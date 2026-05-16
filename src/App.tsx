@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ErrorBoundary } from './components/ui/ErrorBoundary.jsx';
@@ -6,6 +6,8 @@ import { Navbar } from './components/ui/Navbar.jsx';
 import { Footer } from './components/ui/Footer.jsx';
 import { PWAInstallPrompt } from './core/pwa-engine/PWAInstallPrompt';
 import { ScrollToTop } from './components/ui/ScrollToTop';
+import { initGeoDetection } from './core/geo-engine/geoStore.js';
+import { FloatingRegionSwitcher } from './core/geo-engine/FloatingRegionSwitcher.jsx';
 
 // ── Lazily-loaded pages (code splitting per route) ────────────────────
 const Home           = lazy(() => import('./pages/Home.jsx'));
@@ -45,6 +47,9 @@ function PageLoader() {
 }
 
 export default function App() {
+  // Bootstrap geo-localisation once on mount
+  useEffect(() => { initGeoDetection(); }, []);
+
   return (
     <ErrorBoundary>
       <div className="app-root" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -69,6 +74,7 @@ export default function App() {
         </main>
         <Footer />
         <PWAInstallPrompt />
+        <FloatingRegionSwitcher position="bottom-left" />
         <Toaster
           position="bottom-right"
           toastOptions={{
