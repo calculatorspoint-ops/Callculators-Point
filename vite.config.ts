@@ -41,10 +41,19 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Pre-cache core assets
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,webp}'],
-        // Skip large chunks — let them load on demand
-        globIgnores: ['**/bundle-report.html', '**/export-ut*.js'],
+        // Pre-cache core assets only — NOT large lazy chunks
+        globPatterns: ['**/*.{html,ico,png,svg,woff2,webp,manifest}'],
+        // FIX: Exclude large on-demand chunks from pre-caching.
+        // These are lazy-imported and should only download when actually needed,
+        // not pre-fetched on page load (which causes "unused JS" in Lighthouse).
+        globIgnores: [
+          '**/bundle-report.html',
+          '**/export-utils-*.js',   // html2canvas + jsPDF — only on Export click
+          '**/charts-*.js',          // recharts + d3 — only on calculator pages with charts
+          '**/firebase-*.js',        // Firebase — only if auth needed
+          '**/sw.js',
+          '**/workbox-*.js',
+        ],
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,

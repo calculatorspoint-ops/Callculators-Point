@@ -163,19 +163,33 @@ img,svg{display:block;max-width:100%;}
 }
 
 /* Hero: reserve minimum height to prevent collapse-then-expand */
-.hero{
-  min-height:380px;
-}
-@media(max-width:767px){.hero{min-height:320px;}}
+.hero{ min-height:380px; }
+@media(max-width:767px){ .hero{ min-height:300px; } }
 
 /* Stat strip: fixed height prevents a reflow when numbers render */
-.stat-strip{
-  min-height:78px;
+.stat-strip{ min-height:78px; }
+
+/* Scroll lock when mobile menu open — CSS class approach (no forced reflow) */
+html.mob-menu-open body{ overflow:hidden; }
+
+/* ══════════════════════════════════════════════════════════════
+   CONTENT-VISIBILITY — defer below-fold rendering (LCP fix)
+   Browser skips rendering cost of sections not yet in viewport.
+══════════════════════════════════════════════════════════════ */
+.home-why{
+  content-visibility:auto;
+  contain-intrinsic-size:0 480px;
+}
+.footer{
+  content-visibility:auto;
+  contain-intrinsic-size:0 320px;
+}
+#home-sidebar{
+  content-visibility:auto;
+  contain-intrinsic-size:0 600px;
 }
 
-/* Prevent font-swap shift: use font-display:optional for body text
-   so browser uses fallback rather than causing a reflow.
-   The @font-face in index.html uses size-adjust for zero-shift. */
+/* Prevent font-swap shift */
 body{
   font-synthesis:none;
   -webkit-font-smoothing:antialiased;

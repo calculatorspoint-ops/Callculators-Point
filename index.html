@@ -62,51 +62,28 @@
     <style>
       /* System font stack — matches --font token exactly */
       :root {
-        --font:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
-        --font-hd:      'Plus Jakarta Sans', 'Inter', sans-serif;
-        --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+        --font:      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
         --nav-h: 62px;
       }
-      /* Prevent invisible text during font load (fixes FCP) */
-      body { font-family: var(--font); font-display: swap; }
-      /* Above-fold background — no white flash */
-      html, body { background: #020617; color: #f8fafc; margin: 0; overflow-x: hidden; }
+      html, body { background: #020617; color: #f8fafc; margin: 0; overflow-x: hidden; font-family: var(--font); }
 
-      /* ── CLS FIX: Reserve explicit height for navbar ──
-         Without this the navbar pops in and shifts content */
-      .navbar {
-        height: var(--nav-h);
-        min-height: var(--nav-h);
-        contain: layout style;
-      }
+      /* ── CLS FIX: Reserve navbar height so no jump on mount ── */
+      .navbar { height: var(--nav-h); min-height: var(--nav-h); }
 
-      /* ── CLS FIX: Reserve hero section min-height ──
-         Prevents the hero from collapsing then expanding */
-      .hero {
-        min-height: 380px;
-        contain: layout;
-      }
+      /* ── CLS FIX: Reserve hero height ── */
+      .hero { min-height: 380px; }
+      @media(max-width:767px){ .hero { min-height: 300px; } }
 
       /* ── CLS FIX: Reserve stat strip height ── */
-      .stat-strip {
-        min-height: 80px;
-      }
+      .stat-strip { min-height: 78px; }
 
-      /* ── CLS FIX: Prevent font-swap layout shift ──
-         size-adjust ensures fallback & web font take same space */
-      @font-face {
-        font-family: 'Inter';
-        font-display: swap;
-        src: local('Inter');
-        size-adjust: 100%;
-      }
-      @font-face {
-        font-family: 'Plus Jakarta Sans';
-        font-display: swap;
-        src: local('Plus Jakarta Sans');
-        size-adjust: 107%;
-      }
+      /* ── FORCED REFLOW FIX: CSS class instead of body.style.overflow ── */
+      html.mob-menu-open body { overflow: hidden; }
+
+      /* ── content-visibility: auto on below-fold sections ── */
+      .home-why,
+      .footer { content-visibility: auto; contain-intrinsic-size: 0 400px; }
 
       /* Spinner shown while React hydrates */
       #root:empty::after {
@@ -120,7 +97,52 @@
         animation: _spin .7s linear infinite;
       }
       @keyframes _spin { to { transform: rotate(360deg); } }
+
+      /* ── LCP FIX: Static above-fold hero shell ──────────────
+         Renders BEFORE React JS loads → fixes 2,550ms LCP delay.
+         React replaces this on mount (no visual flash because
+         styles match the React-rendered output exactly).
+      ──────────────────────────────────────────────────────── */
+      #hero-shell {
+        background: linear-gradient(135deg, #0f172a 0%, #1a1040 50%, #0f172a 100%);
+        padding: clamp(28px,6vw,72px) clamp(14px,4vw,24px);
+        min-height: 380px;
+        display: flex;
+        align-items: center;
+      }
+      #hero-shell-inner { max-width: 580px; margin: 0 auto; }
+      #hero-shell-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 14px; border-radius: 100px; margin-bottom: 20px;
+        background: rgba(99,102,241,.15); border: 1px solid rgba(99,102,241,.3);
+        color: rgba(255,255,255,.75); font-size: 12px; font-weight: 600;
+      }
+      #hero-shell h1 {
+        font-size: clamp(1.7rem,7vw,3rem); font-weight: 900;
+        letter-spacing: -.04em; line-height: 1.15; color: #fff;
+        margin: 0 0 16px;
+      }
+      #hero-shell-accent {
+        background: linear-gradient(135deg,#60a5fa,#a78bfa,#34d399);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      #hero-shell p {
+        font-size: clamp(13px,3.5vw,16px); color: rgba(255,255,255,.6);
+        line-height: 1.65; margin: 0 0 24px; max-width: 520px;
+      }
+      #hero-shell-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 24px; border-radius: 12px; font-size: 15px;
+        font-weight: 700; color: #fff; text-decoration: none;
+        background: linear-gradient(135deg,#6366f1,#4f46e5);
+        box-shadow: 0 4px 20px rgba(99,102,241,.4);
+      }
+      /* Hide shell once React mounts */
+      #root:not(:empty) ~ #hero-shell,
+      #root:not(:empty) + * #hero-shell { display: none; }
     </style>
+
 
     <!-- ═══════════════════════════════════════════════
          FONTS — Non-blocking load strategy
@@ -165,9 +187,34 @@
     </script>
   </head>
   <body>
+    <!-- ── STATIC HERO SHELL: Renders immediately before React JS loads.
+         This is what Lighthouse measures as the LCP element.
+         React replaces #root content on mount; hero-shell hidden via CSS. ──────── -->
+    <div id="hero-shell" aria-hidden="true">
+      <div id="hero-shell-inner">
+        <div id="hero-shell-badge">✦ 55+ Free Tools · No Signup · Instant Results</div>
+        <h1>Your All-in-One<br><span id="hero-shell-accent">Calculator Suite</span></h1>
+        <p class="hero-sub">Finance, health, math and everyday tools — with live charts, step-by-step breakdowns, and smart insights. 100% free, works offline, completely private.</p>
+        <a href="/calculators" id="hero-shell-btn">Explore All Tools →</a>
+      </div>
+    </div>
+
     <!-- Root mount point -->
     <div id="root"></div>
     <!-- Module script — Vite injects the correct hashed bundle path at build time -->
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Hide static shell once React mounts -->
+    <script>
+      (function(){
+        var root = document.getElementById('root');
+        var shell = document.getElementById('hero-shell');
+        if(!root || !shell) return;
+        var obs = new MutationObserver(function(){
+          if(root.children.length > 0){ shell.style.display='none'; obs.disconnect(); }
+        });
+        obs.observe(root, { childList: true });
+      })();
+    </script>
   </body>
 </html>

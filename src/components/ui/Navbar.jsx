@@ -45,9 +45,10 @@ export function Navbar() {
   }, []);
 
   // Prevent body scroll when mobile menu open
+  // FIX: Use CSS class instead of style.overflow to avoid forced reflow
   useEffect(() => {
-    document.body.style.overflow = mob ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    document.documentElement.classList.toggle("mob-menu-open", mob);
+    return () => { document.documentElement.classList.remove("mob-menu-open"); };
   }, [mob]);
 
   return (
