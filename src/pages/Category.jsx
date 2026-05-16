@@ -16,17 +16,17 @@ export default function Category() {
         <link rel="canonical" href={`https://calculatorspoint.com/category/${cat.id}`} />
       </Helmet>
       
-      <div style={{ background:`linear-gradient(135deg, ${cat.color}22, ${cat.color}11)`, borderBottom:"1px solid var(--border)", padding:"36px 24px 28px" }}>
-        <div style={{ maxWidth:1280, margin:"0 auto" }}>
-          <nav style={{ fontSize:12, color:"var(--text3)", marginBottom:14, display:"flex", gap:6 }}>
+      <div className="cat-page-header" style={{ background:`linear-gradient(135deg, ${cat.color}22, ${cat.color}11)`, borderBottom:"1px solid var(--border)" }}>
+        <div style={{ maxWidth:1280, margin:"0 auto", padding:"clamp(16px,4vw,36px) clamp(14px,3vw,24px) clamp(14px,3vw,28px)" }}>
+          <nav style={{ fontSize:12, color:"var(--text3)", marginBottom:12, display:"flex", gap:6, flexWrap:"wrap" }}>
             <Link to="/" style={{ color:"var(--text3)" }}>Home</Link><span>/</span>
             <Link to="/calculators" style={{ color:"var(--text3)" }}>Calculators</Link><span>/</span>
             <span style={{ color:cat.color, fontWeight:600 }}>{cat.name}</span>
           </nav>
-          <div style={{ display:"flex", alignItems:"center", gap:16 }}>
-            <div style={{ width:60, height:60, borderRadius:"var(--r-xl)", background:cat.bg, border:`2px solid ${cat.color}30`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:28 }}>{cat.icon}</div>
-            <div>
-              <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.6rem,4vw,2.2rem)", fontWeight:800, color:"var(--text)", letterSpacing:"-.03em", marginBottom:4 }}>{cat.name} Calculators</h1>
+          <div style={{ display:"flex", alignItems:"center", gap:14, flexWrap:"wrap" }}>
+            <div style={{ width:"clamp(44px,12vw,60px)", height:"clamp(44px,12vw,60px)", borderRadius:"var(--r-xl)", background:cat.bg, border:`2px solid ${cat.color}30`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"clamp(20px,6vw,28px)", flexShrink:0 }}>{cat.icon}</div>
+            <div style={{ minWidth:0 }}>
+              <h1 style={{ fontFamily:"var(--font-display)", fontSize:"clamp(1.3rem,5vw,2.2rem)", fontWeight:800, color:"var(--text)", letterSpacing:"-.03em", marginBottom:4 }}>{cat.name} Calculators</h1>
               <p style={{ fontSize:13, color:"var(--text3)" }}>{calcs.length} free tools · {cat.desc}</p>
             </div>
           </div>

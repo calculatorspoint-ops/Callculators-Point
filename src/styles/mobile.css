@@ -1,455 +1,388 @@
 /* ══════════════════════════════════════════════════════════════
-   MOBILE COMPLETE FIX — All pages, all breakpoints
+   MOBILE COMPLETE FIX v2 — All pages, all breakpoints
    Covers: Home, AllCalculators, Category, Calculator, Footer,
-           Navbar, QuickCalc, Hero, Stat strip, Sidebar, Forms
+           Navbar, Hero, Stat strip, Forms, Results
    Breakpoints:  ≤1024px tablet  ≤767px mobile  ≤400px xs
 ══════════════════════════════════════════════════════════════ */
 
-/* ── 1. HERO SECTION ──────────────────────────────────────── */
-.hero{
-  padding: clamp(28px, 6vw, 80px) clamp(14px, 4vw, 24px) clamp(28px, 6vw, 60px);
+/* ── GLOBAL: Prevent horizontal overflow on ALL elements ── */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
-.hero-inner{ padding: 0; }
-.hero-layout{ gap: clamp(16px, 4vw, 48px); }
-.hero-title{
-  font-size: clamp(1.7rem, 7vw, 3.2rem) !important;
-  line-height: 1.15;
-}
-.hero-sub{
-  font-size: clamp(13px, 3.5vw, 16px) !important;
-  line-height: 1.65;
-}
-.hero-badge{ font-size: clamp(11px, 3vw, 13px); }
-.hero-actions{ gap: 10px; }
-.hero-features{ gap: 7px; }
-.hero-feature-pill{ font-size: 11px; padding: 5px 10px; }
-
-/* Category pills row */
-.hero-pills{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 20px;
-  justify-content: center;
-}
-.hero-pill{
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 600;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.14);
-  color: rgba(255,255,255,.75);
-  white-space: nowrap;
-  transition: all .15s;
-}
-.hero-pill:hover{ background: rgba(99,102,241,.2); color:#fff; }
-
-/* ── 2. STAT STRIP ────────────────────────────────────────── */
-.stat-strip{ overflow-x: auto; scrollbar-width: none; }
-.stat-strip::-webkit-scrollbar{ display: none; }
-.stat-strip-item{ min-width: 80px; flex-shrink: 0; }
-
-/* ── 3. HOME PAGE LAYOUT ──────────────────────────────────── */
-.home-wrap{ padding: clamp(14px,3vw,28px) clamp(12px,3vw,20px) 60px; }
-
-/* Calculator rows — single column on narrow screens */
-.calc-row{
-  min-height: 52px;
-  padding: 10px 14px;
+*, *::before, *::after {
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
-/* Category block header */
-.home-cat-head{
-  gap: 10px;
-  padding: clamp(12px,3vw,16px) clamp(12px,3vw,18px);
-  flex-wrap: wrap;
-}
+/* ── CLS: Reserve heights for above-fold elements ── */
+.navbar  { min-height: var(--nav-h); height: var(--nav-h); }
+.hero    { min-height: 380px; }
+.stat-strip { min-height: 78px; }
 
-/* ── 4. ALL CALCULATORS PAGE ──────────────────────────────── */
-.hero-premium{
-  padding: clamp(32px,6vw,80px) clamp(14px,4vw,24px) clamp(24px,5vw,60px);
-}
-.hero-title-premium{
-  font-size: clamp(1.6rem, 7vw, 4rem);
-  line-height: 1.15;
-}
-.hero-subtitle-premium{
-  font-size: clamp(13px,3.5vw,17px);
-  padding: 0 clamp(0px,2vw,20px);
-}
+/* ── Scroll lock via CSS class (no forced reflow) ── */
+html.mob-menu-open body { overflow: hidden; }
 
-/* Search + filter toolbar */
-.toolbar-premium-wrap{
-  padding: clamp(10px,2vw,16px) clamp(12px,3vw,24px);
-}
-.search-premium{ max-width: 100%; }
-.search-premium input{
-  height: 44px;
-  font-size: 16px; /* prevents iOS zoom */
-}
-.filters-premium{
-  gap: 6px;
-  padding-bottom: 2px;
-}
-.filter-pill-premium{
-  padding: 7px 13px;
-  font-size: 13px;
-  min-height: 38px;
-}
+/* ── content-visibility: defer below-fold render cost ── */
+.home-why       { content-visibility: auto; contain-intrinsic-size: 0 480px; }
+.footer         { content-visibility: auto; contain-intrinsic-size: 0 320px; }
+#home-sidebar   { content-visibility: auto; contain-intrinsic-size: 0 600px; }
 
-/* Calculator cards grid */
-.calc-grid-premium{
-  padding: clamp(14px,3vw,40px) clamp(12px,3vw,24px);
-  gap: clamp(10px,2vw,20px);
-}
-.calc-card-premium{
-  padding: clamp(14px,3vw,20px);
-  gap: 12px;
-}
-.calc-card-icon{
-  width: 42px;
-  height: 42px;
-  font-size: 20px;
-}
-.calc-card-title{ font-size: 14px; }
-.calc-card-desc{  font-size: 12px; }
-
-/* Category section header */
-.category-header-premium{
-  padding: clamp(14px,3vw,20px) clamp(12px,3vw,24px) 0;
-}
-.category-header-premium h2{ font-size: clamp(1.1rem,4vw,1.5rem); }
-
-/* ── 5. CATEGORY PAGE ─────────────────────────────────────── */
-.cat-grid{
+/* ── Cat-grid: base definition (Category page) ── */
+.cat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
+  padding: 16px 0;
 }
 
-/* ── 6. CALCULATOR PAGE (header + tabs + layout) ──────────── */
-.calc-page-header, .calc-page-head{
-  padding: clamp(14px,3vw,28px) clamp(14px,3vw,24px) 0 !important;
+/* ── AllCalculators card grid: safe minmax ── */
+.calc-grid-premium {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
 }
-.cph-title{
-  font-size: clamp(1rem,5vw,1.6rem) !important;
-  line-height: 1.25;
-}
-.cph-breadcrumb{
-  font-size: clamp(10px,2.5vw,13px);
-  gap: 4px;
-  flex-wrap: wrap;
-}
-.calc-tabs{
+
+/* ── Hero feature pills: horizontal scroll on mobile ── */
+.hero-pills {
   overflow-x: auto;
-  scrollbar-width: none;
-  display: flex;
-  gap: 4px;
-  flex-wrap: nowrap;
-  margin-top: 14px;
-  padding-bottom: 2px;
-}
-.calc-tabs::-webkit-scrollbar{ display: none; }
-.calc-tab{
-  white-space: nowrap;
-  flex-shrink: 0;
-  min-height: 40px;
-  padding: 9px 16px;
-  font-size: 13px;
-}
-.calc-layout{
-  padding: clamp(12px,3vw,28px) clamp(12px,3vw,20px) 60px !important;
-  gap: 16px;
-}
-.calc-card-body{
-  padding: clamp(14px,3vw,20px) !important;
-}
-
-/* Result display */
-.result-val{
-  font-size: clamp(20px,7vw,42px) !important;
-  line-height: 1.1;
-}
-.result-card{ padding: clamp(14px,3vw,24px) !important; }
-
-/* Stat grids inside calculators */
-.sg-4{ grid-template-columns: repeat(2,1fr) !important; }
-
-/* Presets row */
-.presets-wrap{
-  display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 0;
+  scrollbar-width: none;
 }
-.preset-chip{
-  font-size: 11px;
-  padding: 5px 10px;
-  min-height: 32px;
-}
-
-/* Form inputs */
-.f-input, .f-select{
-  font-size: 16px !important; /* prevents iOS auto-zoom */
-  min-height: 44px;
-}
-.f-label{ font-size: 12px; }
-
-/* Sticky result card */
-.sticky-res{ position: static !important; }
-
-/* ── 7. FOOTER ────────────────────────────────────────────── */
-.footer{
-  padding: clamp(32px,5vw,56px) clamp(14px,4vw,20px) clamp(20px,3vw,28px);
-}
-.footer-bottom{
-  flex-direction: column;
-  text-align: center;
-  gap: 6px;
-  font-size: 11px;
-}
-.footer-disc{ font-size: 11px; line-height: 1.6; }
-
-/* ── 8. QUICKCALC HERO WIDGET ─────────────────────────────── */
-.qcalc{
-  width: 100% !important;
-  max-width: 300px !important;
-}
-
-/* ── 9. SIDEBAR (hidden on mobile) ────────────────────────── */
-/* Sidebar is hidden via .home-grid media query — no change needed */
-
-/* ── 10. FORM ENGINE COMPONENTS ──────────────────────────── */
-.form-section-title{ font-size: clamp(13px,3.5vw,16px); }
-details summary{
-  padding: clamp(10px,2.5vw,14px) clamp(12px,3vw,18px);
-  font-size: clamp(12px,3.5vw,14px);
-  min-height: 46px;
-}
-
-/* ── 11. MODALS & DROPDOWNS ───────────────────────────────── */
-.navbar-search-drop{
-  max-height: 60vh;
-  overflow-y: auto;
-}
+.hero-pills::-webkit-scrollbar { display: none; }
 
 /* ══════════════════════════════════════════════════════════════
    TABLET (≤1024px) — use html prefix for highest specificity
 ══════════════════════════════════════════════════════════════ */
-@media(max-width:1024px){
-  /* Collapse desktop nav → show hamburger */
-  html .navbar-nav          { display: none !important; }
-  html .navbar-hamburger    { display: flex !important; }
-  html .navbar-search-desktop { display: none !important; }
-  html .mobile-search-btn   { display: flex !important; }
-  html .desktop-only        { display: none !important; }
+@media (max-width: 1024px) {
 
-  /* Sidebar hidden — full width main column */
-  html .calc-layout         { grid-template-columns: 1fr !important; }
-  html .calc-layout aside   { display: none !important; }
+  /* ── NAVBAR: collapse to hamburger ── */
+  html .navbar-nav           { display: none !important; }
+  html .navbar-hamburger     { display: flex !important; }
+  html .navbar-search-desktop{ display: none !important; }
+  html .mobile-search-btn    { display: flex !important; }
+  html .desktop-only         { display: none !important; }
 
-  /* Footer 2-col */
-  html .footer-grid         { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
+  /* ── Calculator page: full-width, no sidebar ── */
+  html .calc-layout          { grid-template-columns: 1fr !important; }
+  html .calc-layout > aside  { display: none !important; }
 
-  /* Category grid: 2 cols */
-  .calc-grid-premium{ grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); }
+  /* ── Home grid: full-width ── */
+  html .home-grid            { grid-template-columns: 1fr !important; }
+  html #home-sidebar         { display: none !important; }
 
-  .cat-grid{ grid-template-columns: 1fr 1fr; gap: 10px; }
+  /* ── Footer: 2-column ── */
+  html .footer-grid          { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
+
+  /* ── Category grid: 2-column ── */
+  .cat-grid                  { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+
+  /* ── AllCalcs: auto-fill with 240px min ── */
+  .calc-grid-premium         { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 }
 
 /* ══════════════════════════════════════════════════════════════
    MOBILE (≤767px)
 ══════════════════════════════════════════════════════════════ */
-@media(max-width:767px){
-  :root{ --nav-h: 56px; }
+@media (max-width: 767px) {
 
-  /* Navbar */
-  .navbar-inner{ padding: 0 12px; gap: 6px; }
-  .navbar-logo-text{ font-size: 15px; }
-  .navbar-logo-icon{ width: 30px; height: 30px; }
+  /* ── Root vars ── */
+  :root { --nav-h: 56px; }
 
-  /* Hero */
-  .hero{ min-height: auto; }
-  .hero-layout{ grid-template-columns: 1fr !important; }
-  .hero-widget-col{ display: none !important; }
-  .hero-actions{ flex-direction: column; gap: 10px; }
+  /* ══ NAVBAR ══════════════════════════════════ */
+  .navbar-inner { padding: 0 14px; gap: 8px; }
+  .navbar-logo-text { font-size: 16px; }
+  .navbar-logo-icon { width: 30px; height: 30px; }
+
+  /* ══ HERO ════════════════════════════════════ */
+  .hero { min-height: auto !important; }
+  .hero-inner { padding: 24px 16px 28px !important; }
+
+  /* Force hero to single column — no widget */
+  html .hero-layout        { grid-template-columns: 1fr !important; }
+  html .hero-widget-col    { display: none !important; }
+
+  .hero-title {
+    font-size: clamp(1.55rem, 8vw, 2rem) !important;
+    line-height: 1.15;
+    letter-spacing: -.03em;
+  }
+  .hero-sub {
+    font-size: 14px !important;
+    line-height: 1.65;
+    margin-bottom: 20px !important;
+  }
+  .hero-badge { font-size: 11px; padding: 4px 12px; }
+
+  /* Hero action buttons — stack vertically, full width */
+  .hero-actions {
+    flex-direction: column !important;
+    gap: 10px;
+    width: 100%;
+  }
   .hero-actions a,
-  .hero-actions button{ width: 100%; justify-content: center; text-align: center; }
-  .hero-pills{ justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
-  .hero-pills::-webkit-scrollbar{ display: none; }
-  .hero-pill{ flex-shrink: 0; }
+  .hero-actions button {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
 
-  /* Stat strip: 2×2 grid */
-  .stat-strip{ flex-wrap: wrap; overflow: visible; }
-  .stat-strip-item{ flex: 0 0 50%; border-bottom: 1px solid var(--border); }
-  .stat-strip-item:nth-child(even){ border-right: none; }
-  .stat-strip-icon{ font-size: 18px; }
-  .stat-num{ font-size: 20px; }
-  .stat-lbl{ font-size: 10px; }
+  /* Hero feature pills — wrap */
+  .hero-features { gap: 6px; }
+  .hero-feature-pill { font-size: 11px; padding: 4px 10px; }
 
-  /* Home layout */
-  .home-wrap{ padding: 14px 12px 50px; }
-  .home-cat-grid{ grid-template-columns: 1fr !important; }
-  .calc-row{ border-right: none !important; }
-  .calc-row:nth-child(even){ border-right: none; }
+  /* Hero category pills — horizontal scroll */
+  .hero-pills {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 6px;
+    padding-bottom: 4px;
+    margin-top: 20px;
+  }
+  .hero-pill {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 5px 12px;
+    white-space: nowrap;
+  }
 
-  /* All Calculators page */
-  .calc-grid-premium{
-    grid-template-columns: 1fr !important;
-    padding: 14px 12px;
+  /* ══ STAT STRIP ══════════════════════════════ */
+  /* 2×2 grid instead of 4-column row */
+  .stat-strip { flex-wrap: wrap !important; overflow: visible !important; }
+  .stat-strip-item {
+    flex: 0 0 50% !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 14px 8px;
+  }
+  .stat-strip-item:nth-child(even) { border-right: none !important; }
+  .stat-strip-item:nth-child(3),
+  .stat-strip-item:nth-child(4)    { border-bottom: none !important; }
+  .stat-strip-icon { font-size: 18px; }
+  .stat-num        { font-size: 18px; }
+  .stat-lbl        { font-size: 10px; }
+
+  /* ══ HOME PAGE ═══════════════════════════════ */
+  .home-wrap { padding: 14px 12px 48px !important; }
+
+  /* Category blocks */
+  .home-cat-head { padding: 12px 14px; gap: 10px; flex-wrap: wrap; }
+  .home-cat-head > a:last-child { font-size: 11px; padding: 3px 8px; }
+
+  /* Calc rows inside blocks — full width, no right border */
+  html .home-cat-grid { grid-template-columns: 1fr !important; }
+  .calc-row {
+    border-right: none !important;
+    padding: 10px 12px;
+    min-height: 52px;
+  }
+  .calc-row-icon { width: 32px; height: 32px; font-size: 16px; }
+
+  /* Why section */
+  .home-why { padding: 24px 14px; border-radius: 16px; margin-top: 20px; }
+  .home-why-title { font-size: clamp(1.2rem, 6vw, 1.6rem); }
+  html .home-features-grid {
+    grid-template-columns: 1fr 1fr !important;
     gap: 10px;
   }
-  .hero-premium{ padding: 32px 14px 24px; }
-  .toolbar-premium-wrap{ padding: 10px 12px; top: var(--nav-h); }
-  .filters-premium{ gap: 5px; }
+  .home-feature-card { padding: 14px; }
+  .home-feature-title { font-size: 12px; font-weight: 700; }
+  .home-feature-desc  { font-size: 11px; }
+  .home-feature-icon  { width: 36px; height: 36px; font-size: 18px; margin-bottom: 10px; }
 
-  /* Category page header */
-  .cat-grid{ grid-template-columns: 1fr !important; gap: 8px; }
+  /* ══ ALL CALCULATORS PAGE ════════════════════ */
+  .hero-premium { padding: 28px 14px 20px; }
+  .hero-title-premium { font-size: clamp(1.5rem, 7vw, 2.5rem); line-height: 1.15; }
+  .hero-subtitle-premium { font-size: 13px; padding: 0; }
 
-  /* Calculator page */
-  .cph-title-row{ gap: 10px; }
-  .cph-icon{ width: 40px; height: 40px; font-size: 18px; }
-  .cph-meta{ flex-wrap: wrap; gap: 5px; margin-top: 6px; }
-  .cph-actions{ margin-left: 0; width: 100%; margin-top: 6px; }
-  .cph-action-btn span{ display: none; } /* icon-only */
-  .cph-action-btn{ padding: 7px 10px; }
-  .cph-badges{
-    overflow-x: auto; scrollbar-width: none;
-    flex-wrap: nowrap; padding-bottom: 2px;
+  .toolbar-premium-wrap { padding: 10px 12px; top: var(--nav-h); }
+  .search-premium input { height: 44px; font-size: 16px; }
+  .filters-premium { gap: 5px; padding-bottom: 2px; }
+  .filter-pill-premium { padding: 7px 12px; font-size: 12px; min-height: 38px; }
+
+  .calc-grid-premium {
+    grid-template-columns: 1fr !important;
+    padding: 12px 12px;
+    gap: 10px;
   }
-  .cph-badges::-webkit-scrollbar{ display: none; }
+  .calc-card-premium { padding: 14px; gap: 12px; }
+  .calc-card-icon    { width: 40px; height: 40px; font-size: 20px; }
+  .calc-card-title   { font-size: 14px; }
+  .calc-card-desc    { font-size: 12px; }
+  .category-header-premium { padding: 14px 12px 0; }
+  .category-header-premium h2 { font-size: clamp(1rem, 4.5vw, 1.3rem); }
 
-  /* Calc layout & cards */
-  .calc-layout{ padding: 12px 12px 48px !important; }
-  .calc-card-body{ padding: 14px !important; }
-  .sg-3{ grid-template-columns: repeat(2,1fr) !important; }
+  /* ══ CATEGORY PAGE ════════════════════════════ */
+  /* Category header */
+  .cat-page-header,
+  [style*="padding:\"36px 24px 28px\""] {
+    padding: 20px 14px 16px !important;
+  }
+  /* Cat grid: 1 column on mobile */
+  html .cat-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
 
-  /* Forms */
-  .form-row{ flex-direction: column; gap: 10px; }
+  /* ══ CALCULATOR PAGE ══════════════════════════ */
+  .calc-page-head,
+  .calc-page-header { padding: 16px 14px 0 !important; }
 
-  /* Footer: single column */
-  .footer-grid{ grid-template-columns: 1fr !important; gap: 22px !important; }
-  .footer{ padding: 32px 14px 20px; }
-  .footer-bottom{
+  .cph-breadcrumb { font-size: 11px; gap: 3px; flex-wrap: wrap; }
+  .cph-title { font-size: clamp(1rem, 5vw, 1.25rem) !important; line-height: 1.2; }
+  .cph-icon  { width: 40px; height: 40px; font-size: 20px; }
+  .cph-title-row { gap: 10px; align-items: flex-start; }
+
+  /* Badges: horizontal scroll, no wrap */
+  .cph-badges {
+    overflow-x: auto !important;
+    scrollbar-width: none;
+    flex-wrap: nowrap !important;
+    padding-bottom: 2px;
+  }
+  .cph-badges::-webkit-scrollbar { display: none; }
+
+  /* Action buttons: icon-only on mobile */
+  .cph-actions { margin-left: 0; margin-top: 6px; width: 100%; gap: 6px; }
+  .cph-action-btn { padding: 6px 10px; font-size: 12px; }
+  .cph-action-btn span { display: none; }
+
+  /* Tabs: horizontal scroll */
+  .calc-tabs { margin-top: 12px; overflow-x: auto; scrollbar-width: none; }
+  .calc-tabs::-webkit-scrollbar { display: none; }
+  .calc-tab { padding: 10px 14px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+
+  /* Calculator main layout */
+  .calc-layout { padding: 14px 12px 48px !important; gap: 14px !important; }
+  .calc-card-head { padding: 14px 14px 12px; }
+  .calc-card-body { padding: 14px !important; }
+
+  /* Results */
+  .result-val { font-size: clamp(22px, 7vw, 34px) !important; }
+  .result-inner { padding: 20px 16px 16px; }
+  html .sg-4 { grid-template-columns: repeat(2, 1fr) !important; }
+  html .sg-3 { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Form fields */
+  .f-input, .f-select { font-size: 16px !important; min-height: 46px; }
+
+  /* Sticky result → static */
+  .sticky-res { position: static !important; }
+
+  /* Preset chips */
+  .presets-wrap { padding: 8px 10px; gap: 5px; }
+  .preset-chip  { padding: 4px 10px; font-size: 11px; }
+
+  /* FAQ */
+  details summary { padding: 11px 14px; font-size: 13px; min-height: 46px; }
+
+  /* ══ FOOTER ════════════════════════════════════ */
+  html .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  .footer { padding: 32px 14px 20px !important; }
+  .footer-bottom {
     flex-direction: column;
     text-align: center;
-    gap: 5px;
+    gap: 6px;
     font-size: 11px;
   }
-  .footer-disc{ font-size: 11px; }
+  .footer-disc { font-size: 11px; line-height: 1.6; }
 
-  /* Page content */
-  .page-wrap{ padding: 16px 12px 48px !important; }
-  .content-card{ padding: 16px 14px !important; border-radius: 14px !important; }
-  .page-hero{ padding: 32px 14px 28px; }
-  .page-hero h1{ font-size: clamp(1.4rem, 6vw, 2rem) !important; }
-  .page-hero p{ font-size: 13px; }
+  /* ══ PAGE CONTENT (Privacy, About etc.) ════════ */
+  .page-wrap { padding: 16px 12px 48px !important; }
+  .content-card { padding: 16px 14px !important; border-radius: 14px !important; }
+  .page-hero { padding: 28px 14px 24px; }
+  .page-hero h1 { font-size: clamp(1.3rem, 6vw, 1.8rem) !important; }
+  .page-hero p  { font-size: 13px; }
 
-  /* GPA table */
+  /* GPA table: tighter columns */
   .gpa-thead,
-  .gpa-row{
-    grid-template-columns: 1.4fr 1fr 0.8fr auto !important;
-    padding: 7px 10px !important;
+  .gpa-row {
+    grid-template-columns: 1.5fr 1fr 0.8fr auto !important;
     gap: 4px !important;
+    padding: 7px 10px !important;
     font-size: 12px;
   }
 
   /* Filter pills */
-  .filter-pill{ padding: 6px 12px; font-size: 12px; }
+  .filter-pill { padding: 6px 12px; font-size: 12px; }
 
-  /* Why section */
-  .home-why{ padding: 24px 14px; border-radius: 16px; margin-top: 24px; }
-  .home-why-title{ font-size: clamp(1.3rem,5vw,1.8rem); }
-  .home-features-grid{ grid-template-columns: 1fr 1fr !important; gap: 12px; }
-  .home-feature-card{ padding: 14px; }
-  .home-feature-title{ font-size: 13px; }
-  .home-feature-desc{ font-size: 11px; }
-
-  /* Sidebar CTA shown on mobile as full width block */
-  .sidebar-cta{ border-radius: 16px; }
+  /* QuickCalc max-width */
+  .qcalc { width: 100% !important; max-width: 300px !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════
    XS PHONES (≤400px)
 ══════════════════════════════════════════════════════════════ */
-@media(max-width:400px){
-  .navbar-logo-text{ display: none; }
-  .hero-title{ font-size: 1.5rem !important; }
-  .cph-title{ font-size: 0.95rem !important; }
-  .result-val{ font-size: 20px !important; }
-  .sg-3,
-  .sg-4{ grid-template-columns: 1fr 1fr !important; }
+@media (max-width: 400px) {
+  .navbar-logo-text { display: none; }
+  .hero-title       { font-size: 1.4rem !important; }
+  .cph-title        { font-size: 0.95rem !important; }
+  .result-val       { font-size: 20px !important; }
+  html .sg-3        { grid-template-columns: 1fr 1fr !important; }
+  html .sg-4        { grid-template-columns: 1fr 1fr !important; }
   .calc-grid-premium{ grid-template-columns: 1fr !important; }
-  .cat-grid{ grid-template-columns: 1fr !important; }
-  .home-features-grid{ grid-template-columns: 1fr !important; }
-  .badge{ font-size: 9px; padding: 1px 5px; }
-  .stat-num{ font-size: 17px; }
-  .footer-grid{ grid-template-columns: 1fr !important; }
+  html .cat-grid    { grid-template-columns: 1fr !important; }
+  html .home-features-grid { grid-template-columns: 1fr !important; }
+  .badge            { font-size: 9px; padding: 1px 5px; }
+  .stat-num         { font-size: 16px; }
   .hero-actions a,
-  .hero-actions button{ font-size: 13px; padding: 11px 16px; }
-  .calc-tab{ font-size: 12px; padding: 8px 12px; }
+  .hero-actions button { font-size: 13px; padding: 11px 16px; }
+  .calc-tab         { font-size: 11px; padding: 8px 10px; }
+  .cph-action-btn   { padding: 5px 8px; }
 }
 
 /* ══════════════════════════════════════════════════════════════
-   TOUCH DEVICE OPTIMIZATIONS
-   Minimum 44×44px tap targets, no hover-only states
+   TOUCH DEVICE — proper tap targets, no hover flashes
 ══════════════════════════════════════════════════════════════ */
-@media(hover:none) and (pointer:coarse){
-  /* Tap targets */
-  .calc-row{ min-height: 52px; }
-  .sidebar-item{ min-height: 48px; }
+@media (hover: none) and (pointer: coarse) {
+  /* Minimum 44px tap targets */
+  .calc-row        { min-height: 52px; }
+  .sidebar-item    { min-height: 48px; }
   .filter-pill,
-  .filter-pill-premium{ min-height: 42px; }
+  .filter-pill-premium { min-height: 42px; }
   .f-input,
-  .f-select{ min-height: 48px; font-size: 16px !important; }
-  .navbar-icon-btn{ width: 44px; height: 44px; }
-  .hero-pill{ min-height: 36px; }
-  button{ -webkit-tap-highlight-color: transparent; }
-  a{ -webkit-tap-highlight-color: transparent; }
+  .f-select        { min-height: 48px; font-size: 16px !important; }
+  .navbar-icon-btn { width: 44px; height: 44px; }
+  .hero-pill       { min-height: 36px; }
+  .mob-menu-link   { min-height: 48px; }
+  .calc-tab        { min-height: 44px; }
+  .btn-primary,
+  .btn-ghost       { min-height: 48px; }
 
-  /* Remove hover transforms on touch (avoid sticky states) */
-  .calc-row:hover{ background: transparent; transform: none; }
-  .sidebar-item:hover{ background: transparent; }
-  .calc-card-premium:hover{ transform: none; box-shadow: none; }
-  .calc-row:active{ background: var(--brand-l); }
-  .sidebar-item:active{ background: var(--surface2); }
-  .calc-card-premium:active{ background: #1e293b; }
-  .mob-menu-link:hover{ background: transparent; }
-  .mob-menu-link:active{ background: var(--surface2); }
-
-  /* Prevent the "flash" on tap in iOS */
+  /* Remove sticky hover on touch */
+  button, a { -webkit-tap-highlight-color: transparent; }
   * { -webkit-tap-highlight-color: rgba(0,0,0,0); }
+
+  /* Replace hover with active states */
+  .calc-row:hover       { background: transparent !important; transform: none !important; }
+  .calc-card-premium:hover { transform: none !important; box-shadow: none !important; }
+  .calc-row:active      { background: var(--brand-l) !important; }
+  .calc-card-premium:active { background: #1e293b !important; }
+  .mob-menu-link:hover  { background: transparent !important; }
+  .mob-menu-link:active { background: var(--surface2) !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════
-   LANDSCAPE PHONE
+   LANDSCAPE PHONE (short viewport)
 ══════════════════════════════════════════════════════════════ */
-@media(max-height:500px) and (orientation:landscape){
-  .hero{ padding: 18px 14px 18px !important; min-height: auto; }
-  .hero-title{ font-size: 1.35rem !important; }
-  .stat-strip{ display: none; }
-  .hero-features{ display: none; }
-  .hero-widget-col{ display: none !important; }
-  .mob-menu-panel{ padding-top: var(--nav-h); }
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { padding: 16px 14px !important; min-height: auto !important; }
+  .hero-title { font-size: 1.2rem !important; }
+  .hero-features,
+  .hero-pills  { display: none !important; }
+  .hero-widget-col { display: none !important; }
+  .stat-strip  { display: none !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════
-   SAFE AREA (iPhone notch / Dynamic Island)
+   SAFE AREA — iPhone notch / Dynamic Island
 ══════════════════════════════════════════════════════════════ */
-@supports(padding: env(safe-area-inset-top)){
-  .navbar{
-    padding-left: env(safe-area-inset-left);
+@supports (padding: env(safe-area-inset-top)) {
+  .navbar {
+    padding-left:  env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
-  .mob-menu-panel{
-    padding-right: max(env(safe-area-inset-right), 0px);
+  .mob-menu-panel {
+    padding-right:  max(env(safe-area-inset-right), 0px);
     padding-bottom: env(safe-area-inset-bottom);
   }
-  .footer{
+  .footer {
     padding-bottom: calc(max(20px, env(safe-area-inset-bottom)) + 8px);
   }
 }
@@ -457,42 +390,26 @@ details summary{
 /* ══════════════════════════════════════════════════════════════
    REDUCED MOTION
 ══════════════════════════════════════════════════════════════ */
-@media(prefers-reduced-motion:reduce){
-  *{
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:       0.01ms !important;
+    animation-iteration-count: 1     !important;
+    transition-duration:      0.01ms !important;
+    scroll-behavior:          auto   !important;
   }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   HIGH CONTRAST
-══════════════════════════════════════════════════════════════ */
-@media(forced-colors:active){
-  .result-card,
-  .btn-primary{ border: 2px solid ButtonText; }
-  .f-input,
-  .f-select{ border: 2px solid ButtonText; }
 }
 
 /* ══════════════════════════════════════════════════════════════
    PRINT
 ══════════════════════════════════════════════════════════════ */
-@media print{
+@media print {
   .navbar,
   .footer,
   .mob-menu-panel,
   .mob-overlay,
-  .navbar-search-drop,
   .navbar-icon-btn,
-  .result-actions,
   .hero-widget-col,
-  #home-sidebar{ display: none !important; }
-  .result-card{
-    background: #1d4ed8 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  body{ background: #fff; }
+  .cph-actions,
+  #home-sidebar { display: none !important; }
+  body { background: #fff; color: #000; }
 }
