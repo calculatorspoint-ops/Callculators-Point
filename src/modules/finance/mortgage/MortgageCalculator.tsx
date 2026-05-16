@@ -7,10 +7,14 @@ import { MortgageSchema } from './schemas/mortgageSchema';
 import { calculateMortgage, MortgageResult } from './engine/mortgageEngine';
 import { generateMortgageInsights } from './insights/mortgageInsights';
 import { useRegionCurrency } from '../../../core/geo-engine/useRegion.js';
+import { useGeoStore } from '../../../core/geo-engine/geoStore.js';
 
+// ── Form ──────────────────────────────────────────────────────────────────────
 function MortgageFormUI({ control }: { control: any }) {
+  // ✅ Hook called at top of React component — correct
   const { currencySymbol } = useRegionCurrency();
   const sym = currencySymbol || '$';
+
   return (
     <div className="flex flex-col gap-4">
       <NumericInput
@@ -57,14 +61,14 @@ function MortgageFormUI({ control }: { control: any }) {
           name="propertyTax"
           control={control}
           label="Annual Property Tax"
-          unit="$"
+          unit={sym}
           tooltip="Your yearly property tax bill. This is added to your monthly payment via an escrow account by most lenders."
         />
         <NumericInput
           name="homeInsurance"
           control={control}
           label="Annual Home Insurance"
-          unit="$"
+          unit={sym}
           tooltip="Your yearly homeowner's insurance premium. Also typically escrowed alongside property tax."
         />
       </ProgressiveDisclosure>
@@ -72,11 +76,15 @@ function MortgageFormUI({ control }: { control: any }) {
   );
 }
 
+// ── Result ────────────────────────────────────────────────────────────────────
 function MortgageResultUI({ result }: { result: MortgageResult }) {
-  if (result.principal <= 0) return null;
+  // ✅ Hook ALWAYS called first — no conditional hook call
   const { currencySymbol } = useRegionCurrency();
   const sym = currencySymbol || '$';
   const fmt = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Guard AFTER all hooks
+  if (result.principal <= 0) return null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -104,19 +112,24 @@ function MortgageResultUI({ result }: { result: MortgageResult }) {
   );
 }
 
+// ── Interpretation ────────────────────────────────────────────────────────────
+// Pure function — NO hooks. Reads currency symbol via .getState() (safe outside React)
 function interpretMortgage(result: MortgageResult): InterpretationCardProps | null {
   if (result.principal <= 0) return null;
+
+  // .getState() is the Zustand static accessor — safe to call in any plain function
+  const sym = useGeoStore.getState()?.rules?.currencySymbol || '$';
+
   const interestRatio = result.principal > 0 ? result.totalInterest / result.principal : 0;
   const pct = (interestRatio * 100).toFixed(0);
-  const { currencySymbol } = useRegionCurrency();
-  const sym = currencySymbol || '$';
   const fmt = (v: number) => `${sym}${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
   if (interestRatio > 1) {
     return {
       tone: 'critical',
       headline: `You will pay ${pct}% of your loan amount again purely in interest — ${fmt(result.totalInterest)} on top of your ${fmt(result.principal)} principal.`,
       detail: `Over a ${result.payoffDate} timeline, more than half your total payments go to the bank, not your equity.`,
-      action: `Adding even $200–$300 extra per month towards the principal can shorten your loan by 4–6 years and save tens of thousands in interest.`
+      action: `Adding extra payments towards principal each month can shorten your loan by years and save significantly in interest.`
     };
   }
 
@@ -125,7 +138,7 @@ function interpretMortgage(result: MortgageResult): InterpretationCardProps | nu
       tone: 'warning',
       headline: `You will pay ${fmt(result.totalInterest)} in total interest — ${pct}% of your original loan amount.`,
       detail: `This is normal for a long-term mortgage, but the actual cost of the home is ${fmt(result.totalPayment)}, not just the sticker price.`,
-      action: `Consider a 15-year term if you can afford higher monthly payments — it typically halves the total interest paid.`
+      action: `Consider a shorter loan term if you can afford higher monthly payments — it typically halves the total interest paid.`
     };
   }
 

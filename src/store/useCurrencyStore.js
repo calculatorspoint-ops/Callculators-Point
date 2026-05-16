@@ -1,27 +1,31 @@
 /**
  * @file useCurrencyStore.js
- * @description Thin bridge: re-exports the geo-store's currency slice so that
- *   all legacy components importing from useCurrencyStore continue to work
- *   without modification, while the REAL currency is now driven by the
- *   geo-engine (IP-detected country → correct currency).
+ * @description Bridge: wraps the geo-engine so all legacy components
+ *   importing { useCurrencyStore, CURRENCIES } continue to work unchanged.
  *
- *   This also keeps CURRENCIES and formatMoney available for backward-compat.
+ *   Key guarantees:
+ *   - useCurrencyStore()         → { currency, setCurrency, autoDetected, detectFromIP }
+ *   - useCurrencyStore.getState()→ { currency, ... }   (static read, safe outside React)
+ *   - CURRENCIES                 → shape identical to old store: { USD:{symbol,code,name,flag,...}, ... }
+ *   - COUNTRY_CURRENCY           → { US:'USD', PK:'PKR', ... }
+ *   - formatMoney(n, code)       → locale-formatted string
+ *   - toLocal(amount, code)      → amount (rates not tracked)
  */
 
 import { useGeoStore } from '../core/geo-engine/geoStore.js';
-import { COUNTRY_RULES, getRules, formatCurrency } from '../core/geo-engine/countryRules.js';
+import { COUNTRY_RULES, formatCurrency } from '../core/geo-engine/countryRules.js';
 
-// ── Re-export CURRENCIES in the old shape so CurrencyBanner still works ─────
-
+// ── CURRENCIES — legacy shape ─────────────────────────────────────────────────
 export const CURRENCIES = {};
+
 Object.entries(COUNTRY_RULES).forEach(([, r]) => {
   if (!CURRENCIES[r.currency]) {
     CURRENCIES[r.currency] = {
       symbol    : r.currencySymbol,
       code      : r.currency,
-      name      : `${r.countryName} (${r.currency})`,
+      name      : r.countryName,
       flag      : r.flag,
-      rate      : 1,             // live rates not tracked; use formatCurrency
+      rate      : 1,
       locale    : r.locale,
       taxRate   : r.taxRate,
       vatLabel  : r.taxLabel,
@@ -30,7 +34,7 @@ Object.entries(COUNTRY_RULES).forEach(([, r]) => {
   }
 });
 
-// Fill well-known names more precisely
+// Pretty display names for well-known currencies
 const PRETTY_NAMES = {
   USD:'US Dollar', EUR:'Euro', GBP:'British Pound', PKR:'Pakistani Rupee',
   INR:'Indian Rupee', AED:'UAE Dirham', SAR:'Saudi Riyal', CAD:'Canadian Dollar',
@@ -46,23 +50,35 @@ const PRETTY_NAMES = {
   EGP:'Egyptian Pound', QAR:'Qatari Riyal', KWD:'Kuwaiti Dinar',
   BHD:'Bahraini Dinar', OMR:'Omani Rial', LKR:'Sri Lankan Rupee',
   NPR:'Nepalese Rupee', KES:'Kenyan Shilling', GHS:'Ghanaian Cedi',
-  ETB:'Ethiopian Birr', MAD:'Moroccan Dirham', ARS:'Argentine Peso',
-  COP:'Colombian Peso', CLP:'Chilean Peso', PEN:'Peruvian Sol',
-  NZD:'New Zealand Dollar',
+  NZD:'New Zealand Dollar', ARS:'Argentine Peso', COP:'Colombian Peso',
+  CLP:'Chilean Peso', PEN:'Peruvian Sol',
 };
 Object.entries(PRETTY_NAMES).forEach(([code, name]) => {
   if (CURRENCIES[code]) CURRENCIES[code].name = name;
 });
 
-// ── COUNTRY_CURRENCY mapping (for backward compat) ───────────────────────────
+// ── COUNTRY_CURRENCY — backward compat ───────────────────────────────────────
 export const COUNTRY_CURRENCY = {};
 Object.entries(COUNTRY_RULES).forEach(([cc, r]) => {
   COUNTRY_CURRENCY[cc] = r.currency;
 });
 
-// ── formatMoney backward compat ───────────────────────────────────────────────
+// ── preferredCountry — maps currencyCode → ISO country code ─────────────────
+const PREFERRED_COUNTRY = {
+  USD:'US', EUR:'DE', GBP:'GB', PKR:'PK', INR:'IN', AED:'AE', SAR:'SA',
+  CAD:'CA', AUD:'AU', CNY:'CN', JPY:'JP', CHF:'CH', BDT:'BD', MYR:'MY',
+  SGD:'SG', TRY:'TR', NGN:'NG', ZAR:'ZA', BRL:'BR', MXN:'MX',
+  KRW:'KR', THB:'TH', IDR:'ID', VND:'VN', PHP:'PH', HKD:'HK',
+  TWD:'TW', PLN:'PL', SEK:'SE', NOK:'NO', DKK:'DK', CZK:'CZ',
+  RON:'RO', HUF:'HU', RUB:'RU', ILS:'IL', EGP:'EG', QAR:'QA',
+  KWD:'KW', BHD:'BH', OMR:'OM', LKR:'LK', NPR:'NP', KES:'KE',
+  GHS:'GH', NZD:'NZ', ARS:'AR', COP:'CO', CLP:'CL', PEN:'PE',
+};
+
+// ── formatMoney — backward compat ─────────────────────────────────────────────
 export function formatMoney(amount, currencyCode = 'USD') {
-  return formatCurrency(amount, Object.keys(COUNTRY_RULES).find(cc => COUNTRY_RULES[cc].currency === currencyCode) || 'US');
+  const cc = PREFERRED_COUNTRY[currencyCode] || 'US';
+  return formatCurrency(amount, cc);
 }
 
 export function toLocal(usdAmount, currencyCode = 'USD') {
@@ -70,39 +86,49 @@ export function toLocal(usdAmount, currencyCode = 'USD') {
   return usdAmount * (cur?.rate || 1);
 }
 
-// ── Bridge hook — reads from geo-store, writes back to it ───────────────────
-
+// ── useCurrencyStore hook — full backward-compat API ─────────────────────────
 /**
- * Drop-in replacement for the old useCurrencyStore hook.
- * Now powered by the real geo-detection engine.
+ * Replaces the old useCurrencyStore hook.
+ * Returns all fields the legacy components used to destructure.
  */
 export function useCurrencyStore() {
   const countryCode    = useGeoStore(s => s.countryCode);
   const rules          = useGeoStore(s => s.rules);
+  const autoDetected   = useGeoStore(s => s.autoDetected);
+  const detecting      = useGeoStore(s => s.detecting);
   const setCountryFull = useGeoStore(s => s.setCountry);
+  const detectRegion   = useGeoStore(s => s.detectRegion);
 
-  // Find the currency code from the geo store
   const currency = rules?.currency ?? 'USD';
 
-  // setCurrency: map currencyCode → best country code with that currency
   const setCurrency = (currencyCode) => {
-    // Find the first country using this currency (prefer major ones)
-    const preferredCountry = {
-      USD:'US', EUR:'DE', GBP:'GB', PKR:'PK', INR:'IN', AED:'AE', SAR:'SA',
-      CAD:'CA', AUD:'AU', CNY:'CN', JPY:'JP', CHF:'CH', BDT:'BD', MYR:'MY',
-      SGD:'SG', TRY:'TR', NGN:'NG', ZAR:'ZA', BRL:'BR', MXN:'MX',
-      KRW:'KR', THB:'TH', IDR:'ID', VND:'VN', PHP:'PH', HKD:'HK',
-      TWD:'TW', PLN:'PL', SEK:'SE', NOK:'NO', DKK:'DK', CZK:'CZ',
-      RON:'RO', HUF:'HU', RUB:'RU', ILS:'IL', EGP:'EG', QAR:'QA',
-      KWD:'KW', BHD:'BH', OMR:'OM', LKR:'LK', NPR:'NP', KES:'KE',
-      GHS:'GH', NZD:'NZ', ARS:'AR', COP:'CO', CLP:'CL', PEN:'PE',
-    };
-    const cc = preferredCountry[currencyCode];
+    const cc = PREFERRED_COUNTRY[currencyCode];
     if (cc) setCountryFull(cc);
   };
 
-  return { currency, setCurrency };
+  return {
+    currency,
+    setCurrency,
+    autoDetected,
+    detecting,
+    // legacy alias: some components call detectFromIP
+    detectFromIP : detectRegion,
+    detectRegion,
+    countryCode,
+    rules,
+  };
 }
 
-// Named export for components using destructured import
-useCurrencyStore.getState = () => useGeoStore.getState();
+// ── useCurrencyStore.getState() — safe static read outside React ──────────────
+// Used by SharedComponents.jsx line 15:
+//   formatMoney = (n) => _fmtMoney(n, useCurrencyStore.getState().currency)
+useCurrencyStore.getState = () => {
+  const state = useGeoStore.getState();
+  return {
+    currency    : state.rules?.currency ?? 'USD',
+    currencyCode: state.countryCode ?? 'US',
+    rules       : state.rules,
+    autoDetected: state.autoDetected,
+    userSelected: state.userSelected,
+  };
+};
