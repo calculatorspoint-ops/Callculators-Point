@@ -1113,11 +1113,14 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 ══════════════════════════════════════════════════════════════ */
 @media(max-width:1024px){
   .calc-layout{grid-template-columns:1fr!important;}
+  .calc-layout aside{display:none!important;}
   .footer-grid{grid-template-columns:1fr 1fr!important;gap:24px!important;}
-  .navbar-search-desktop{display:none;}
-  .mobile-search-btn{display:flex;}
-  .navbar-nav{display:none;}
-  .navbar-hamburger{display:flex;}
+  /* ── NAVBAR COLLAPSE ── */
+  .navbar-search-desktop{display:none!important;}
+  .mobile-search-btn{display:flex!important;}
+  .navbar-nav{display:none!important;}
+  .navbar-hamburger{display:flex!important;}
+  .desktop-only{display:none!important;}
   .hero-inner{padding:40px 20px 36px;}
 }
 

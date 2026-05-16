@@ -238,25 +238,25 @@ details summary{
 }
 
 /* ══════════════════════════════════════════════════════════════
-   TABLET (≤1024px)
+   TABLET (≤1024px) — use html prefix for highest specificity
 ══════════════════════════════════════════════════════════════ */
 @media(max-width:1024px){
-  /* Layout */
-  .calc-layout{ grid-template-columns: 1fr !important; }
-  .home-grid{ grid-template-columns: 1fr !important; }
-  #home-sidebar{ display: none !important; }
+  /* Collapse desktop nav → show hamburger */
+  html .navbar-nav          { display: none !important; }
+  html .navbar-hamburger    { display: flex !important; }
+  html .navbar-search-desktop { display: none !important; }
+  html .mobile-search-btn   { display: flex !important; }
+  html .desktop-only        { display: none !important; }
 
-  /* Footer: 2-column */
-  .footer-grid{ grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
+  /* Sidebar hidden — full width main column */
+  html .calc-layout         { grid-template-columns: 1fr !important; }
+  html .calc-layout aside   { display: none !important; }
+
+  /* Footer 2-col */
+  html .footer-grid         { grid-template-columns: 1fr 1fr !important; gap: 28px !important; }
 
   /* Category grid: 2 cols */
   .calc-grid-premium{ grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); }
-
-  /* Navbar: hide desktop nav, show hamburger */
-  .navbar-search-desktop{ display: none !important; }
-  .mobile-search-btn{ display: flex !important; }
-  .navbar-nav{ display: none !important; }
-  .navbar-hamburger{ display: flex !important; }
 
   .cat-grid{ grid-template-columns: 1fr 1fr; gap: 10px; }
 }
