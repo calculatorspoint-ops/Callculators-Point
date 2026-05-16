@@ -78,16 +78,7 @@ export const useGeoStore = create(
       detecting     : false,
       detectionError: null,
 
-      // ── Derived shorthand getters ──────────────────────────────────────────
-      get currency()     { return get().rules?.currency     ?? 'USD'; },
-      get currencySymbol(){ return get().rules?.currencySymbol ?? '$'; },
-      get locale()       { return get().rules?.locale       ?? 'en-US'; },
-      get taxRate()      { return get().rules?.taxRate      ?? 0; },
-      get taxLabel()     { return get().rules?.taxLabel     ?? 'Tax'; },
-      get dateFormat()   { return get().rules?.dateFormat   ?? 'MM/DD/YYYY'; },
-      get measureSystem(){ return get().rules?.measureSystem ?? 'metric'; },
-
-      // ── Formatting helpers ─────────────────────────────────────────────────
+      // ── Formatting helpers (always read countryCode fresh via get()) ───────
       formatMoney: (value) => formatCurrency(value, get().countryCode),
       formatNum  : (value, opts) => formatNumber(value, get().countryCode, opts),
       formatDate : (date) => formatDate(date, get().countryCode),
@@ -153,16 +144,18 @@ export const useGeoStore = create(
     }),
     {
       name: 'CalcPoint-geo-v1',
-      // Only persist the country selection; rules are rehydrated from the map
+      // Only persist the country selection; rules are re-derived on rehydrate
       partialize: (s) => ({
         countryCode : s.countryCode,
         userSelected: s.userSelected,
         autoDetected: s.autoDetected,
       }),
-      // After rehydration, re-attach the rules object from the static map
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.rules = getRules(state.countryCode);
+      // After localStorage restore, push updated rules through set() so all
+      // subscribers re-render with the correct rules object.
+      onRehydrateStorage: () => (state, error) => {
+        if (!error && state) {
+          // Use the store's own set to trigger subscriber notifications
+          useGeoStore.setState({ rules: getRules(state.countryCode) });
         }
       },
     }

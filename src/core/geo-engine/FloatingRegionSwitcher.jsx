@@ -133,10 +133,13 @@ function CountryRow({ country, isSelected, onSelect }) {
 }
 
 function ContinentSection({ continent, countries, selectedCode, onSelect }) {
-  const [expanded, setExpanded] = useState(
-    // auto-expand continent of selected country
-    countries.some(c => c.code === selectedCode)
-  );
+  const hasSelected = countries.some(c => c.code === selectedCode);
+  const [expanded, setExpanded] = useState(hasSelected);
+
+  // Keep expanded in sync if the selected country changes after mount
+  useEffect(() => {
+    if (hasSelected) setExpanded(true);
+  }, [hasSelected]);
 
   return (
     <div>
