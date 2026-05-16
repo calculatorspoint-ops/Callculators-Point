@@ -75,7 +75,7 @@ export function Footer() {
 
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Calculators Point. All rights reserved. Results are for informational purposes only.</span>
-          <span>Made with ❤️ · React + Vite + TypeScript</span>
+          <span>Made with ❤️ · <a href="https://mkinnovexa.vercel.app/" target="_blank" rel="noopener noreferrer" style={{color:"var(--brand)",fontWeight:700,textDecoration:"none"}}>MK INNOVEXA</a></span>
         </div>
       </div>
     </footer>
