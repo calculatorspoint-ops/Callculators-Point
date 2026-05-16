@@ -1,9 +1,10 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Bookmark, BookmarkCheck, Share2, ExternalLink } from "lucide-react";
+import { Bookmark, BookmarkCheck, Share2 } from "lucide-react";
 
 import { CalculatorWidget } from "@/components/calculator-core/CalculatorWidget.jsx";
 import { ExportToolbar } from "@/core/export-engine/ExportToolbar";
+import { CurrencyBanner } from "@/components/ui/CurrencyBanner.jsx";
 import { getCalcBySlug, getRelated, CATEGORIES, ALL_CALCULATORS } from "@/data/calculatorConfigs.js";
 import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
 import { useAppStore } from "@/store/useAppStore.js";
@@ -127,6 +128,9 @@ export default function Calculator() {
           </div>
         </div>
       </div>
+
+      {/* ══════════ CURRENCY BANNER (finance calculators only) ══════════ */}
+      {calc.cat === "finance" && <CurrencyBanner />}
 
       {/* ══════════ CONTENT ══════════ */}
       <div className="calc-layout">
