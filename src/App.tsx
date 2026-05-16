@@ -1,0 +1,88 @@
+import { Suspense, lazy } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { ErrorBoundary } from './components/ui/ErrorBoundary.jsx';
+import { Navbar } from './components/ui/Navbar.jsx';
+import { Footer } from './components/ui/Footer.jsx';
+import { PWAInstallPrompt } from './core/pwa-engine/PWAInstallPrompt';
+import { ScrollToTop } from './components/ui/ScrollToTop';
+
+// ── Lazily-loaded pages (code splitting per route) ────────────────────
+const Home           = lazy(() => import('./pages/Home.jsx'));
+const AllCalculators = lazy(() => import('./pages/AllCalculators.jsx'));
+const Calculator     = lazy(() => import('./pages/Calculator.jsx'));
+const Category       = lazy(() => import('./pages/Category.jsx'));
+const About          = lazy(() => import('./pages/About.jsx'));
+const Contact        = lazy(() => import('./pages/Contact.jsx'));
+const PrivacyPolicy  = lazy(() => import('./pages/PrivacyPolicy.jsx'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'));
+const Disclaimer     = lazy(() => import('./pages/Disclaimer.jsx'));
+const Sitemap        = lazy(() => import('./pages/Sitemap.jsx'));
+
+// ── Inline page loader (avoids importing a heavy component) ───────────
+function PageLoader() {
+  return (
+    <div
+      aria-label="Loading page"
+      role="status"
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        minHeight: '60vh', flexDirection: 'column', gap: 16,
+      }}
+    >
+      <div style={{
+        width: 36, height: 36, borderRadius: '50%',
+        border: '3px solid var(--border)',
+        borderTopColor: 'var(--brand)',
+        animation: 'spin 0.7s linear infinite',
+      }} />
+      <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text3)', margin: 0 }}>
+        Loading…
+      </p>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <div className="app-root" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Navbar />
+        <main style={{ flex: 1 }} id="main-content">
+          <ScrollToTop />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/"                     element={<Home />} />
+              <Route path="/calculators"           element={<AllCalculators />} />
+              <Route path="/calculator/:slug"      element={<Calculator />} />
+              <Route path="/category/:catId"       element={<Category />} />
+              <Route path="/about"                 element={<About />} />
+              <Route path="/contact"               element={<Contact />} />
+              <Route path="/privacy-policy"        element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service"      element={<TermsOfService />} />
+              <Route path="/disclaimer"            element={<Disclaimer />} />
+              <Route path="/sitemap"               element={<Sitemap />} />
+              <Route path="*"                      element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </main>
+        <Footer />
+        <PWAInstallPrompt />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: 'var(--surface)',
+              color: 'var(--text)',
+              border: '1.5px solid var(--border)',
+              borderRadius: 'var(--r-lg)',
+              fontSize: 13,
+              fontWeight: 600,
+            },
+          }}
+        />
+      </div>
+    </ErrorBoundary>
+  );
+}
