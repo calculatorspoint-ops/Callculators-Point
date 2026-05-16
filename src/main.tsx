@@ -4,6 +4,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles/index.css';
+import './styles/mobile.css'; // Comprehensive mobile-first overrides
+
 
 const container = document.getElementById('root')!;
 
