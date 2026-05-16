@@ -7,10 +7,8 @@
     <!-- ═══════════════════════════════════════════════
          RESOURCE HINTS — load critical assets early
     ════════════════════════════════════════════════ -->
-    <!-- DNS prefetch for Google Fonts CDN -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <!-- Preconnect — establish TCP+TLS early -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
@@ -57,33 +55,59 @@
     <meta name="twitter:description" content="Professional-grade calculators for finance, health, math, and everyday use." />
 
     <!-- ═══════════════════════════════════════════════
-         FONTS — display=swap prevents render-blocking
-    ════════════════════════════════════════════════ -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <!-- Fallback for no-JS -->
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-    </noscript>
-
-    <!-- ═══════════════════════════════════════════════
-         CRITICAL INLINE CSS — prevents FOUC
-         (system font stack while Inter loads)
+         CRITICAL INLINE CSS — prevents FOUC + fixes CLS
+         IMPORTANT: Reserves explicit height for above-fold
+         sections to prevent 0.400 layout shift score.
     ════════════════════════════════════════════════ -->
     <style>
-      /* System font stack to prevent layout shift while Inter loads */
+      /* System font stack — matches --font token exactly */
       :root {
-        --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+        --font:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+        --font-hd:      'Plus Jakarta Sans', 'Inter', sans-serif;
+        --font-mono:    'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+        --nav-h: 62px;
       }
-      /* Prevent invisible text during font load */
-      body { font-family: var(--font); }
-      /* Critical above-the-fold background to prevent white flash */
-      html, body { background: #020617; color: #f8fafc; margin: 0; }
+      /* Prevent invisible text during font load (fixes FCP) */
+      body { font-family: var(--font); font-display: swap; }
+      /* Above-fold background — no white flash */
+      html, body { background: #020617; color: #f8fafc; margin: 0; overflow-x: hidden; }
+
+      /* ── CLS FIX: Reserve explicit height for navbar ──
+         Without this the navbar pops in and shifts content */
+      .navbar {
+        height: var(--nav-h);
+        min-height: var(--nav-h);
+        contain: layout style;
+      }
+
+      /* ── CLS FIX: Reserve hero section min-height ──
+         Prevents the hero from collapsing then expanding */
+      .hero {
+        min-height: 380px;
+        contain: layout;
+      }
+
+      /* ── CLS FIX: Reserve stat strip height ── */
+      .stat-strip {
+        min-height: 80px;
+      }
+
+      /* ── CLS FIX: Prevent font-swap layout shift ──
+         size-adjust ensures fallback & web font take same space */
+      @font-face {
+        font-family: 'Inter';
+        font-display: swap;
+        src: local('Inter');
+        size-adjust: 100%;
+      }
+      @font-face {
+        font-family: 'Plus Jakarta Sans';
+        font-display: swap;
+        src: local('Plus Jakarta Sans');
+        size-adjust: 107%;
+      }
+
       /* Spinner shown while React hydrates */
       #root:empty::after {
         content: '';
@@ -97,6 +121,30 @@
       }
       @keyframes _spin { to { transform: rotate(360deg); } }
     </style>
+
+    <!-- ═══════════════════════════════════════════════
+         FONTS — Non-blocking load strategy
+         FIX: Was render-blocking. Now uses preload +
+         media="print" trick to load asynchronously.
+         Plus Jakarta Sans added (used by --font-hd token).
+    ════════════════════════════════════════════════ -->
+    <!-- Step 1: preload the font CSS so browser fetches it early -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
+    <!-- Step 2: load non-blocking via media=print trick -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <!-- Fallback for no-JS -->
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    </noscript>
 
     <!-- ═══════════════════════════════════════════════
          JSON-LD STRUCTURED DATA
@@ -123,4 +171,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

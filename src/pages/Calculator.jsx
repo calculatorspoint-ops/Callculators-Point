@@ -83,31 +83,30 @@ export default function Calculator() {
           </nav>
 
           {/* Title row */}
-          <div style={{ display:"flex", alignItems:"flex-start", gap:16 }}>
-            <div style={{ width:56, height:56, borderRadius:"var(--r-xl)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, flexShrink:0, background:"rgba(255,255,255,.1)", border:"1px solid rgba(255,255,255,.15)", backdropFilter:"blur(10px)" }}>
+          <div className="cph-title-row">
+            <div className="cph-icon">
               {calc.icon}
             </div>
-            <div style={{ flex:1, minWidth:0 }}>
+            <div className="cph-title-content">
               <h1 className="cph-title">{calc.name}</h1>
               <div className="cph-meta">
-                <span className="badge" style={{ background:"rgba(255,255,255,.15)", color:"rgba(255,255,255,.85)", border:"1px solid rgba(255,255,255,.2)", fontSize:11 }}>
-                  {cat?.icon} {cat?.name}
-                </span>
-                {calc.popular  && <span className="badge badge-green">⭐ Popular</span>}
-                {calc.isNew    && <span className="badge badge-red">🆕 New</span>}
-                {calc.hasChart && <span className="badge badge-blue">📊 Charts</span>}
-
-                <div style={{ marginLeft:"auto", display:"flex", gap:8 }}>
-                  <button onClick={() => toggleFavorite(calc.id)}
-                    style={{ display:"flex", alignItems:"center", gap:5, padding:"5px 12px", borderRadius:100, background:"rgba(255,255,255,.12)", border:"1px solid rgba(255,255,255,.2)", color:"rgba(255,255,255,.8)", fontSize:12, fontWeight:600, cursor:"pointer", transition:"all .15s", fontFamily:"var(--font)" }}
+                <div className="cph-badges">
+                  <span className="badge" style={{ background:"rgba(255,255,255,.15)", color:"rgba(255,255,255,.85)", border:"1px solid rgba(255,255,255,.2)", fontSize:11 }}>
+                    {cat?.icon} {cat?.name}
+                  </span>
+                  {calc.popular  && <span className="badge badge-green">⭐ Popular</span>}
+                  {calc.isNew    && <span className="badge badge-red">🆕 New</span>}
+                  {calc.hasChart && <span className="badge badge-blue">📊 Charts</span>}
+                </div>
+                <div className="cph-actions">
+                  <button onClick={() => toggleFavorite(calc.id)} className="cph-action-btn"
                     onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.22)"}
                     onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.12)"}>
                     {isFav ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
-                    {isFav ? "Saved" : "Save"}
+                    <span>{isFav ? "Saved" : "Save"}</span>
                   </button>
-                  <button onClick={share}
-                    style={{ display:"flex", alignItems:"center", gap:5, padding:"5px 12px", borderRadius:100, background:"rgba(255,255,255,.12)", border:"1px solid rgba(255,255,255,.2)", color:"rgba(255,255,255,.8)", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"var(--font)" }}>
-                    <Share2 size={13} /> Share
+                  <button onClick={share} className="cph-action-btn">
+                    <Share2 size={13} /> <span>Share</span>
                   </button>
                 </div>
               </div>

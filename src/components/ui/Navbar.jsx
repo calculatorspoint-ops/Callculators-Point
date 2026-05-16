@@ -1,120 +1,260 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Moon, Sun, Menu, X, Calculator } from "lucide-react";
+import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore.js";
 import { ALL_CALCULATORS, CATEGORIES } from "@/data/calculatorConfigs.js";
 import { CurrencySelector } from "./CurrencySelector.jsx";
 
 export function Navbar() {
   const { theme, toggleTheme } = useAppStore();
-  const [q, setQ]       = useState("");
+  const [q, setQ]             = useState("");
   const [results, setResults] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [mob, setMob]   = useState(false);
-  const ref  = useRef(null);
-  const loc = useLocation();
+  const [open, setOpen]       = useState(false);
+  const [mob, setMob]         = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const ref       = useRef(null);
+  const searchRef = useRef(null);
+  const loc       = useLocation();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  useEffect(() => { setMob(false); setOpen(false); setQ(""); }, [loc.pathname]);
+  useEffect(() => { setMob(false); setOpen(false); setSearchOpen(false); setQ(""); }, [loc.pathname]);
 
   useEffect(() => {
     if (!q.trim()) { setResults([]); setOpen(false); return; }
     const lq = q.toLowerCase();
-    const r = ALL_CALCULATORS.filter(c => c.name.toLowerCase().includes(lq) || c.desc?.toLowerCase().includes(lq)).slice(0, 8);
+    const r = ALL_CALCULATORS
+      .filter(c => c.name.toLowerCase().includes(lq) || c.desc?.toLowerCase().includes(lq))
+      .slice(0, 8);
     setResults(r);
     setOpen(r.length > 0);
   }, [q]);
 
   useEffect(() => {
-    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const h = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchOpen(false);
+        setQ("");
+      }
+    };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
+  // Prevent body scroll when mobile menu open
+  useEffect(() => {
+    document.body.style.overflow = mob ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mob]);
+
   return (
-    <header className="navbar">
-      <div className="navbar-inner">
-        {/* Logo */}
-        <Link to="/" className="navbar-logo" style={{ textDecoration: "none" }}>
-          <div style={{ width:34, height:34, borderRadius:10, background:"linear-gradient(135deg,#6366f1,#4f46e5)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 8px rgba(99,102,241,.4)" }}>
-            <Calculator size={19} color="#fff" strokeWidth={2.5} />
-          </div>
-          <span style={{ fontWeight:800, fontSize:18, letterSpacing:"-.04em", color:"var(--text)" }}>
-            Calculators<span style={{ color:"#6366f1" }}>Point</span>
-          </span>
-        </Link>
+    <>
+      <header className="navbar">
+        <div className="navbar-inner">
 
-        {/* Desktop Nav */}
-        <nav className="navbar-nav" style={{ display:"flex", gap:4, alignItems:"center" }}>
-          {CATEGORIES.slice(0,5).map(c => (
-            <Link key={c.id} to={`/category/${c.id}`} className="nav-link"
-              style={{ padding:"6px 12px", borderRadius:8, fontSize:13, fontWeight:600, color:"var(--text2)", textDecoration:"none", transition:"all .15s" }}
-              onMouseEnter={e=>{e.currentTarget.style.background="var(--surface2)";e.currentTarget.style.color="var(--text)";}}
-              onMouseLeave={e=>{e.currentTarget.style.background="";e.currentTarget.style.color="var(--text2)";}}>
-              {c.icon} {c.name}
-            </Link>
-          ))}
-          <Link to="/calculators" style={{ padding:"6px 14px", borderRadius:8, fontSize:13, fontWeight:700, color:"var(--brand)", border:"1.5px solid var(--brand)", textDecoration:"none", transition:"all .15s" }}
-            onMouseEnter={e=>{e.currentTarget.style.background="var(--p50)";}}
-            onMouseLeave={e=>{e.currentTarget.style.background="";}}>
-            All Tools
+          {/* ── Logo ── */}
+          <Link to="/" className="navbar-logo" aria-label="CalculatorsPoint home">
+            <div className="navbar-logo-icon">
+              <Calculator size={19} color="#fff" strokeWidth={2.5} />
+            </div>
+            <span className="navbar-logo-text">
+              Calculators<span style={{ color: "#6366f1" }}>Point</span>
+            </span>
           </Link>
-        </nav>
 
-        {/* Search + Controls */}
-        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          {/* Search box */}
-          <div ref={ref} style={{ position:"relative" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:6, padding:"7px 12px", background:"var(--surface2)", border:"1.5px solid var(--border)", borderRadius:10, width:220 }}>
-              <Search size={14} style={{ color:"var(--text3)", flexShrink:0 }} />
-              <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search calculators..."
-                style={{ flex:1, background:"transparent", border:"none", outline:"none", fontSize:13, color:"var(--text)", fontFamily:"var(--font)" }}
+          {/* ── Desktop Nav ── */}
+          <nav className="navbar-nav" aria-label="Main navigation">
+            {CATEGORIES.slice(0, 5).map(c => (
+              <Link
+                key={c.id}
+                to={`/category/${c.id}`}
+                className="nav-link"
+              >
+                {c.icon} {c.name}
+              </Link>
+            ))}
+            <Link to="/calculators" className="nav-link nav-link-all">
+              All Tools
+            </Link>
+          </nav>
+
+          {/* ── Right controls ── */}
+          <div className="navbar-controls">
+
+            {/* Desktop search */}
+            <div ref={ref} className="navbar-search-desktop">
+              <div className="navbar-search-box">
+                <Search size={14} className="navbar-search-icon" />
+                <input
+                  value={q}
+                  onChange={e => setQ(e.target.value)}
+                  placeholder="Search calculators…"
+                  className="navbar-search-input"
+                  aria-label="Search calculators"
+                />
+                {q && (
+                  <button
+                    onClick={() => { setQ(""); setOpen(false); }}
+                    className="navbar-search-clear"
+                    aria-label="Clear search"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              {open && (
+                <div className="navbar-search-drop">
+                  {results.map(r => (
+                    <Link
+                      key={r.id}
+                      to={`/calculator/${r.slug}`}
+                      className="navbar-search-item"
+                    >
+                      <span className="navbar-search-item-icon">{r.icon}</span>
+                      <div>
+                        <div className="navbar-search-item-name">{r.name}</div>
+                        <div className="navbar-search-item-desc">{r.desc?.slice(0, 50)}</div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Mobile search icon */}
+            <button
+              className="navbar-icon-btn mobile-search-btn"
+              onClick={() => setSearchOpen(s => !s)}
+              aria-label="Search"
+            >
+              <Search size={17} />
+            </button>
+
+            {/* Currency — desktop only */}
+            <div className="desktop-only">
+              <CurrencySelector />
+            </div>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="navbar-icon-btn"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+
+            {/* Mobile hamburger */}
+            <button
+              className="navbar-icon-btn navbar-hamburger"
+              onClick={() => setMob(!mob)}
+              aria-label={mob ? "Close menu" : "Open menu"}
+              aria-expanded={mob}
+            >
+              {mob ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
+
+        {/* ── Mobile search bar (expands below header) ── */}
+        {searchOpen && (
+          <div className="navbar-mobile-search" ref={searchRef}>
+            <div className="navbar-mobile-search-inner">
+              <Search size={15} style={{ color: "var(--text3)", flexShrink: 0 }} />
+              <input
+                value={q}
+                onChange={e => setQ(e.target.value)}
+                placeholder="Search 55+ calculators…"
+                className="navbar-search-input"
+                autoFocus
+                aria-label="Search calculators"
               />
-              {q && <button onClick={()=>{setQ("");setOpen(false);}} style={{ color:"var(--text3)", fontSize:14 }}>×</button>}
+              {q && (
+                <button
+                  onClick={() => { setQ(""); setOpen(false); }}
+                  className="navbar-search-clear"
+                >
+                  ×
+                </button>
+              )}
             </div>
             {open && (
-              <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"var(--surface)", border:"1.5px solid var(--border)", borderRadius:12, overflow:"hidden", zIndex:999, boxShadow:"0 8px 32px rgba(0,0,0,.18)" }}>
+              <div className="navbar-search-drop navbar-search-drop-mobile">
                 {results.map(r => (
-                  <Link key={r.id} to={`/calculator/${r.slug}`} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 14px", fontSize:13, textDecoration:"none", color:"var(--text)", borderBottom:"1px solid var(--border2)", transition:"background .1s" }}
-                    onMouseEnter={e=>e.currentTarget.style.background="var(--surface2)"}
-                    onMouseLeave={e=>e.currentTarget.style.background=""}>
-                    <span style={{ fontSize:18 }}>{r.icon}</span>
-                    <div><div style={{ fontWeight:600 }}>{r.name}</div><div style={{ fontSize:11, color:"var(--text3)" }}>{r.desc?.slice(0,50)}</div></div>
+                  <Link
+                    key={r.id}
+                    to={`/calculator/${r.slug}`}
+                    className="navbar-search-item"
+                  >
+                    <span className="navbar-search-item-icon">{r.icon}</span>
+                    <div>
+                      <div className="navbar-search-item-name">{r.name}</div>
+                      <div className="navbar-search-item-desc">{r.desc?.slice(0, 45)}</div>
+                    </div>
                   </Link>
                 ))}
               </div>
             )}
           </div>
+        )}
+      </header>
 
-          <CurrencySelector />
-
-          <button onClick={toggleTheme} style={{ padding:8, borderRadius:8, background:"var(--surface2)", border:"1px solid var(--border)", cursor:"pointer", display:"flex", color:"var(--text2)" }}>
-            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
-
-          {/* Mobile hamburger */}
-          <button className="mob-toggle" onClick={()=>setMob(!mob)} style={{ padding:8, borderRadius:8, background:"var(--surface2)", border:"1px solid var(--border)", cursor:"pointer", display:"none", color:"var(--text2)" }}>
-            {mob ? <X size={16}/> : <Menu size={16}/>}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
+      {/* ── Mobile full-screen menu overlay ── */}
       {mob && (
-        <div style={{ background:"var(--surface)", borderTop:"1px solid var(--border)", padding:"12px 20px" }}>
+        <div className="mob-overlay" onClick={() => setMob(false)} />
+      )}
+      <div className={`mob-menu-panel${mob ? " mob-menu-panel--open" : ""}`} aria-hidden={!mob}>
+        {/* Category links */}
+        <div className="mob-menu-section">
+          <p className="mob-menu-section-title">Categories</p>
           {CATEGORIES.map(c => (
-            <Link key={c.id} to={`/category/${c.id}`} style={{ display:"flex", alignItems:"center", gap:8, padding:"9px 12px", borderRadius:8, fontSize:14, fontWeight:600, color:"var(--text2)", textDecoration:"none" }}>
-              {c.icon} {c.name}
+            <Link
+              key={c.id}
+              to={`/category/${c.id}`}
+              className="mob-menu-link"
+            >
+              <span className="mob-menu-link-icon">{c.icon}</span>
+              <span>{c.name}</span>
+              <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
             </Link>
           ))}
-          <Link to="/calculators" style={{ display:"block", marginTop:8, padding:"9px 12px", borderRadius:8, fontSize:14, fontWeight:700, color:"var(--brand)", textDecoration:"none" }}>
-            📊 All 55+ Tools
+        </div>
+
+        <div className="mob-menu-divider" />
+
+        {/* Quick links */}
+        <div className="mob-menu-section">
+          <p className="mob-menu-section-title">Quick Links</p>
+          <Link to="/calculators" className="mob-menu-link mob-menu-link--featured">
+            <span>📊</span>
+            <span>All 55+ Tools</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto" }} />
+          </Link>
+          <Link to="/about" className="mob-menu-link">
+            <span>ℹ️</span>
+            <span>About</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
+          </Link>
+          <Link to="/contact" className="mob-menu-link">
+            <span>✉️</span>
+            <span>Contact</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </Link>
         </div>
-      )}
-    </header>
+
+        <div className="mob-menu-divider" />
+
+        {/* Currency in mobile menu */}
+        <div className="mob-menu-section">
+          <p className="mob-menu-section-title">Currency</p>
+          <div style={{ padding: "0 4px" }}>
+            <CurrencySelector />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
