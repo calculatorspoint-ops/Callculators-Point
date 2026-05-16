@@ -170,12 +170,17 @@ html.mob-menu-open body { overflow: hidden; }
 
   /* Calc rows inside blocks — full width, no right border */
   html .home-cat-grid { grid-template-columns: 1fr !important; }
+  .home-cat-block { overflow: hidden; width: 100%; }
   .calc-row {
     border-right: none !important;
     padding: 10px 12px;
     min-height: 52px;
+    overflow: hidden;   /* clips desc text — prevents horiz overflow */
+    width: 100%;
+    max-width: 100%;
   }
-  .calc-row-icon { width: 32px; height: 32px; font-size: 16px; }
+  .calc-row > div { min-width: 0; overflow: hidden; } /* inner flex child clips */
+  .calc-row-icon { width: 32px; height: 32px; font-size: 16px; flex-shrink: 0; }
 
   /* Why section */
   .home-why { padding: 24px 14px; border-radius: 16px; margin-top: 20px; }
@@ -310,7 +315,7 @@ html.mob-menu-open body { overflow: hidden; }
    XS PHONES (≤400px)
 ══════════════════════════════════════════════════════════════ */
 @media (max-width: 400px) {
-  .navbar-logo-text { display: none; }
+  /* Keep logo text visible down to 360px; hide only on very tiny phones */
   .hero-title       { font-size: 1.4rem !important; }
   .cph-title        { font-size: 0.95rem !important; }
   .result-val       { font-size: 20px !important; }
@@ -325,6 +330,11 @@ html.mob-menu-open body { overflow: hidden; }
   .hero-actions button { font-size: 13px; padding: 11px 16px; }
   .calc-tab         { font-size: 11px; padding: 8px 10px; }
   .cph-action-btn   { padding: 5px 8px; }
+}
+
+/* Hide logo TEXT only on very tiny screens (≤340px) */
+@media (max-width: 340px) {
+  .navbar-logo-text { display: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════

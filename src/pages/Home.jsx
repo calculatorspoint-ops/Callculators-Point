@@ -11,21 +11,26 @@ import { useAppStore } from "@/store/useAppStore.js";
 function CalcRow({ calc }) {
   const cat = CATEGORIES.find(c => c.id === calc.cat);
   return (
-    <Link to={`/calculator/${calc.slug}`} className="calc-row" aria-label={`Open ${calc.name} calculator`}>
-      <div className="calc-row-icon" style={{ background: cat?.bg || "var(--surf2)", fontSize: 18 }}>
+    <Link
+      to={`/calculator/${calc.slug}`}
+      className="calc-row"
+      aria-label={`Open ${calc.name} calculator`}
+      style={{ overflow: "hidden", minWidth: 0 }}
+    >
+      <div className="calc-row-icon" style={{ background: cat?.bg || "var(--surf2)", fontSize: 18, flexShrink: 0 }}>
         {calc.icon}
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>{calc.name}</span>
-          {calc.popular && <span className="badge badge-green">Popular</span>}
-          {calc.isNew   && <span className="badge badge-red">New</span>}
+      <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap", minWidth: 0 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{calc.name}</span>
+          {calc.popular && <span className="badge badge-green" style={{ flexShrink: 0 }}>Popular</span>}
+          {calc.isNew   && <span className="badge badge-red"   style={{ flexShrink: 0 }}>New</span>}
         </div>
-        <p style={{ fontSize: 12, color: "var(--text3)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <p style={{ fontSize: 12, color: "var(--text3)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
           {calc.desc}
         </p>
       </div>
-      <ChevronRight size={14} style={{ color: "var(--text3)", flexShrink: 0 }} />
+      <ChevronRight size={14} style={{ color: "var(--text3)", flexShrink: 0, marginLeft: 4 }} />
     </Link>
   );
 }
@@ -43,14 +48,14 @@ function CatBlock({ cat }) {
         <div style={{ width: 36, height: 36, borderRadius: 10, background: cat.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
           {cat.icon}
         </div>
-        <div style={{ flex: 1 }}>
-          <Link to={`/category/${cat.id}`} style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", textDecoration: "none", letterSpacing: "-.02em" }}>
+        <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+          <Link to={`/category/${cat.id}`} style={{ fontSize: 14, fontWeight: 800, color: "var(--text)", textDecoration: "none", letterSpacing: "-.02em", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {cat.name}
           </Link>
-          <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>{cat.desc}</p>
+          <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cat.desc}</p>
         </div>
-        <Link to={`/category/${cat.id}`} style={{ fontSize: 11, fontWeight: 700, color: cat.color, textDecoration: "none", padding: "4px 10px", background: cat.bg, borderRadius: 100, whiteSpace: "nowrap" }}>
-          {calcs.length} tools →
+        <Link to={`/category/${cat.id}`} style={{ fontSize: 11, fontWeight: 700, color: cat.color, textDecoration: "none", padding: "4px 8px", background: cat.bg, borderRadius: 100, whiteSpace: "nowrap", flexShrink: 0 }}>
+          {calcs.length} →
         </Link>
       </div>
 
