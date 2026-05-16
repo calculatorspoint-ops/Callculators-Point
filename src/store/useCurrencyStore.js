@@ -1,105 +1,108 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+/**
+ * @file useCurrencyStore.js
+ * @description Thin bridge: re-exports the geo-store's currency slice so that
+ *   all legacy components importing from useCurrencyStore continue to work
+ *   without modification, while the REAL currency is now driven by the
+ *   geo-engine (IP-detected country → correct currency).
+ *
+ *   This also keeps CURRENCIES and formatMoney available for backward-compat.
+ */
 
-// ── Currency definitions ──────────────────────────────────────────────────────
-export const CURRENCIES = {
-  USD: { symbol:"$",  code:"USD", name:"US Dollar",          flag:"🇺🇸", rate:1,       locale:"en-US", taxRate:0,    vatLabel:"Sales Tax",   dateFormat:"MM/DD/YYYY" },
-  EUR: { symbol:"€",  code:"EUR", name:"Euro",                flag:"🇪🇺", rate:0.92,    locale:"de-DE", taxRate:19,   vatLabel:"VAT",         dateFormat:"DD/MM/YYYY" },
-  GBP: { symbol:"£",  code:"GBP", name:"British Pound",       flag:"🇬🇧", rate:0.79,    locale:"en-GB", taxRate:20,   vatLabel:"VAT",         dateFormat:"DD/MM/YYYY" },
-  PKR: { symbol:"₨",  code:"PKR", name:"Pakistani Rupee",     flag:"🇵🇰", rate:278.5,   locale:"en-PK", taxRate:17,   vatLabel:"GST",         dateFormat:"DD/MM/YYYY" },
-  INR: { symbol:"₹",  code:"INR", name:"Indian Rupee",        flag:"🇮🇳", rate:83.2,    locale:"en-IN", taxRate:18,   vatLabel:"GST",         dateFormat:"DD/MM/YYYY" },
-  AED: { symbol:"د.إ",code:"AED", name:"UAE Dirham",          flag:"🇦🇪", rate:3.67,    locale:"ar-AE", taxRate:5,    vatLabel:"VAT",         dateFormat:"DD/MM/YYYY" },
-  SAR: { symbol:"﷼",  code:"SAR", name:"Saudi Riyal",         flag:"🇸🇦", rate:3.75,    locale:"ar-SA", taxRate:15,   vatLabel:"VAT",         dateFormat:"DD/MM/YYYY" },
-  CAD: { symbol:"C$", code:"CAD", name:"Canadian Dollar",     flag:"🇨🇦", rate:1.36,    locale:"en-CA", taxRate:5,    vatLabel:"GST",         dateFormat:"DD/MM/YYYY" },
-  AUD: { symbol:"A$", code:"AUD", name:"Australian Dollar",   flag:"🇦🇺", rate:1.52,    locale:"en-AU", taxRate:10,   vatLabel:"GST",         dateFormat:"DD/MM/YYYY" },
-  CNY: { symbol:"¥",  code:"CNY", name:"Chinese Yuan",        flag:"🇨🇳", rate:7.24,    locale:"zh-CN", taxRate:13,   vatLabel:"VAT",         dateFormat:"YYYY/MM/DD" },
-  JPY: { symbol:"¥",  code:"JPY", name:"Japanese Yen",        flag:"🇯🇵", rate:149.5,   locale:"ja-JP", taxRate:10,   vatLabel:"CT",          dateFormat:"YYYY/MM/DD" },
-  CHF: { symbol:"Fr", code:"CHF", name:"Swiss Franc",         flag:"🇨🇭", rate:0.90,    locale:"de-CH", taxRate:7.7,  vatLabel:"VAT",         dateFormat:"DD.MM.YYYY" },
-  BDT: { symbol:"৳",  code:"BDT", name:"Bangladeshi Taka",   flag:"🇧🇩", rate:110,     locale:"bn-BD", taxRate:15,   vatLabel:"VAT",         dateFormat:"DD/MM/YYYY" },
-  MYR: { symbol:"RM", code:"MYR", name:"Malaysian Ringgit",   flag:"🇲🇾", rate:4.72,    locale:"ms-MY", taxRate:6,    vatLabel:"SST",         dateFormat:"DD/MM/YYYY" },
-  SGD: { symbol:"S$", code:"SGD", name:"Singapore Dollar",    flag:"🇸🇬", rate:1.34,    locale:"en-SG", taxRate:9,    vatLabel:"GST",         dateFormat:"DD/MM/YYYY" },
-  TRY: { symbol:"₺",  code:"TRY", name:"Turkish Lira",        flag:"🇹🇷", rate:32.1,    locale:"tr-TR", taxRate:18,   vatLabel:"KDV",         dateFormat:"DD.MM.YYYY" },
-  NGN: { symbol:"₦",  code:"NGN", name:"Nigerian Naira",      flag:"🇳🇬", rate:1550,    locale:"en-NG", taxRate:7.5,  vatLabel:"VAT",         dateFormat:"DD/MM/YYYY" },
-  ZAR: { symbol:"R",  code:"ZAR", name:"South African Rand",  flag:"🇿🇦", rate:18.6,    locale:"en-ZA", taxRate:15,   vatLabel:"VAT",         dateFormat:"YYYY/MM/DD" },
-  BRL: { symbol:"R$", code:"BRL", name:"Brazilian Real",      flag:"🇧🇷", rate:4.97,    locale:"pt-BR", taxRate:17,   vatLabel:"ICMS",        dateFormat:"DD/MM/YYYY" },
-  MXN: { symbol:"$",  code:"MXN", name:"Mexican Peso",        flag:"🇲🇽", rate:17.2,    locale:"es-MX", taxRate:16,   vatLabel:"IVA",         dateFormat:"DD/MM/YYYY" },
-};
+import { useGeoStore } from '../core/geo-engine/geoStore.js';
+import { COUNTRY_RULES, getRules, formatCurrency } from '../core/geo-engine/countryRules.js';
 
-// ── IP → Currency mapping ─────────────────────────────────────────────────────
-export const COUNTRY_CURRENCY = {
-  US:"USD", GB:"GBP", DE:"EUR", FR:"EUR", IT:"EUR", ES:"EUR", NL:"EUR", BE:"EUR",
-  AT:"EUR", PT:"EUR", IE:"EUR", FI:"EUR", GR:"EUR", PK:"PKR", IN:"INR", AE:"AED",
-  SA:"SAR", CA:"CAD", AU:"AUD", CN:"CNY", JP:"JPY", CH:"CHF", BD:"BDT", MY:"MYR",
-  SG:"SGD", TR:"TRY", NG:"NGN", ZA:"ZAR", BR:"BRL", MX:"MXN", PL:"EUR", CZ:"EUR",
-  RO:"EUR", HU:"EUR", BG:"EUR", HR:"EUR", SK:"EUR", SI:"EUR",
-};
+// ── Re-export CURRENCIES in the old shape so CurrencyBanner still works ─────
 
-// ── Format money using detected currency ──────────────────────────────────────
-export function formatMoney(amount, currencyCode = "USD") {
-  const cur = CURRENCIES[currencyCode] || CURRENCIES.USD;
-  const abs = Math.abs(amount);
-  const sign = amount < 0 ? "-" : "";
-  const sym  = cur.symbol;
-
-  // Compact formatting for large numbers
-  if (abs >= 1_000_000_000) return `${sign}${sym}${(abs/1_000_000_000).toFixed(2)}B`;
-  if (abs >= 1_000_000)     return `${sign}${sym}${(abs/1_000_000).toFixed(2)}M`;
-
-  // PKR/INR lakhs/crores style
-  if (["PKR","INR"].includes(currencyCode)) {
-    if (abs >= 1_00_00_000) return `${sign}${sym}${(abs/1_00_00_000).toFixed(2)}Cr`;
-    if (abs >= 1_00_000)    return `${sign}${sym}${(abs/1_00_000).toFixed(2)}L`;
-    if (abs >= 1_000)       return `${sign}${sym}${Math.round(abs).toLocaleString("en-IN")}`;
-    return `${sign}${sym}${abs.toFixed(2)}`;
+export const CURRENCIES = {};
+Object.entries(COUNTRY_RULES).forEach(([, r]) => {
+  if (!CURRENCIES[r.currency]) {
+    CURRENCIES[r.currency] = {
+      symbol    : r.currencySymbol,
+      code      : r.currency,
+      name      : `${r.countryName} (${r.currency})`,
+      flag      : r.flag,
+      rate      : 1,             // live rates not tracked; use formatCurrency
+      locale    : r.locale,
+      taxRate   : r.taxRate,
+      vatLabel  : r.taxLabel,
+      dateFormat: r.dateFormat,
+    };
   }
+});
 
-  // Standard formatting
-  if (abs >= 1_000) return `${sign}${sym}${Math.round(abs).toLocaleString()}`;
-  return `${sign}${sym}${abs.toFixed(2)}`;
+// Fill well-known names more precisely
+const PRETTY_NAMES = {
+  USD:'US Dollar', EUR:'Euro', GBP:'British Pound', PKR:'Pakistani Rupee',
+  INR:'Indian Rupee', AED:'UAE Dirham', SAR:'Saudi Riyal', CAD:'Canadian Dollar',
+  AUD:'Australian Dollar', CNY:'Chinese Yuan', JPY:'Japanese Yen', CHF:'Swiss Franc',
+  BDT:'Bangladeshi Taka', MYR:'Malaysian Ringgit', SGD:'Singapore Dollar',
+  TRY:'Turkish Lira', NGN:'Nigerian Naira', ZAR:'South African Rand',
+  BRL:'Brazilian Real', MXN:'Mexican Peso', KRW:'South Korean Won',
+  THB:'Thai Baht', IDR:'Indonesian Rupiah', VND:'Vietnamese Dong',
+  PHP:'Philippine Peso', HKD:'Hong Kong Dollar', TWD:'New Taiwan Dollar',
+  PLN:'Polish Złoty', SEK:'Swedish Krona', NOK:'Norwegian Krone',
+  DKK:'Danish Krone', CZK:'Czech Koruna', RON:'Romanian Leu',
+  HUF:'Hungarian Forint', RUB:'Russian Ruble', ILS:'Israeli Shekel',
+  EGP:'Egyptian Pound', QAR:'Qatari Riyal', KWD:'Kuwaiti Dinar',
+  BHD:'Bahraini Dinar', OMR:'Omani Rial', LKR:'Sri Lankan Rupee',
+  NPR:'Nepalese Rupee', KES:'Kenyan Shilling', GHS:'Ghanaian Cedi',
+  ETB:'Ethiopian Birr', MAD:'Moroccan Dirham', ARS:'Argentine Peso',
+  COP:'Colombian Peso', CLP:'Chilean Peso', PEN:'Peruvian Sol',
+  NZD:'New Zealand Dollar',
+};
+Object.entries(PRETTY_NAMES).forEach(([code, name]) => {
+  if (CURRENCIES[code]) CURRENCIES[code].name = name;
+});
+
+// ── COUNTRY_CURRENCY mapping (for backward compat) ───────────────────────────
+export const COUNTRY_CURRENCY = {};
+Object.entries(COUNTRY_RULES).forEach(([cc, r]) => {
+  COUNTRY_CURRENCY[cc] = r.currency;
+});
+
+// ── formatMoney backward compat ───────────────────────────────────────────────
+export function formatMoney(amount, currencyCode = 'USD') {
+  return formatCurrency(amount, Object.keys(COUNTRY_RULES).find(cc => COUNTRY_RULES[cc].currency === currencyCode) || 'US');
 }
 
-// ── Convert amount from USD base to current currency ──────────────────────────
-export function toLocal(usdAmount, currencyCode = "USD") {
-  const rate = CURRENCIES[currencyCode]?.rate || 1;
-  return usdAmount * rate;
+export function toLocal(usdAmount, currencyCode = 'USD') {
+  const cur = CURRENCIES[currencyCode];
+  return usdAmount * (cur?.rate || 1);
 }
 
-// ── Zustand store ─────────────────────────────────────────────────────────────
-export const useCurrencyStore = create(
-  persist(
-    (set, get) => ({
-      currency:        "USD",   // default
-      autoDetected:    false,
-      userSelected:    false,
+// ── Bridge hook — reads from geo-store, writes back to it ───────────────────
 
-      setCurrency: (code) => set({ currency: code, userSelected: true }),
+/**
+ * Drop-in replacement for the old useCurrencyStore hook.
+ * Now powered by the real geo-detection engine.
+ */
+export function useCurrencyStore() {
+  const countryCode    = useGeoStore(s => s.countryCode);
+  const rules          = useGeoStore(s => s.rules);
+  const setCountryFull = useGeoStore(s => s.setCountry);
 
-      // Auto-detect from IP using free API
-      detectFromIP: async () => {
-        if (get().autoDetected || get().userSelected) return; // already ran or manually set
-        try {
-          const res  = await fetch("https://ipapi.co/json/", { signal: AbortSignal.timeout(3000) });
-          if (!res.ok) throw new Error("API failed");
-          const data = await res.json();
-          const code = data.country_code;
-          const cur  = COUNTRY_CURRENCY[code] || "USD";
-          set({ currency: cur, autoDetected: true });
-        } catch {
-          // Fallback to browser locale
-          try {
-            const locale = navigator.language || "en-US";
-            const countryCode = locale.split("-")[1]?.toUpperCase();
-            const cur = COUNTRY_CURRENCY[countryCode] || "USD";
-            set({ currency: cur, autoDetected: true });
-          } catch (e) {
-            set({ currency: "USD", autoDetected: true }); // Ultimate fallback
-          }
-        }
-      },
-    }),
-    {
-      name: "CalculatorsPoint-currency-v2",
-      partialize: (s) => ({ currency: s.currency, userSelected: s.userSelected, autoDetected: s.autoDetected }),
-    }
-  )
-);
+  // Find the currency code from the geo store
+  const currency = rules?.currency ?? 'USD';
+
+  // setCurrency: map currencyCode → best country code with that currency
+  const setCurrency = (currencyCode) => {
+    // Find the first country using this currency (prefer major ones)
+    const preferredCountry = {
+      USD:'US', EUR:'DE', GBP:'GB', PKR:'PK', INR:'IN', AED:'AE', SAR:'SA',
+      CAD:'CA', AUD:'AU', CNY:'CN', JPY:'JP', CHF:'CH', BDT:'BD', MYR:'MY',
+      SGD:'SG', TRY:'TR', NGN:'NG', ZAR:'ZA', BRL:'BR', MXN:'MX',
+      KRW:'KR', THB:'TH', IDR:'ID', VND:'VN', PHP:'PH', HKD:'HK',
+      TWD:'TW', PLN:'PL', SEK:'SE', NOK:'NO', DKK:'DK', CZK:'CZ',
+      RON:'RO', HUF:'HU', RUB:'RU', ILS:'IL', EGP:'EG', QAR:'QA',
+      KWD:'KW', BHD:'BH', OMR:'OM', LKR:'LK', NPR:'NP', KES:'KE',
+      GHS:'GH', NZD:'NZ', ARS:'AR', COP:'CO', CLP:'CL', PEN:'PE',
+    };
+    const cc = preferredCountry[currencyCode];
+    if (cc) setCountryFull(cc);
+  };
+
+  return { currency, setCurrency };
+}
+
+// Named export for components using destructured import
+useCurrencyStore.getState = () => useGeoStore.getState();

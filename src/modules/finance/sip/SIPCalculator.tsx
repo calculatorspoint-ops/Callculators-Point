@@ -10,8 +10,11 @@ import { SIPSchema, SIPForm } from './schemas/sipSchema';
 import { calculateProbabilisticSIP } from './engine/sipEngine';
 import { generateSIPInsights } from './insights/sipInsights';
 import { SIPResult } from './types';
+import { useRegionCurrency } from '../../../core/geo-engine/useRegion.js';
 
 export function SIPCalculator() {
+  const { currencySymbol, locale } = useRegionCurrency();
+  const sym = currencySymbol || '₹';
   const { form, derivedState, isCalculating } = useFormEngine<SIPForm, SIPResult>({
     schema: SIPSchema,
     defaultValues: {
@@ -56,13 +59,13 @@ export function SIPCalculator() {
     const { expectedWealth, inflationAdjustedWealth, totalInvestment, p10Wealth, p90Wealth } = derivedState;
     const gain = expectedWealth - totalInvestment;
     const gainPct = totalInvestment > 0 ? ((gain / totalInvestment) * 100).toFixed(0) : '0';
-    const fmt = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0, notation: 'compact' }).format(v);
+    const fmt = (v: number) => new Intl.NumberFormat(locale || 'en-IN', { maximumFractionDigits: 0, notation: 'compact' }).format(v);
 
     if (inflationAdjustedWealth < totalInvestment) {
       return {
         tone: 'critical' as const,
-        headline: `After ${form.getValues().tenureYears} years, your real purchasing power (₹${fmt(inflationAdjustedWealth)}) will be lower than what you invested (₹${fmt(totalInvestment)}). Inflation is outpacing your returns.`,
-        detail: `Your nominal corpus of ₹${fmt(expectedWealth)} sounds positive, but in today's money it is worth less than you put in.`,
+        headline: `After ${form.getValues().tenureYears} years, your real purchasing power (${sym}${fmt(inflationAdjustedWealth)}) will be lower than what you invested (${sym}${fmt(totalInvestment)}). Inflation is outpacing your returns.`,
+        detail: `Your nominal corpus of ${sym}${fmt(expectedWealth)} sounds positive, but in today's money it is worth less than you put in.`,
         action: "Consider increasing your expected return rate or your annual step-up percentage to beat inflation."
       };
     }
@@ -71,15 +74,15 @@ export function SIPCalculator() {
     const tone: 'positive' | 'warning' = Number(gainPct) > 100 ? 'positive' : 'warning';
     return {
       tone,
-      headline: `At the median (P50), your ₹${fmt(totalInvestment)} investment grows to ₹${fmt(expectedWealth)} — a ${gainPct}% gain over your invested capital.`,
-      detail: `Due to market volatility, outcomes range from ₹${fmt(p10Wealth)} (pessimistic) to ₹${fmt(p90Wealth)} (optimistic) — a ±${spreadPct}% spread. The real inflation-adjusted value is ₹${fmt(inflationAdjustedWealth)}.`,
+      headline: `At the median (P50), your ${sym}${fmt(totalInvestment)} investment grows to ${sym}${fmt(expectedWealth)} — a ${gainPct}% gain over your invested capital.`,
+      detail: `Due to market volatility, outcomes range from ${sym}${fmt(p10Wealth)} (pessimistic) to ${sym}${fmt(p90Wealth)} (optimistic) — a ±${spreadPct}% spread. The real inflation-adjusted value is ${sym}${fmt(inflationAdjustedWealth)}.`,
       action: "Focus on the inflation-adjusted figure as your true financial goal, not the nominal number."
     };
   }, [derivedState, form]);
 
   const formatCurrency = (val: number | undefined) => {
     if (val === undefined) return '0';
-    return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(val);
+    return new Intl.NumberFormat(locale || 'en-IN', { maximumFractionDigits: 0 }).format(val);
   };
 
   return (
@@ -89,7 +92,7 @@ export function SIPCalculator() {
           name="monthlyInvestment"
           control={form.control}
           label="Monthly Investment"
-          unit="₹"
+          unit={sym}
           tooltip="The fixed amount you invest every month into a mutual fund SIP."
           placeholder="5,000"
           decimals={0}
@@ -147,7 +150,7 @@ export function SIPCalculator() {
             name="currentSalary"
             control={form.control}
             label="Monthly Salary (Optional)"
-            unit="₹"
+            unit={sym}
             tooltip="Your current monthly take-home pay. Used to estimate whether your step-up SIP remains affordable relative to your income."
             hint="Used for contribution sustainability analysis"
           />
@@ -170,7 +173,7 @@ export function SIPCalculator() {
               Nominal Future Value
               <GlossaryTooltip term="Nominal" explanation="The total money in your account without adjusting for inflation. This number looks larger but doesn't reflect real purchasing power." />
             </span>
-            <span className="text-2xl font-black text-[var(--text)]">₹{formatCurrency(derivedState?.expectedWealth)}</span>
+            <span className="text-2xl font-black text-[var(--text)]">{sym}{formatCurrency(derivedState?.expectedWealth)}</span>
             <span className="text-xs text-[var(--text2)] mt-1">Median (P50) outcome</span>
           </div>
           <div className="bg-[var(--brand)]/10 border border-[var(--brand)] p-4 rounded-xl flex flex-col shadow-sm">
@@ -178,7 +181,7 @@ export function SIPCalculator() {
               Today's Purchasing Power
               <GlossaryTooltip term="Real Value" explanation="Your future corpus expressed in today's money, after stripping out inflation. This is the actual lifestyle you can afford." />
             </span>
-            <span className="text-2xl font-black text-[var(--brand)]">₹{formatCurrency(derivedState?.inflationAdjustedWealth)}</span>
+            <span className="text-2xl font-black text-[var(--brand)]">{sym}{formatCurrency(derivedState?.inflationAdjustedWealth)}</span>
             <span className="text-xs text-[var(--brand)] opacity-80 mt-1">Real value after inflation</span>
           </div>
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-xl flex flex-col shadow-sm">
@@ -186,7 +189,7 @@ export function SIPCalculator() {
               Inflation Erosion
             </span>
             <span className="text-2xl font-black text-red-600 dark:text-red-400">
-              -₹{formatCurrency((derivedState?.expectedWealth || 0) - (derivedState?.inflationAdjustedWealth || 0))}
+              -{sym}{formatCurrency((derivedState?.expectedWealth || 0) - (derivedState?.inflationAdjustedWealth || 0))}
             </span>
             <span className="text-xs text-red-600 dark:text-red-400 opacity-80 mt-1">Loss in purchasing power</span>
           </div>

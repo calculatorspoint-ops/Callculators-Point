@@ -6,15 +6,18 @@ import { buildProjectionChart } from '../../../core/chart-engine';
 import { MortgageSchema } from './schemas/mortgageSchema';
 import { calculateMortgage, MortgageResult } from './engine/mortgageEngine';
 import { generateMortgageInsights } from './insights/mortgageInsights';
+import { useRegionCurrency } from '../../../core/geo-engine/useRegion.js';
 
 function MortgageFormUI({ control }: { control: any }) {
+  const { currencySymbol } = useRegionCurrency();
+  const sym = currencySymbol || '$';
   return (
     <div className="flex flex-col gap-4">
       <NumericInput
         name="homePrice"
         control={control}
         label="Home Price"
-        unit="$"
+        unit={sym}
         tooltip="The full listing or agreed purchase price of the property."
         placeholder="300,000"
         decimals={0}
@@ -23,7 +26,7 @@ function MortgageFormUI({ control }: { control: any }) {
         name="downPayment"
         control={control}
         label="Down Payment"
-        unit="$"
+        unit={sym}
         tooltip="The upfront amount you pay out of pocket. The rest is financed by the loan. Most lenders require at least 3–20% of the home price."
         placeholder="60,000"
         decimals={0}
@@ -71,6 +74,8 @@ function MortgageFormUI({ control }: { control: any }) {
 
 function MortgageResultUI({ result }: { result: MortgageResult }) {
   if (result.principal <= 0) return null;
+  const { currencySymbol } = useRegionCurrency();
+  const sym = currencySymbol || '$';
   const fmt = (v: number) => v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
@@ -79,7 +84,7 @@ function MortgageResultUI({ result }: { result: MortgageResult }) {
         <div className="text-xs font-bold text-[var(--text3)] uppercase mb-1 tracking-widest">
           Monthly Payment (PITI)
         </div>
-        <div className="text-4xl font-black text-[var(--brand)]">${fmt(result.monthlyPayment)}</div>
+        <div className="text-4xl font-black text-[var(--brand)]">{sym}{fmt(result.monthlyPayment)}</div>
         <p className="text-xs font-semibold text-[var(--text2)] mt-2 flex justify-between">
           <span>Loan Paid Off:</span>
           <span className="text-[var(--text)]">{result.payoffDate}</span>
@@ -88,11 +93,11 @@ function MortgageResultUI({ result }: { result: MortgageResult }) {
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-200 dark:border-red-700">
           <div className="text-xs font-bold text-red-600 uppercase mb-1">Total Interest</div>
-          <div className="text-xl font-black text-red-700 dark:text-red-400">${fmt(result.totalInterest)}</div>
+          <div className="text-xl font-black text-red-700 dark:text-red-400">{sym}{fmt(result.totalInterest)}</div>
         </div>
         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-200 dark:border-green-700">
           <div className="text-xs font-bold text-green-700 uppercase mb-1">Total Cost (P+I)</div>
-          <div className="text-xl font-black text-green-800 dark:text-green-300">${fmt(result.totalPayment)}</div>
+          <div className="text-xl font-black text-green-800 dark:text-green-300">{sym}{fmt(result.totalPayment)}</div>
         </div>
       </div>
     </div>
@@ -103,8 +108,9 @@ function interpretMortgage(result: MortgageResult): InterpretationCardProps | nu
   if (result.principal <= 0) return null;
   const interestRatio = result.principal > 0 ? result.totalInterest / result.principal : 0;
   const pct = (interestRatio * 100).toFixed(0);
-  const fmt = (v: number) => `$${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-
+  const { currencySymbol } = useRegionCurrency();
+  const sym = currencySymbol || '$';
+  const fmt = (v: number) => `${sym}${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
   if (interestRatio > 1) {
     return {
       tone: 'critical',

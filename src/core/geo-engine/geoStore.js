@@ -3,21 +3,15 @@
  * @description Zustand persistent store for worldwide geo-localisation.
  *
  * Detection chain (first success wins):
- *   1. Previously persisted user selection (localStorage)
- *   2. IP-based geolocation  → ipapi.co/json  (3 s timeout)
- *   3. Browser navigator.language  ("en-PK" → "PK")
- *   4. Hard fallback  → "US"
+ *   1. Persisted user-manual selection  → skip detection entirely
+ *   2. ipapi.co/json  (primary, 4 s timeout)
+ *   3. ip-api.com     (secondary — higher rate limit)
+ *   4. navigator.language  ("en-PK" → "PK")
+ *   5. Hard fallback  → "US"
  *
- * Exported selectors (pick inside components to avoid re-renders):
- *   useGeoStore(s => s.countryCode)
- *   useGeoStore(s => s.rules)          // full COUNTRY_RULES entry
- *   useGeoStore(s => s.currency)       // shorthand
- *   useGeoStore(s => s.locale)         // shorthand
- *   useGeoStore(s => s.setCountry)     // manual override
- *   useGeoStore(s => s.formatMoney)    // (value) => string
- *   useGeoStore(s => s.formatNum)      // (value, opts?) => string
- *   useGeoStore(s => s.formatDate)     // (date) => string
- *   useGeoStore(s => s.detectRegion)   // re-run detection
+ * KEY FIX: autoDetected is NEVER persisted to localStorage.
+ * This ensures every page load re-runs IP detection, so users in Pakistan
+ * see PKR and users in India see INR — not a cached "US" from a prior session.
  */
 
 import { create } from 'zustand';
@@ -30,21 +24,16 @@ import {
   formatDate,
 } from './countryRules.js';
 
-// ── IP detection ─────────────────────────────────────────────────────────────
+// ── IP detection helpers ─────────────────────────────────────────────────────
 
-const IP_API_URL  = 'https://ipapi.co/json/';
-const IP_API_TIMEOUT_MS = 3500;
+const TIMEOUT_MS = 4000;
 
-/**
- * Attempt to resolve country code from IP geolocation API.
- * Returns ISO-3166-1 alpha-2 string or null on failure.
- */
-async function detectFromIP() {
+async function tryIpApiCo() {
   try {
-    const res = await fetch(IP_API_URL, {
-      signal: AbortSignal.timeout(IP_API_TIMEOUT_MS),
+    const res = await fetch('https://ipapi.co/json/', {
+      signal: AbortSignal.timeout(TIMEOUT_MS),
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error(`ipapi.co HTTP ${res.status}`);
     const data = await res.json();
     const code = data?.country_code?.toUpperCase();
     if (code && COUNTRY_RULES[code]) return code;
@@ -52,86 +41,83 @@ async function detectFromIP() {
   return null;
 }
 
-/**
- * Attempt to resolve country code from navigator.language.
- * e.g. "en-PK" → "PK", "en-US" → "US"
- */
-function detectFromLocale() {
+async function tryIpApiDotCom() {
   try {
-    const lang = navigator.language || navigator.languages?.[0] || '';
-    const code = lang.split('-')[1]?.toUpperCase();
+    // ip-api.com allows 45 requests/minute on free tier — good secondary
+    const res = await fetch('https://ip-api.com/json/?fields=countryCode', {
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!res.ok) throw new Error(`ip-api.com HTTP ${res.status}`);
+    const data = await res.json();
+    const code = data?.countryCode?.toUpperCase();
     if (code && COUNTRY_RULES[code]) return code;
   } catch { /* silent */ }
   return null;
 }
 
-// ── Store ────────────────────────────────────────────────────────────────────
+function detectFromLocale() {
+  try {
+    const langs = [navigator.language, ...(navigator.languages || [])];
+    for (const lang of langs) {
+      const code = lang?.split('-')[1]?.toUpperCase();
+      if (code && COUNTRY_RULES[code]) return code;
+    }
+  } catch { /* silent */ }
+  return null;
+}
+
+// ── Zustand store ─────────────────────────────────────────────────────────────
 
 export const useGeoStore = create(
   persist(
     (set, get) => ({
-      // ── State ──────────────────────────────────────────────────────────────
+      // ── Core state ──────────────────────────────────────────────────────────
       countryCode   : 'US',
       rules         : COUNTRY_RULES.US,
-      autoDetected  : false,
-      userSelected  : false,
+      autoDetected  : false,   // ephemeral — NOT persisted (see partialize)
+      userSelected  : false,   // persisted — manual user override
       detecting     : false,
       detectionError: null,
 
-      // ── Formatting helpers (always read countryCode fresh via get()) ───────
-      formatMoney: (value) => formatCurrency(value, get().countryCode),
+      // ── Formatting helpers ───────────────────────────────────────────────────
+      formatMoney: (value)       => formatCurrency(value, get().countryCode),
       formatNum  : (value, opts) => formatNumber(value, get().countryCode, opts),
-      formatDate : (date) => formatDate(date, get().countryCode),
+      formatDate : (date)        => formatDate(date, get().countryCode),
 
-      // ── Actions ───────────────────────────────────────────────────────────
+      // ── Actions ──────────────────────────────────────────────────────────────
 
-      /**
-       * Manually set the country (user override).
-       * Marks userSelected=true so auto-detection won't override it next time.
-       * @param {string} code - ISO-3166-1 alpha-2
-       */
+      /** User-initiated country override — persisted. */
       setCountry: (code) => {
         const upper = code?.toUpperCase();
         if (!upper || !COUNTRY_RULES[upper]) {
-          console.warn(`[GeoStore] Unknown country code: ${code}`);
+          console.warn('[GeoStore] Unknown country code:', code);
           return;
         }
-        set({
-          countryCode  : upper,
-          rules        : getRules(upper),
-          userSelected : true,
-          detectionError: null,
-        });
+        set({ countryCode: upper, rules: getRules(upper), userSelected: true, detectionError: null });
       },
 
-      /**
-       * Reset to auto-detection (clears userSelected flag then re-detects).
-       */
+      /** Clear manual override and re-detect from IP. */
       resetToAuto: async () => {
         set({ userSelected: false, autoDetected: false });
         await get().detectRegion();
       },
 
       /**
-       * Run the full detection chain.
-       * Skipped if user has already made a manual selection.
+       * Full IP-detection chain.
+       * Blocked only by userSelected (manual pick) or concurrent detecting.
+       * NOT blocked by autoDetected — we always re-detect on load.
        */
       detectRegion: async () => {
-        if (get().userSelected) return;    // respect user choice
-        if (get().detecting)    return;    // prevent concurrent runs
+        if (get().userSelected) return;
+        if (get().detecting)    return;
 
         set({ detecting: true, detectionError: null });
 
-        let code = null;
-
-        // 1️⃣  IP API
-        code = await detectFromIP();
-
-        // 2️⃣  Browser locale fallback
-        if (!code) code = detectFromLocale();
-
-        // 3️⃣  Hard fallback
-        if (!code) code = 'US';
+        let code =
+          (await tryIpApiCo())    ||
+          (await tryIpApiDotCom()) ||
+          detectFromLocale()       ||
+          'US';
 
         set({
           countryCode   : code,
@@ -143,18 +129,15 @@ export const useGeoStore = create(
       },
     }),
     {
-      name: 'CalcPoint-geo-v1',
-      // Only persist the country selection; rules are re-derived on rehydrate
+      name: 'CalcPoint-geo-v2',
+      // ⚠️ NEVER persist autoDetected — must always re-detect on page load
       partialize: (s) => ({
         countryCode : s.countryCode,
         userSelected: s.userSelected,
-        autoDetected: s.autoDetected,
       }),
-      // After localStorage restore, push updated rules through set() so all
-      // subscribers re-render with the correct rules object.
       onRehydrateStorage: () => (state, error) => {
         if (!error && state) {
-          // Use the store's own set to trigger subscriber notifications
+          // Re-attach rules after localStorage restore (set() triggers re-renders)
           useGeoStore.setState({ rules: getRules(state.countryCode) });
         }
       },
@@ -162,15 +145,16 @@ export const useGeoStore = create(
   )
 );
 
-// ── Bootstrap helper (call once in main.tsx / App.tsx) ─────────────────────
+// ── Bootstrap (call once in App.tsx via useEffect) ───────────────────────────
 
 /**
- * Trigger region detection once on app startup.
- * Safe to call multiple times — internally guarded.
+ * Always re-runs IP detection on every page load unless user explicitly
+ * chose a country. This is the only correct behaviour — cached locale
+ * would leave Pakistan/India users stuck showing "US".
  */
 export function initGeoDetection() {
-  const { autoDetected, userSelected, detectRegion } = useGeoStore.getState();
-  if (!autoDetected && !userSelected) {
+  const { userSelected, detecting, detectRegion } = useGeoStore.getState();
+  if (!userSelected && !detecting) {
     detectRegion();
   }
 }
