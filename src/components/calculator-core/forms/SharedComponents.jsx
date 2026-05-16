@@ -4,6 +4,7 @@ import { parseLocalizedNumber, formatInputNumber } from "@/utils/validation.js";
 import { useCurrencyStore, formatMoney as _fmtMoney } from "@/store/useCurrencyStore.js";
 import { useAppStore } from "@/store/useAppStore.js";
 import { fmt, CURRENCIES } from "@/core/calculationEngine.js";
+import { copyShareLink } from "@/utils/urlParams.js";
 import { ResultBox } from "@/components/ui/ResultBox.jsx";
 import { StatsGrid } from "@/components/ui/StatsGrid.jsx";
 import { InsightBox } from "@/components/ui/InsightBox.jsx";
@@ -122,9 +123,10 @@ export function Presets({items,onApply}){
   );
 }
 
-export function Panel({ result, loading, label }) {
+export function Panel({ result, loading, label, shareParams }) {
   const { activeCalc, saveLocally, savedLocally, removeSaved } = useAppStore();
   const [showHistory, setShowHistory] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   if (!result && !loading) return (
     <div className="empty-state">
@@ -162,7 +164,7 @@ export function Panel({ result, loading, label }) {
       {/* ── Chart ── */}
       {result.chart && (
         <div style={{ marginTop: 14 }}>
-          <CalcChart data={result.chart.data} type={result.chart.type} keys={result.chart.keys} />
+          <CalcChart chartData={result.chart} />
         </div>
       )}
 
@@ -174,7 +176,7 @@ export function Panel({ result, loading, label }) {
         <Breakdown rows={result.breakdowns} title="Step-by-Step Breakdown" />
       )}
 
-      {/* ── Toolbar: save, export ── */}
+      {/* ── Toolbar: save, export, share ── */}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
         <button onClick={handleSaveHistory}
           style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: "var(--surf2)", border: "1px solid var(--border)", color: "var(--text2)", cursor: "pointer", fontFamily: "var(--font)" }}>
@@ -184,6 +186,12 @@ export function Panel({ result, loading, label }) {
           <button onClick={() => exportToCSV(result.breakdowns, label?.toLowerCase().replace(/\s+/g, "-"))}
             style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: "var(--surf2)", border: "1px solid var(--border)", color: "var(--text2)", cursor: "pointer", fontFamily: "var(--font)" }}>
             📥 Export CSV
+          </button>
+        )}
+        {shareParams && (
+          <button onClick={async () => { await copyShareLink(shareParams); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: copied ? "var(--brand)" : "var(--surf2)", border: `1px solid ${copied ? "var(--brand)" : "var(--border)"}`, color: copied ? "#fff" : "var(--text2)", cursor: "pointer", fontFamily: "var(--font)", transition: "all .2s" }}>
+            {copied ? "✅ Link Copied!" : "🔗 Share Link"}
           </button>
         )}
       </div>

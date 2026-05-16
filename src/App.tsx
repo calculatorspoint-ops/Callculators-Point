@@ -20,6 +20,7 @@ const PrivacyPolicy  = lazy(() => import('./pages/PrivacyPolicy.jsx'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'));
 const Disclaimer     = lazy(() => import('./pages/Disclaimer.jsx'));
 const Sitemap        = lazy(() => import('./pages/Sitemap.jsx'));
+const SEOLandingPage = lazy(() => import('./pages/SEOLandingPage.jsx'));
 
 // ── Inline page loader (avoids importing a heavy component) ───────────
 function PageLoader() {
@@ -68,6 +69,7 @@ export default function App() {
               <Route path="/terms-of-service"      element={<TermsOfService />} />
               <Route path="/disclaimer"            element={<Disclaimer />} />
               <Route path="/sitemap"               element={<Sitemap />} />
+              <Route path="/tools/:slug"            element={<SEOLandingPage />} />
               <Route path="*"                      element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

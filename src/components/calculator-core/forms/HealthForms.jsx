@@ -11,10 +11,12 @@ import { StatsGrid } from "@/components/ui/StatsGrid.jsx";
 import { InsightBox } from "@/components/ui/InsightBox.jsx";
 import { Breakdown } from "@/components/ui/Breakdown.jsx";
 import { CalcChart } from "@/components/charts/LazyCalcChart.jsx";
+import { readCalcParams } from "@/utils/urlParams.js";
 
 // ── BMI ──────────────────────────────────────────────────────────────
 export function BMIForm(){
-  const [sex,setSex]=useState("male"),[w,setW]=useState(70),[h,setH]=useState(170),[age,setAge]=useState(30),[unit,setUnit]=useState("metric");
+  const init = readCalcParams({ w: 70, h: 170, age: 30 });
+  const [sex,setSex]=useState("male"),[w,setW]=useState(init.w),[h,setH]=useState(init.h),[age,setAge]=useState(init.age),[unit,setUnit]=useState("metric");
   const [res,setRes]=useState(null),[load,setLoad]=useState(false);
   useEffect(()=>{
     setLoad(true);
@@ -38,7 +40,7 @@ export function BMIForm(){
         <Sl label={unit==="metric"?"Height (cm)":"Height (ft)"} id="bh" min={unit==="metric"?100:3} max={unit==="metric"?250:8} step={unit==="metric"?0.5:0.1} value={h} onChange={setH} fmt={v=>`${v} ${unit==="metric"?"cm":"ft"}`}/>
         <Sl label="Age" id="bage" min={10} max={100} value={age} onChange={setAge} fmt={v=>`${v} years`}/>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={load} label="Your BMI"/></div>
+      <div className="sticky-res"><Panel result={res} loading={load} label="Your BMI" shareParams={{w,h,age,sex}}/></div>
     </div>
   );
 }
@@ -73,7 +75,7 @@ export function CalorieForm(){
           <Sel label="Formula" id="cf2" value={formula} onChange={setFormula} opts={[{v:"mifflin",l:"Mifflin-St Jeor"},{v:"harris",l:"Harris-Benedict"}]}/>
         </Row2>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={load} label="Daily Calories"/></div>
+      <div className="sticky-res"><Panel result={res} loading={load} label="Daily Calories" shareParams={{w,h,a:a,sex,act,goal}}/></div>
     </div>
   );
 }
@@ -122,30 +124,46 @@ export function BMRForm(){
   );
 }
 
-// ── Body Fat ─────────────────────────────────────────────────────────
+// ── Body Fat (Upgraded — Sliders + Gauge + 2-col) ─────────────────
 export function BodyFatForm(){
-  const [sex,setSex]=useState("male"),[h,setH]=useState("170"),[neck,setNeck]=useState("38"),[waist,setWaist]=useState("85"),[hip,setHip]=useState("95");
+  const [sex,setSex]=useState("male"),[h,setH]=useState(170),[neck,setNeck]=useState(38),[waist,setWaist]=useState(85),[hip,setHip]=useState(95);
   const [res,setRes]=useState(null);
   useEffect(()=>{
     const t=setTimeout(()=>{
       const d=calcBodyFat({height:h,neck,waist,hip,gender:sex});
       if(!d){setRes(null);return;}
-      setRes(buildResult("Body Fat %",d.bf+"%",[{label:"Category",value:d.category,highlight:d.category==="Fitness"||d.category==="Athletic"}],d.insights,null,d.breakdowns));
+      // Build a gauge chart to visualize body fat position
+      const bfNum = parseFloat(d.bf) || 20;
+      const gaugePos = Math.min(Math.max((bfNum / 45) * 100, 2), 98);
+      const chart = {type:"gauge",pct:gaugePos,color:
+        d.category==="Athletic"||d.category==="Fitness"?"#16a34a":
+        d.category==="Average"?"#f59e0b":"#dc2626"};
+      setRes(buildResult("Body Fat %",d.bf+"%",
+        [{label:"Category",value:d.category,highlight:d.category==="Fitness"||d.category==="Athletic"},
+         {label:"Fat Mass",value:Math.round(+h/100*+h/100*(bfNum/100)*70)+" kg (est)"},
+         {label:"Lean Mass",value:Math.round(70-70*(bfNum/100))+" kg (est)"}],
+        d.insights,chart,d.breakdowns));
     },80);
     return()=>clearTimeout(t);
   },[sex,h,neck,waist,hip]);
 
   return (
-    <div>
-      <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
-      <Row2><N label="Height (cm)" id="bfh" value={h} onChange={setH}/><N label="Neck (cm)" id="bfn" value={neck} onChange={setNeck}/></Row2>
-      <Row2><N label="Waist (cm)" id="bfw" value={waist} onChange={setWaist}/>{sex==="female"&&<N label="Hip (cm)" id="bfhip" value={hip} onChange={setHip}/>}</Row2>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><Breakdown rows={res.breakdowns}/></>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
+        <Sl label="Height" id="bfh" min={120} max={220} step={1} value={h} onChange={setH} fmt={v=>`${v} cm`}/>
+        <Sl label="Neck Circumference" id="bfn" min={25} max={60} step={0.5} value={neck} onChange={setNeck} fmt={v=>`${v} cm`}/>
+        <Sl label="Waist Circumference" id="bfw" min={50} max={150} step={0.5} value={waist} onChange={setWaist} fmt={v=>`${v} cm`}/>
+        {sex==="female"&&<Sl label="Hip Circumference" id="bfhip" min={60} max={160} step={0.5} value={hip} onChange={setHip} fmt={v=>`${v} cm`}/>}
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Body Fat %"/>
+      </div>
     </div>
   );
 }
 
-// ── Ideal Weight ─────────────────────────────────────────────────────
+// ── Ideal Weight (Upgraded — Bar Chart comparison) ─────────────────
 export function IdealWeightForm(){
   const [sex,setSex]=useState("male"),[h,setH]=useState(170);
   const [res,setRes]=useState(null);
@@ -153,17 +171,28 @@ export function IdealWeightForm(){
     const t=setTimeout(()=>{
       const d=calcIdealWeight({height:h,gender:sex});
       if(!d){setRes(null);return;}
+      const chart = {type:"bar",data:[
+        {label:"Devine",value:+d.devine,color:"#2563eb"},
+        {label:"Miller",value:+d.miller,color:"#16a34a"},
+        {label:"Robinson",value:+d.robinson||+d.avg,color:"#f59e0b"},
+        {label:"BMI Min",value:+d.bmiMin,color:"#7c3aed"},
+        {label:"BMI Max",value:+d.bmiMax,color:"#dc2626"},
+      ]};
       setRes(buildResult("Ideal Weight (avg)",d.avg+" kg",
-        [{label:"Devine",value:d.devine+" kg"},{label:"Miller",value:d.miller+" kg"},{label:"BMI Range",value:d.bmiMin+"–"+d.bmiMax+" kg",highlight:true}],
-        d.insights,null,d.breakdowns));
+        [{label:"Devine",value:d.devine+" kg"},{label:"Miller",value:d.miller+" kg"},{label:"BMI Range",value:d.bmiMin+"–"+d.bmiMax+" kg",highlight:true},{label:"Consensus",value:d.avg+" kg"}],
+        d.insights,chart,d.breakdowns));
     },80);
     return()=>clearTimeout(t);
   },[sex,h]);
   return (
-    <div>
-      <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
-      <Sl label="Height (cm)" id="iwh" min={100} max={250} step={0.5} value={h} onChange={setH} fmt={v=>`${v} cm`}/>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><Breakdown rows={res.breakdowns}/></>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
+        <Sl label="Height" id="iwh" min={100} max={250} step={0.5} value={h} onChange={setH} fmt={v=>`${v} cm`}/>
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Ideal Weight"/>
+      </div>
     </div>
   );
 }
@@ -189,32 +218,56 @@ export function MacroForm(){
         <N label="Body Weight" id="mbw" value={bw} onChange={setBw} unit="kg"/>
         <Sel label="Goal" id="mg" value={goal} onChange={setGoal} opts={[{v:"lose",l:"Lose Weight (−500)"},{v:"maintain",l:"Maintain Weight"},{v:"gain",l:"Lean Gain (+300)"},{v:"aggressive",l:"Aggressive Bulk (+500)"}]}/>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Macros"/></div>
+      <div className="sticky-res"><Panel result={res} loading={null} label="Macros" shareParams={{cal,goal,bw}}/></div>
     </div>
   );
 }
 
-// ── Water Intake ─────────────────────────────────────────────────────
+// ── Water Intake (Upgraded — Hydration Visual + 2-col) ──────────────
 export function WaterForm(){
   const [w,setW]=useState(70),[act,setAct]=useState("moderate"),[climate,setClimate]=useState("moderate");
   const [res,setRes]=useState(null);
   useEffect(()=>{
     const t=setTimeout(()=>{
       const d=calcWater({weight:w,activity:act,climate});
-      setRes(buildResult("Daily Water Intake",d.total+"L",
-        [{label:"Base",value:d.base+"L"},{label:"Total",value:d.total+"L",highlight:true},{label:"In Glasses",value:d.glasses+" × 250ml"},{label:"In ml",value:d.ml+"ml"}],
-        d.insights,null,d.breakdowns));
+      setRes({
+        ...buildResult("Daily Water Intake",d.total+"L",
+          [{label:"Base",value:d.base+"L"},{label:"Total",value:d.total+"L",highlight:true},{label:"In Glasses",value:d.glasses+" × 250ml"},{label:"In ml",value:d.ml+"ml"}],
+          d.insights,null,d.breakdowns),
+        raw: d
+      });
     },80);
     return()=>clearTimeout(t);
   },[w,act,climate]);
   return (
-    <div>
-      <Sl label="Body Weight" id="ww" min={30} max={150} value={w} onChange={setW} fmt={v=>`${v}kg`}/>
-      <Row2>
-        <Sel label="Activity Level" id="wact" value={act} onChange={setAct} opts={[{v:"sedentary",l:"Sedentary"},{v:"light",l:"Light"},{v:"moderate",l:"Moderate"},{v:"active",l:"Active"},{v:"veryActive",l:"Very Active"}]}/>
-        <Sel label="Climate" id="wclimate" value={climate} onChange={setClimate} opts={[{v:"cool",l:"Cool"},{v:"moderate",l:"Moderate"},{v:"warm",l:"Warm"},{v:"hot",l:"Hot"}]}/>
-      </Row2>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/></>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Sl label="Body Weight" id="ww" min={30} max={150} value={w} onChange={setW} fmt={v=>`${v} kg`}/>
+        <Row2>
+          <Sel label="Activity Level" id="wact" value={act} onChange={setAct} opts={[{v:"sedentary",l:"Sedentary"},{v:"light",l:"Light"},{v:"moderate",l:"Moderate"},{v:"active",l:"Active"},{v:"veryActive",l:"Very Active"}]}/>
+          <Sel label="Climate" id="wclimate" value={climate} onChange={setClimate} opts={[{v:"cool",l:"Cool"},{v:"moderate",l:"Moderate"},{v:"warm",l:"Warm"},{v:"hot",l:"Hot"}]}/>
+        </Row2>
+        {/* Hydration visual */}
+        {res?.raw && (
+          <div style={{marginTop:16,padding:"16px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+              <span style={{fontSize:12,fontWeight:700,color:"var(--text3)",textTransform:"uppercase",letterSpacing:".05em"}}>💧 Daily Hydration Goal</span>
+              <span style={{fontSize:13,fontWeight:800,color:"#2563eb"}}>{res.raw.total}L</span>
+            </div>
+            <div style={{display:"flex",gap:4,flexWrap:"wrap",justifyContent:"center"}}>
+              {Array.from({length: Math.min(+res.raw.glasses || 8, 16)}).map((_,i) => (
+                <div key={i} style={{width:28,height:36,borderRadius:"0 0 6px 6px",border:"2px solid #93c5fd",background:"linear-gradient(to top, #3b82f6 80%, transparent 80%)",display:"flex",alignItems:"flex-end",justifyContent:"center",fontSize:8,color:"#fff",fontWeight:700,paddingBottom:2}}>
+                  {i+1}
+                </div>
+              ))}
+            </div>
+            <p style={{textAlign:"center",fontSize:11,color:"var(--text3)",marginTop:8}}>{res.raw.glasses} glasses of 250ml each</p>
+          </div>
+        )}
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Water Intake"/>
+      </div>
     </div>
   );
 }

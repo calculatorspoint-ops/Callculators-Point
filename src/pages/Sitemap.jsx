@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { ALL_CALCULATORS, CATEGORIES } from "@/data/calculatorConfigs.js";
+import { SEO_LANDING_PAGES } from "@/data/seoLandingData.js";
 
 const GROUP = ({ title, icon, color, bg, links }) => (
   <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:"var(--r-xl)", overflow:"hidden", marginBottom:16, boxShadow:"var(--sh1)" }}>
@@ -74,6 +75,17 @@ export default function Sitemap() {
             />
           );
         })}
+
+        {/* SEO Landing Pages */}
+        {SEO_LANDING_PAGES.length > 0 && (
+          <GROUP
+            title="Specialized Tool Guides" icon="🎯" color="#7c3aed" bg="#f5f3ff"
+            links={SEO_LANDING_PAGES.map(p => ({
+              to: `/tools/${p.slug}`,
+              label: `🎯 ${p.h1}`,
+            }))}
+          />
+        )}
 
         {/* XML sitemap link */}
         <div style={{ textAlign:"center", padding:"24px", background:"var(--surf2)", border:"1px solid var(--border)", borderRadius:"var(--r-xl)", marginTop:8 }}>

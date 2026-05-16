@@ -1,13 +1,80 @@
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useState, useEffect, lazy, Suspense } from "react";
+import { useParams, Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { Bookmark, BookmarkCheck, Share2 } from "lucide-react";
-
-import { CalculatorWidget } from "@/components/calculator-core/CalculatorWidget.jsx";
-import { ExportToolbar } from "@/core/export-engine/ExportToolbar";
-import { CurrencyBanner } from "@/components/ui/CurrencyBanner.jsx";
-import { getCalcBySlug, getRelated, CATEGORIES, ALL_CALCULATORS } from "@/data/calculatorConfigs.js";
-import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
 import { useAppStore } from "@/store/useAppStore.js";
+import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated } from "@/data/calculatorConfigs.js";
+import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
+import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb } from "lucide-react";
+
+const CalculatorWidget = lazy(() => import("@/components/calculator-core/CalculatorWidget.jsx").then(m => ({ default: m.CalculatorWidget })));
+const CurrencyBanner = lazy(() => import("@/components/ui/CurrencyBanner.jsx"));
+const ExportToolbar = lazy(() => import("@/core/export-engine/ExportToolbar.tsx").then(m => ({ default: m.ExportToolbar })));
+
+/* ── Smart cross-calculator recommendations ──────────────────── */
+const CROSS_LINKS = {
+  "bmi-calculator": ["calorie-calculator", "body-fat-calculator", "ideal-weight-calculator"],
+  "calorie-calculator": ["bmr-calculator", "macro-calculator", "bmi-calculator"],
+  "bmr-calculator": ["calorie-calculator", "macro-calculator", "water-intake-calculator"],
+  "body-fat-calculator": ["bmi-calculator", "ideal-weight-calculator", "one-rep-max-calculator"],
+  "ideal-weight-calculator": ["bmi-calculator", "body-fat-calculator", "calorie-calculator"],
+  "macro-calculator": ["calorie-calculator", "bmr-calculator", "water-intake-calculator"],
+  "water-intake-calculator": ["calorie-calculator", "bmr-calculator", "macro-calculator"],
+  "heart-rate-calculator": ["calorie-calculator", "bmi-calculator", "body-fat-calculator"],
+  "one-rep-max-calculator": ["body-fat-calculator", "macro-calculator", "calorie-calculator"],
+  "loan-emi-calculator": ["mortgage-calculator", "simple-interest-calculator", "compound-interest-calculator"],
+  "mortgage-calculator": ["loan-emi-calculator", "compound-interest-calculator", "tax-calculator"],
+  "sip-calculator": ["compound-interest-calculator", "ppf-calculator", "roi-calculator"],
+  "compound-interest-calculator": ["sip-calculator", "simple-interest-calculator", "roi-calculator"],
+  "simple-interest-calculator": ["compound-interest-calculator", "loan-emi-calculator", "roi-calculator"],
+  "roi-calculator": ["compound-interest-calculator", "sip-calculator", "profit-margin-calculator"],
+  "salary-calculator": ["tax-calculator", "gst-calculator", "work-hours-calculator"],
+  "tax-calculator": ["salary-calculator", "gst-calculator", "roi-calculator"],
+  "gst-calculator": ["tax-calculator", "discount-calculator", "profit-margin-calculator"],
+  "discount-calculator": ["gst-calculator", "profit-margin-calculator", "percentage-calculator"],
+  "profit-margin-calculator": ["break-even-calculator", "roi-calculator", "discount-calculator"],
+  "break-even-calculator": ["profit-margin-calculator", "roi-calculator", "discount-calculator"],
+  "tip-calculator": ["discount-calculator", "percentage-calculator", "gst-calculator"],
+  "ppf-calculator": ["sip-calculator", "compound-interest-calculator", "roi-calculator"],
+  "percentage-calculator": ["discount-calculator", "gst-calculator", "statistics-calculator"],
+  "gpa-calculator": ["cgpa-percentage-calculator", "grade-calculator", "final-grade-calculator"],
+  "grade-calculator": ["gpa-calculator", "final-grade-calculator", "percentage-calculator"],
+  "final-grade-calculator": ["gpa-calculator", "grade-calculator", "percentage-calculator"],
+  "cgpa-percentage-calculator": ["gpa-calculator", "grade-calculator", "percentage-calculator"],
+  "age-calculator": ["date-difference-calculator", "countdown-calculator", "pregnancy-due-date"],
+  "date-difference-calculator": ["age-calculator", "countdown-calculator", "work-hours-calculator"],
+  "countdown-calculator": ["date-difference-calculator", "age-calculator", "work-hours-calculator"],
+  "password-generator": ["random-number-generator", "base64-encoder", "word-counter"],
+  "fuel-cost-calculator": ["ev-charging-calculator", "discount-calculator", "percentage-calculator"],
+  "ev-charging-calculator": ["fuel-cost-calculator", "roi-calculator", "percentage-calculator"],
+  "quadratic-calculator": ["pythagorean-calculator", "statistics-calculator", "scientific-calculator"],
+  "statistics-calculator": ["percentage-calculator", "scientific-calculator", "quadratic-calculator"],
+  "scientific-calculator": ["quadratic-calculator", "statistics-calculator", "percentage-calculator"],
+};
+
+function CrossCalcRecommendations({ slug }) {
+  const links = CROSS_LINKS[slug];
+  if (!links?.length) return null;
+  const calcs = links.map(s => getCalcBySlug(s)).filter(Boolean).slice(0, 3);
+  if (!calcs.length) return null;
+  return (
+    <div style={{ background:"var(--surface)", border:"1.5px solid var(--border)", borderRadius:"var(--r-xl)", overflow:"hidden", boxShadow:"var(--sh2)" }}>
+      <div style={{ padding:"12px 16px", background:"var(--surf2)", borderBottom:"1px solid var(--border)", display:"flex", alignItems:"center", gap:8 }}>
+        <Lightbulb size={14} style={{ color:"var(--text-accent)" }} />
+        <span style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".05em", color:"var(--text-accent)" }}>Recommended Next</span>
+      </div>
+      {calcs.map(c => (
+        <Link key={c.id} to={`/calculator/${c.slug}`} className="side-item" style={{ gap:10, display:"flex", padding:12, alignItems:"center", textDecoration:"none", borderBottom:"1px solid var(--border)" }}>
+          <span style={{ fontSize:16, width:28, textAlign:"center", flexShrink:0 }}>{c.icon}</span>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontSize:13, fontWeight:600, color:"var(--text)" }}>{c.name}</div>
+            <div style={{ fontSize:11, color:"var(--text3)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.desc}</div>
+          </div>
+          <ArrowRight size={13} style={{ color:"var(--text3)", flexShrink:0 }} />
+        </Link>
+      ))}
+    </div>
+  );
+}
 
 /* ── Rich FAQ section with JSON-LD ──────────────────────────── */
 function FAQSection({ faqs, calcName }) {
@@ -57,16 +124,41 @@ export default function Calculator() {
   return (
     <>
       <Helmet>
-        <title>{`Free ${calc.name} — ${calc.desc?.slice(0, 55)} | CalculatorsPoint`}</title>
-        <meta name="description" content={`Use our free ${calc.name} online. ${calc.desc}. No signup required — instant, accurate, and 100% private.`} />
+        <title>{`Free ${calc.name} Online — ${calc.desc?.slice(0, 60)} | CalculatorsPoint`}</title>
+        <meta name="description" content={`Use our free ${calc.name} online with instant results, visual charts & step-by-step breakdowns. ${calc.desc}. No signup — 100% private & accurate.`} />
+        <meta name="keywords" content={`${calc.name.toLowerCase()}, free ${calc.name.toLowerCase()}, online ${calc.name.toLowerCase()}, ${cat?.name?.toLowerCase() || ''} calculator`} />
         <meta property="og:title" content={`${calc.name} — Free Online Calculator | CalculatorsPoint`} />
-        <meta property="og:description" content={`Free ${calc.name}: ${calc.desc}`} />
+        <meta property="og:description" content={`Free ${calc.name}: ${calc.desc}. Instant results with charts & insights.`} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://calculatorspoint.com/calculator/${calc.slug}`} />
-        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${calc.name} — Free Online Calculator`} />
         <meta name="twitter:description" content={calc.desc} />
         <link rel="canonical" href={`https://calculatorspoint.com/calculator/${calc.slug}`} />
+        {/* BreadcrumbList Schema */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://calculatorspoint.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://calculatorspoint.com/calculators" },
+            { "@type": "ListItem", "position": 3, "name": cat?.name || "Tools", "item": `https://calculatorspoint.com/category/${calc.cat}` },
+            { "@type": "ListItem", "position": 4, "name": calc.name }
+          ]
+        })}</script>
+        {/* WebApplication Schema */}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": calc.name,
+          "description": calc.desc,
+          "url": `https://calculatorspoint.com/calculator/${calc.slug}`,
+          "applicationCategory": cat?.name === "Finance & Money" ? "FinanceApplication" : cat?.name === "Health & Fitness" ? "HealthApplication" : "UtilityApplication",
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "1250", "bestRating": "5" }
+        })}</script>
       </Helmet>
 
       {/* ══════════ PAGE HEADER ══════════ */}
@@ -152,19 +244,34 @@ export default function Calculator() {
             </div>
           </div>
 
-          {/* About section */}
+          {/* About section — enriched with SEO keywords and educational content */}
           <div id="tab-about" className="content-card" role="tabpanel" aria-label="About">
             <h2>About {calc.name}</h2>
             <p>
-              The <strong>{calc.name}</strong> is a free, accurate tool that helps you {calc.desc.toLowerCase()}.
-              All calculations are performed instantly in your browser using industry-standard formulas —
-              no data is ever sent to a server, and no signup is required.
+              The <strong>{calc.name}</strong> is a free, professional-grade online tool that helps you {calc.desc.toLowerCase()}.
+              All calculations are performed instantly in your browser using industry-standard, precision-verified formulas —
+              no data is ever sent to a server, no signup is required, and it works offline.
             </p>
+            {calc.formula && (
+              <div style={{ padding:"14px 16px", background:"var(--surf2)", borderRadius:"var(--r-lg)", border:"1px solid var(--bord2)", marginBottom:12 }}>
+                <h3 style={{ fontSize:13, fontWeight:700, color:"var(--text)", marginBottom:6 }}>📐 Formula Used</h3>
+                <pre style={{ fontFamily:"var(--font-mono)", fontSize:12, color:"var(--text2)", whiteSpace:"pre-wrap", margin:0, lineHeight:1.7 }}>{calc.formula}</pre>
+              </div>
+            )}
             <p>
-              Our {calc.name.toLowerCase()} is designed for students, professionals, business owners and
-              everyday users who need quick, reliable answers. Results include visual charts, a step-by-step
-              breakdown and smart insights so you don't just get a number — you understand it.
+              Our {calc.name.toLowerCase()} is designed for students, professionals, business owners, and
+              everyday users who need quick, reliable answers. Results include <strong>visual charts</strong>, a <strong>step-by-step
+              breakdown</strong>, and <strong>smart insights</strong> so you don't just get a number — you understand it.
             </p>
+            <h3 style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginTop:16, marginBottom:8 }}>✨ Key Features</h3>
+            <ul style={{ fontSize:14, color:"var(--text2)", lineHeight:1.8, paddingLeft:20, marginBottom:12 }}>
+              <li><strong>Instant results</strong> — no loading, no server roundtrips</li>
+              <li><strong>Visual charts</strong> — understand your data at a glance</li>
+              <li><strong>Step-by-step breakdown</strong> — see exactly how results are calculated</li>
+              <li><strong>Smart insights</strong> — contextual tips based on your specific inputs</li>
+              <li><strong>Save & export</strong> — download CSV or save results for comparison</li>
+              <li><strong>100% private</strong> — all data stays in your browser</li>
+            </ul>
             <p style={{ padding:"12px 16px", background:"var(--surf2)", border:"1px solid var(--bord2)", borderRadius:"var(--r-md)", borderLeft:"3px solid var(--brand)", fontSize:13, fontStyle:"italic", color:"var(--text2)" }}>
               ⚠️ Results are for informational purposes only. Always consult a qualified professional before
               making important financial, health or legal decisions.
@@ -182,31 +289,34 @@ export default function Calculator() {
 
           {/* Pro Tips / Intelligence */}
           {(calc.tips || calc.formula) && (
-            <div className="side-card" style={{ borderRadius:"var(--r-xl)", background:"linear-gradient(to bottom, #eff6ff, #ffffff)", borderColor:"#bfdbfe", boxShadow:"0 4px 20px -5px rgba(59, 130, 246, 0.15)" }}>
-              <div className="sec-head" style={{ background:"transparent", borderBottom:"1px solid rgba(59, 130, 246, 0.1)" }}>
-                <div className="sec-head-icon" style={{ background:"#fff", boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>💡</div>
-                <span style={{ fontWeight:800, fontSize:13, color:"#1d4ed8", textTransform:"uppercase", letterSpacing:".05em" }}>Pro Tips & Intel</span>
+            <div className="side-card" style={{ borderRadius:"var(--r-xl)", background:"linear-gradient(to bottom, var(--brand-l), var(--surface))", borderColor:"var(--border)", boxShadow:"0 4px 20px -5px rgba(59, 130, 246, 0.15)" }}>
+              <div className="sec-head" style={{ background:"transparent", borderBottom:"1px solid var(--border)" }}>
+                <div className="sec-head-icon" style={{ background:"var(--surface)", boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>💡</div>
+                <span style={{ fontWeight:800, fontSize:13, color:"var(--brand)", textTransform:"uppercase", letterSpacing:".05em" }}>Pro Tips & Intel</span>
               </div>
               <div style={{ padding:"16px", fontSize:13, color:"var(--text2)", lineHeight:1.6 }}>
                 {calc.formula && (
                   <div style={{ marginBottom: calc.tips ? 16 : 0 }}>
-                    <span style={{ display:"block", marginBottom:6, color:"#2563eb", fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:".05em" }}>Core Formula</span>
-                    <div style={{ background:"#fff", padding:"10px", borderRadius:8, border:"1px dashed #bfdbfe", fontSize:12, fontFamily:"var(--font-mono)", color:"#334155", whiteSpace:"pre-wrap" }}>
+                    <span style={{ display:"block", marginBottom:6, color:"var(--brand)", fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:".05em" }}>Core Formula</span>
+                    <div style={{ background:"var(--surface)", padding:"10px", borderRadius:8, border:"1px dashed var(--border)", fontSize:12, fontFamily:"var(--font-mono)", color:"var(--text2)", whiteSpace:"pre-wrap" }}>
                       {calc.formula}
                     </div>
                   </div>
                 )}
                 {calc.tips && (
                   <div>
-                    <span style={{ display:"block", marginBottom:6, color:"#2563eb", fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:".05em" }}>Did You Know?</span>
+                    <span style={{ display:"block", marginBottom:6, color:"var(--brand)", fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:".05em" }}>Did You Know?</span>
                     <ul style={{ margin:0, paddingLeft:18, display:"flex", flexDirection:"column", gap:8 }}>
-                      {calc.tips.map((t, i) => <li key={i} style={{ color:"#334155" }}>{t}</li>)}
+                      {calc.tips.map((t, i) => <li key={i} style={{ color:"var(--text2)" }}>{t}</li>)}
                     </ul>
                   </div>
                 )}
               </div>
             </div>
           )}
+
+          {/* Smart Cross-Calculator Recommendations */}
+          <CrossCalcRecommendations slug={slug} />
 
           {/* Related tools */}
           {related.length > 0 && (

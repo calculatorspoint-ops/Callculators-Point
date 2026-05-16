@@ -12,13 +12,16 @@ import { StatsGrid } from "@/components/ui/StatsGrid.jsx";
 import { InsightBox } from "@/components/ui/InsightBox.jsx";
 import { Breakdown } from "@/components/ui/Breakdown.jsx";
 import { CalcChart } from "@/components/charts/LazyCalcChart.jsx";
+import { readCalcParams } from "@/utils/urlParams.js";
+import { ScenarioCompare } from "@/components/calculator-core/ScenarioCompare.jsx";
 
 // ── EMI & Mortgage Calculator (Enterprise Grade) ─────────────────────
 export function EMIForm(){
   const { fm, fmSlider, sym, currency } = useCurrency();
-  const [p,setP]=useState(5000000);
-  const [r,setR]=useState(8.5);
-  const [y,setY]=useState(20);
+  const init = readCalcParams({ p: 5000000, r: 8.5, y: 20 });
+  const [p,setP]=useState(init.p);
+  const [r,setR]=useState(init.r);
+  const [y,setY]=useState(init.y);
   const [ex,setEx]=useState("");
   const [cr,setCr]=useState("");
   const [balloon,setBalloon]=useState("");
@@ -85,7 +88,7 @@ export function EMIForm(){
       </div>
       
       <div className="sticky-res">
-        <Panel result={res} loading={load} label="Monthly EMI"/>
+        <Panel result={res} loading={load} label="Monthly EMI" shareParams={{p,r,y,ex:ex||undefined,cr:cr||undefined}}/>
         {res?.primary && res?.chart && (
           <div style={{marginTop:14,padding:"14px",background:"var(--surface2)",border:"1px solid var(--border)",borderRadius:"var(--r-lg)"}}>
             <p style={{fontSize:11,fontWeight:700,color:"var(--text3)",textTransform:"uppercase",letterSpacing:".05em",marginBottom:8}}>Income Affordability Guidelines</p>
@@ -99,6 +102,12 @@ export function EMIForm(){
             </div>
           </div>
         )}
+        <ScenarioCompare
+          currentResult={res}
+          currentParams={{p,r,y,ex,balloon,interestOnly}}
+          calcLabel="Monthly EMI"
+          onRestoreParams={(params)=>{setP(params.p);setR(params.r);setY(params.y);setEx(params.ex||"");setBalloon(params.balloon||"");setInterestOnly(params.interestOnly||false);}}
+        />
       </div>
     </div>
   );
@@ -107,7 +116,8 @@ export function EMIForm(){
 // ── Compound Interest ────────────────────────────────────────────────
 export function CompoundForm(){
   const { fm, fmSlider, sym, vatLabel, taxRate, cur, currency } = useCurrency();
-  const [p,setP]=useState(100000),[r,setR]=useState(8),[y,setY]=useState(10),[f,setF]=useState("12"),[c,setC]=useState("0"),[inf,setInf]=useState("0"),[tax,setTax]=useState("0"),[goalMode,setGoalMode]=useState(false),[target,setTarget]=useState("1000000");
+  const init = readCalcParams({ p: 100000, r: 8, y: 10 });
+  const [p,setP]=useState(init.p),[r,setR]=useState(init.r),[y,setY]=useState(init.y),[f,setF]=useState("12"),[c,setC]=useState("0"),[inf,setInf]=useState("0"),[tax,setTax]=useState("0"),[goalMode,setGoalMode]=useState(false),[target,setTarget]=useState("1000000");
   const [res,setRes]=useState(null),[load,setLoad]=useState(false);
   const fmtM=v=>fmSlider(v);
   useEffect(()=>{
@@ -144,7 +154,15 @@ export function CompoundForm(){
         </div>
         {goalMode&&<N label="Target Amount" id="ctg" value={target} onChange={setTarget} unit={sym} placeholder="1000000"/>}
       </div>
-      <div className="sticky-res"><Panel result={res} loading={load} label="Final Amount"/></div>
+      <div className="sticky-res">
+        <Panel result={res} loading={load} label="Final Amount" shareParams={{p,r,y,f,c:c||undefined}}/>
+        <ScenarioCompare
+          currentResult={res}
+          currentParams={{p,r,y,f,c,inf,tax}}
+          calcLabel="Final Amount"
+          onRestoreParams={(params)=>{setP(params.p);setR(params.r);setY(params.y);setF(params.f);setC(params.c||"0");setInf(params.inf||"0");setTax(params.tax||"0");}}
+        />
+      </div>
     </div>
   );
 }
@@ -152,7 +170,8 @@ export function CompoundForm(){
 // ── SIP Calculator ───────────────────────────────────────────────────
 export function SIPForm(){
   const { fm, fmSlider, sym, vatLabel, taxRate, cur, currency } = useCurrency();
-  const [amt,setAmt]=useState(5000),[r,setR]=useState(12),[y,setY]=useState(10),[su,setSu]=useState("0");
+  const init = readCalcParams({ amt: 5000, r: 12, y: 10 });
+  const [amt,setAmt]=useState(init.amt),[r,setR]=useState(init.r),[y,setY]=useState(init.y),[su,setSu]=useState("0");
   const [res,setRes]=useState(null),[load,setLoad]=useState(false);
   const fmtM=v=>fmSlider(v);
   useEffect(()=>{
@@ -179,7 +198,15 @@ export function SIPForm(){
         <Sl label="Time Period" id="sy" min={1} max={40} value={y} onChange={setY} fmt={v=>`${v} years`}/>
         <N label="Annual Step-up (%)" id="ssu" value={su} onChange={setSu} unit="%" placeholder="0" hint="💡 Increase SIP every year to beat inflation"/>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={load} label="Future Wealth"/></div>
+      <div className="sticky-res">
+        <Panel result={res} loading={load} label="Future Wealth" shareParams={{amt,r,y,su:su||undefined}}/>
+        <ScenarioCompare
+          currentResult={res}
+          currentParams={{amt,r,y,su}}
+          calcLabel="Future Wealth"
+          onRestoreParams={(params)=>{setAmt(params.amt);setR(params.r);setY(params.y);setSu(params.su||"0");}}
+        />
+      </div>
     </div>
   );
 }
@@ -187,7 +214,8 @@ export function SIPForm(){
 // ── ROI Calculator ───────────────────────────────────────────────────
 export function ROIForm(){
   const { fm, fmSlider, sym, vatLabel, taxRate, cur, currency } = useCurrency();
-  const [inv,setInv]=useState("100000"),[ret,setRet]=useState("150000"),[y,setY]=useState(2),[inf,setInf]=useState("0");
+  const init = readCalcParams({ inv: 100000, ret: 150000, y: 2 });
+  const [inv,setInv]=useState(String(init.inv)),[ret,setRet]=useState(String(init.ret)),[y,setY]=useState(init.y),[inf,setInf]=useState("0");
   const [res,setRes]=useState(null);
   useEffect(()=>{
     const t=setTimeout(()=>{
@@ -209,7 +237,15 @@ export function ROIForm(){
         <Sl label="Time Period" id="ry" min={1} max={20} value={y} onChange={setY} fmt={v=>`${v} years`}/>
         <N label="Inflation Rate" id="rinf" value={inf} onChange={setInf} unit="%" placeholder="0" hint="For inflation-adjusted real return"/>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Total ROI"/></div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Total ROI" shareParams={{inv,ret,y}}/>
+        <ScenarioCompare
+          currentResult={res}
+          currentParams={{inv,ret,y,inf}}
+          calcLabel="Total ROI"
+          onRestoreParams={(params)=>{setInv(String(params.inv));setRet(String(params.ret));setY(params.y);setInf(params.inf||"0");}}
+        />
+      </div>
     </div>
   );
 }
@@ -245,7 +281,7 @@ export function SalaryForm(){
           <N label="Monthly Deductions" id="sd" value={dedu} onChange={setDedu} unit={sym} placeholder="0"/>
         </Row2>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Net Salary"/></div>
+      <div className="sticky-res"><Panel result={res} loading={null} label="Net Salary" shareParams={{amt,period}}/></div>
     </div>
   );
 }
@@ -278,7 +314,7 @@ export function TaxForm(){
           </p>
         </div>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Income Tax"/></div>
+      <div className="sticky-res"><Panel result={res} loading={null} label="Income Tax" shareParams={{income,period}}/></div>
     </div>
   );
 }
@@ -338,85 +374,192 @@ export function PPFForm(){
   );
 }
 
-// ── Simple Interest ──────────────────────────────────────────────────
+// ── Simple Interest (Upgraded — Sliders + Area Chart) ────────────────
 export function SimpleInterestForm(){
   const { fm, fmSlider, sym } = useCurrency();
-  const [p,setP]=useState("100000"),[r,setR]=useState("10"),[t,setT]=useState("1");
+  const init = readCalcParams({ p: 500000, r: 10, t: 5 });
+  const [p,setP]=useState(init.p);
+  const [r,setR]=useState(init.r);
+  const [t,setT]=useState(init.t);
   const [res,setRes]=useState(null);
   useEffect(()=>{
-    const d=calcSimpleInterest({principal:p,rate:r,time:t});
-    if(!d){setRes(null);return;}
-    setRes(buildResult("Total Amount",fm(d.total),
-      [{label:"Principal",value:fm(d.principal)},{label:"Interest",value:fm(d.interest),highlight:true}],
-      d.insights,null,d.breakdowns));
+    const timer=setTimeout(()=>{
+      const d=calcSimpleInterest({principal:p,rate:r,time:t});
+      if(!d){setRes(null);return;}
+      // Generate growth comparison data (SI vs CI)
+      const chartData = [];
+      for (let yr = 0; yr <= t; yr++) {
+        const siVal = +p + (+p * +r * yr / 100);
+        const ciVal = +p * Math.pow(1 + +r / 100, yr);
+        chartData.push({ year: `Year ${yr}`, simple: Math.round(siVal), compound: Math.round(ciVal) });
+      }
+      const P = +p, R = +r, T = +t;
+      const chart = { type: "area", data: chartData, keys: ["simple", "compound"], xKey: "year" };
+      const ciTotal = Math.round(P * Math.pow(1 + R / 100, T));
+      const ciInterest = ciTotal - P;
+      setRes(buildResult("Total Amount",fm(d.total),
+        [{label:"Principal",value:fm(P)},{label:"SI Earned",value:fm(d.si),highlight:true},{label:"CI Would Be",value:fm(ciInterest)},{label:"CI Advantage",value:fm(ciInterest - d.si),warn:true}],
+        d.insights,chart,d.breakdowns));
+    },120);
+    return()=>clearTimeout(timer);
   },[p,r,t]);
   return (
-    <div>
-      <N label="Principal" id="sip" value={p} onChange={setP} unit={sym}/>
-      <Row2><N label="Interest Rate (%)" id="sir" value={r} onChange={setR} unit="%"/><N label="Time (Years)" id="sit" value={t} onChange={setT} unit="yr"/></Row2>
-      {res&&<Panel result={res} loading={null} label="Total Amount"/>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Sl label="Principal Amount" id="sip" min={10000} max={10000000} step={10000} value={p} onChange={setP} fmt={v=>fmSlider(v)}/>
+        <Sl label="Interest Rate (% p.a.)" id="sir" min={1} max={30} step={0.5} value={r} onChange={setR} fmt={v=>`${v}%`}/>
+        <Sl label="Time Period" id="sit" min={1} max={30} value={t} onChange={setT} fmt={v=>`${v} year${v>1?"s":""}`}/>
+        <div style={{marginTop:14,padding:"12px 14px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
+          💡 <strong>Chart shows SI vs CI comparison</strong> — see how compounding outperforms simple interest over time.
+        </div>
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Total Amount" shareParams={{p,r,t}}/>
+      </div>
     </div>
   );
 }
 
-// ── Profit Margin ────────────────────────────────────────────────────
+// ── Profit Margin (Upgraded — Donut Chart + Slider) ──────────────────
 export function ProfitMarginForm(){
-  const { fm, sym } = useCurrency();
-  const [cost,setCost]=useState("1000"),[rev,setRev]=useState("1250");
+  const { fm, fmSlider, sym } = useCurrency();
+  const init = readCalcParams({ cost: 10000, rev: 15000 });
+  const [cost,setCost]=useState(init.cost);
+  const [rev,setRev]=useState(init.rev);
   const [res,setRes]=useState(null);
   useEffect(()=>{
-    const d=calcProfitMargin({cost,price:rev});
-    if(!d){setRes(null);return;}
-    setRes(buildResult("Net Profit",fm(d.profit),
-      [{label:"Gross Margin",value:d.margin+"%",highlight:d.margin>=20,warn:d.margin<10},{label:"Markup",value:d.markup+"%"},{label:"Health",value:d.health}],
-      d.insights,null,d.breakdowns));
+    const timer=setTimeout(()=>{
+      const d=calcProfitMargin({cost,price:rev});
+      if(!d){setRes(null);return;}
+      const chart = {type:"donut",data:[
+        {name:"Cost",value:+cost,color:"#dc2626"},
+        {name:"Profit",value:Math.max(0,+rev - +cost),color:"#16a34a"},
+      ]};
+      setRes(buildResult("Net Profit",fm(d.profit),
+        [{label:"Gross Margin",value:d.margin+"%",highlight:d.margin>=20,warn:d.margin<10},{label:"Markup",value:d.markup+"%"},{label:"Health",value:d.health},{label:"Revenue",value:fm(+rev)}],
+        d.insights,chart,d.breakdowns));
+    },100);
+    return()=>clearTimeout(timer);
   },[cost,rev]);
   return (
-    <div>
-      <Row2><N label="Cost Price" id="pmc" value={cost} onChange={setCost} unit={sym}/><N label="Selling Price" id="pmr" value={rev} onChange={setRev} unit={sym}/></Row2>
-      {res&&<Panel result={res} loading={null} label="Profit Margin"/>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Sl label="Cost Price" id="pmc" min={100} max={1000000} step={100} value={cost} onChange={setCost} fmt={v=>fmSlider(v)}/>
+        <Sl label="Selling Price" id="pmr" min={100} max={1500000} step={100} value={rev} onChange={setRev} fmt={v=>fmSlider(v)}/>
+        <div style={{marginTop:14,padding:"14px",background:rev>cost?"#f0fdf4":"#fef2f2",borderRadius:"var(--r-lg)",border:`1.5px solid ${rev>cost?"#86efac":"#fca5a5"}`,textAlign:"center"}}>
+          <p style={{fontSize:11,fontWeight:700,color:rev>cost?"#16a34a":"#dc2626",textTransform:"uppercase",letterSpacing:".06em"}}>{rev>cost?"✅ Profitable":"❌ Loss"}</p>
+          <p style={{fontSize:20,fontWeight:900,color:rev>cost?"#16a34a":"#dc2626",fontFamily:"var(--font-display)"}}>{((rev-cost)/Math.max(rev,1)*100).toFixed(1)}% margin</p>
+        </div>
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Profit Margin" shareParams={{cost,rev}}/>
+      </div>
     </div>
   );
 }
 
-// ── Break Even ───────────────────────────────────────────────────────
+// ── Break Even (Upgraded — Line Chart + Slider) ─────────────────────
 export function BreakEvenForm(){
-  const { fm, sym } = useCurrency();
-  const [fixed,setFixed]=useState("50000"),[price,setPrice]=useState("100"),[vCost,setVCost]=useState("60");
+  const { fm, fmSlider, sym } = useCurrency();
+  const init = readCalcParams({ fixed: 50000, price: 100, vCost: 60 });
+  const [fixed,setFixed]=useState(init.fixed);
+  const [price,setPrice]=useState(init.price);
+  const [vCost,setVCost]=useState(init.vCost);
   const [res,setRes]=useState(null);
   useEffect(()=>{
-    const d=calcBreakEven({fixedCosts:fixed,sellingPrice:price,variableCost:vCost});
-    if(!d){setRes(null);return;}
-    setRes(buildResult("Break-Even Units",d.beUnits+" units",
-      [{label:"Break-Even Revenue",value:fm(d.beRevenue)},{label:"Contribution/Unit",value:fm(d.contribution)},{label:"Contrib Margin",value:d.contributionMargin+"%",highlight:true}],
-      d.insights,null,d.breakdowns));
+    const timer=setTimeout(()=>{
+      const d=calcBreakEven({fixedCosts:fixed,sellingPrice:price,variableCost:vCost});
+      if(!d){setRes(null);return;}
+      // Generate revenue vs cost line chart data
+      const beUnits = +d.beUnits || 100;
+      const maxUnits = Math.ceil(beUnits * 2.5);
+      const step = Math.max(1, Math.ceil(maxUnits / 12));
+      const chartData = [];
+      for (let u = 0; u <= maxUnits; u += step) {
+        chartData.push({ label: `${u}`, revenue: u * +price, cost: +fixed + u * +vCost, profit: u * +price - (+fixed + u * +vCost) });
+      }
+      const chart = { type: "line", data: chartData, keys: ["revenue", "cost", "profit"], xKey: "label" };
+      setRes(buildResult("Break-Even Units",d.beUnits+" units",
+        [{label:"Break-Even Revenue",value:fm(d.beRevenue)},{label:"Contribution/Unit",value:fm(d.contribution)},{label:"Contrib Margin",value:d.contributionMargin+"%",highlight:true},{label:"Fixed Costs",value:fm(+fixed)}],
+        d.insights,chart,d.breakdowns));
+    },120);
+    return()=>clearTimeout(timer);
   },[fixed,price,vCost]);
   return (
-    <div>
-      <N label="Total Fixed Costs" id="bef" value={fixed} onChange={setFixed} unit={sym}/>
-      <Row2><N label="Price Per Unit" id="bep" value={price} onChange={setPrice} unit={sym}/><N label="Variable Cost Per Unit" id="bev" value={vCost} onChange={setVCost} unit={sym}/></Row2>
-      {res&&<Panel result={res} loading={null} label="Break-Even Point"/>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Sl label="Total Fixed Costs" id="bef" min={1000} max={5000000} step={1000} value={fixed} onChange={setFixed} fmt={v=>fmSlider(v)}/>
+        <Sl label="Price Per Unit" id="bep" min={1} max={10000} step={1} value={price} onChange={setPrice} fmt={v=>fmSlider(v)}/>
+        <Sl label="Variable Cost Per Unit" id="bev" min={0} max={9999} step={1} value={vCost} onChange={setVCost} fmt={v=>fmSlider(v)}/>
+        {+price > +vCost && (
+          <div style={{marginTop:14,padding:"12px 14px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
+            📊 Chart shows <strong>Revenue vs Total Cost</strong> intersection — the break-even point where profit begins.
+          </div>
+        )}
+        {+price <= +vCost && (
+          <div style={{marginTop:14,padding:"12px 14px",background:"#fef2f2",borderRadius:"var(--r-lg)",border:"1.5px solid #fca5a5",fontSize:12,color:"#dc2626",fontWeight:600}}>
+            ⚠️ Price must exceed variable cost to ever break even.
+          </div>
+        )}
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Break-Even Point" shareParams={{fixed,price,vCost}}/>
+      </div>
     </div>
   );
 }
 
-// ── Discount ─────────────────────────────────────────────────────────
+// ── Discount (Upgraded — Donut Chart + Slider) ──────────────────────
 export function DiscountForm(){
-  const { fm, sym } = useCurrency();
-  const [price,setPrice]=useState("2000"),[disc,setDisc]=useState("15"),[tax,setTax]=useState("0");
+  const { fm, fmSlider, sym } = useCurrency();
+  const init = readCalcParams({ price: 5000, disc: 25, tax: 0 });
+  const [price,setPrice]=useState(init.price);
+  const [disc,setDisc]=useState(init.disc);
+  const [tax,setTax]=useState(init.tax);
   const [res,setRes]=useState(null);
   useEffect(()=>{
-    const d=calcDiscount({originalPrice:price,discountPct:disc,taxRate:tax});
-    if(!d){setRes(null);return;}
-    setRes(buildResult("Final Price",fm(d.final),
-      [{label:"You Save",value:fm(d.totalSaved),highlight:true},{label:"Savings %",value:d.savingsPct+"%"},{label:"Original Price",value:fm(d.original)}],
-      d.insights,null,d.breakdowns));
+    const timer=setTimeout(()=>{
+      const d=calcDiscount({originalPrice:price,discountPct:disc,taxRate:tax});
+      if(!d){setRes(null);return;}
+      const chart = {type:"donut",data:[
+        {name:"You Pay",value:+d.final,color:"#2563eb"},
+        {name:"You Save",value:+d.totalSaved,color:"#16a34a"},
+        ...(+tax > 0 ? [{name:"Tax",value:Math.round(+d.final * +tax / 100),color:"#f59e0b"}] : []),
+      ]};
+      setRes(buildResult("Final Price",fm(d.final),
+        [{label:"You Save",value:fm(d.totalSaved),highlight:true},{label:"Savings %",value:d.savingsPct+"%"},{label:"Original",value:fm(d.original)},{label:"Discount Amt",value:fm(Math.round(+price * +disc / 100))}],
+        d.insights,chart,d.breakdowns));
+    },100);
+    return()=>clearTimeout(timer);
   },[price,disc,tax]);
   return (
-    <div>
-      <N label="Original Price" id="dp" value={price} onChange={setPrice} unit={sym}/>
-      <Row2><N label="Discount (%)" id="dd" value={disc} onChange={setDisc} unit="%"/><N label="Tax (%)" id="dt" value={tax} onChange={setTax} unit="%"/></Row2>
-      {res&&<Panel result={res} loading={null} label="Discount Price"/>}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Sl label="Original Price" id="dp" min={100} max={500000} step={100} value={price} onChange={setPrice} fmt={v=>fmSlider(v)}/>
+        <Sl label="Discount (%)" id="dd" min={1} max={90} step={1} value={disc} onChange={setDisc} fmt={v=>`${v}%`}/>
+        <Sl label="Tax / GST (%)" id="dt" min={0} max={30} step={0.5} value={tax} onChange={setTax} fmt={v=>`${v}%`}/>
+        {/* Visual price comparison */}
+        <div style={{marginTop:16,padding:"16px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+            <span style={{fontSize:12,fontWeight:700,color:"var(--text3)",textTransform:"uppercase",letterSpacing:".05em"}}>Price Comparison</span>
+            <span style={{fontSize:11,fontWeight:800,color:"#16a34a",background:"#f0fdf4",padding:"2px 10px",borderRadius:100,border:"1px solid #86efac"}}>{disc}% OFF</span>
+          </div>
+          <div style={{display:"flex",gap:12}}>
+            <div style={{flex:1,textAlign:"center",padding:"10px",borderRadius:"var(--r-md)",background:"var(--surface)",border:"1px solid var(--border)"}}>
+              <p style={{fontSize:10,color:"var(--text3)",fontWeight:700,textTransform:"uppercase"}}>Original</p>
+              <p style={{fontSize:18,fontWeight:800,color:"var(--text3)",textDecoration:"line-through"}}>{fm(+price)}</p>
+            </div>
+            <div style={{display:"flex",alignItems:"center",fontSize:18,color:"var(--text3)"}}>→</div>
+            <div style={{flex:1,textAlign:"center",padding:"10px",borderRadius:"var(--r-md)",background:"#eff6ff",border:"1.5px solid #93c5fd"}}>
+              <p style={{fontSize:10,color:"#2563eb",fontWeight:700,textTransform:"uppercase"}}>Final</p>
+              <p style={{fontSize:18,fontWeight:800,color:"#2563eb"}}>{fm(Math.round(+price * (1 - +disc/100) * (1 + +tax/100)))}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Discount Price" shareParams={{price,disc,tax}}/>
+      </div>
     </div>
   );
 }
