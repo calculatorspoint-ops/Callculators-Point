@@ -252,12 +252,15 @@ export function ROIForm(){
 
 // ── Salary ───────────────────────────────────────────────────────────
 export function SalaryForm(){
-  const { fm, fmSlider, sym, vatLabel, taxRate, cur, currency } = useCurrency();
+  const { fm, fmSlider, sym, vatLabel, taxRate, cur, currency, countryCode } = useCurrency();
   const [amt,setAmt]=useState("50000"),[period,setPeriod]=useState("monthly"),[allw,setAllw]=useState("0"),[dedu,setDedu]=useState("0");
   const [res,setRes]=useState(null);
   useEffect(()=>{
     const t=setTimeout(()=>{
-      const d=calcSalary({amount:amt,period,region:currency==="PKR"?"pk":"global",allowances:+allw||0,deductions:+dedu||0});
+      // Map country code to salary region: PK → pk, IN → in, US → us, otherwise → global
+      const regionMap = { PK:'pk', IN:'in', US:'us', GB:'uk', CA:'ca', AU:'au' };
+      const region = regionMap[countryCode] || 'global';
+      const d=calcSalary({amount:amt,period,region,allowances:+allw||0,deductions:+dedu||0});
       if(!d){setRes(null);return;}
       const chart = { type: "donut", data: [
         { name: "Take Home", value: d.netMonthly, color: "var(--brand)" },
@@ -288,20 +291,31 @@ export function SalaryForm(){
 
 // ── Income Tax ───────────────────────────────────────────────────────
 export function TaxForm(){
-  const { fm, fmSlider, sym, vatLabel, taxRate, cur, currency } = useCurrency();
+  const { fm, fmSlider, sym, vatLabel, taxRate, cur, currency, countryCode } = useCurrency();
   const [income,setIncome]=useState("1200000"),[period,setPeriod]=useState("annual");
   const [res,setRes]=useState(null);
   useEffect(()=>{
     const t=setTimeout(()=>{
-      const d=calcTax({income,period,region:currency==="PKR"?"pk":"global"});
+      // Map country code to tax region
+      const regionMap = { PK:'pk', IN:'in', US:'us', GB:'uk', CA:'ca', AU:'au' };
+      const region = regionMap[countryCode] || 'global';
+      const d=calcTax({income,period,region});
       if(!d){setRes(null);return;}
-      const chart={type:"pie",data:[{name:"Tax",value:d.tax,color:"#ef4444"},{name:"Net Income",value:d.grossAnnual-d.tax,color:"var(--brand)"}]};
+      const chart={type:"pie",data:[{name:vatLabel,value:d.tax,color:"#ef4444"},{name:"Net Income",value:d.grossAnnual-d.tax,color:"var(--brand)"}]};
       setRes(buildResult("Income Tax",fm(d.tax),
         [{label:"Effective Rate",value:d.effRate+"%",highlight:true},{label:"Monthly Tax",value:fm(d.monthlyTax)},{label:"Net Annual",value:fm(d.netAnnual)},{label:"Current Slab",value:d.slabLabel}],
         d.insights,chart,d.slabBreakdown));
     },80);
     return()=>clearTimeout(t);
-  },[income,period,currency]);
+  },[income,period,countryCode]);
+
+  // Generate country-specific notes
+  const taxNotes = {
+    PK: "Tax is calculated using official FBR Salary Slabs for 2024-2025.",
+    IN: "Tax is calculated using India Income Tax slabs for 2024-2025.",
+    US: "US Federal income tax estimated. State taxes vary.",
+    GB: "UK income tax estimated using HMRC bands for 2024-2025.",
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -310,7 +324,7 @@ export function TaxForm(){
         <Tabs tabs={["Annual","Monthly"]} active={period==="annual"?"Annual":"Monthly"} onChange={v=>setPeriod(v.toLowerCase())}/>
         <div style={{marginTop:24,padding:16,background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1.5px solid var(--border)"}}>
           <p style={{fontSize:12,color:"var(--text2)",lineHeight:1.6}}>
-            <strong>Note:</strong> {currency === "PKR" ? "Tax is calculated using official FBR Salary Slabs for 2024-2025." : "Tax is calculated using a global estimated flat rate."}
+            <strong>Note:</strong> {taxNotes[countryCode] || `${vatLabel} is calculated using a global estimated flat rate. Actual rates vary by jurisdiction.`}
           </p>
         </div>
       </div>
@@ -321,16 +335,27 @@ export function TaxForm(){
 
 // ── GST / VAT ────────────────────────────────────────────────────────
 export function GSTForm(){
-  const { fm, sym, vatLabel, cur } = useCurrency();
-  const [amt,setAmt]=useState("10000"),[rate,setRate]=useState(18),[type,setType]=useState("inclusive");
+  const { fm, sym, vatLabel, taxRate: regionRate, cur } = useCurrency();
+  // Default rate comes from the detected region, fallback to 18
+  const defaultRate = regionRate > 0 ? regionRate : 18;
+  const [amt,setAmt]=useState("10000");
+  const [rate,setRate]=useState(defaultRate);
+  const [type,setType]=useState("inclusive");
   const [res,setRes]=useState(null);
+
+  // Reset rate when region changes
+  useEffect(()=>{ setRate(regionRate > 0 ? regionRate : 18); },[regionRate]);
+
   useEffect(()=>{
     const d=calcGST({amount:amt,gstRate:rate,type});
     if(!d){setRes(null);return;}
     setRes(buildResult(vatLabel+" Amount",fm(d.gstAmt),
-      [{label:"Base Amount",value:fm(d.base)},{label:"Final Total",value:fm(d.total),highlight:true},{label:"Rate",value:rate+"%"}],
+      [{label:"Base Amount",value:fm(d.base)},{label:"Final Total",value:fm(d.total),highlight:true},{label:vatLabel+" Rate",value:rate+"%"}],
       d.insights,null,d.breakdowns));
-  },[amt,rate,type]);
+  },[amt,rate,type,vatLabel]);
+
+  // Show 4 common preset rates — include the region default
+  const presetRates = [...new Set([regionRate > 0 ? regionRate : 18, 5, 10, 15, 20].filter(Boolean))].sort((a,b)=>a-b).slice(0,5);
 
   return (
     <div>
@@ -338,11 +363,14 @@ export function GSTForm(){
       <N label="Amount" id="ga" value={amt} onChange={setAmt} unit={sym}/>
       <L t={vatLabel + " Rate"} id="gr"/>
       <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:16}}>
-        {[5,12,18,28].map(r=>(
-          <button key={r} onClick={()=>setRate(r)} style={{padding:"8px 16px",borderRadius:"var(--r-md)",border:rate===r?"2px solid var(--brand)":"1px solid var(--border)",background:rate===r?"var(--p50)":"var(--surface)",color:rate===r?"var(--brand)":"var(--text2)",fontWeight:700,fontSize:13,cursor:"pointer"}}>{r}%</button>
+        {presetRates.map(r=>(
+          <button key={r} onClick={()=>setRate(r)} style={{padding:"8px 16px",borderRadius:"var(--r-md)",border:rate===r?"2px solid var(--brand)":"1px solid var(--border)",background:rate===r?"var(--p50)":"var(--surface)",color:rate===r?"var(--brand)":"var(--text2)",fontWeight:700,fontSize:13,cursor:"pointer"}}>{r}%{r===regionRate&&regionRate>0?" ✓":""}</button>
         ))}
         <input type="number" value={rate} onChange={e=>setRate(e.target.value)} style={{width:70,height:38,padding:"0 10px",borderRadius:"var(--r-md)",border:"1px solid var(--border)",background:"var(--surface)",color:"var(--text)",fontSize:13}} placeholder="Custom"/>
       </div>
+      {regionRate > 0 && (
+        <p style={{fontSize:11,color:"var(--text3)",marginBottom:12}}>✅ Default {vatLabel} rate for your region: <strong>{regionRate}%</strong></p>
+      )}
       {res&&<Panel result={res} loading={null} label={vatLabel}/>}
     </div>
   );

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { parseLocalizedNumber, formatInputNumber } from "@/utils/validation.js";
 import { useCurrencyStore, formatMoney as _fmtMoney } from "@/store/useCurrencyStore.js";
+import { useGeoStore } from "@/core/geo-engine/geoStore.js";
 import { useAppStore } from "@/store/useAppStore.js";
 import { fmt, CURRENCIES } from "@/core/calculationEngine.js";
 import { copyShareLink } from "@/utils/urlParams.js";
@@ -239,15 +240,55 @@ export const buildResult = (label, val, stats, insights, chart, breakdowns) => (
 });
 
 export const useCurrency = () => {
-  const { currency } = useCurrencyStore();
-  const sym = CURRENCIES[currency]?.symbol || "$";
+  // Read everything from the geo-engine (single source of truth)
+  const countryCode    = useGeoStore(s => s.countryCode);
+  const rules          = useGeoStore(s => s.rules);
+
+  const currency       = rules?.currency       ?? 'USD';
+  const sym            = rules?.currencySymbol  ?? '$';
+  const locale         = rules?.locale          ?? 'en-US';
+  const vatLabel       = rules?.taxLabel        ?? 'Tax';
+  const taxRate        = rules?.taxRate         ?? 0;
+  const measureSystem  = rules?.measureSystem   ?? 'metric';
+  const dateFormat     = rules?.dateFormat      ?? 'MM/DD/YYYY';
+
+  const fm = (value) => {
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: 2,
+      }).format(value);
+    } catch {
+      return `${sym}${Number(value).toFixed(2)}`;
+    }
+  };
+
+  const fmSlider = (v) => {
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: 0,
+      }).format(v);
+    } catch {
+      return `${sym}${fmt(v)}`;
+    }
+  };
+
   return {
     sym,
     currency,
-    fm: formatMoney,
-    fmSlider: (v) => `${sym}${fmt(v)}`,
-    vatLabel: currency === "PKR" ? "GST" : "Tax",
-    taxRate: currency === "PKR" ? 18 : 0,
-    cur: currency
+    locale,
+    vatLabel,
+    taxRate,
+    measureSystem,
+    dateFormat,
+    countryCode,
+    rules,
+    fm,
+    fmSlider,
+    // Legacy aliases
+    cur: currency,
   };
 };

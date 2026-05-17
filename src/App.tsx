@@ -49,7 +49,12 @@ function PageLoader() {
 
 export default function App() {
   // Bootstrap geo-localisation once on mount
-  useEffect(() => { initGeoDetection(); }, []);
+  useEffect(() => {
+    // Migrate: clear the old v2 key so users aren't stuck on stale data
+    try { localStorage.removeItem('CalcPoint-geo-v2'); } catch { /* ignore */ }
+    // Start geo detection
+    initGeoDetection();
+  }, []);
 
   return (
     <ErrorBoundary>

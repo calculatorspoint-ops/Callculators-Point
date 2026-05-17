@@ -192,7 +192,7 @@ export function FloatingRegionSwitcher({
 }) {
   const {
     countryCode, flag, countryName, currency, currencySymbol,
-    autoDetected, userSelected, detecting,
+    autoDetected, userSelected, detecting, detectionSource,
     setCountry, resetToAuto,
     allCountries, byContinent, continents,
   } = useRegion();
@@ -363,7 +363,20 @@ export function FloatingRegionSwitcher({
                     background: 'var(--success-light, #dcfce7)',
                     color: 'var(--success, #16a34a)',
                     borderRadius: 4, fontWeight: 600,
-                  }}>Auto</span>
+                  }}>
+                    Auto
+                    {detectionSource && detectionSource !== 'fallback' && (
+                      <span style={{ opacity: 0.7, fontWeight: 400 }}>
+                        {' '}· {detectionSource === 'ipapi.co' || detectionSource === 'ip-api.com'
+                          ? 'IP'
+                          : detectionSource === 'browser-locale'
+                          ? 'Browser'
+                          : detectionSource === 'timezone'
+                          ? 'TZ'
+                          : ''}
+                      </span>
+                    )}
+                  </span>
                 )}
                 {userSelected && (
                   <span style={{
@@ -372,6 +385,14 @@ export function FloatingRegionSwitcher({
                     color: 'var(--brand, #6366f1)',
                     borderRadius: 4, fontWeight: 600,
                   }}>Custom</span>
+                )}
+                {!autoDetected && !userSelected && detecting && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, padding: '1px 5px',
+                    background: '#fef9c3',
+                    color: '#854d0e',
+                    borderRadius: 4, fontWeight: 600,
+                  }}>Detecting…</span>
                 )}
               </p>
             </div>

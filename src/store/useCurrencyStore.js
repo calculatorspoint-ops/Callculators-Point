@@ -92,12 +92,13 @@ export function toLocal(usdAmount, currencyCode = 'USD') {
  * Returns all fields the legacy components used to destructure.
  */
 export function useCurrencyStore() {
-  const countryCode    = useGeoStore(s => s.countryCode);
-  const rules          = useGeoStore(s => s.rules);
-  const autoDetected   = useGeoStore(s => s.autoDetected);
-  const detecting      = useGeoStore(s => s.detecting);
-  const setCountryFull = useGeoStore(s => s.setCountry);
-  const detectRegion   = useGeoStore(s => s.detectRegion);
+  const countryCode      = useGeoStore(s => s.countryCode);
+  const rules            = useGeoStore(s => s.rules);
+  const autoDetected     = useGeoStore(s => s.autoDetected);
+  const detecting        = useGeoStore(s => s.detecting);
+  const detectionSource  = useGeoStore(s => s.detectionSource);
+  const setCountryFull   = useGeoStore(s => s.setCountry);
+  const detectRegion     = useGeoStore(s => s.detectRegion);
 
   const currency = rules?.currency ?? 'USD';
 
@@ -111,6 +112,7 @@ export function useCurrencyStore() {
     setCurrency,
     autoDetected,
     detecting,
+    detectionSource,
     // legacy alias: some components call detectFromIP
     detectFromIP : detectRegion,
     detectRegion,
@@ -125,10 +127,11 @@ export function useCurrencyStore() {
 useCurrencyStore.getState = () => {
   const state = useGeoStore.getState();
   return {
-    currency    : state.rules?.currency ?? 'USD',
-    currencyCode: state.countryCode ?? 'US',
-    rules       : state.rules,
-    autoDetected: state.autoDetected,
-    userSelected: state.userSelected,
+    currency       : state.rules?.currency ?? 'USD',
+    currencyCode   : state.countryCode ?? 'US',
+    rules          : state.rules,
+    autoDetected   : state.autoDetected,
+    userSelected   : state.userSelected,
+    detectionSource: state.detectionSource,
   };
 };

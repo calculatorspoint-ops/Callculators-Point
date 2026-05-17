@@ -59,14 +59,15 @@ import {
  * @returns {RegionAPI}
  */
 export function useRegion() {
-  const countryCode    = useGeoStore(s => s.countryCode);
-  const rules          = useGeoStore(s => s.rules);
-  const autoDetected   = useGeoStore(s => s.autoDetected);
-  const userSelected   = useGeoStore(s => s.userSelected);
-  const detecting      = useGeoStore(s => s.detecting);
-  const setCountry     = useGeoStore(s => s.setCountry);
-  const resetToAuto    = useGeoStore(s => s.resetToAuto);
-  const detectRegion   = useGeoStore(s => s.detectRegion);
+  const countryCode     = useGeoStore(s => s.countryCode);
+  const rules           = useGeoStore(s => s.rules);
+  const autoDetected    = useGeoStore(s => s.autoDetected);
+  const userSelected    = useGeoStore(s => s.userSelected);
+  const detecting       = useGeoStore(s => s.detecting);
+  const detectionSource = useGeoStore(s => s.detectionSource);
+  const setCountry      = useGeoStore(s => s.setCountry);
+  const resetToAuto     = useGeoStore(s => s.resetToAuto);
+  const detectRegion    = useGeoStore(s => s.detectRegion);
 
   // Stable derived values — only re-computed when countryCode changes
   const derived = useMemo(() => {
@@ -116,6 +117,8 @@ export function useRegion() {
     autoDetected,
     userSelected,
     detecting,
+    detectionSource,
+    isAutoDetected: autoDetected && !userSelected,
 
     // Derived (stable per country)
     ...derived,
