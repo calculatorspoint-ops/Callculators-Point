@@ -45,6 +45,17 @@ const MathCalcs = {
   PrimeForm: lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.PrimeForm }))),
 };
 
+const Education = {
+  MarksPercentage: lazy(() => import("../../modules/education/marks-percentage/MarksPercentageCalculator.tsx").then(m => ({ default: m.MarksPercentageCalculator }))),
+  Attendance: lazy(() => import("../../modules/education/attendance/AttendanceCalculator.tsx").then(m => ({ default: m.AttendanceCalculator }))),
+  IELTS: lazy(() => import("../../modules/education/ielts/IELTSBandCalculator.tsx").then(m => ({ default: m.IELTSBandCalculator }))),
+  SAT: lazy(() => import("../../modules/education/sat/SATScoreCalculator.tsx").then(m => ({ default: m.SATScoreCalculator }))),
+  StudyTimer: lazy(() => import("../../modules/education/study-timer/StudyTimer.tsx").then(m => ({ default: m.StudyTimer }))),
+  TargetGPA: lazy(() => import("../../modules/education/target-gpa/TargetGPACalculator.tsx").then(m => ({ default: m.TargetGPACalculator }))),
+  RequiredGrade: lazy(() => import("../../modules/education/required-grade/RequiredGradeCalculator.tsx").then(m => ({ default: m.RequiredGradeCalculator }))),
+  FinalGrade: lazy(() => import("../../modules/education/required-grade/RequiredGradeCalculator.tsx").then(m => ({ default: m.RequiredGradeCalculator }))),
+};
+
 const Utility = {
   UnitForm: lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: m.UnitForm }))),
   AreaForm: lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: m.AreaForm }))),
@@ -110,11 +121,19 @@ const FORMS = {
   "quadratic-calculator":         MathCalcs.QuadraticForm,
   "pythagorean-calculator":       MathCalcs.PythagoreanForm,
   "fraction-calculator":          MathCalcs.FractionForm,
-  "gpa-calculator":               MathCalcs.GPAForm,
-  "grade-calculator":             MathCalcs.GPAForm,
-  "final-grade-calculator":       MathCalcs.GPAForm,
-  "cgpa-percentage-calculator":   MathCalcs.CGPAForm,
   "prime-number-checker":         MathCalcs.PrimeForm,
+
+  // Education
+  "gpa-calculator":               MathCalcs.GPAForm,
+  "marks-percentage-calculator":  Education.MarksPercentage,
+  "attendance-calculator":        Education.Attendance,
+  "final-grade-calculator":       Education.FinalGrade,
+  "cgpa-percentage-calculator":   MathCalcs.CGPAForm,
+  "ielts-band-calculator":        Education.IELTS,
+  "sat-score-calculator":         Education.SAT,
+  "study-timer":                  Education.StudyTimer,
+  "target-gpa-calculator":        Education.TargetGPA,
+  "required-grade-calculator":    Education.RequiredGrade,
 
   // Utility
   "area-calculator":               Utility.AreaForm,

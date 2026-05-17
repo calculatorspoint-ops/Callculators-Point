@@ -120,17 +120,60 @@ export const CALC_FAQS = {
     { q:"When is the fertile window?", a:"Ovulation typically occurs about 14 days BEFORE your next period. The fertile window spans approximately 5 days before ovulation through 1 day after." },
   ],
   "gpa-calculator": [
-    { q:"How is GPA calculated?", a:"GPA = Sum of (Grade Points × Credit Hours) ÷ Total Credit Hours. Each letter grade corresponds to a point value: A=4.0, B=3.0, C=2.0, D=1.0, F=0." },
-    { q:"What GPA do you need for Dean's List?", a:"Most universities require a GPA of 3.5-3.7 or higher for Dean's List. Requirements vary by institution — check your university's specific criteria." },
+    { q:"How is GPA calculated?", a:"GPA = Sum of (Grade Points × Credit Hours) ÷ Total Credit Hours. Each letter grade corresponds to a point value: A+=4.0, A=4.0, A-=3.7, B+=3.3, B=3.0, B-=2.7, C+=2.3, C=2.0, D=1.0, F=0.0. A 3-credit A and a 3-credit F average to exactly 2.0." },
+    { q:"What GPA do I need for Dean's List?", a:"Most universities require a GPA of 3.5–3.7 or higher for Dean's List. Cum Laude typically starts at 3.5, Magna Cum Laude at 3.7, and Summa Cum Laude at 3.9+. Requirements vary by institution — check your university's catalog." },
+    { q:"How can I raise my GPA quickly?", a:"Focus on high-credit courses first — a 4-credit A has more impact than a 1-credit A. Retaking a failed course to replace the F can dramatically improve your GPA. Consistent A/A- performance is more sustainable than sporadic excellence." },
+    { q:"What is the difference between semester GPA and cumulative GPA?", a:"Semester GPA reflects only that semester's courses. Cumulative GPA is the weighted average across all completed semesters. Cumulative GPA changes slowly the more credits you've earned." },
   ],
-  "grade-calculator": [
-    { q:"How do I calculate my final grade?", a:"Multiply each assignment grade by its weight (percentage), sum all weighted scores, then divide by the total weight. For example: Midterm (30% × 85) + Final (40% × 90) + Homework (30% × 95) = 90." },
+  "marks-percentage-calculator": [
+    { q:"How do I calculate percentage from marks?", a:"Percentage = (Total Marks Obtained ÷ Total Maximum Marks) × 100. For example, if you scored 420 out of 500, your percentage = (420 ÷ 500) × 100 = 84%." },
+    { q:"What is a distinction percentage?", a:"In most Indian and Pakistani university systems, 75%+ is Distinction, 60-74% is First Division, 50-59% is Second Division, 40-49% is Third Division/Pass, and below 40% is Fail. Standards vary by board and institution." },
+    { q:"How does the reverse percentage mode work?", a:"Reverse mode calculates how many total marks you need to achieve a specific percentage. For example, to score 75% on a 500-mark exam, you need 375 marks. Useful for setting study targets." },
+    { q:"Can I track multiple subjects separately?", a:"Yes! Add each subject with its own marks and total. The calculator shows per-subject percentage, grade classification, and pass/fail status, plus an overall percentage across all subjects combined." },
+  ],
+  "attendance-calculator": [
+    { q:"What is the minimum attendance required?", a:"Most Indian and Pakistani universities require 75% minimum attendance to appear for semester exams. Some institutions require 80-85%. Always verify with your institution's specific policy." },
+    { q:"How many classes can I miss safely?", a:"Safe Bunks = floor(Attended × 100 ÷ MinRequired - TotalHeld). For example, with 30/40 classes (75%), you can't skip any more without falling below 75%. With 38/40 (95%), you have room for several absences." },
+    { q:"What does the Bunk Planner mode do?", a:"Bunk Planner shows exactly how many classes you can safely skip per subject without falling below your minimum attendance threshold. It also shows how many classes you need to attend to reach your target percentage." },
+    { q:"How is attendance percentage calculated?", a:"Attendance % = (Classes Attended ÷ Total Classes Held) × 100. If you attended 36 out of 48 classes, your attendance = 75%. This is calculated per-subject and overall across all subjects." },
   ],
   "final-grade-calculator": [
-    { q:"What grade do I need on my final exam?", a:"Required Grade = (Target Grade - Current Grade × (1 - Final Weight)) ÷ Final Weight. If your current average is 80%, your target is 85%, and the final is worth 30%, you need a 96.7%." },
+    { q:"What grade do I need on my final exam?", a:"Required Grade = (Target% × TotalWeight - CompletedPoints) ÷ PendingWeight × 100. If your current weighted average is 78% with assignments worth 60%, and the final exam is 40%, you need 83.5% on the final to achieve 80% overall." },
+    { q:"How do weighted grades work?", a:"Weighted grades multiply each component's score by its percentage weight. Example: Assignments (30% × 85) + Midterm (30% × 78) + Final (40% × ?) = overall. This ensures each component contributes proportionally to your final grade." },
+    { q:"What is the best/worst case scenario?", a:"Best Case shows your maximum possible grade if you score 100% on all pending work. Worst Case shows your guaranteed minimum if you score 0% on all pending work. Your actual grade will fall between these two values." },
   ],
   "cgpa-percentage-calculator": [
-    { q:"How do I convert CGPA to percentage?", a:"The most common formula is Percentage = CGPA × 9.5. However, different universities use different multipliers. VTU uses (CGPA × 10) - 5. HEC Pakistan uses CGPA × 10." },
+    { q:"How do I convert CGPA to percentage?", a:"The standard formula is Percentage = CGPA × 9.5, used by many Indian universities per UGC guidelines. HEC Pakistan uses CGPA × 10. VTU Bangalore uses (CGPA × 10) - 5. Anna University uses CGPA × 10. Always verify with your specific institution." },
+    { q:"Which CGPA formula should I use?", a:"Select your university system from the dropdown. If your university isn't listed, use Standard (×9.5) for most Indian universities, or ×10 for Pakistani universities. Many employers accept the standard ×9.5 formula." },
+    { q:"What is the difference between CGPA and SGPA?", a:"CGPA (Cumulative Grade Point Average) is the overall average across all semesters. SGPA (Semester Grade Point Average) is the GPA for a single semester. CGPA is typically the weighted average of all SGPAs considering credits." },
+  ],
+  "ielts-band-calculator": [
+    { q:"How is the IELTS overall band score calculated?", a:"The overall band is the average of the four sections (Listening, Reading, Writing, Speaking) rounded to the nearest 0.5. Averages that are exactly .25 or above round up. For example, an average of 6.625 rounds to 6.5, while 6.75 rounds to 7.0." },
+    { q:"What IELTS score do I need for UK universities?", a:"Most UK universities require Band 6.5–7.5 overall with no section below 6.0 for undergraduate. Postgraduate programs and competitive universities typically require Band 7.0+. Oxford and Cambridge often require 7.5." },
+    { q:"What is the difference between Academic and General IELTS?", a:"Academic IELTS is for university admission and professional registration. General Training is for work experience, secondary education, and immigration to Australia, Canada, and New Zealand. Both have the same Listening and Speaking tests; Reading and Writing differ." },
+    { q:"Can I use raw scores for Listening and Reading?", a:"Yes! Switch to 'Raw Score' mode and enter the number of correct answers out of 40. The calculator converts these to official IELTS band scores using the official conversion table. Writing and Speaking must be entered as band scores (0–9 in 0.5 steps)." },
+    { q:"What IELTS score do I need for Canada PR?", a:"For Canada Express Entry (Federal Skilled Worker), you need minimum CLB 7 which corresponds to IELTS 6.0 in all four sections. Higher scores earn more Comprehensive Ranking System (CRS) points." },
+  ],
+  "sat-score-calculator": [
+    { q:"What is a good SAT score?", a:"The national average is around 1010–1060. A 1200 is above average (74th percentile), 1400 is very strong (95th percentile), and 1500+ is elite (98th+). 'Good' depends on your target universities — research average scores for admitted students." },
+    { q:"What is the Digital SAT?", a:"The Digital SAT (launched 2024) replaced the paper SAT. It's shorter (2 hours 14 minutes vs. 3 hours), adaptive by section, and scored the same (400–1600). The Math section still covers Algebra, Advanced Math, Problem Solving & Data Analysis, and Geometry." },
+    { q:"How is the SAT score converted to a percentile?", a:"Percentile rank shows what percentage of test takers you scored equal to or better than. A 1400 score is approximately the 95th percentile, meaning you scored higher than 95% of test takers. Percentiles are recalculated periodically by College Board." },
+    { q:"How do I improve my SAT score?", a:"Targeted practice is most effective: identify weak areas using official practice tests, use Khan Academy's free personalized SAT prep (official College Board partner), and take 3+ full-length practice tests under real test conditions. Most students improve 50–150 points with 8+ weeks of dedicated prep." },
+  ],
+  "study-timer": [
+    { q:"What is the Pomodoro Technique?", a:"Developed by Francesco Cirillo in the 1980s, the Pomodoro Technique uses 25-minute focused work sessions ('Pomodoros') separated by 5-minute breaks. After 4 Pomodoros, take a longer 15-30 minute break. Research shows this rhythm improves sustained attention and reduces mental fatigue." },
+    { q:"How many Pomodoros should I do per day?", a:"Most productive people complete 8–12 Pomodoros (4–6 hours of focused work) per day. Quality matters more than quantity — consistent 2-hour daily sessions often outperform irregular 6-hour marathon sessions." },
+    { q:"Can I customize the timer durations?", a:"Yes! Select 'Custom' mode to set your own focus, short break, and long break durations. Popular alternatives include 50/10 (Deep Work mode) and 15/3 (Short Burst mode). Research suggests 90-minute ultradian rhythms for complex problem-solving." },
+  ],
+  "target-gpa-calculator": [
+    { q:"How do I calculate my target GPA?", a:"Required Future GPA = (Target × TotalCredits - CurrentGPA × CurrentCredits) ÷ FutureCredits. If your current GPA is 3.0 with 60 credits and you want 3.5 after 90 total credits, you need: (3.5×90 - 3.0×60) ÷ 30 = (315 - 180) ÷ 30 = 4.5 — which exceeds 4.0, making it impossible without more credits." },
+    { q:"Can I realistically improve my GPA significantly in my final year?", a:"It depends on how many credits you've already earned. With 30 credits completed at 2.5 GPA, you can potentially reach 3.5 in the remaining 30 credits by earning a 4.5 (impossible). With fewer completed credits, more change is mathematically possible. Earlier action has exponentially more impact." },
+    { q:"What GPA do I need for graduate school?", a:"Most graduate programs require a minimum 3.0 GPA. Competitive programs at top universities prefer 3.5+. Some professional programs (MBA, Law) weight undergraduate institution selectivity alongside GPA. A strong upward trend in your final semesters can offset a lower overall GPA." },
+  ],
+  "required-grade-calculator": [
+    { q:"How do I calculate what grade I need on my final?", a:"Required Final Grade = (Target Overall% × TotalWeight - EarnedPoints) ÷ FinalWeight × 100. If you have 75% in a class (which is worth 70% of your grade) and want 80% overall, and your final is worth 30%: you need (80×100% - 75×70) ÷ 30 = (8000 - 5250) ÷ 30 = 91.7%." },
+    { q:"What if the required grade exceeds 100%?", a:"If the required score is over 100%, your target grade is mathematically impossible with your current standing. You'll need to either lower your target, or accept that the best case scenario is your new maximum. The Best Case indicator shows your absolute maximum achievable grade." },
+    { q:"How do I handle different grading scales?", a:"Select your institution's grading system from the Scale dropdown. US Letter Grade, UK Classification (First/2:1/2:2), German Grading (1–6), and Percentage-Only systems are all supported. The required grade and grade labels update automatically." },
   ],
   "scientific-calculator": [
     { q:"What is DEG vs RAD mode?", a:"DEG (degrees) uses the 360° system. RAD (radians) uses the 2π system. Most everyday calculations use degrees. Scientific and engineering formulas often use radians." },
