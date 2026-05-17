@@ -12,6 +12,9 @@ html, body {
 }
 *, *::before, *::after {
   box-sizing: border-box;
+}
+/* max-width containment only for media — NOT for positioned dropdowns */
+img, video, canvas, svg, iframe, embed, object {
   max-width: 100%;
 }
 
@@ -425,3 +428,15 @@ html.mob-menu-open body { overflow: hidden; }
 }
 /* On desktop, ensure FAB z-index is below modals but above content */
 #geo-region-switcher-fab { z-index: 8999 !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   CURRENCY BANNER — Mobile responsive helpers
+   .cb-badge-hide-xs  — hide tax/custom badges on very small screens
+   .cb-btn-label      — hide button text labels on very small screens
+   .cb-subtitle       — hide "Imperial units · ..." on mobile
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .cb-badge-hide-xs { display: none !important; }
+  .cb-btn-label     { display: none !important; }
+  .cb-subtitle      { display: none !important; }
+}

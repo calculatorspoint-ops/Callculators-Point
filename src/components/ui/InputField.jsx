@@ -1,4 +1,8 @@
+import { useGeoStore } from "@/core/geo-engine/geoStore.js";
+
 export function InputField({ config, value, onChange, error }) {
+  const currencySymbol = useGeoStore(s => s.rules?.currencySymbol ?? '$');
+  const locale         = useGeoStore(s => s.rules?.locale         ?? 'en-US');
   const { id, label, type, min, max, step, unit, options, optional } = config;
 
   if (type === "select") return (
@@ -40,7 +44,7 @@ export function InputField({ config, value, onChange, error }) {
           {label} {optional && <span className="text-xs font-normal" style={{ color: "var(--txt3)" }}>(optional)</span>}
         </label>
         <span className="text-sm font-bold" style={{ color: "#16a34a" }}>
-          {unit === "₹" ? `₹${Number(value).toLocaleString("en-IN")}` : `${value}${unit}`}
+          {unit === currencySymbol ? `${currencySymbol}${Number(value).toLocaleString(locale)}` : `${value}${unit}`}
         </span>
       </div>
       <input id={id} type="range" min={min} max={max} step={step} value={value}

@@ -47,40 +47,35 @@ export function CurrencyBanner({ minimal = false }) {
       <div style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e3a8a 100%)',
         borderBottom: '1px solid rgba(255,255,255,.1)',
-        padding: minimal ? '8px 16px' : '10px 20px',
-        display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+        padding: minimal ? '7px 12px' : '9px 16px',
+        display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap', overflow: 'hidden',
       }}>
         {/* Left: region info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
-          <span style={{ fontSize: 22, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, flex: 1, minWidth: 0, overflow: 'hidden' }}>
+          <span style={{ fontSize: 18, flexShrink: 0, lineHeight: 1 }}>
             {detecting ? '🌐' : flag}
           </span>
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {detecting ? 'Detecting your region…' : countryName}
+          <div style={{ minWidth: 0, overflow: 'hidden', flex: 1 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: 5, flexWrap: 'nowrap', overflow: 'hidden' }}>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexShrink: 1, minWidth: 0 }}>
+                {detecting ? 'Detecting…' : countryName}
               </span>
-              <span style={{ background: 'rgba(99,102,241,.25)', border: '1px solid rgba(99,102,241,.4)', borderRadius: 100, padding: '1px 8px', fontSize: 11, color: '#a5b4fc', fontWeight: 800, flexShrink: 0 }}>
+              <span style={{ background: 'rgba(99,102,241,.25)', border: '1px solid rgba(99,102,241,.4)', borderRadius: 100, padding: '1px 7px', fontSize: 10, color: '#a5b4fc', fontWeight: 800, flexShrink: 0, whiteSpace: 'nowrap' }}>
                 {currencySymbol} {currency}
               </span>
               {taxRate > 0 && (
-                <span style={{ background: 'rgba(34,197,94,.15)', border: '1px solid rgba(34,197,94,.25)', borderRadius: 100, padding: '1px 8px', fontSize: 11, color: '#4ade80', fontWeight: 700, flexShrink: 0 }}>
+                <span className="cb-badge-hide-xs" style={{ background: 'rgba(34,197,94,.15)', border: '1px solid rgba(34,197,94,.25)', borderRadius: 100, padding: '1px 7px', fontSize: 10, color: '#4ade80', fontWeight: 700, flexShrink: 0, whiteSpace: 'nowrap' }}>
                   {taxLabel} {taxRate}%
                 </span>
               )}
-              {autoDetected && !userSelected && (
-                <span style={{ background: 'rgba(251,191,36,.15)', border: '1px solid rgba(251,191,36,.3)', borderRadius: 100, padding: '1px 7px', fontSize: 10, color: '#fbbf24', fontWeight: 700, flexShrink: 0 }}>
-                  Auto-detected
-                </span>
-              )}
               {userSelected && (
-                <span style={{ background: 'rgba(99,102,241,.2)', border: '1px solid rgba(99,102,241,.35)', borderRadius: 100, padding: '1px 7px', fontSize: 10, color: '#a5b4fc', fontWeight: 700, flexShrink: 0 }}>
+                <span className="cb-badge-hide-xs" style={{ background: 'rgba(99,102,241,.2)', border: '1px solid rgba(99,102,241,.35)', borderRadius: 100, padding: '1px 6px', fontSize: 10, color: '#a5b4fc', fontWeight: 700, flexShrink: 0, whiteSpace: 'nowrap' }}>
                   Custom
                 </span>
               )}
             </div>
             {!minimal && (
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,.4)', marginTop: 2 }}>
+              <p className="cb-subtitle" style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {measureSystem === 'imperial' ? 'Imperial units' : 'Metric units'} · {dateFormat} dates · All calculations use {currencySymbol}
               </p>
             )}
@@ -88,25 +83,25 @@ export function CurrencyBanner({ minimal = false }) {
         </div>
 
         {/* Right: actions */}
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexShrink: 0 }}>
           {/* Info */}
           <button
             onClick={() => setShowInfo(s => !s)}
-            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px', borderRadius: 8, background: showInfo ? 'rgba(99,102,241,.3)' : 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', color: 'rgba(255,255,255,.8)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font)' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 8px', borderRadius: 7, background: showInfo ? 'rgba(99,102,241,.3)' : 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.15)', color: 'rgba(255,255,255,.8)', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font)', whiteSpace: 'nowrap' }}
             title="View tax & financial rules"
           >
-            <Info size={13} />
-            {!minimal && <span>Tax Rules</span>}
+            <Info size={12} />
+            <span className="cb-btn-label">Tax Rules</span>
           </button>
 
           {/* Region switcher */}
           <button
             onClick={() => setOpen(s => !s)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 8, background: 'rgba(99,102,241,.3)', border: '1px solid rgba(99,102,241,.5)', color: '#c7d2fe', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font)', whiteSpace: 'nowrap' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px', borderRadius: 7, background: 'rgba(99,102,241,.3)', border: '1px solid rgba(99,102,241,.5)', color: '#c7d2fe', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font)', whiteSpace: 'nowrap' }}
           >
-            <Globe size={13} />
-            Change Region
-            <ChevronDown size={11} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
+            <Globe size={12} />
+            <span className="cb-btn-label">Change Region</span>
+            <ChevronDown size={10} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }} />
           </button>
         </div>
       </div>

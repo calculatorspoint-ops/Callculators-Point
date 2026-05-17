@@ -1,10 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   AreaChart, Area, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, Cell, PieChart, Pie, ReferenceLine,
 } from "recharts";
 import { Download, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { useGeoStore } from "@/core/geo-engine/geoStore.js";
 
 /* ── Color palette ─────────────────────────────────────────────────── */
 const C = {
@@ -16,15 +17,35 @@ const C = {
 };
 const PAL = ["#2563eb","#dc2626","#16a34a","#f59e0b","#7c3aed","#06b6d4","#f97316","#84cc16"];
 
-const CustomTip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  const fmtV = v => {
+/* ── Smart currency formatter — respects selected region ────────────── */
+function useCurrencyFormatter() {
+  const sym    = useGeoStore(s => s.rules?.currencySymbol ?? "$");
+  const locale = useGeoStore(s => s.rules?.locale         ?? "en-US");
+
+  const fmtCompact = (v) => {
     if (typeof v !== "number") return v;
-    if (Math.abs(v) >= 1e7) return "₹" + (v/1e7).toFixed(2) + "Cr";
-    if (Math.abs(v) >= 1e5) return "₹" + (v/1e5).toFixed(2) + "L";
-    if (Math.abs(v) >= 1e3) return "₹" + Math.round(v).toLocaleString("en-IN");
-    return v % 1 !== 0 ? v.toFixed(4) : v.toString();
+    const a = Math.abs(v);
+    // Use locale-aware compact notation
+    if (a >= 1_000_000_000) return sym + (v / 1_000_000_000).toFixed(1) + "B";
+    if (a >= 1_000_000)     return sym + (v / 1_000_000).toFixed(1) + "M";
+    if (a >= 1_000)         return sym + new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(Math.round(v));
+    return v % 1 !== 0 ? v.toFixed(2) : String(v);
   };
+
+  const fmtAxis = (v) => {
+    const a = Math.abs(v);
+    if (a >= 1_000_000_000) return sym + (a / 1_000_000_000).toFixed(1) + "B";
+    if (a >= 1_000_000)     return sym + (a / 1_000_000).toFixed(1) + "M";
+    if (a >= 1_000)         return sym + (a / 1_000).toFixed(0) + "K";
+    return v % 1 !== 0 ? v.toFixed(2) : String(v);
+  };
+
+  return { sym, locale, fmtCompact, fmtAxis };
+}
+
+/* ── Tooltip ────────────────────────────────────────────────────────── */
+function CustomTip({ active, payload, label, fmtV }) {
+  if (!active || !payload?.length) return null;
   return (
     <div style={{ background:"rgba(255, 255, 255, 0.9)", backdropFilter:"blur(12px)", border:"1px solid rgba(0,0,0,0.05)", borderRadius:12, padding:"12px 16px", boxShadow:"0 10px 40px -10px rgba(0,0,0,0.2)", fontSize:12, minWidth:160 }}>
       <p style={{ fontWeight:800, color:"#64748b", marginBottom:8, fontSize:11, textTransform:"uppercase", letterSpacing:".06em" }}>{label}</p>
@@ -37,7 +58,7 @@ const CustomTip = ({ active, payload, label }) => {
       ))}
     </div>
   );
-};
+}
 
 /* ── Export chart as PNG ─────────────────────────────────────────────── */
 function exportChart(title) {
@@ -64,13 +85,6 @@ function exportChart(title) {
 /* ── Shared axis styles ─────────────────────────────────────────────── */
 const tickStyle = { fontSize: 10, fill: "var(--text3)" };
 const gridStyle = { stroke: "var(--border)", strokeDasharray: "3 3" };
-const fmtY = v => {
-  const a = Math.abs(v);
-  if (a >= 1e7) return "₹" + (a/1e7).toFixed(1) + "Cr";
-  if (a >= 1e5) return "₹" + (a/1e5).toFixed(0) + "L";
-  if (a >= 1e3) return "₹" + (a/1e3).toFixed(0) + "K";
-  return v % 1 !== 0 ? v.toFixed(2) : String(v);
-};
 
 /* ── Chart wrapper with title, zoom, export ─────────────────────────── */
 function ChartBox({ title, children, data }) {
@@ -113,13 +127,14 @@ const ctrlBtn = {
 
 /* ══ Main export ════════════════════════════════════════════════════ */
 export function CalcChart({ chartData }) {
+  const { fmtCompact, fmtAxis } = useCurrencyFormatter();
+
   if (!chartData) return null;
   const { type, data, keys, xKey, pct, color } = chartData;
 
   /* ── BMI Gauge ─────────────────────────────────────────────────── */
   if (type === "gauge") {
     const g = Math.min(Math.max(pct || 50, 2), 98);
-    const LABELS = ["Severely\nUnderweight","Underweight","Normal","Overweight","Obese I","Obese II+"];
     return (
       <div className="chart-wrap">
         <p className="chart-title">BMI Scale</p>
@@ -153,7 +168,7 @@ export function CalcChart({ chartData }) {
             <defs>
               {data.map((e, i) => (
                 <linearGradient key={`grad_${i}`} id={`grad_${i}`} x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor={e.color||PAL[i%PAL.length]} stopOpacity={1}/>
+                  <stop offset="0%"   stopColor={e.color||PAL[i%PAL.length]} stopOpacity={1}/>
                   <stop offset="100%" stopColor={e.color||PAL[i%PAL.length]} stopOpacity={0.7}/>
                 </linearGradient>
               ))}
@@ -166,7 +181,7 @@ export function CalcChart({ chartData }) {
               labelLine={{ stroke:"var(--text3)", strokeWidth:1, strokeDasharray:"2 2" }}>
               {data.map((e, i) => <Cell key={i} fill={`url(#grad_${i})`} stroke="var(--surface)" strokeWidth={2}/>)}
             </Pie>
-            <Tooltip content={<CustomTip/>}/>
+            <Tooltip content={<CustomTip fmtV={fmtCompact}/>}/>
             <Legend wrapperStyle={{ fontSize:12, paddingTop:12, fontWeight:600 }}/>
           </PieChart>
         </ResponsiveContainer>
@@ -187,8 +202,8 @@ export function CalcChart({ chartData }) {
             <BarChart data={d} margin={{ top:4, right:4, bottom:20, left:0 }}>
               <CartesianGrid {...gridStyle} vertical={false}/>
               <XAxis dataKey={xk} tick={{ fontSize:9, fill:"var(--text3)" }} tickLine={false} axisLine={false} angle={-20} textAnchor="end" height={40}/>
-              <YAxis tick={tickStyle} tickLine={false} axisLine={false} width={42} tickFormatter={fmtY}/>
-              <Tooltip content={<CustomTip/>} cursor={{ fill:"var(--brand-l)" }}/>
+              <YAxis tick={tickStyle} tickLine={false} axisLine={false} width={52} tickFormatter={fmtAxis}/>
+              <Tooltip content={<CustomTip fmtV={fmtCompact}/>} cursor={{ fill:"var(--brand-l)" }}/>
               <Bar dataKey={dk} name={dk} radius={[5,5,0,0]} maxBarSize={60}>
                 {d.map((e,i) => <Cell key={i} fill={e.color||PAL[i%PAL.length]}/>)}
               </Bar>
@@ -210,8 +225,8 @@ export function CalcChart({ chartData }) {
             <LineChart data={d} margin={{ top:4, right:8, bottom:4, left:0 }}>
               <CartesianGrid {...gridStyle} vertical={false}/>
               <XAxis dataKey={xk} tick={tickStyle} tickLine={false} axisLine={false}/>
-              <YAxis tick={tickStyle} tickLine={false} axisLine={false} width={42} tickFormatter={fmtY}/>
-              <Tooltip content={<CustomTip/>}/>
+              <YAxis tick={tickStyle} tickLine={false} axisLine={false} width={52} tickFormatter={fmtAxis}/>
+              <Tooltip content={<CustomTip fmtV={fmtCompact}/>}/>
               <Legend wrapperStyle={{ fontSize:11, paddingTop:8 }}/>
               {/* Break-even reference line */}
               {data.some(d => d.profit < 0) && data.some(d => d.profit >= 0) && (
@@ -249,8 +264,8 @@ export function CalcChart({ chartData }) {
             </defs>
             <CartesianGrid {...gridStyle} vertical={false}/>
             <XAxis dataKey={xDataKey} tick={tickStyle} tickLine={false} axisLine={false}/>
-            <YAxis tick={tickStyle} tickLine={false} axisLine={false} width={50} tickFormatter={fmtY}/>
-            <Tooltip content={<CustomTip/>}/>
+            <YAxis tick={tickStyle} tickLine={false} axisLine={false} width={58} tickFormatter={fmtAxis}/>
+            <Tooltip content={<CustomTip fmtV={fmtCompact}/>}/>
             <Legend wrapperStyle={{ fontSize:12, paddingTop:12, fontWeight:600 }} iconType="circle"/>
             {aKeys.map((k,i) => (
               <Area key={k} type="monotone" dataKey={k}
