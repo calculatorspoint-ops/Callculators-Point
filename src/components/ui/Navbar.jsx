@@ -1,55 +1,237 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight } from "lucide-react";
+import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Clock, TrendingUp } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore.js";
-import { ALL_CALCULATORS, CATEGORIES } from "@/data/calculatorConfigs.js";
+import { ALL_CALCULATORS, CATEGORIES, POPULAR } from "@/data/calculatorConfigs.js";
 import { CurrencySelector } from "./CurrencySelector.jsx";
 
+/* ── Search aliases: map user intent → calculator IDs ──────────── */
+const ALIASES = {
+  "grade needed": ["required-grade", "final-grade", "gpa"],
+  "grade required": ["required-grade", "final-grade"],
+  "period": ["period", "ovulation", "fertility"],
+  "pregnancy": ["pregnancy", "implantation", "ovulation"],
+  "fertile": ["fertility", "ovulation", "implantation"],
+  "cycle": ["period", "ovulation", "fertility"],
+  "mortgage": ["mortgage", "emi", "compound"],
+  "home loan": ["mortgage", "emi"],
+  "emi": ["emi", "mortgage", "simple-interest"],
+  "installment": ["emi", "mortgage"],
+  "investment": ["sip", "compound", "ppf", "roi"],
+  "calories": ["calorie", "bmr", "macro"],
+  "diet": ["calorie", "macro", "bmi"],
+  "lose weight": ["bmi", "calorie", "bmr"],
+  "body mass": ["bmi", "ideal-weight"],
+  "tax": ["tax", "gst", "salary"],
+  "vat": ["gst", "tax"],
+  "gst": ["gst", "tax", "discount"],
+  "salary": ["salary", "tax", "work-hours"],
+  "age": ["age", "date-diff", "countdown"],
+  "birthday": ["age", "countdown"],
+  "timer": ["countdown", "study-timer", "work-hours"],
+  "password": ["password", "random", "base64"],
+  "secure": ["password", "base64"],
+  "convert": ["length", "weight", "temperature", "speed", "data"],
+  "length": ["length", "area-conv"],
+  "weight": ["weight", "bmi", "ideal-weight"],
+  "temperature": ["temperature"],
+  "speed": ["speed"],
+  "data": ["data"],
+  "percentage": ["percentage", "marks-percentage", "discount"],
+  "discount": ["discount", "gst", "percentage"],
+  "profit": ["profit-margin", "roi", "break-even"],
+  "gpa": ["gpa", "target-gpa", "marks-percentage"],
+  "cgpa": ["cgpa-to-percent", "gpa", "target-gpa"],
+  "ielts": ["ielts", "sat", "study-timer"],
+  "sat": ["sat", "ielts", "gpa"],
+  "study": ["study-timer", "attendance", "marks-percentage"],
+  "attendance": ["attendance", "study-timer"],
+  "fuel": ["fuel", "ev-charging"],
+  "ev": ["ev-charging", "fuel"],
+  "word": ["word-count", "reading-time"],
+  "read": ["reading-time", "word-count"],
+  "bmi": ["bmi", "ideal-weight", "calorie"],
+  "sip": ["sip", "compound", "ppf"],
+  "interest": ["compound", "simple-interest", "emi"],
+  "loan": ["emi", "mortgage", "simple-interest"],
+  "retirement": ["retirement", "sip", "compound"],
+  "sleeping": ["sleep"],
+  "sleep": ["sleep", "study-timer"],
+  "exercise": ["calories-burned", "heart-rate", "bmi"],
+  "workout": ["calories-burned", "one-rep-max", "heart-rate"],
+};
+
+/* ── Fuzzy-ish search: alias + name + desc + keywords ──────────── */
+function searchCalculators(query) {
+  if (!query?.trim()) return [];
+  const lq = query.toLowerCase().trim();
+
+  // Check aliases first
+  const aliasKey = Object.keys(ALIASES).find(k => lq.includes(k) || k.includes(lq));
+  const aliasIds = aliasKey ? ALIASES[aliasKey] : [];
+
+  const scored = ALL_CALCULATORS.map(c => {
+    const nameL = c.name.toLowerCase();
+    const descL = (c.desc || "").toLowerCase();
+    let score = 0;
+
+    if (nameL === lq)                         score += 100;
+    else if (nameL.startsWith(lq))            score += 60;
+    else if (nameL.includes(lq))             score += 40;
+    if (descL.includes(lq))                  score += 15;
+    if (aliasIds.includes(c.id))             score += 50;
+    if (c.popular)                           score += 5;
+
+    return { calc: c, score };
+  });
+
+  return scored
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(s => s.calc)
+    .slice(0, 8);
+}
+
+/* ── Search Dropdown ──────────────────────────────────────────── */
+function SearchDropdown({ results, query, onClose, activeIdx }) {
+  const noResults = query.trim().length > 1 && results.length === 0;
+  const suggestions = noResults
+    ? POPULAR.slice(0, 4)
+    : null;
+
+  return (
+    <div className="navbar-search-drop" role="listbox" aria-label="Search results">
+      {results.map((r, i) => {
+        const cat = CATEGORIES.find(c => c.id === r.cat);
+        return (
+          <Link
+            key={r.id}
+            to={`/calculator/${r.slug}`}
+            className={`navbar-search-item${i === activeIdx ? " navbar-search-item--active" : ""}`}
+            role="option"
+            aria-selected={i === activeIdx}
+          >
+            <span className="navbar-search-item-icon">{r.icon}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="navbar-search-item-name">{r.name}</div>
+              <div className="navbar-search-item-desc">{r.desc?.slice(0, 55)}</div>
+            </div>
+            {r.popular && (
+              <span style={{ fontSize: 9, fontWeight: 800, color: "#f59e0b", background: "#fef3c7", padding: "2px 6px", borderRadius: 100, flexShrink: 0 }}>
+                HOT
+              </span>
+            )}
+          </Link>
+        );
+      })}
+
+      {noResults && (
+        <div>
+          <div style={{ padding: "10px 16px 6px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)" }}>
+            No results — try these popular tools
+          </div>
+          {suggestions.map((r, i) => (
+            <Link key={r.id} to={`/calculator/${r.slug}`} className="navbar-search-item" role="option">
+              <span className="navbar-search-item-icon">{r.icon}</span>
+              <div>
+                <div className="navbar-search-item-name">{r.name}</div>
+                <div className="navbar-search-item-desc">{r.desc?.slice(0, 50)}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Navbar() {
-  const { theme, toggleTheme } = useAppStore();
+  const { theme, toggleTheme, searchHistory, addSearchHistory } = useAppStore();
   const [q, setQ]             = useState("");
   const [results, setResults] = useState([]);
   const [open, setOpen]       = useState(false);
   const [mob, setMob]         = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [activeIdx, setActiveIdx]   = useState(-1);
   const ref       = useRef(null);
   const searchRef = useRef(null);
+  const inputRef  = useRef(null);
+  const mobInputRef = useRef(null);
   const loc       = useLocation();
+  const debounceRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  useEffect(() => { setMob(false); setOpen(false); setSearchOpen(false); setQ(""); }, [loc.pathname]);
+  useEffect(() => { setMob(false); setOpen(false); setSearchOpen(false); setQ(""); setActiveIdx(-1); }, [loc.pathname]);
 
+  // Debounced search
   useEffect(() => {
-    if (!q.trim()) { setResults([]); setOpen(false); return; }
-    const lq = q.toLowerCase();
-    const r = ALL_CALCULATORS
-      .filter(c => c.name.toLowerCase().includes(lq) || c.desc?.toLowerCase().includes(lq))
-      .slice(0, 8);
-    setResults(r);
-    setOpen(r.length > 0);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (!q.trim()) {
+        setResults([]);
+        setOpen(false);
+        setActiveIdx(-1);
+        return;
+      }
+      const r = searchCalculators(q);
+      setResults(r);
+      setOpen(true);
+      setActiveIdx(-1);
+    }, 120);
+    return () => clearTimeout(debounceRef.current);
   }, [q]);
 
+  // Click outside to close
   useEffect(() => {
     const h = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+        setActiveIdx(-1);
+      }
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setSearchOpen(false);
         setQ("");
+        setActiveIdx(-1);
       }
     };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
-  // Prevent body scroll when mobile menu open
-  // FIX: Use CSS class instead of style.overflow to avoid forced reflow
   useEffect(() => {
     document.documentElement.classList.toggle("mob-menu-open", mob);
     return () => { document.documentElement.classList.remove("mob-menu-open"); };
   }, [mob]);
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback((e) => {
+    if (!open) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIdx(i => Math.min(i + 1, results.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIdx(i => Math.max(i - 1, -1));
+    } else if (e.key === "Escape") {
+      setOpen(false);
+      setQ("");
+      setActiveIdx(-1);
+    } else if (e.key === "Enter" && activeIdx >= 0 && results[activeIdx]) {
+      e.preventDefault();
+      addSearchHistory(q);
+      window.location.href = `/calculator/${results[activeIdx].slug}`;
+    }
+  }, [open, activeIdx, results, q, addSearchHistory]);
+
+  const handleSubmit = useCallback(() => {
+    if (q.trim()) addSearchHistory(q);
+    if (activeIdx >= 0 && results[activeIdx]) {
+      window.location.href = `/calculator/${results[activeIdx].slug}`;
+    }
+  }, [q, activeIdx, results, addSearchHistory]);
 
   return (
     <>
@@ -69,11 +251,7 @@ export function Navbar() {
           {/* ── Desktop Nav ── */}
           <nav className="navbar-nav" aria-label="Main navigation">
             {CATEGORIES.slice(0, 5).map(c => (
-              <Link
-                key={c.id}
-                to={`/category/${c.id}`}
-                className="nav-link"
-              >
+              <Link key={c.id} to={`/category/${c.id}`} className="nav-link">
                 {c.icon} {c.name}
               </Link>
             ))}
@@ -90,15 +268,22 @@ export function Navbar() {
               <div className="navbar-search-box">
                 <Search size={14} className="navbar-search-icon" />
                 <input
+                  ref={inputRef}
                   value={q}
                   onChange={e => setQ(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => q.trim() && setOpen(true)}
                   placeholder="Search calculators…"
                   className="navbar-search-input"
                   aria-label="Search calculators"
+                  aria-expanded={open}
+                  aria-haspopup="listbox"
+                  role="combobox"
+                  autoComplete="off"
                 />
                 {q && (
                   <button
-                    onClick={() => { setQ(""); setOpen(false); }}
+                    onClick={() => { setQ(""); setOpen(false); inputRef.current?.focus(); }}
                     className="navbar-search-clear"
                     aria-label="Clear search"
                   >
@@ -107,21 +292,7 @@ export function Navbar() {
                 )}
               </div>
               {open && (
-                <div className="navbar-search-drop">
-                  {results.map(r => (
-                    <Link
-                      key={r.id}
-                      to={`/calculator/${r.slug}`}
-                      className="navbar-search-item"
-                    >
-                      <span className="navbar-search-item-icon">{r.icon}</span>
-                      <div>
-                        <div className="navbar-search-item-name">{r.name}</div>
-                        <div className="navbar-search-item-desc">{r.desc?.slice(0, 50)}</div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                <SearchDropdown results={results} query={q} onClose={() => setOpen(false)} activeIdx={activeIdx} />
               )}
             </div>
 
@@ -166,12 +337,15 @@ export function Navbar() {
             <div className="navbar-mobile-search-inner">
               <Search size={15} style={{ color: "var(--text3)", flexShrink: 0 }} />
               <input
+                ref={mobInputRef}
                 value={q}
                 onChange={e => setQ(e.target.value)}
-                placeholder="Search 55+ calculators…"
+                onKeyDown={handleKeyDown}
+                placeholder={`Search ${ALL_CALCULATORS.length}+ calculators…`}
                 className="navbar-search-input"
                 autoFocus
                 aria-label="Search calculators"
+                autoComplete="off"
               />
               {q && (
                 <button
@@ -183,21 +357,7 @@ export function Navbar() {
               )}
             </div>
             {open && (
-              <div className="navbar-search-drop navbar-search-drop-mobile">
-                {results.map(r => (
-                  <Link
-                    key={r.id}
-                    to={`/calculator/${r.slug}`}
-                    className="navbar-search-item"
-                  >
-                    <span className="navbar-search-item-icon">{r.icon}</span>
-                    <div>
-                      <div className="navbar-search-item-name">{r.name}</div>
-                      <div className="navbar-search-item-desc">{r.desc?.slice(0, 45)}</div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <SearchDropdown results={results} query={q} onClose={() => { setSearchOpen(false); setOpen(false); }} activeIdx={activeIdx} />
             )}
           </div>
         )}
@@ -212,11 +372,7 @@ export function Navbar() {
         <div className="mob-menu-section">
           <p className="mob-menu-section-title">Categories</p>
           {CATEGORIES.map(c => (
-            <Link
-              key={c.id}
-              to={`/category/${c.id}`}
-              className="mob-menu-link"
-            >
+            <Link key={c.id} to={`/category/${c.id}`} className="mob-menu-link">
               <span className="mob-menu-link-icon">{c.icon}</span>
               <span>{c.name}</span>
               <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
@@ -231,7 +387,7 @@ export function Navbar() {
           <p className="mob-menu-section-title">Quick Links</p>
           <Link to="/calculators" className="mob-menu-link mob-menu-link--featured">
             <span>📊</span>
-            <span>All 55+ Tools</span>
+            <span>All {ALL_CALCULATORS.length}+ Tools</span>
             <ChevronRight size={14} style={{ marginLeft: "auto" }} />
           </Link>
           <Link to="/about" className="mob-menu-link">

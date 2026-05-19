@@ -31,6 +31,8 @@ const Health = {
   HeartRateForm: lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.HeartRateForm }))),
   PregnancyForm: lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.PregnancyForm }))),
   OneRMForm: lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.OneRMForm }))),
+  // Women's Health
+  PeriodCalc: lazy(() => import("../../modules/health/women-health/PeriodCalculator.jsx")),
 };
 
 const MathCalcs = {
@@ -153,19 +155,19 @@ const FORMS = {
   "roman-numeral-converter":      Utility.RomanForm,
   "word-counter":                 Utility.WordCountForm,
   "base64-encoder":               Utility.Base64Form,
-  "period-calculator":            Utility.PeriodForm,
+  "period-calculator":            Health.PeriodCalc,
+  "ovulation-calculator":         Health.PeriodCalc,
+  "fertility-window-calculator":  Health.PeriodCalc,
+  "implantation-calculator":      Health.PeriodCalc,
   "ev-charging-calculator":       Utility.EVChargingForm,
 };
 
 export function CalculatorWidget({ calc }) {
-  const { addRecent, setActiveCalc } = useAppStore();
+  const { setActiveCalc } = useAppStore();
   
   useEffect(() => { 
-    if (calc) {
-      addRecent(calc.id); 
-      setActiveCalc(calc);
-    }
-  }, [calc, addRecent, setActiveCalc]);
+    if (calc) setActiveCalc(calc);
+  }, [calc, setActiveCalc]);
 
   const FormComponent = FORMS[calc?.slug];
 

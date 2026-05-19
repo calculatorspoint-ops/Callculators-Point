@@ -1,10 +1,10 @@
 export const CATEGORIES = [
-  { id:"finance",    name:"Finance & Money",     icon:"💰", color:"#1d4ed8", bg:"#eff6ff", desc:"Loans, investments, savings, tax & more" },
-  { id:"health",     name:"Health & Fitness",     icon:"❤️", color:"#dc2626", bg:"#fef2f2", desc:"BMI, calories, BMR, body fat & nutrition" },
-  { id:"math",       name:"Math & Science",       icon:"📐", color:"#7c3aed", bg:"#f5f3ff", desc:"Algebra, geometry, statistics & science" },
-  { id:"education",  name:"Education & GPA",      icon:"🎓", color:"#c2410c", bg:"#fff7ed", desc:"GPA, grades, marks & academic planning" },
-  { id:"converters", name:"Unit Converters",      icon:"🔄", color:"#065f46", bg:"#f0fdf4", desc:"Length, weight, temp, speed, data & more" },
-  { id:"everyday",   name:"Everyday Tools",       icon:"🏠", color:"#b45309", bg:"#fffbeb", desc:"Age, dates, fuel, passwords & daily tools" },
+  { id:"finance",      name:"Finance & Money",     icon:"💰", color:"#1d4ed8", bg:"#eff6ff", desc:"Loans, investments, savings, tax & more" },
+  { id:"health",       name:"Health & Fitness",     icon:"❤️", color:"#dc2626", bg:"#fef2f2", desc:"BMI, calories, BMR, body fat & nutrition" },
+  { id:"math",         name:"Math & Science",       icon:"📐", color:"#7c3aed", bg:"#f5f3ff", desc:"Algebra, geometry, statistics & science" },
+  { id:"education",    name:"Education & GPA",      icon:"🎓", color:"#c2410c", bg:"#fff7ed", desc:"GPA, grades, marks & academic planning" },
+  { id:"converters",   name:"Unit Converters",      icon:"🔄", color:"#065f46", bg:"#f0fdf4", desc:"Length, weight, temp, speed, data & more" },
+  { id:"everyday",     name:"Everyday Tools",       icon:"🏠", color:"#b45309", bg:"#fffbeb", desc:"Age, dates, fuel, passwords & daily tools" },
 ];
 
 export const ALL_CALCULATORS = [
@@ -139,6 +139,42 @@ export const ALL_CALCULATORS = [
   { id:"base64",          slug:"base64-encoder",                 cat:"everyday",   name:"Base64 Encoder/Decoder",    icon:"🔠", desc:"Encode & decode Base64 with copy and reverse button",                               popular:false, hasChart:false, isNew:true  },
   { id:"period",          slug:"period-calculator",              cat:"health",     name:"Period & Cycle Calculator", icon:"🌸", desc:"Adaptive cycle prediction with ovulation window, fertile days, phase visualization, irregular cycle detection & health insights", popular:true, hasChart:false, isNew:true,
     tips: ["Cycle length varies naturally 21–35 days. 28 days is the statistical average, not the rule.", "Tracking 3+ past cycles lets the engine personalize your fertile window prediction.", "Ovulation usually occurs 14 days BEFORE your next period — not 14 days after your last one."] },
+
+  // ── WOMEN'S HEALTH ECOSYSTEM ──────────────────────────────────────────
+  { id:"ovulation",       slug:"ovulation-calculator",          cat:"health",     name:"Ovulation Calculator",      icon:"🌿", desc:"Predict your ovulation date and fertile window based on your cycle length", popular:true,  hasChart:false, isNew:true,
+    formula: "Ovulation Day = LMP + (Cycle Length - 14 days)\nFertile Window = Ovulation Day -5 to +1",
+    tips:["Sperm can survive up to 5 days, but eggs only 12–24 hours — the fertile window is wider than ovulation itself.","Ovulation timing varies even in regular cycles — track 3+ months for best accuracy."] },
+  { id:"fertility",       slug:"fertility-window-calculator",   cat:"health",     name:"Fertile Window Calculator",  icon:"🌱", desc:"Calculate your exact fertile days for natural conception planning",          popular:false, hasChart:false, isNew:true,
+    tips:["Peak fertility is the 2 days around ovulation. The full fertile window spans up to 6 days.","Use alongside ovulation predictor kits for highest accuracy."] },
+  { id:"implantation",    slug:"implantation-calculator",       cat:"health",     name:"Implantation Calculator",   icon:"🔬", desc:"Estimate your implantation window — when a fertilized egg attaches to the uterus", popular:false, hasChart:false, isNew:true,
+    formula: "Implantation Window = Ovulation Day + 6 to 12 days",
+    tips:["Implantation typically occurs 6–12 days after ovulation. Light spotting during this window is normal."] },
+
+  // ── NEW HEALTH TOOLS ──────────────────────────────────────────────────
+  { id:"sleep",           slug:"sleep-calculator",              cat:"health",     name:"Sleep Calculator",          icon:"😴", desc:"Calculate ideal bedtimes and wake times based on 90-min REM sleep cycles", popular:true,  hasChart:false, isNew:true,
+    formula: "Optimal Wake = Bedtime + (90min × N cycles) + 14min sleep onset\nRecommended: 5–6 cycles (7.5–9 hours)",
+    tips:["Each sleep cycle is ~90 minutes. Waking mid-cycle causes grogginess.","Adults need 7–9 hours (5–6 cycles). Teens need 8–10 hours."] },
+  { id:"calories-burned", slug:"calories-burned-calculator",   cat:"health",     name:"Calories Burned",           icon:"🏃", desc:"Calories burned by 30+ exercises using MET values and body weight",         popular:true,  hasChart:true,  isNew:true,
+    formula: "Calories = MET × Weight(kg) × Duration(hours)",
+    tips:["MET (Metabolic Equivalent of Task) measures exercise intensity. Running at 8km/h = MET 8, walking = MET 3.5."] },
+
+  // ── NEW FINANCE TOOLS ─────────────────────────────────────────────────
+  { id:"loan-compare",   slug:"loan-comparison-calculator",    cat:"finance",    name:"Loan Comparison",           icon:"⚖️", desc:"Compare up to 3 loans side-by-side — total interest, EMI, and tenure",    popular:true,  hasChart:true,  isNew:true,
+    tips:["A lower rate doesn't always mean less total cost — check the full tenure interest paid."] },
+  { id:"retirement",     slug:"retirement-calculator",         cat:"finance",    name:"Retirement Calculator",     icon:"🏖️", desc:"Calculate your retirement corpus, savings gap, and monthly savings target", popular:true,  hasChart:true,  isNew:true,
+    formula: "Required Corpus = Annual Expenses × (1+inflation)^years / (real_rate - inflation)\n4% Rule: Corpus = 25 × Annual Expenses",
+    tips:["Starting 10 years earlier can cut your required monthly savings by more than half.","The 4% rule: a corpus of 25× annual expenses sustains 30+ years of withdrawals."] },
+  { id:"fd",             slug:"fd-calculator",                 cat:"finance",    name:"FD / Fixed Deposit",        icon:"🏛️", desc:"Fixed deposit maturity with compound interest, tax deduction and effective yield", popular:false, hasChart:true, isNew:true,
+    formula: "Maturity = P × (1 + r/n)^(n×t)",
+    tips:["FD interest is taxable as income. The effective post-tax yield depends on your tax bracket."] },
+
+  // ── NEW MATH TOOLS ────────────────────────────────────────────────────
+  { id:"log",            slug:"logarithm-calculator",          cat:"math",       name:"Logarithm Calculator",      icon:"🔢", desc:"Calculate log base 2, 10, e, and any custom base with step-by-step solution", popular:false, hasChart:false, isNew:true },
+  { id:"ratio",          slug:"ratio-calculator",              cat:"math",       name:"Ratio Calculator",          icon:"📊", desc:"Simplify ratios, find missing values, and scale recipes or mixtures",        popular:false, hasChart:false, isNew:true },
+
+  // ── NEW EVERYDAY TOOLS ────────────────────────────────────────────────
+  { id:"timezone",       slug:"time-zone-converter",           cat:"everyday",   name:"Time Zone Converter",      icon:"🌍", desc:"Convert time between 50+ world time zones with DST support",              popular:false, hasChart:false, isNew:true },
+  { id:"reading-time",   slug:"reading-time-calculator",      cat:"everyday",   name:"Reading Time Calculator",  icon:"📖", desc:"Estimate reading time for any text, book, or article by word count",        popular:false, hasChart:false, isNew:true },
 ];
 
 export const BY_CATEGORY = ALL_CALCULATORS.reduce((acc, c) => {

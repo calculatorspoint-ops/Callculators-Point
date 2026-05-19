@@ -1,10 +1,10 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense, useCallback } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAppStore } from "@/store/useAppStore.js";
 import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated } from "@/data/calculatorConfigs.js";
 import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
-import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb } from "lucide-react";
+import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, BarChart2, FileText, HelpCircle } from "lucide-react";
 
 const CalculatorWidget = lazy(() => import("@/components/calculator-core/CalculatorWidget.jsx").then(m => ({ default: m.CalculatorWidget })));
 const CurrencyBanner = lazy(() => import("@/components/ui/CurrencyBanner.jsx"));
@@ -110,8 +110,14 @@ function FAQSection({ faqs, calcName }) {
 export default function Calculator() {
   const { slug } = useParams();
   const calc = getCalcBySlug(slug);
-  const { toggleFavorite, favorites } = useAppStore();
-  
+  const { toggleFavorite, favorites, addRecent } = useAppStore();
+  const [activeTab, setActiveTab] = useState("calculator");
+
+  // ── Track recently used calculators ──────────────────────────
+  useEffect(() => {
+    if (calc?.id) addRecent(calc.id);
+  }, [calc?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!calc) return <Navigate to="/calculators" replace />;
 
   const isFav   = favorites.includes(calc.id);

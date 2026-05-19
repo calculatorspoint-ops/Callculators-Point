@@ -12,49 +12,154 @@ const GRADE_OPTIONS = [
   { label: 'A+ (4.0)', value: 'A+' }, { label: 'A (4.0)', value: 'A' }, { label: 'A- (3.7)', value: 'A-' },
   { label: 'B+ (3.3)', value: 'B+' }, { label: 'B (3.0)', value: 'B' }, { label: 'B- (2.7)', value: 'B-' },
   { label: 'C+ (2.3)', value: 'C+' }, { label: 'C (2.0)', value: 'C' }, { label: 'C- (1.7)', value: 'C-' },
-  { label: 'D+ (1.3)', value: 'D+' }, { label: 'D (1.0)', value: 'D' }, { label: 'F (0.0)', value: 'F' }
+  { label: 'D+ (1.3)', value: 'D+' }, { label: 'D (1.0)', value: 'D' }, { label: 'F (0.0)', value: 'F' },
 ];
+
+/* ─────────────────────────────────────────────────────────────────────────
+   GPA_COL_TEMPLATE
+   Uses a CSS custom property so the same template drives both the
+   header row AND every course row — perfect pixel alignment guaranteed.
+   Columns: [Course Name flex] [Credits 72px] [Grade 120px] [Delete 38px]
+───────────────────────────────────────────────────────────────────────── */
+const COL = '1fr 72px 120px 38px';
 
 function GPAFormUI({ control }: { control: any }) {
   const { fields, append, remove } = useFieldArray({ control, name: 'courses' });
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-12 gap-2 px-1">
-        <div className="col-span-5 sm:col-span-6 text-xs font-bold text-[var(--text3)] uppercase tracking-wide">Course</div>
-        <div className="col-span-3 sm:col-span-2 text-xs font-bold text-[var(--text3)] uppercase tracking-wide flex items-center gap-1">
-          Credits
-          <GlossaryTooltip term="Credit Hours" explanation="The number of hours per week the course meets. Higher-credit courses have more weight in your GPA calculation." />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+      {/* ── Column headers ─────────────────────────────────────────── */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: COL,
+          gap: 8,
+          padding: '0 12px 0 4px',
+        }}
+      >
+        <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+          Course Name
         </div>
-        <div className="col-span-3 text-xs font-bold text-[var(--text3)] uppercase tracking-wide">Grade</div>
+        <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.06em', display: 'flex', alignItems: 'center', gap: 3 }}>
+          Credits
+          <GlossaryTooltip
+            term="Credit Hours"
+            explanation="The number of weekly contact hours. Higher-credit courses carry more weight in your GPA."
+          />
+        </div>
+        <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+          Grade
+        </div>
+        {/* spacer for delete column */}
+        <div />
       </div>
+
+      {/* ── Course rows ────────────────────────────────────────────── */}
       {fields.map((field, index) => (
-        <div key={field.id} className="grid grid-cols-12 gap-2 items-end bg-[var(--surface2)] p-3 rounded-xl border border-[var(--border)]">
-          <div className="col-span-5 sm:col-span-6">
-            <TextInput name={`courses.${index}.name`} control={control} label="" placeholder="e.g. Math 101" />
+        <div
+          key={field.id}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: COL,
+            gap: 8,
+            alignItems: 'end',
+            background: 'var(--surface2)',
+            padding: '10px 8px 10px 10px',
+            borderRadius: 12,
+            border: '1px solid var(--border)',
+          }}
+        >
+          {/* Course name */}
+          <div style={{ minWidth: 0 }}>
+            <TextInput
+              name={`courses.${index}.name`}
+              control={control}
+              label=""
+              placeholder="e.g. Math 101"
+            />
           </div>
-          <div className="col-span-3 sm:col-span-2">
-            <NumericInput name={`courses.${index}.credits`} control={control} label="" placeholder="3" decimals={0} />
+
+          {/* Credits */}
+          <div style={{ minWidth: 0 }}>
+            <NumericInput
+              name={`courses.${index}.credits`}
+              control={control}
+              label=""
+              placeholder="3"
+              decimals={0}
+            />
           </div>
-          <div className="col-span-3 sm:col-span-3">
-            <SelectInput name={`courses.${index}.grade`} control={control} label="" options={GRADE_OPTIONS} />
+
+          {/* Grade */}
+          <div style={{ minWidth: 0 }}>
+            <SelectInput
+              name={`courses.${index}.grade`}
+              control={control}
+              label=""
+              options={GRADE_OPTIONS}
+            />
           </div>
-          <div className="col-span-1">
+
+          {/* Delete */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
             <button
               type="button"
               onClick={() => remove(index)}
-              className="w-full h-[38px] bg-red-50 dark:bg-red-900/20 text-red-500 rounded-lg font-bold hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors text-sm"
               aria-label={`Remove course ${index + 1}`}
+              style={{
+                width: 36,
+                height: 36,
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'var(--red-l, #fee2e2)',
+                color: '#ef4444',
+                border: 'none',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontSize: 14,
+                fontWeight: 700,
+                transition: 'background .15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#fecaca')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--red-l, #fee2e2)')}
             >
               ✕
             </button>
           </div>
         </div>
       ))}
+
+      {/* ── Add course button ──────────────────────────────────────── */}
       <button
         type="button"
         onClick={() => append({ name: '', credits: 3, grade: 'A' })}
-        className="px-4 py-3 bg-[var(--surface2)] text-[var(--text2)] border border-dashed border-[var(--border)] rounded-xl font-bold hover:bg-[var(--surface)] hover:text-[var(--brand)] transition-colors mt-1 text-sm"
+        style={{
+          padding: '11px 16px',
+          background: 'var(--surface2)',
+          color: 'var(--text2)',
+          border: '1.5px dashed var(--border)',
+          borderRadius: 12,
+          fontWeight: 700,
+          fontSize: 13,
+          cursor: 'pointer',
+          transition: 'all .15s',
+          marginTop: 2,
+          fontFamily: 'var(--font)',
+          textAlign: 'center',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = 'var(--brand-l)';
+          e.currentTarget.style.color = 'var(--brand)';
+          e.currentTarget.style.borderColor = 'var(--brand)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = 'var(--surface2)';
+          e.currentTarget.style.color = 'var(--text2)';
+          e.currentTarget.style.borderColor = 'var(--border)';
+        }}
       >
         + Add Course
       </button>
@@ -65,7 +170,7 @@ function GPAFormUI({ control }: { control: any }) {
 const GPA_BANDS = [
   { min: 3.7, label: 'Summa / Magna Cum Laude', color: 'text-green-700 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800' },
   { min: 3.3, label: 'Cum Laude', color: 'text-emerald-700 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-200 dark:border-emerald-800' },
-  { min: 3.0, label: 'Dean\'s List (typical)', color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800' },
+  { min: 3.0, label: "Dean's List (typical)", color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800' },
   { min: 2.0, label: 'Good Standing', color: 'text-yellow-700 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900/20', border: 'border-yellow-200 dark:border-yellow-800' },
   { min: 0.0, label: 'Academic Warning', color: 'text-red-700 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200 dark:border-red-800' },
 ];
@@ -102,7 +207,7 @@ function interpretGPA(result: GPAResult, form: GPAForm): InterpretationCardProps
       tone: 'critical',
       headline: `Your GPA of ${gpa.toFixed(2)} is being pulled down by ${failedCourses.length} failed course(s).`,
       detail: `An F (0.0 grade points) has full credit-hour weight in your GPA calculation. Even one failed 3-credit course has a severe impact.`,
-      action: "Consider retaking failed courses — many institutions replace the F grade upon completion, directly improving your GPA."
+      action: 'Consider retaking failed courses — many institutions replace the F grade upon completion, directly improving your GPA.',
     };
   }
 
@@ -111,7 +216,7 @@ function interpretGPA(result: GPAResult, form: GPAForm): InterpretationCardProps
       tone: 'positive',
       headline: `Excellent! A GPA of ${gpa.toFixed(2)} across ${totalCredits} credit hours places you in the top academic tier.`,
       detail: `A 3.7+ GPA typically qualifies for Latin honors (Magna/Summa Cum Laude) and is highly competitive for graduate school applications.`,
-      action: "Maintain this trajectory and ensure your research, internships, or extracurriculars match your academic strength."
+      action: 'Maintain this trajectory and ensure your research, internships, or extracurriculars match your academic strength.',
     };
   }
 
@@ -120,7 +225,7 @@ function interpretGPA(result: GPAResult, form: GPAForm): InterpretationCardProps
       tone: 'neutral',
       headline: `A GPA of ${gpa.toFixed(2)} is solid — you're meeting Dean's List thresholds at most institutions.`,
       detail: `Raising your GPA by 0.1 points requires consistently scoring slightly above your current average in upcoming semesters.`,
-      action: "Focus on your highest-credit courses first — improving grades in 4-credit subjects has the biggest GPA impact per course."
+      action: "Focus on your highest-credit courses first — improving grades in 4-credit subjects has the biggest GPA impact per course.",
     };
   }
 
@@ -128,7 +233,7 @@ function interpretGPA(result: GPAResult, form: GPAForm): InterpretationCardProps
     tone: 'warning',
     headline: `Your GPA of ${gpa.toFixed(2)} may put you below the threshold for many graduate programs and scholarships.`,
     detail: `Most graduate programs require a minimum of 3.0 GPA, and many scholarships require 3.5+.`,
-    action: "Prioritize high-credit courses for grade improvement. A strong upward trend in your final semesters can still make a compelling case."
+    action: 'Prioritize high-credit courses for grade improvement. A strong upward trend in your final semesters can still make a compelling case.',
   };
 }
 
@@ -141,5 +246,5 @@ export const GPACalculator = CalculatorFactory.create({
   engine: calculateGPA,
   interpretation: interpretGPA,
   formLayout: GPAFormUI,
-  resultLayout: GPAResultUI
+  resultLayout: GPAResultUI,
 });

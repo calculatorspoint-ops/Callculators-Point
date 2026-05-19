@@ -21,6 +21,7 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'));
 const Disclaimer     = lazy(() => import('./pages/Disclaimer.jsx'));
 const Sitemap        = lazy(() => import('./pages/Sitemap.jsx'));
 const SEOLandingPage = lazy(() => import('./pages/SEOLandingPage.jsx'));
+const EcosystemHub   = lazy(() => import('./pages/EcosystemHub.jsx'));
 
 // ── Inline page loader (avoids importing a heavy component) ───────────
 function PageLoader() {
@@ -75,6 +76,7 @@ export default function App() {
               <Route path="/disclaimer"            element={<Disclaimer />} />
               <Route path="/sitemap"               element={<Sitemap />} />
               <Route path="/tools/:slug"            element={<SEOLandingPage />} />
+              <Route path="/ecosystem/:id"          element={<EcosystemHub />} />
               <Route path="*"                      element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Calculator, Sparkles } from "lucide-react";
+import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Calculator, Sparkles, BookOpen, Heart } from "lucide-react";
 
 import { QuickCalc } from "@/components/ui/QuickCalc.jsx";
 import { CATEGORIES, BY_CATEGORY, POPULAR, NEW_CALCS, ALL_CALCULATORS } from "@/data/calculatorConfigs.js";
@@ -88,15 +88,37 @@ function FeatureCard({ icon, title, desc, color }) {
 
 /* ── Main Home page ─────────────────────────────────────────────── */
 export default function Home() {
-  const { recent } = useAppStore();
-  const recentCalcs = recent.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
+  const { recent, favorites } = useAppStore();
+  const recentCalcs   = recent.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
+  const favoriteCalcs = favorites.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
 
   return (
     <>
       <Helmet>
         <title>{`CalculatorsPoint — ${ALL_CALCULATORS.length}+ Free Online Calculators for Finance, Health & Math`}</title>
         <meta name="description" content={`CalculatorsPoint offers ${ALL_CALCULATORS.length}+ free online calculators for finance, health, math, and everyday use. EMI, BMI, SIP, GST, compound interest, and more. Instant results, 100% private.`} />
+        <meta name="keywords" content="free online calculator, BMI calculator, EMI calculator, GPA calculator, percentage calculator, compound interest calculator, loan calculator, tax calculator" />
         <link rel="canonical" href="https://calculatorspoint.com/" />
+        <meta property="og:title" content="CalculatorsPoint — Free Online Calculators" />
+        <meta property="og:description" content={`${ALL_CALCULATORS.length}+ free calculators for finance, health, math & everyday use. Instant results, 100% private.`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://calculatorspoint.com/" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "CalculatorsPoint",
+          "url": "https://calculatorspoint.com",
+          "description": `Free online calculators for finance, health, math, and everyday use. ${ALL_CALCULATORS.length}+ tools.`,
+          "sameAs": ["https://calculatorspoint.com"]
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "CalculatorsPoint",
+          "url": "https://calculatorspoint.com",
+          "potentialAction": { "@type": "SearchAction", "target": "https://calculatorspoint.com/calculators?q={search_term_string}", "query-input": "required name=search_term_string" }
+        })}</script>
       </Helmet>
 
       {/* ═══ HERO ══════════════════════════════════════════════════════════════ */}
@@ -181,24 +203,112 @@ export default function Home() {
 
       {/* ═══ MAIN CONTENT ═══════════════════════════════════════════════════════ */}
       <div className="home-wrap">
-        <div className="home-grid">
 
+        {/* ═══ ECOSYSTEM HUBS STRIP ══════════════════════════════════════════════ */}
+        <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "16px 20px", overflowX: "auto" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+              <BookOpen size={14} style={{ color: "var(--brand)" }} />
+              <span style={{ fontSize: 12, fontWeight: 800, color: "var(--text2)", textTransform: "uppercase", letterSpacing: ".06em" }}>Calculator Suites</span>
+            </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "nowrap", overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
+              {[
+                { id: "education", icon: "🎓", label: "Education Suite", sub: "GPA, IELTS, Attendance", color: "#c2410c", bg: "#fff7ed" },
+                { id: "finance", icon: "💰", label: "Finance Suite", sub: "EMI, SIP, Tax, Salary", color: "#1d4ed8", bg: "#eff6ff" },
+                { id: "fitness", icon: "💪", label: "Fitness Suite", sub: "BMI, Calories, Macros", color: "#dc2626", bg: "#fef2f2" },
+                { id: "women-health", icon: "🌸", label: "Women's Health", sub: "Period, Ovulation, Fertility", color: "#be185d", bg: "#fdf2f8" },
+              ].map(eco => (
+                <Link key={eco.id} to={`/ecosystem/${eco.id}`} style={{
+                  display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
+                  background: eco.bg, border: `1.5px solid ${eco.color}20`,
+                  borderRadius: "var(--r-xl)", textDecoration: "none", flexShrink: 0,
+                  transition: "all .15s",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = eco.color; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = `${eco.color}20`; e.currentTarget.style.transform = "none"; }}>
+                  <span style={{ fontSize: 20 }}>{eco.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: eco.color }}>{eco.label}</div>
+                    <div style={{ fontSize: 10, color: "var(--text3)", fontWeight: 600 }}>{eco.sub}</div>
+                  </div>
+                  <ArrowRight size={12} style={{ color: eco.color, marginLeft: 4 }} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ═══ TRENDING CALCULATORS ═══════════════════════════════════════════════ */}
+        <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "20px 20px" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <TrendingUp size={16} style={{ color: "#f59e0b" }} />
+                <span style={{ fontSize: 14, fontWeight: 800, color: "var(--text)" }}>Trending Now</span>
+              </div>
+              <Link to="/calculators" style={{ fontSize: 12, fontWeight: 700, color: "var(--brand)", display: "flex", alignItems: "center", gap: 4 }}>
+                View All <ArrowRight size={12} />
+              </Link>
+            </div>
+            <div style={{ display: "flex", gap: 10, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+              {POPULAR.slice(0, 10).map((c, i) => {
+                const cat = CATEGORIES.find(x => x.id === c.cat);
+                return (
+                  <Link key={c.id} to={`/calculator/${c.slug}`} style={{
+                    display: "flex", flexDirection: "column", gap: 6, padding: "12px 14px",
+                    background: cat?.bg || "var(--surf2)", border: `1.5px solid ${cat?.color}20`,
+                    borderRadius: "var(--r-xl)", textDecoration: "none", minWidth: 130, flexShrink: 0,
+                    transition: "all .15s",
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = cat?.color; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = `${cat?.color}20`; }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: 22 }}>{c.icon}</span>
+                      <div style={{ fontSize: 10, fontWeight: 800, color: "#f59e0b", background: "#fef3c7", padding: "1px 6px", borderRadius: 100 }}>#{i + 1}</div>
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", lineHeight: 1.4 }}>{c.name}</div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="home-grid">
           {/* ── Left: Calculator lists ── */}
           <main role="main">
             {/* Recently Used */}
             {recentCalcs.length > 0 && (
-              <div className="home-cat-block" style={{ marginBottom: 20 }}>
+              <div className="home-cat-block" style={{ marginBottom: 16 }}>
                 <div className="home-cat-head" style={{ borderLeft: "4px solid #16a34a" }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--green-l)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--green-l)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
                     🕐
                   </div>
-                  <div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>Recently Used</div>
                     <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Jump back in where you left off</p>
                   </div>
                 </div>
                 <div className="home-cat-grid">
                   {recentCalcs.slice(0, 5).map(c => <CalcRow key={c.id} calc={c} />)}
+                </div>
+              </div>
+            )}
+
+            {/* Favorites */}
+            {favoriteCalcs.length > 0 && (
+              <div className="home-cat-block" style={{ marginBottom: 16 }}>
+                <div className="home-cat-head" style={{ borderLeft: "4px solid #f59e0b" }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
+                    ⭐
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>Your Favorites</div>
+                    <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Saved tools — accessible in one click</p>
+                  </div>
+                </div>
+                <div className="home-cat-grid">
+                  {favoriteCalcs.slice(0, 6).map(c => <CalcRow key={c.id} calc={c} />)}
                 </div>
               </div>
             )}

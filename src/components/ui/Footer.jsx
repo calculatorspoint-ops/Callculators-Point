@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { CATEGORIES, POPULAR } from "@/data/calculatorConfigs.js";
+import { CATEGORIES, POPULAR, ALL_CALCULATORS } from "@/data/calculatorConfigs.js";
 import { Calculator } from "lucide-react";
 
 export function Footer() {
@@ -16,7 +16,7 @@ export function Footer() {
               <div>Calculators<span style={{ color:"#4ade80" }}>Point</span></div>
             </div>
             <p style={{ fontSize:13, lineHeight:1.7, color:"var(--footer-text)", marginBottom:16 }}>
-              55+ free online calculators for finance, health, math, education and daily life.
+              {ALL_CALCULATORS.length}+ free online calculators for finance, health, math, education and daily life.
               Fast, accurate, and 100% free — always.
             </p>
             <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
