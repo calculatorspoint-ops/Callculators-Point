@@ -195,9 +195,9 @@ export function QuickCalc() {
       minHeight: mode === "basic" ? 48 : 40,
       display: "flex", alignItems: "center", justifyContent: "center",
     };
-    if (s === "eq")  return { ...base, background: "linear-gradient(135deg,#4361ee,#3451c7)", color: "#fff", boxShadow: "0 4px 14px rgba(67,97,238,.4)", fontSize: 17 };
-    if (s === "op")  return { ...base, background: "rgba(139,92,246,.25)", color: "#c4b5fd", fontSize: mode==="basic"?15:13 };
-    if (s === "fn")  return { ...base, background: "rgba(6,182,212,.18)", color: "#67e8f9", fontSize: mode==="basic"?11:10, letterSpacing: "-.01em" };
+    if (s === "eq")  return { ...base, background: "linear-gradient(135deg,#2563EB,#1D4ED8)", color: "#fff", boxShadow: "0 4px 14px rgba(37,99,235,.45)", fontSize: 17 };
+    if (s === "op")  return { ...base, background: "rgba(37,99,235,.25)", color: "#93c5fd", fontSize: mode==="basic"?15:13 };
+    if (s === "fn")  return { ...base, background: "rgba(16,185,129,.18)", color: "#6ee7b7", fontSize: mode==="basic"?11:10, letterSpacing: "-.01em" };
     if (s === "mem") return { ...base, background: "rgba(245,158,11,.15)", color: "#fcd34d", fontSize: 10.5 };
     if (s === "del") return { ...base, background: "rgba(239,68,68,.22)", color: "#fca5a5" };
     if (s === "clr") return { ...base, background: "rgba(251,191,36,.22)", color: "#fde047" };
@@ -228,8 +228,8 @@ export function QuickCalc() {
             <button key={m} onClick={() => setMode(m)}
               style={{
                 flex: 1, padding: "5px 0", borderRadius: 8, border: "none", cursor: "pointer",
-                background: mode === m ? "rgba(99,102,241,.35)" : "rgba(255,255,255,.07)",
-                color: mode === m ? "#a5b4fc" : "rgba(255,255,255,.45)",
+                background: mode === m ? "rgba(37,99,235,.35)" : "rgba(255,255,255,.07)",
+                color: mode === m ? "#93c5fd" : "rgba(255,255,255,.45)",
                 fontSize: 10.5, fontWeight: 700, fontFamily: "var(--font)", letterSpacing: ".04em",
                 transition: "all .15s", textTransform: "uppercase",
               }}>
@@ -251,8 +251,8 @@ export function QuickCalc() {
           <button onClick={() => setShowHist(s => !s)}
             style={{
               padding: "5px 8px", borderRadius: 8, border: "none", cursor: "pointer",
-              background: showHist ? "rgba(99,102,241,.3)" : "rgba(255,255,255,.07)",
-              color: showHist ? "#a5b4fc" : "rgba(255,255,255,.45)",
+              background: showHist ? "rgba(37,99,235,.3)" : "rgba(255,255,255,.07)",
+              color: showHist ? "#93c5fd" : "rgba(255,255,255,.45)",
               fontSize: 12, transition: "all .15s",
             }}>
             🕐
@@ -282,7 +282,7 @@ export function QuickCalc() {
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
                 <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "55%" }}>{h.expr}</span>
-                <span style={{ color: "#818cf8", fontWeight: 700, flexShrink: 0 }}>= {h.result}</span>
+                <span style={{ color: "#60a5fa", fontWeight: 700, flexShrink: 0 }}>= {h.result}</span>
               </div>
             ))}
           </div>

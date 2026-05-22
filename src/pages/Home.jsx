@@ -395,12 +395,12 @@ export default function Home() {
           </div>
           <div className="home-features-grid">
             {[
-              { icon: "📊", color: "#4361ee", title: "Interactive Charts",    desc: "Visual charts that update as you type — growth curves, amortization schedules, scenario comparisons." },
+              { icon: "📊", color: "#2563EB", title: "Interactive Charts",    desc: "Visual charts that update as you type — growth curves, amortization schedules, scenario comparisons." },
               { icon: "💡", color: "#d97706", title: "Smart Insights",        desc: "Automatic tips like 'Pay ₹500 extra/month to save ₹40K in interest'. Actionable, not just numbers." },
-              { icon: "📋", color: "#059669", title: "Step-by-Step Breakdowns", desc: "Every formula explained clearly. Understand the math behind every result." },
+              { icon: "📋", color: "#10B981", title: "Step-by-Step Breakdowns", desc: "Every formula explained clearly. Understand the math behind every result." },
               { icon: "🔒", color: "#7c3aed", title: "100% Private",          desc: "All calculations run locally in your browser. Nothing is ever sent to any server." },
-              { icon: "🌍", color: "#3451c7", title: "Multi-Currency",        desc: "Auto-detects your region. Switch currency and everything updates instantly." },
-              { icon: "🆓", color: "#059669", title: "Always Free",           desc: "No subscriptions, no paywalls, no tricks. Every tool, free forever." },
+              { icon: "🌍", color: "#1D4ED8", title: "Multi-Currency",        desc: "Auto-detects your region. Switch currency and everything updates instantly." },
+              { icon: "🆓", color: "#10B981", title: "Always Free",           desc: "No subscriptions, no paywalls, no tricks. Every tool, free forever." },
             ].map(f => <FeatureCard key={f.title} {...f} />)}
           </div>
         </section>
