@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { writeFileSync } from 'fs';
+
+const CONTENT = `import { useState, useEffect } from "react";
 import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency } from "./SharedComponents.jsx";
 
 // ── Stock Return Calculator ───────────────────────────────────────────
@@ -74,7 +76,7 @@ export function StockReturnForm() {
       </div>
       <div style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "24px" }}>
         <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>Stock Return Breakdown</h2>
-        <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75 }}>Total stock return includes capital appreciation (price change) + dividends received - brokerage fees - taxes. In India: STCG (under 1 year) = 15%, LTCG (over 1 year, above ₹1L) = 10%. Always calculate net returns after all costs to compare investments fairly.</p>
+        <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75 }}>Total stock return includes capital appreciation (price change) + dividends received - brokerage fees - taxes. In India: STCG (< 1 year) = 15%, LTCG (> 1 year, above ₹1L) = 10%. Always calculate net returns after all costs to compare investments fairly.</p>
       </div>
     </div>
   );
@@ -342,3 +344,8 @@ export function DividendYieldForm() {
     </div>
   );
 }
+`;
+
+writeFileSync('src/components/calculator-core/forms/InvestmentForms.jsx', CONTENT, 'utf8');
+const lines = CONTENT.split('\n').length;
+console.log('InvestmentForms.jsx written. Lines:', lines);
