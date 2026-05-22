@@ -20,9 +20,9 @@
   width: 140%;
   height: 200%;
   background: 
-    radial-gradient(ellipse at 50% 0%, rgba(67, 97, 238, 0.14) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(52, 81, 199, 0.12) 0%, transparent 40%),
-    radial-gradient(ellipse at 20% 80%, rgba(67, 97, 238, 0.08) 0%, transparent 40%);
+    radial-gradient(ellipse at 50% 0%, rgba(37, 99, 235, 0.14) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(29, 78, 216, 0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at 20% 80%, rgba(37, 99, 235, 0.08) 0%, transparent 40%);
   pointer-events: none;
   animation: bg-shift 15s ease-in-out infinite alternate;
 }
@@ -117,8 +117,8 @@
 .search-premium input:focus {
   outline: none;
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(67, 97, 238, 0.5);
-  box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.12);
+  border-color: rgba(37, 99, 235, 0.5);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .search-premium .search-icon {
@@ -161,10 +161,10 @@
 }
 
 .filter-pill-premium.active {
-  background: rgba(67, 97, 238, 0.2);
-  border-color: rgba(67, 97, 238, 0.45);
+  background: rgba(37, 99, 235, 0.2);
+  border-color: rgba(37, 99, 235, 0.45);
   color: #fff;
-  box-shadow: 0 0 15px rgba(67, 97, 238, 0.15);
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
 }
 
 /* ── Premium Cards ── */
@@ -232,8 +232,8 @@
 
 .calc-card-premium:hover {
   transform: translateY(-3px);
-  border-color: rgba(67, 97, 238, 0.4);
-  box-shadow: 0 8px 32px -8px rgba(67, 97, 238, 0.22);
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: 0 8px 32px -8px rgba(37, 99, 235, 0.22);
   background: #1a1f3e;
 }
 
@@ -257,8 +257,8 @@
 
 .calc-card-premium:hover .calc-card-icon {
   transform: scale(1.05) rotate(-4deg);
-  background: rgba(67, 97, 238, 0.18);
-  border-color: rgba(67, 97, 238, 0.28);
+  background: rgba(37, 99, 235, 0.18);
+  border-color: rgba(37, 99, 235, 0.28);
 }
 
 .calc-card-content {

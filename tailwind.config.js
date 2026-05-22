@@ -14,14 +14,20 @@ export default {
       },
       colors: {
         brand: {
-          DEFAULT: '#6366f1',
-          light: '#818cf8',
-          dark: '#4f46e5',
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          800: '#3730a3',
-          900: '#312e81',
+          DEFAULT: '#2563EB',
+          light: '#60A5FA',
+          dark: '#1D4ED8',
+          50: '#EFF6FF',
+          100: '#DBEAFE',
+          200: '#BFDBFE',
+          800: '#1E40AF',
+          900: '#1E3A8A',
+        },
+        accent: {
+          DEFAULT: '#10B981',
+          dark: '#047857',
+          light: '#ECFDF5',
+          border: '#A7F3D0',
         },
       },
       animation: {
