@@ -7,15 +7,15 @@ import {
 import { Download, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 import { useGeoStore } from "@/core/geo-engine/geoStore.js";
 
-/* ── Color palette ─────────────────────────────────────────────────── */
+/* ── Color palette — calm professional ───────────────────────────────── */
 const C = {
-  principal:"#2563eb", interest:"#dc2626", balance:"#7c3aed",
-  nominal:"#2563eb",   invested:"#94a3b8", real:"#16a34a",
-  corpus:"#2563eb",    gains:"#16a34a",    afterTax:"#f59e0b",
-  revenue:"#16a34a",   cost:"#dc2626",     profit:"#2563eb",
-  total:"#2563eb",     value:"#2563eb",    y:"#2563eb",
+  principal:"#4361ee", interest:"#dc3545", balance:"#7c3aed",
+  nominal:"#4361ee",   invested:"#9aa0ba", real:"#059669",
+  corpus:"#4361ee",    gains:"#059669",    afterTax:"#d97706",
+  revenue:"#059669",   cost:"#dc3545",     profit:"#4361ee",
+  total:"#4361ee",     value:"#4361ee",    y:"#4361ee",
 };
-const PAL = ["#2563eb","#dc2626","#16a34a","#f59e0b","#7c3aed","#06b6d4","#f97316","#84cc16"];
+const PAL = ["#4361ee","#dc3545","#059669","#d97706","#7c3aed","#0891b2","#ea580c","#65a30d"];
 
 /* ── Smart currency formatter — respects selected region ────────────── */
 function useCurrencyFormatter() {

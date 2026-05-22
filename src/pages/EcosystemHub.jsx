@@ -12,7 +12,7 @@ const ECOSYSTEMS = {
     icon: "🎓",
     color: "#c2410c",
     bg: "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)",
-    heroBg: "linear-gradient(135deg, #1c0a00 0%, #431407 40%, #c2410c 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1510 40%, #a83510 100%)",
     description: "Master every academic challenge with our interconnected education calculators. From calculating your current GPA to planning the grades you need for your dream scholarship — everything works together.",
     stats: [{ n: "10+", l: "Tools" }, { n: "5", l: "Universities" }, { n: "GPA & IELTS", l: "Covered" }],
     groups: [
@@ -48,9 +48,9 @@ const ECOSYSTEMS = {
     name: "Finance & Money Suite",
     tagline: "Loans, investments, tax — everything in one place",
     icon: "💰",
-    color: "#1d4ed8",
-    bg: "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
-    heroBg: "linear-gradient(135deg, #0f172a 0%, #1e2a6b 40%, #1d4ed8 100%)",
+    color: "#3451c7",
+    bg: "linear-gradient(135deg, #eef0fd 0%, #dde3fb 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a2554 40%, #2f4cb5 100%)",
     description: "From your monthly EMI to long-term SIP wealth building — our financial calculators are designed to work together, giving you a complete picture of your money.",
     stats: [{ n: "14+", l: "Tools" }, { n: "50+", l: "Countries" }, { n: "EMI to SIP", l: "Covered" }],
     groups: [
@@ -113,7 +113,7 @@ const ECOSYSTEMS = {
     icon: "💪",
     color: "#dc2626",
     bg: "linear-gradient(135deg, #fef2f2 0%, #fecaca20 100%)",
-    heroBg: "linear-gradient(135deg, #0a0000 0%, #450a0a 40%, #dc2626 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1230 40%, #8b1a4a 100%)",
     description: "Build your ultimate fitness profile. Start with BMI, calculate your caloric needs, plan your macros, and discover your optimal heart rate training zones.",
     stats: [{ n: "8+", l: "Tools" }, { n: "3", l: "Formulas" }, { n: "BMI to 1RM", l: "Covered" }],
     groups: [

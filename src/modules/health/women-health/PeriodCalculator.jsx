@@ -8,7 +8,6 @@ import {
   getPhaseInfo,
   isIrregularCycle,
   calcAverageCycle,
-  type CycleInput,
 } from "./engine/womenHealthEngine.ts";
 
 /* ── Tiny helper ── */
@@ -103,7 +102,7 @@ export default function PeriodCalculator() {
       .map(Number)
       .filter(n => n >= 15 && n <= 50);
 
-    const input: CycleInput = {
+    const input = {
       lastPeriodDate: toDate(lmp),
       cycleLength: cycleLen,
       periodDuration: periodDur,

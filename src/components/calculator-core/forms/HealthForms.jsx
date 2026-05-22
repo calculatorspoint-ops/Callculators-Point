@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { 
   calcBMI, calcCalorie, calcBMR, calcMacro, calcWater, 
-  calcHeartRate, calcBodyFat, calcIdealWeight, calcOneRepMax, calcPregnancy, round, fmtC, fmt 
+  calcHeartRate, calcBodyFat, calcIdealWeight, calcOneRepMax, calcPregnancy,
+  calcCaloriesBurned, calcSleep, MET_ACTIVITIES, round, fmtC, fmt 
 } from "@/core/calculationEngine.js";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
@@ -386,6 +387,92 @@ export function PregnancyForm(){
             </div>
           ))}
         </>
+      )}
+    </div>
+  );
+}
+
+// Placeholder for new forms
+
+// ── Calories Burned ───────────────────────────────────────────────────
+export function CaloriesBurnedForm(){
+  const [weight,setWeight]=useState(70),[duration,setDuration]=useState(30),[actIdx,setActIdx]=useState(0);
+  const [res,setRes]=useState(null);
+  const activity=MET_ACTIVITIES[actIdx]||MET_ACTIVITIES[0];
+  useEffect(()=>{
+    const t=setTimeout(()=>{
+      const d=calcCaloriesBurned({weight,duration,met:activity.met});
+      if(!d){setRes(null);return;}
+      const chart={type:"bar",data:MET_ACTIVITIES.slice(0,8).map(a=>({label:a.label.split(" ")[0],value:round(a.met*weight*(duration/60))})),xKey:"label",dataKey:"value"};
+      setRes(buildResult("Calories Burned",d.calories+" kcal",
+        [{label:"Fat Burned",value:d.fatGrams+"g",highlight:true},{label:"Apples equiv.",value:d.equivalents.apples+""},{label:"Big Macs",value:d.equivalents.bigMacs+""},{label:"Walk Equiv.",value:d.equivalents.walkMins+" min"}],
+        d.insights,chart,d.breakdowns));
+    },80);
+    return()=>clearTimeout(t);
+  },[weight,duration,actIdx]);
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Row2>
+          <Sl label="Body Weight" id="cbw" min={30} max={200} step={0.5} value={weight} onChange={setWeight} fmt={v=>`${v} kg`}/>
+          <Sl label="Duration" id="cbd" min={5} max={180} step={5} value={duration} onChange={setDuration} fmt={v=>`${v} min`}/>
+        </Row2>
+        <L t="Select Activity"/>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,maxHeight:260,overflowY:"auto",paddingRight:4}}>
+          {MET_ACTIVITIES.map((a,i)=>(
+            <button key={i} onClick={()=>setActIdx(i)} style={{padding:"8px 10px",borderRadius:"var(--r-md)",border:actIdx===i?"2px solid var(--brand)":"1px solid var(--border)",background:actIdx===i?"var(--p50)":"var(--surface)",color:actIdx===i?"var(--brand)":"var(--text2)",fontWeight:actIdx===i?700:500,fontSize:11,cursor:"pointer",textAlign:"left"}}>
+              {a.label}
+            </button>
+          ))}
+        </div>
+        <div style={{marginTop:12,padding:"10px 14px",background:"var(--surface2)",borderRadius:"var(--r-md)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
+          MET Value: <strong style={{color:"var(--brand)"}}>{activity.met}</strong> - {activity.label}
+        </div>
+      </div>
+      <div className="sticky-res"><Panel result={res} loading={null} label="Calories Burned"/></div>
+    </div>
+  );
+}
+
+// ── Sleep Calculator ──────────────────────────────────────────────────
+export function SleepForm(){
+  const [mode,setMode]=useState("wakeup"),[time,setTime]=useState("22:00");
+  const [res,setRes]=useState(null);
+  useEffect(()=>{ setTime(mode==="wakeup"?"22:00":"07:00"); },[mode]);
+  useEffect(()=>{
+    const d=calcSleep({mode,time});
+    if(!d){setRes(null);return;}
+    setRes(d);
+  },[mode,time]);
+  const CYCLE_COLORS=["#f87171","#34d399","#60a5fa"];
+  return (
+    <div>
+      <Tabs tabs={["Bedtime to Wake","Wake to Bedtime"]} active={mode==="wakeup"?"Bedtime to Wake":"Wake to Bedtime"}
+        onChange={v=>setMode(v==="Bedtime to Wake"?"wakeup":"bedtime")}/>
+      <N label={mode==="wakeup"?"Bedtime":"Desired Wake-Up Time"} id="sleepTime" value={time} onChange={setTime} type="time"
+        hint={mode==="wakeup"?"When you plan to fall asleep":"When you need to wake up"}/>
+      {res&&(
+        <div style={{marginTop:16}}>
+          <L t={mode==="wakeup"?"Optimal Wake-Up Times":"Optimal Bedtimes"}/>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {res.results.map((r,i)=>(
+              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 18px",borderRadius:"var(--r-lg)",border:`2px solid ${r.cycles===5?"var(--brand)":"var(--border)"}`,background:r.cycles===5?"var(--p50)":"var(--surface2)"}}>
+                <div>
+                  <div style={{fontWeight:700,fontSize:14,color:r.cycles===5?"var(--brand)":"var(--text)"}}>
+                    {mode==="wakeup"?r.wakeup:r.bedtime}
+                    {r.cycles===5&&<span style={{marginLeft:8,fontSize:11,fontWeight:800,background:"var(--brand)",color:"#fff",padding:"2px 8px",borderRadius:100}}>Best</span>}
+                  </div>
+                  <div style={{fontSize:12,color:"var(--text3)",marginTop:3}}>{r.cycles} cycles - {r.hours}h sleep</div>
+                </div>
+                <div style={{width:12,height:12,borderRadius:"50%",background:CYCLE_COLORS[i]}}/>
+              </div>
+            ))}
+          </div>
+          <div style={{marginTop:14,padding:"12px 14px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
+            You fall asleep ~{res.onsetMins} min after lying down. Each sleep cycle is approx 90 min.
+          </div>
+          <InsightBox insights={res.insights}/>
+        </div>
       )}
     </div>
   );

@@ -17,7 +17,7 @@ export default function AllCalculators() {
   }), [q, cat]);
 
   return (
-    <div style={{ backgroundColor: '#020617', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#0a0e25', minHeight: '100vh' }}>
       
 
       {/* Hero Section */}

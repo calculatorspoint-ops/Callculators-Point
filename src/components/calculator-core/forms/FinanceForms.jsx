@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { 
   calcEMI, calcCompound, calcSIP, calcSalary, calcGST, calcPPF, 
   calcSimpleInterest, calcProfitMargin, calcBreakEven, calcDiscount, 
-  calcTip, calcTax, calcROI, convertCurrency, round, fmtC, fmt 
+  calcTip, calcTax, calcROI, calcFD, calcLoanCompare, convertCurrency, round, fmtC, fmt 
 } from "@/core/calculationEngine.js";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
@@ -613,3 +613,82 @@ export function TipForm(){
     </div>
   );
 }
+
+// ── FD / Fixed Deposit ───────────────────────────────────────────────
+export function FDForm(){
+  const { fm, fmSlider, sym } = useCurrency();
+  const [p,setP]=useState(100000),[r,setR]=useState(7),[y,setY]=useState(3),[freq,setFreq]=useState("4"),[tax,setTax]=useState("0");
+  const [res,setRes]=useState(null);
+  useEffect(()=>{
+    const d=calcFD({principal:p,rate:r,tenure:y,frequency:freq,taxRate:+tax||0});
+    if(!d){setRes(null);return;}
+    const chart={type:"area",data:d.pts,keys:["balance","invested"]};
+    setRes(buildResult("Maturity Value",fm(d.maturity),
+      [{label:"Interest Earned",value:fm(d.interest),highlight:true},{label:"Effective Yield",value:d.effectiveYield+"%"},{label:"Net Maturity",value:fm(d.netMaturity||d.maturity)},{label:"Tax Deducted",value:fm(d.taxAmt||0),warn:d.taxAmt>0}],
+      d.insights,chart,d.breakdowns));
+  },[p,r,y,freq,tax]);
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Presets items={[
+          {label:"🏦 Short-term (1yr)",v:{p:100000,r:7,y:1}},
+          {label:"💰 Mid-term (3yr)",v:{p:500000,r:7.5,y:3}},
+          {label:"🚀 Long-term (5yr)",v:{p:1000000,r:8,y:5}},
+        ]} onApply={pr=>{setP(pr.v.p);setR(pr.v.r);setY(pr.v.y);}}/>
+        <Sl label="Principal Amount" id="fdp" min={1000} max={5000000} step={1000} value={p} onChange={setP} fmt={v=>fmSlider(v)}/>
+        <Sl label="Interest Rate (% p.a.)" id="fdr" min={1} max={15} step={0.25} value={r} onChange={setR} fmt={v=>`${v}%`}/>
+        <Sl label="Tenure (Years)" id="fdy" min={1} max={10} value={y} onChange={setY} fmt={v=>`${v} yr${v>1?"s":""}`}/>
+        <Sel label="Compounding Frequency" id="fdfreq" value={freq} onChange={setFreq} opts={[{v:"1",l:"Annually"},{v:"2",l:"Half-Yearly"},{v:"4",l:"Quarterly"},{v:"12",l:"Monthly"}]}/>
+        <N label="Tax on Interest (%)" id="fdtax" value={tax} onChange={setTax} unit="%" placeholder="0" hint="e.g. 10% TDS on FD interest"/>
+      </div>
+      <div className="sticky-res"><Panel result={res} loading={null} label="Maturity Value"/></div>
+    </div>
+  );
+}
+
+// ── Loan Comparison ──────────────────────────────────────────────────
+export function LoanCompareForm(){
+  const { fm, fmSlider, sym } = useCurrency();
+  const [loans,setLoans]=useState([
+    {label:"Loan A",principal:"500000",rate:"8.5",tenure:"20"},
+    {label:"Loan B",principal:"500000",rate:"9.0",tenure:"20"},
+    {label:"Loan C",principal:"500000",rate:"9.5",tenure:"20"},
+  ]);
+  const [res,setRes]=useState(null);
+  const update=(i,k,v)=>setLoans(prev=>prev.map((l,idx)=>idx===i?{...l,[k]:v}:l));
+
+  useEffect(()=>{
+    const d=calcLoanCompare({loans:loans.map(l=>({...l,principal:+l.principal,rate:+l.rate,tenure:+l.tenure}))});
+    if(!d){setRes(null);return;}
+    const chart={type:"bar",data:d.results.map(r=>({name:r.label,EMI:r.emi,Interest:r.interest,Total:r.total})),keys:["EMI","Interest"]};
+    setRes(buildResult("Best Loan",fm(d.best.emi)+"/mo",
+      d.results.map(r=>({label:r.label+" EMI",value:fm(r.emi),highlight:r.label===d.best.label})),
+      d.insights,chart,d.breakdowns));
+  },[loans]);
+
+  const colors=["var(--brand)","#f59e0b","#ef4444"];
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        {loans.map((l,i)=>(
+          <div key={i} style={{marginBottom:20,padding:"16px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:`2px solid ${colors[i]}30`}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+              <div style={{width:12,height:12,borderRadius:"50%",background:colors[i]}}/>
+              <span style={{fontWeight:700,fontSize:14,color:"var(--text)"}}>{l.label}</span>
+            </div>
+            <Row3>
+              <N label="Principal" id={`lc-p${i}`} value={l.principal} onChange={v=>update(i,"principal",v)} unit={sym}/>
+              <N label="Rate (%)" id={`lc-r${i}`} value={l.rate} onChange={v=>update(i,"rate",v)} unit="%"/>
+              <N label="Tenure (yr)" id={`lc-t${i}`} value={l.tenure} onChange={v=>update(i,"tenure",v)} unit="yr"/>
+            </Row3>
+          </div>
+        ))}
+        <div style={{padding:"12px 14px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
+          ⚖️ Compare up to 3 loans side-by-side — see which saves the most in total interest.
+        </div>
+      </div>
+      <div className="sticky-res"><Panel result={res} loading={null} label="Loan Comparison"/></div>
+    </div>
+  );
+}
+

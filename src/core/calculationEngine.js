@@ -1493,5 +1493,258 @@ export function convertCurrency(amount, from, to) {
   return round(usd*(CURRENCIES[to]?.rate||1),4);
 }
 
+// ── FD / Fixed Deposit Calculator ────────────────────────────────────
+export function calcFD({ principal, rate, tenure, frequency = "4", taxRate = 0 }) {
+  const P = +principal || 0, r = (+rate || 0) / 100, y = +tenure || 1, n = +frequency || 4, tax = (+taxRate || 0) / 100;
+  if (!P || !r) return null;
+  const maturity = round(P * Math.pow(1 + r / n, n * y));
+  const interest = round(maturity - P);
+  const taxAmt = round(interest * tax);
+  const netInterest = round(interest - taxAmt);
+  const netMaturity = round(P + netInterest);
+  const effectiveYield = round((Math.pow(1 + r / n, n) - 1) * 100, 3);
+  const pts = Array.from({ length: y + 1 }, (_, i) => ({
+    year: `Y${i}`,
+    balance: round(P * Math.pow(1 + r / n, n * i)),
+    invested: P,
+  }));
+  return {
+    maturity, interest, taxAmt, netInterest, netMaturity, effectiveYield, pts,
+    breakdowns: [
+      { label: "Principal", value: fmtC(P) },
+      { label: "Annual Rate", value: rate + "%" },
+      { label: "Tenure", value: y + " years" },
+      { label: "Compounding", value: { 1: "Annually", 2: "Half-Yearly", 4: "Quarterly", 12: "Monthly" }[n] || "Quarterly" },
+      { label: "Gross Maturity", value: fmtC(maturity), bold: true },
+      { label: "Interest Earned", value: fmtC(interest), bold: true },
+      ...(tax > 0 ? [{ label: `Tax (${taxRate}%)`, value: fmtC(taxAmt) }, { label: "Net Maturity", value: fmtC(netMaturity), bold: true }] : []),
+      { label: "Effective Yield", value: effectiveYield + "% p.a." },
+    ],
+    insights: [
+      { type: "good", msg: `${fmtC(P)} grows to ${fmtC(maturity)} in ${y} years at ${rate}%` },
+      { type: "info", msg: `Effective annual yield: ${effectiveYield}% (with ${{ 1: "annual", 2: "half-yearly", 4: "quarterly", 12: "monthly" }[n] || "quarterly"} compounding)` },
+      tax > 0 && { type: "warn", msg: `After ${taxRate}% tax on interest: net maturity = ${fmtC(netMaturity)}` },
+    ].filter(Boolean),
+  };
+}
+
+// ── Loan Comparison Calculator ────────────────────────────────────────
+export function calcLoanCompare({ loans }) {
+  if (!loans?.length) return null;
+  const results = loans.map((l, i) => {
+    const P = +l.principal || 0, r = (+l.rate || 0) / 1200, n = (+l.tenure || 1) * 12;
+    if (!P || !r || !n) return null;
+    const emi = round(P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
+    const total = round(emi * n);
+    const interest = round(total - P);
+    return { label: l.label || `Loan ${i + 1}`, principal: P, rate: +l.rate, tenure: +l.tenure, emi, total, interest, interestRatio: round(interest / total * 100, 1) };
+  }).filter(Boolean);
+  if (!results.length) return null;
+  const best = results.reduce((a, b) => a.total < b.total ? a : b);
+  return {
+    results, best,
+    breakdowns: results.flatMap(r => [
+      { label: `${r.label} — EMI`, value: fmtC(r.emi), bold: true },
+      { label: `${r.label} — Total`, value: fmtC(r.total) },
+      { label: `${r.label} — Interest`, value: fmtC(r.interest) },
+    ]),
+    insights: [
+      { type: "good", msg: `Best deal: ${best.label} saves most — lowest total cost of ${fmtC(best.total)}` },
+      results.length > 1 && { type: "info", msg: `Interest difference: ${fmtC(Math.max(...results.map(r => r.interest)) - Math.min(...results.map(r => r.interest)))}` },
+    ].filter(Boolean),
+  };
+}
+
+// ── Calories Burned Calculator ────────────────────────────────────────
+export const MET_ACTIVITIES = [
+  { label: "Walking (moderate, 5km/h)", met: 3.5 },
+  { label: "Running (8km/h)", met: 8.0 },
+  { label: "Running (10km/h)", met: 10.0 },
+  { label: "Cycling (leisure)", met: 4.0 },
+  { label: "Cycling (vigorous)", met: 8.0 },
+  { label: "Swimming (moderate)", met: 6.0 },
+  { label: "Jump Rope", met: 11.0 },
+  { label: "Weight Training", met: 3.5 },
+  { label: "HIIT", met: 9.0 },
+  { label: "Yoga", met: 2.5 },
+  { label: "Dancing", met: 5.0 },
+  { label: "Soccer", met: 7.0 },
+  { label: "Basketball", met: 6.5 },
+  { label: "Tennis", met: 7.3 },
+  { label: "Badminton", met: 5.5 },
+  { label: "Hiking", met: 6.0 },
+  { label: "Elliptical (moderate)", met: 5.0 },
+  { label: "Rowing (moderate)", met: 7.0 },
+  { label: "Rock Climbing", met: 8.0 },
+  { label: "Stair Climbing", met: 9.0 },
+  { label: "Pilates", met: 3.0 },
+  { label: "Martial Arts", met: 10.0 },
+  { label: "Gardening", met: 3.5 },
+  { label: "Housework", met: 3.0 },
+  { label: "Sleeping", met: 0.9 },
+];
+export function calcCaloriesBurned({ weight, duration, met }) {
+  const w = +weight || 70, d = +duration || 30, m = +met || 5;
+  const calories = round(m * w * (d / 60));
+  const fatGrams = round(calories / 9);
+  const top5 = [...MET_ACTIVITIES].sort((a, b) => b.met - a.met).slice(0, 5);
+  return {
+    calories, fatGrams,
+    equivalents: {
+      walkMins: round(calories / (3.5 * w / 60)),
+      bigMacs: round(calories / 550, 1),
+      apples: round(calories / 95, 1),
+    },
+    breakdowns: [
+      { label: "Body Weight", value: w + " kg" },
+      { label: "Duration", value: d + " min" },
+      { label: "MET Value", value: m },
+      { label: "Calories Burned", value: calories + " kcal", bold: true },
+      { label: "Fat Burned (est.)", value: fatGrams + "g" },
+    ],
+    insights: [
+      { type: "good", msg: `Burned ${calories} kcal — equivalent to ~${round(calories / 95, 1)} apples or ${round(calories / 550, 1)} Big Macs` },
+      { type: "info", msg: `At this rate, you'd burn 1kg of fat in ${round(7700 / calories * (d / 60), 1)} hours of exercise` },
+    ],
+  };
+}
+
+// ── Sleep Calculator ──────────────────────────────────────────────────
+export function calcSleep({ mode, time }) {
+  const CYCLE = 90, ONSET = 14; // minutes
+  const parseTime = (t) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+  const addMins = (base, add) => {
+    const total = (base + add + 1440) % 1440;
+    const h = Math.floor(total / 60), m = total % 60;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  };
+  const baseMin = parseTime(time || "22:00");
+  const cycles = [4, 5, 6];
+  let results;
+  if (mode === "bedtime") {
+    // Given wake time, find bedtimes
+    results = cycles.map(c => {
+      const sleepMin = c * CYCLE + ONSET;
+      const bed = addMins(baseMin, -sleepMin);
+      return { cycles: c, hours: round(c * CYCLE / 60, 1), bedtime: bed, wakeup: time };
+    });
+  } else {
+    // Given bedtime, find wake times
+    results = cycles.map(c => {
+      const sleepMin = c * CYCLE + ONSET;
+      const wake = addMins(baseMin, sleepMin);
+      return { cycles: c, hours: round(c * CYCLE / 60, 1), bedtime: time, wakeup: wake };
+    });
+  }
+  const recommended = results.find(r => r.cycles === 5) || results[1];
+  return {
+    results, recommended, onsetMins: ONSET,
+    breakdowns: results.map(r => ({
+      label: `${r.cycles} cycles (${r.hours}h)`,
+      value: mode === "bedtime" ? `Bed at ${r.bedtime}` : `Wake at ${r.wakeup}`,
+      bold: r.cycles === 5,
+    })),
+    insights: [
+      { type: "good", msg: `Optimal: ${recommended.cycles} cycles = ${recommended.hours}h of sleep` },
+      { type: "info", msg: "Each sleep cycle is ~90 min. Waking mid-cycle causes grogginess." },
+      { type: "info", msg: "Adults need 5–6 cycles (7.5–9 hours) for full restoration." },
+    ],
+  };
+}
+
+// ── Logarithm Calculator ──────────────────────────────────────────────
+export function calcLog({ value, base = "10" }) {
+  const v = +value;
+  if (v <= 0) return null;
+  const b = base === "e" ? Math.E : base === "2" ? 2 : +base || 10;
+  const result = base === "e" ? Math.log(v) : Math.log(v) / Math.log(b);
+  const log10 = Math.log10(v), log2 = Math.log2(v), ln = Math.log(v);
+  return {
+    result: round(result, 8),
+    log10: round(log10, 8), log2: round(log2, 8), ln: round(ln, 8),
+    antilog: round(Math.pow(b, result), 6),
+    breakdowns: [
+      { label: `log${base === "e" ? "ₑ" : base === "10" ? "₁₀" : `(${base})`}(${v})`, value: round(result, 8), bold: true },
+      { label: "log₁₀(" + v + ")", value: round(log10, 8) },
+      { label: "log₂(" + v + ")", value: round(log2, 8) },
+      { label: "ln(" + v + ")", value: round(ln, 8) },
+      { label: `Antilog (${b}^result)`, value: round(Math.pow(b, result), 4) },
+    ],
+    insights: [
+      { type: "info", msg: `log${base === "e" ? "ₑ" : base}(${v}) = ${round(result, 6)}` },
+      { type: "info", msg: `Change of base: ln(${v}) / ln(${b}) = ${round(result, 6)}` },
+    ],
+  };
+}
+
+// ── Ratio Calculator ──────────────────────────────────────────────────
+export function calcRatio({ a, b, c, d, mode = "simplify" }) {
+  const gcd = (x, y) => y === 0 ? x : gcd(y, x % y);
+  const av = +a || 0, bv = +b || 1, cv = +c || 0, dv = +d || 0;
+  if (mode === "simplify") {
+    if (!av || !bv) return null;
+    const g = gcd(Math.abs(av), Math.abs(bv));
+    const sa = av / g, sb = bv / g;
+    const decimal = round(av / bv, 6);
+    return {
+      simplified: `${sa} : ${sb}`, decimal, percentage: round(av / bv * 100, 2),
+      parts: { a: sa, b: sb, total: sa + sb },
+      breakdowns: [
+        { label: "Original Ratio", value: `${av} : ${bv}` },
+        { label: "Simplified", value: `${sa} : ${sb}`, bold: true },
+        { label: "Decimal", value: decimal },
+        { label: "Percentage A", value: round(sa / (sa + sb) * 100, 2) + "%" },
+        { label: "Percentage B", value: round(sb / (sa + sb) * 100, 2) + "%" },
+      ],
+      insights: [{ type: "good", msg: `${av}:${bv} simplifies to ${sa}:${sb}` }],
+    };
+  } else if (mode === "missing") {
+    // a:b = c:? → d = b*c/a
+    if (!av || !bv || !cv) return null;
+    const missing = round(bv * cv / av, 6);
+    return {
+      result: missing,
+      breakdowns: [
+        { label: "Ratio", value: `${av} : ${bv}` },
+        { label: "Given", value: cv },
+        { label: "Missing Value", value: missing, bold: true },
+      ],
+      insights: [{ type: "good", msg: `${av}:${bv} = ${cv}:${missing}` }],
+    };
+  }
+  return null;
+}
+
+// ── Reading Time Calculator ────────────────────────────────────────────
+export function calcReadingTime({ wordCount, wpm = 200 }) {
+  const w = +wordCount || 0, speed = +wpm || 200;
+  if (!w) return null;
+  const minutes = w / speed;
+  const fast = round(w / 300, 1), avg = round(w / 200, 1), slow = round(w / 130, 1);
+  const speakMins = round(w / 130, 1);
+  const pages = round(w / 250, 1); // avg page = 250 words
+  return {
+    minutes: round(minutes, 1), fast, avg, slow, speakMins, pages,
+    formatted: minutes < 1 ? "< 1 min" : `${Math.floor(minutes)}m ${Math.round((minutes % 1) * 60)}s`,
+    breakdowns: [
+      { label: "Word Count", value: w.toLocaleString() },
+      { label: "Your WPM", value: speed },
+      { label: "Reading Time", value: round(minutes, 1) + " min", bold: true },
+      { label: "Fast Reader (300 WPM)", value: fast + " min" },
+      { label: "Average (200 WPM)", value: avg + " min" },
+      { label: "Slow Reader (130 WPM)", value: slow + " min" },
+      { label: "Speaking Time", value: speakMins + " min" },
+      { label: "Approx. Pages", value: pages + " pages" },
+    ],
+    insights: [
+      { type: "info", msg: `At ${speed} WPM, ${w.toLocaleString()} words takes ${round(minutes, 1)} minutes` },
+      { type: "info", msg: `Equivalent to ~${pages} pages of a book` },
+    ],
+  };
+}
+
 // Re-export helpers for backward compat
 export { fmtC as formatC, round as roundN };

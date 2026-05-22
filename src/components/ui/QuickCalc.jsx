@@ -195,7 +195,7 @@ export function QuickCalc() {
       minHeight: mode === "basic" ? 48 : 40,
       display: "flex", alignItems: "center", justifyContent: "center",
     };
-    if (s === "eq")  return { ...base, background: "linear-gradient(135deg,#6366f1,#4f46e5)", color: "#fff", boxShadow: "0 4px 14px rgba(99,102,241,.45)", fontSize: 17 };
+    if (s === "eq")  return { ...base, background: "linear-gradient(135deg,#4361ee,#3451c7)", color: "#fff", boxShadow: "0 4px 14px rgba(67,97,238,.4)", fontSize: 17 };
     if (s === "op")  return { ...base, background: "rgba(139,92,246,.25)", color: "#c4b5fd", fontSize: mode==="basic"?15:13 };
     if (s === "fn")  return { ...base, background: "rgba(6,182,212,.18)", color: "#67e8f9", fontSize: mode==="basic"?11:10, letterSpacing: "-.01em" };
     if (s === "mem") return { ...base, background: "rgba(245,158,11,.15)", color: "#fcd34d", fontSize: 10.5 };

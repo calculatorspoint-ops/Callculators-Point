@@ -6,7 +6,7 @@ import { CATEGORIES, BY_CATEGORY, POPULAR, ALL_CALCULATORS } from "@/data/calcul
 /* ─── Per-category rich content ─────────────────────────── */
 const CAT_CONTENT = {
   finance: {
-    heroBg: "linear-gradient(135deg, #0f172a 0%, #1e2a6b 50%, #1d4ed8 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a2554 50%, #2f4cb5 100%)",
     intro: "Whether you're planning a home loan, growing your savings through SIP, or understanding your tax liability — our finance calculators are designed to give you complete clarity on your money.",
     ecosystemId: "finance",
     ecosystemLabel: "Open Finance Suite →",
@@ -19,7 +19,7 @@ const CAT_CONTENT = {
     seoContent: `Finance calculators are among the most searched tools online. Our suite covers everything from simple EMI calculations to complex retirement planning, all with region-aware currency support for 50+ countries including India (INR/GST), Pakistan (PKR/GST), USA (USD/Sales Tax), UK (GBP/VAT), and more.`,
   },
   health: {
-    heroBg: "linear-gradient(135deg, #0a0000 0%, #450a0a 50%, #dc2626 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1230 50%, #8b1a4a 100%)",
     intro: "Your health deserves precision. Our health and fitness calculators use medically validated formulas to help you understand your body, plan your nutrition, and achieve your fitness goals.",
     ecosystemId: "fitness",
     ecosystemLabel: "Open Fitness Suite →",
@@ -32,7 +32,7 @@ const CAT_CONTENT = {
     seoContent: `Health calculators require medical-grade accuracy. All our formulas are based on peer-reviewed research including Mifflin-St Jeor for BMR, WHO guidelines for BMI classification, and the US Navy method for body fat percentage.`,
   },
   math: {
-    heroBg: "linear-gradient(135deg, #0f0820 0%, #2e1065 50%, #7c3aed 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #160e3a 50%, #4c2a8a 100%)",
     intro: "From quick percentage calculations to solving quadratic equations — our math tools provide step-by-step solutions with visual graphs, making complex calculations understandable for everyone.",
     ecosystemId: null,
     ecosystemLabel: null,
@@ -45,7 +45,7 @@ const CAT_CONTENT = {
     seoContent: `Math calculators serve students, teachers, engineers, and professionals. Our percentage calculator alone handles 6 simultaneous calculation modes — far beyond what Calculator.net offers.`,
   },
   education: {
-    heroBg: "linear-gradient(135deg, #1c0a00 0%, #431407 50%, #c2410c 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1510 50%, #7a3010 100%)",
     intro: "From calculating your current semester GPA to planning what you need on your final exam — our education tools are designed to help students at every stage of their academic journey.",
     ecosystemId: "education",
     ecosystemLabel: "Open Education Suite →",
@@ -58,7 +58,7 @@ const CAT_CONTENT = {
     seoContent: `Education calculators are used by millions of students worldwide. Our GPA calculator supports all major grading scales, while our IELTS calculator uses official rounding rules for precise band score prediction.`,
   },
   converters: {
-    heroBg: "linear-gradient(135deg, #00100a 0%, #065f46 50%, #059669 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #0a2820 50%, #065f46 100%)",
     intro: "Instant unit conversion across all common measurement systems. All converters update in real-time — type in any field and all others update instantly.",
     ecosystemId: null,
     ecosystemLabel: null,
@@ -71,7 +71,7 @@ const CAT_CONTENT = {
     seoContent: `Unit converters are the most frequently searched tools on the internet. Our converters are bidirectional and real-time — every field updates simultaneously as you type.`,
   },
   everyday: {
-    heroBg: "linear-gradient(135deg, #0a0800 0%, #451a03 50%, #b45309 100%)",
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1200 50%, #7a4210 100%)",
     intro: "The everyday tools you need, built with precision. Age calculation, date differences, fuel costs, password generation — all fast, free, and private.",
     ecosystemId: null,
     ecosystemLabel: null,

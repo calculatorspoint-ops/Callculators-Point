@@ -302,7 +302,7 @@ export default function Calculator() {
 
           {/* Pro Tips / Intelligence */}
           {(calc.tips || calc.formula) && (
-            <div className="side-card" style={{ borderRadius:"var(--r-xl)", background:"linear-gradient(to bottom, var(--brand-l), var(--surface))", borderColor:"var(--border)", boxShadow:"0 4px 20px -5px rgba(59, 130, 246, 0.15)" }}>
+            <div className="side-card" style={{ borderRadius:"var(--r-xl)", background:"linear-gradient(to bottom, var(--brand-l), var(--surface))", borderColor:"var(--border)", boxShadow:"0 4px 20px -5px rgba(67, 97, 238, 0.14)" }}>
               <div className="sec-head" style={{ background:"transparent", borderBottom:"1px solid var(--border)" }}>
                 <div className="sec-head-icon" style={{ background:"var(--surface)", boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>💡</div>
                 <span style={{ fontWeight:800, fontSize:13, color:"var(--brand)", textTransform:"uppercase", letterSpacing:".05em" }}>Pro Tips & Intel</span>

@@ -32,7 +32,7 @@ export function exportToPDF(title) {
     <title>${title} — Calculators Point</title>
     <style>
       body { font-family: Arial, sans-serif; padding: 32px; color: #0f172a; }
-      h1 { color: #2563eb; font-size: 24px; margin-bottom: 8px; }
+      h1 { color: #4361ee; font-size: 24px; margin-bottom: 8px; }
       .sub { color: #64748b; font-size: 13px; margin-bottom: 24px; }
       table { width: 100%; border-collapse: collapse; margin-top: 16px; }
       td, th { padding: 10px 14px; border: 1px solid #e2e8f0; font-size: 13px; }

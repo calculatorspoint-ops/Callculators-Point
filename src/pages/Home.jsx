@@ -214,9 +214,9 @@ export default function Home() {
             <div style={{ display: "flex", gap: 10, flexWrap: "nowrap", overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
               {[
                 { id: "education", icon: "🎓", label: "Education Suite", sub: "GPA, IELTS, Attendance", color: "#c2410c", bg: "#fff7ed" },
-                { id: "finance", icon: "💰", label: "Finance Suite", sub: "EMI, SIP, Tax, Salary", color: "#1d4ed8", bg: "#eff6ff" },
-                { id: "fitness", icon: "💪", label: "Fitness Suite", sub: "BMI, Calories, Macros", color: "#dc2626", bg: "#fef2f2" },
-                { id: "women-health", icon: "🌸", label: "Women's Health", sub: "Period, Ovulation, Fertility", color: "#be185d", bg: "#fdf2f8" },
+                { id: "finance", icon: "💰", label: "Finance Suite", sub: "EMI, SIP, Tax, Salary", color: "#3451c7", bg: "#eef0fd" },
+                { id: "fitness", icon: "💪", label: "Fitness Suite", sub: "BMI, Calories, Macros", color: "#b91c1c", bg: "#fef2f2" },
+                { id: "women-health", icon: "🌸", label: "Women's Health", sub: "Period, Ovulation, Fertility", color: "#9d174d", bg: "#fdf2f8" },
               ].map(eco => (
                 <Link key={eco.id} to={`/ecosystem/${eco.id}`} style={{
                   display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
@@ -264,7 +264,7 @@ export default function Home() {
                     onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = `${cat?.color}20`; }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span style={{ fontSize: 22 }}>{c.icon}</span>
-                      <div style={{ fontSize: 10, fontWeight: 800, color: "#f59e0b", background: "#fef3c7", padding: "1px 6px", borderRadius: 100 }}>#{i + 1}</div>
+                      <div style={{ fontSize: 10, fontWeight: 800, color: "#d97706", background: "#fef3c7", padding: "1px 6px", borderRadius: 100 }}>#{i + 1}</div>
                     </div>
                     <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", lineHeight: 1.4 }}>{c.name}</div>
                   </Link>
@@ -395,12 +395,12 @@ export default function Home() {
           </div>
           <div className="home-features-grid">
             {[
-              { icon: "📊", color: "#6366f1", title: "Interactive Charts",    desc: "Visual charts that update as you type — growth curves, amortization schedules, scenario comparisons." },
-              { icon: "💡", color: "#f59e0b", title: "Smart Insights",        desc: "Automatic tips like 'Pay ₹500 extra/month to save ₹40K in interest'. Actionable, not just numbers." },
-              { icon: "📋", color: "#22c55e", title: "Step-by-Step Breakdowns", desc: "Every formula explained clearly. Understand the math behind every result." },
-              { icon: "🔒", color: "#8b5cf6", title: "100% Private",          desc: "All calculations run locally in your browser. Nothing is ever sent to any server." },
-              { icon: "🌍", color: "#3b82f6", title: "Multi-Currency",        desc: "Auto-detects your region. Switch currency and everything updates instantly." },
-              { icon: "🆓", color: "#10b981", title: "Always Free",           desc: "No subscriptions, no paywalls, no tricks. Every tool, free forever." },
+              { icon: "📊", color: "#4361ee", title: "Interactive Charts",    desc: "Visual charts that update as you type — growth curves, amortization schedules, scenario comparisons." },
+              { icon: "💡", color: "#d97706", title: "Smart Insights",        desc: "Automatic tips like 'Pay ₹500 extra/month to save ₹40K in interest'. Actionable, not just numbers." },
+              { icon: "📋", color: "#059669", title: "Step-by-Step Breakdowns", desc: "Every formula explained clearly. Understand the math behind every result." },
+              { icon: "🔒", color: "#7c3aed", title: "100% Private",          desc: "All calculations run locally in your browser. Nothing is ever sent to any server." },
+              { icon: "🌍", color: "#3451c7", title: "Multi-Currency",        desc: "Auto-detects your region. Switch currency and everything updates instantly." },
+              { icon: "🆓", color: "#059669", title: "Always Free",           desc: "No subscriptions, no paywalls, no tricks. Every tool, free forever." },
             ].map(f => <FeatureCard key={f.title} {...f} />)}
           </div>
         </section>

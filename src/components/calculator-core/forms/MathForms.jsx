@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { 
   calcPercentage, calcStatistics, calcQuadratic, calcPythagorean, 
-  calcFraction, calcGPA, calcCGPA, calcScientific, round, fmtC, fmt 
+  calcFraction, calcGPA, calcCGPA, calcScientific, calcLog, calcRatio, calcReadingTime, round, fmtC, fmt 
 } from "@/core/calculationEngine.js";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
@@ -377,6 +377,192 @@ export function PrimeForm(){
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+// ── Logarithm Calculator ──────────────────────────────────────────────
+export function LogForm() {
+  const [value, setValue] = useState("100");
+  const [base, setBase] = useState("10");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const d = calcLog({ value, base });
+      if (!d) { setRes(null); return; }
+      setRes(buildResult(
+        "Logarithm Result",
+        d.result.toString(),
+        [
+          { label: "log10", value: d.log10.toString() },
+          { label: "log2", value: d.log2.toString() },
+          { label: "ln (natural)", value: d.ln.toString(), highlight: true },
+          { label: "Antilog", value: d.antilog.toString() },
+        ],
+        d.insights, null, d.breakdowns
+      ));
+    }, 80);
+    return () => clearTimeout(t);
+  }, [value, base]);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Tabs
+          tabs={["Base 10", "Base 2", "Natural (e)", "Custom"]}
+          active={{ "10": "Base 10", "2": "Base 2", "e": "Natural (e)" }[base] || "Custom"}
+          onChange={v => setBase({ "Base 10": "10", "Base 2": "2", "Natural (e)": "e" }[v] || base)}
+        />
+        <N label="Number (x)" id="log-val" value={value} onChange={setValue} hint="Enter a positive number" placeholder="e.g. 100"/>
+        {!["10","2","e"].includes(base) && (
+          <N label="Custom Base" id="log-base" value={base} onChange={setBase} hint="Any positive number except 1" placeholder="e.g. 3"/>
+        )}
+        <div style={{ marginTop: 16, padding: "14px 16px", background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
+          <div style={{ fontSize: 13, color: "var(--text3)", marginBottom: 8, fontWeight: 600 }}>Quick Reference</div>
+          {[
+            { label: "log10(10) = 1", desc: "Base 10 log of 10" },
+            { label: "log2(8) = 3", desc: "Base 2 log of 8" },
+            { label: "ln(e) = 1", desc: "Natural log of e" },
+            { label: "log(1) = 0", desc: "Log of 1 is always 0" },
+          ].map((q, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: i < 3 ? "1px solid var(--border2)" : "none", fontSize: 12 }}>
+              <span style={{ color: "var(--brand)", fontWeight: 700 }}>{q.label}</span>
+              <span style={{ color: "var(--text3)" }}>{q.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Logarithm Result" />
+      </div>
+    </div>
+  );
+}
+
+// ── Ratio Calculator ──────────────────────────────────────────────────
+export function RatioForm() {
+  const [mode, setMode] = useState("simplify");
+  const [a, setA] = useState("6");
+  const [b, setB] = useState("9");
+  const [c, setC] = useState("4");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const d = calcRatio({ a, b, c, mode });
+      if (!d) { setRes(null); return; }
+      if (mode === "simplify") {
+        setRes(buildResult("Simplified Ratio", d.simplified,
+          [
+            { label: "Decimal", value: d.decimal.toString() },
+            { label: "Part A %", value: round(d.parts.a / d.parts.total * 100, 2) + "%" },
+            { label: "Part B %", value: round(d.parts.b / d.parts.total * 100, 2) + "%" },
+            { label: "Total Parts", value: d.parts.total.toString(), highlight: true },
+          ],
+          d.insights, null, d.breakdowns
+        ));
+      } else {
+        setRes(buildResult("Missing Value", d.result.toString(),
+          [
+            { label: "Ratio", value: `${a} : ${b}` },
+            { label: "Given (c)", value: c },
+            { label: "Missing (d)", value: d.result.toString(), highlight: true },
+          ],
+          d.insights, null, d.breakdowns
+        ));
+      }
+    }, 80);
+    return () => clearTimeout(t);
+  }, [a, b, c, mode]);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <Tabs
+          tabs={["Simplify Ratio", "Find Missing Value"]}
+          active={mode === "simplify" ? "Simplify Ratio" : "Find Missing Value"}
+          onChange={v => setMode(v === "Simplify Ratio" ? "simplify" : "missing")}
+        />
+        {mode === "simplify" ? (
+          <>
+            <Row2>
+              <N label="A" id="ra" value={a} onChange={setA} placeholder="e.g. 6" />
+              <N label="B" id="rb" value={b} onChange={setB} placeholder="e.g. 9" />
+            </Row2>
+            <div style={{ padding: "12px 14px", background: "var(--surface2)", borderRadius: "var(--r-md)", border: "1px solid var(--border)", fontSize: 12, color: "var(--text3)", marginTop: 8 }}>
+              Enter any two numbers to simplify A:B to its lowest terms.
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ padding: "12px 14px", background: "var(--surface2)", borderRadius: "var(--r-md)", border: "1px solid var(--border)", fontSize: 13, color: "var(--text)", marginBottom: 12 }}>
+              Solve: <strong style={{ color: "var(--brand)" }}>A : B = C : ?</strong>
+            </div>
+            <Row3>
+              <N label="A" id="rma" value={a} onChange={setA} placeholder="e.g. 3" />
+              <N label="B" id="rmb" value={b} onChange={setB} placeholder="e.g. 5" />
+              <N label="C" id="rmc" value={c} onChange={setC} placeholder="e.g. 9" />
+            </Row3>
+          </>
+        )}
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Ratio Result" />
+      </div>
+    </div>
+  );
+}
+
+// ── Reading Time Calculator ────────────────────────────────────────────
+export function ReadingTimeForm() {
+  const [wordCount, setWordCount] = useState("1000");
+  const [wpm, setWpm] = useState(200);
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const d = calcReadingTime({ wordCount, wpm });
+      if (!d) { setRes(null); return; }
+      setRes(buildResult(
+        "Reading Time",
+        d.formatted,
+        [
+          { label: "Fast Reader (300 WPM)", value: d.fast + " min" },
+          { label: "Average (200 WPM)", value: d.avg + " min" },
+          { label: "Slow Reader (130 WPM)", value: d.slow + " min" },
+          { label: "Speaking Time", value: d.speakMins + " min" },
+          { label: "Approx. Pages", value: d.pages + " pages", highlight: true },
+        ],
+        d.insights, null, d.breakdowns
+      ));
+    }, 80);
+    return () => clearTimeout(t);
+  }, [wordCount, wpm]);
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <N label="Word Count" id="rt-words" value={wordCount} onChange={setWordCount} hint="Number of words in your text" placeholder="e.g. 1000"/>
+        <Sl label="Your Reading Speed (WPM)" id="rt-wpm" min={50} max={600} step={10} value={wpm} onChange={setWpm} fmt={v => `${v} WPM`}/>
+        <div style={{ marginTop: 16, padding: "14px 16px", background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
+          <div style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600, marginBottom: 8 }}>Average Reading Speeds</div>
+          {[
+            { label: "Child reader", wpm: "100-150 WPM" },
+            { label: "Average adult", wpm: "200-250 WPM" },
+            { label: "Fast reader", wpm: "300-400 WPM" },
+            { label: "Speed reader", wpm: "500-700 WPM" },
+          ].map((s, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, padding: "4px 0", borderBottom: i < 3 ? "1px solid var(--border2)" : "none" }}>
+              <span style={{ color: "var(--text2)" }}>{s.label}</span>
+              <span style={{ color: "var(--brand)", fontWeight: 700 }}>{s.wpm}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Reading Time" />
+      </div>
     </div>
   );
 }

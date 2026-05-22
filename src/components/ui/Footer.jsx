@@ -10,10 +10,10 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:8, fontFamily:"var(--font-hd)", fontSize:22, fontWeight:800, color:"#fff", marginBottom:10, letterSpacing:"-.04em" }}>
-              <div style={{ width:32, height:32, borderRadius:8, background:"linear-gradient(135deg,#2563eb,#1d4ed8)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 8px rgba(37,99,235,0.35)" }}>
+              <div style={{ width:32, height:32, borderRadius:8, background:"linear-gradient(135deg,#4361ee,#3451c7)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 8px rgba(67,97,238,0.35)" }}>
                 <Calculator size={18} color="#ffffff" strokeWidth={2.5} />
               </div>
-              <div>Calculators<span style={{ color:"#4ade80" }}>Point</span></div>
+              <div>Calculators<span style={{ color:"#34d399" }}>Point</span></div>
             </div>
             <p style={{ fontSize:13, lineHeight:1.7, color:"var(--footer-text)", marginBottom:16 }}>
               {ALL_CALCULATORS.length}+ free online calculators for finance, health, math, education and daily life.

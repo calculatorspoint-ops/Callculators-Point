@@ -244,7 +244,7 @@ export function Navbar() {
               <Calculator size={19} color="#fff" strokeWidth={2.5} />
             </div>
             <span className="navbar-logo-text">
-              Calculators<span style={{ color: "#6366f1" }}>Point</span>
+              Calculators<span style={{ color: "#4361ee" }}>Point</span>
             </span>
           </Link>
 

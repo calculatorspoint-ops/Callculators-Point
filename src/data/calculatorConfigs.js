@@ -5,6 +5,9 @@ export const CATEGORIES = [
   { id:"education",    name:"Education & GPA",      icon:"🎓", color:"#c2410c", bg:"#fff7ed", desc:"GPA, grades, marks & academic planning" },
   { id:"converters",   name:"Unit Converters",      icon:"🔄", color:"#065f46", bg:"#f0fdf4", desc:"Length, weight, temp, speed, data & more" },
   { id:"everyday",     name:"Everyday Tools",       icon:"🏠", color:"#b45309", bg:"#fffbeb", desc:"Age, dates, fuel, passwords & daily tools" },
+  { id:"construction", name:"Construction",         icon:"🏗️", color:"#92400e", bg:"#fef3c7", desc:"Concrete, materials, area, cost & engineering" },
+  { id:"technology",   name:"Technology",           icon:"💻", color:"#1e40af", bg:"#dbeafe", desc:"Binary, hex, subnet, network & developer tools" },
+  { id:"business",     name:"Business",             icon:"📊", color:"#065f46", bg:"#d1fae5", desc:"Profit, break-even, ROI, payroll & productivity" },
 ];
 
 export const ALL_CALCULATORS = [
@@ -175,6 +178,202 @@ export const ALL_CALCULATORS = [
   // ── NEW EVERYDAY TOOLS ────────────────────────────────────────────────
   { id:"timezone",       slug:"time-zone-converter",           cat:"everyday",   name:"Time Zone Converter",      icon:"🌍", desc:"Convert time between 50+ world time zones with DST support",              popular:false, hasChart:false, isNew:true },
   { id:"reading-time",   slug:"reading-time-calculator",      cat:"everyday",   name:"Reading Time Calculator",  icon:"📖", desc:"Estimate reading time for any text, book, or article by word count",        popular:false, hasChart:false, isNew:true },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ── PHASE 1 ADDITIONS — FINANCE GAPS ─────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+
+  // Mortgage & Real Estate
+  { id:"mortgage-payoff",      slug:"mortgage-payoff-calculator",     cat:"finance", name:"Mortgage Payoff",          icon:"🏡", desc:"Early mortgage payoff with extra payments — see interest saved and years cut", popular:true,  hasChart:true,  isNew:true,
+    formula:"Payoff Date with extra payments: recalculate amortization reducing principal faster each month",
+    tips:["Even $100 extra/month can save tens of thousands in interest and years off your mortgage."] },
+  { id:"house-afford",         slug:"house-affordability-calculator", cat:"finance", name:"House Affordability",      icon:"🏘️", desc:"Max affordable home price based on income, debts & DTI rule (28/36)", popular:true,  hasChart:false, isNew:true,
+    formula:"Max Home Price = (Monthly Income × 0.28) × 12 / Annual Rate factor\nDTI Rule: Total debts ≤ 36% of gross income",
+    tips:["Lenders typically allow housing costs up to 28% and total debt up to 36% of gross monthly income."] },
+  { id:"rent-vs-buy",          slug:"rent-vs-buy-calculator",         cat:"finance", name:"Rent vs. Buy",             icon:"🔑", desc:"Long-term cost comparison of renting vs buying with break-even year", popular:true,  hasChart:true,  isNew:true,
+    tips:["The break-even point is when total buying costs equal total renting costs — typically 5-7 years."] },
+  { id:"apr",                  slug:"apr-calculator",                 cat:"finance", name:"APR Calculator",           icon:"💳", desc:"Annual Percentage Rate with fees, points and comparison to nominal rate", popular:false, hasChart:false, isNew:true,
+    formula:"APR = ((Fees + Interest) / Principal) / Loan Term × 365 × 100",
+    tips:["APR includes fees while interest rate does not — always compare APRs, not just rates."] },
+  { id:"heloc",                slug:"heloc-calculator",               cat:"finance", name:"HELOC Calculator",         icon:"🏦", desc:"Home equity line of credit payments — draw period and repayment phase", popular:false, hasChart:true,  isNew:true },
+  { id:"down-payment",         slug:"down-payment-calculator",        cat:"finance", name:"Down Payment Calculator",  icon:"💵", desc:"Required down payment, PMI threshold, and time to save goal", popular:false, hasChart:false, isNew:true },
+
+  // Loans & Credit
+  { id:"auto-loan",            slug:"auto-loan-calculator",           cat:"finance", name:"Auto Loan Calculator",     icon:"🚗", desc:"Car loan EMI with depreciation curve, total cost & best deal analysis", popular:true,  hasChart:true,  isNew:true,
+    formula:"EMI = [P × R × (1+R)^N] / [(1+R)^N - 1]",
+    tips:["A 60-month loan vs 36-month: lower EMI but significantly more total interest paid."] },
+  { id:"personal-loan",        slug:"personal-loan-calculator",       cat:"finance", name:"Personal Loan Calculator", icon:"💸", desc:"Personal loan EMI, total repayment & early closure savings", popular:true,  hasChart:true,  isNew:true },
+  { id:"student-loan",         slug:"student-loan-calculator",        cat:"finance", name:"Student Loan Calculator",  icon:"🎓", desc:"Student loan monthly payments with income-based repayment comparison", popular:true,  hasChart:true,  isNew:true,
+    tips:["Income-driven repayment caps payments at 10-20% of discretionary income and forgives after 20-25 years."] },
+  { id:"credit-card",          slug:"credit-card-calculator",         cat:"finance", name:"Credit Card Calculator",   icon:"💳", desc:"Credit card payoff time with minimum payment trap visualization", popular:true,  hasChart:true,  isNew:true,
+    formula:"Payoff Months = -log(1 - balance×rate/payment) / log(1 + rate)",
+    tips:["Paying only the minimum on a $5,000 balance at 20% APR takes 15+ years and $6,000 in interest."] },
+  { id:"debt-payoff",          slug:"debt-payoff-calculator",         cat:"finance", name:"Debt Payoff Calculator",   icon:"⚖️", desc:"Multi-debt snowball vs avalanche strategy comparison with payoff timeline", popular:true,  hasChart:true,  isNew:true,
+    tips:["Avalanche method (highest rate first) saves most interest. Snowball (smallest balance first) provides motivation."] },
+  { id:"debt-consolidation",   slug:"debt-consolidation-calculator",  cat:"finance", name:"Debt Consolidation",       icon:"🔗", desc:"Compare consolidation loan vs individual debts — total cost and monthly savings", popular:false, hasChart:true,  isNew:true },
+  { id:"auto-lease",           slug:"auto-lease-calculator",          cat:"finance", name:"Auto Lease Calculator",    icon:"🚙", desc:"Car lease monthly payment with money factor, residual & total cost vs buy", popular:false, hasChart:false, isNew:true,
+    formula:"Monthly Payment = (Selling Price - Residual + Fees) / Months + (Selling Price + Residual) × Money Factor" },
+
+  // Investment & Savings
+  { id:"pv",                   slug:"present-value-calculator",       cat:"finance", name:"Present Value (PV)",       icon:"⏮️", desc:"Present value of future cash flows with discount rate", popular:false, hasChart:false, isNew:true,
+    formula:"PV = FV / (1 + r)^n" },
+  { id:"fv",                   slug:"future-value-calculator",        cat:"future",  name:"Future Value (FV)",        icon:"⏭️", desc:"Future value of investments with regular contributions", popular:false, hasChart:true,  isNew:true,
+    formula:"FV = PV × (1 + r)^n + PMT × ((1 + r)^n - 1) / r" },
+  { id:"irr",                  slug:"irr-calculator",                 cat:"finance", name:"IRR Calculator",           icon:"📈", desc:"Internal Rate of Return for a series of cash flows — investment viability", popular:false, hasChart:false, isNew:true,
+    formula:"Solve for r where NPV = Σ(CFt / (1+r)^t) = 0 using iterative Newton-Raphson method",
+    tips:["IRR above your cost of capital (WACC) means the investment is profitable."] },
+  { id:"bond",                 slug:"bond-calculator",                cat:"finance", name:"Bond Calculator",          icon:"📜", desc:"Bond price, yield to maturity, current yield & duration", popular:false, hasChart:false, isNew:true,
+    formula:"Bond Price = Σ(Coupon / (1+r)^t) + Face Value / (1+r)^n" },
+  { id:"cd",                   slug:"cd-calculator",                  cat:"finance", name:"CD / Certificate of Deposit", icon:"🏦", desc:"CD maturity value with APY comparison across term lengths", popular:false, hasChart:true,  isNew:true },
+  { id:"avg-return",           slug:"average-return-calculator",      cat:"finance", name:"Average Return Calculator", icon:"📊", desc:"Arithmetic vs geometric average return on investment portfolio", popular:false, hasChart:false, isNew:true,
+    formula:"CAGR = (End Value / Start Value)^(1/Years) - 1" },
+
+  // Retirement
+  { id:"401k",                 slug:"401k-calculator",                cat:"finance", name:"401(k) Calculator",        icon:"🏖️", desc:"401k growth with employer match, tax-deferred compounding & withdrawal projections", popular:true,  hasChart:true,  isNew:true,
+    tips:["Always contribute at least enough to get the full employer match — it's free money with 100% instant return.","Tax-deferred growth means you pay taxes on withdrawal, not during accumulation."] },
+  { id:"roth-ira",             slug:"roth-ira-calculator",            cat:"finance", name:"Roth IRA Calculator",      icon:"💼", desc:"Roth IRA tax-free growth with contribution limits and income phase-out", popular:false, hasChart:true,  isNew:true,
+    tips:["Roth IRA contributions are after-tax but withdrawals in retirement are 100% tax-free."] },
+  { id:"pension",              slug:"pension-calculator",             cat:"finance", name:"Pension Calculator",       icon:"👴", desc:"Defined benefit pension monthly income estimate with years of service formula", popular:false, hasChart:false, isNew:true },
+  { id:"annuity",              slug:"annuity-calculator",             cat:"finance", name:"Annuity Calculator",       icon:"♾️", desc:"Annuity present value, future value, payment & accumulated value", popular:false, hasChart:true,  isNew:true,
+    formula:"PV Annuity = PMT × [1-(1+r)^-n]/r" },
+  { id:"rmd",                  slug:"rmd-calculator",                 cat:"finance", name:"RMD Calculator",           icon:"📋", desc:"Required Minimum Distribution from IRA/401k using IRS life expectancy tables", popular:false, hasChart:false, isNew:true,
+    formula:"RMD = Account Balance / IRS Life Expectancy Factor" },
+  { id:"social-security",      slug:"social-security-calculator",     cat:"finance", name:"Social Security Calculator", icon:"🏛️", desc:"Estimated Social Security benefit based on earnings history and claiming age", popular:false, hasChart:false, isNew:true,
+    tips:["Claiming at 70 instead of 62 can increase monthly benefits by up to 77%."] },
+
+  // Tax & Salary
+  { id:"estate-tax",           slug:"estate-tax-calculator",          cat:"finance", name:"Estate Tax Calculator",    icon:"📜", desc:"Federal estate tax estimate with exemption threshold and marginal rates", popular:false, hasChart:false, isNew:true },
+  { id:"marriage-tax",         slug:"marriage-tax-calculator",        cat:"finance", name:"Marriage Tax Calculator",  icon:"💍", desc:"Marriage tax bonus or penalty — compare single vs married filing status", popular:false, hasChart:false, isNew:true },
+  { id:"commission",           slug:"commission-calculator",          cat:"finance", name:"Commission Calculator",    icon:"🤝", desc:"Sales commission with tiered slabs, base salary and total earnings", popular:false, hasChart:false, isNew:true,
+    formula:"Commission = Sales Amount × Rate / 100" },
+  { id:"depreciation",         slug:"depreciation-calculator",        cat:"finance", name:"Depreciation Calculator",  icon:"📉", desc:"Asset depreciation using straight-line, declining balance & sum-of-years methods", popular:false, hasChart:true,  isNew:true,
+    formula:"Straight Line: Depreciation = (Cost - Salvage) / Useful Life" },
+  { id:"budget",               slug:"budget-calculator",              cat:"finance", name:"Budget Calculator",        icon:"📓", desc:"Monthly budget planner with income, expense categories and savings rate", popular:true,  hasChart:true,  isNew:true,
+    tips:["The 50/30/20 rule: 50% needs, 30% wants, 20% savings — a popular starting framework."] },
+  { id:"boat-loan",            slug:"boat-loan-calculator",           cat:"finance", name:"Boat Loan Calculator",     icon:"⛵", desc:"Marine loan EMI with insurance cost and total ownership cost analysis", popular:false, hasChart:false, isNew:true },
+  { id:"college-cost",         slug:"college-cost-calculator",        cat:"finance", name:"College Cost Calculator",  icon:"🎓", desc:"4-year college cost with tuition inflation, savings gap and monthly savings needed", popular:false, hasChart:true,  isNew:true,
+    tips:["College tuition typically inflates at 4-6% per year — start saving early to minimize loans."] },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ── PHASE 2 ADDITIONS — HEALTH GAPS ──────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  { id:"body-type",            slug:"body-type-calculator",           cat:"health",  name:"Body Type Calculator",     icon:"🧬", desc:"Determine your somatotype (ectomorph, mesomorph, endomorph) with training advice", popular:false, hasChart:false, isNew:true },
+  { id:"bsa",                  slug:"bsa-calculator",                 cat:"health",  name:"Body Surface Area (BSA)",  icon:"📐", desc:"BSA using Mosteller formula — used for drug dosage calculations", popular:false, hasChart:false, isNew:true,
+    formula:"BSA = √(Height(cm) × Weight(kg) / 3600)" },
+  { id:"bac",                  slug:"bac-calculator",                 cat:"health",  name:"BAC Calculator",           icon:"🍺", desc:"Blood alcohol content estimation with legal limit warning and clearance time", popular:false, hasChart:false, isNew:true,
+    formula:"BAC = (Alcohol grams / (Body weight × r)) - (0.015 × Hours)\nr = 0.68 for men, 0.55 for women" },
+  { id:"gfr",                  slug:"gfr-calculator",                 cat:"health",  name:"GFR Calculator",           icon:"🫀", desc:"Glomerular filtration rate (kidney function) using CKD-EPI formula", popular:false, hasChart:false, isNew:true },
+  { id:"healthy-weight",       slug:"healthy-weight-calculator",      cat:"health",  name:"Healthy Weight Range",     icon:"⚖️", desc:"BMI-based healthy weight range for your height with multiple formula comparison", popular:false, hasChart:false, isNew:true },
+  { id:"lean-body-mass",       slug:"lean-body-mass-calculator",      cat:"health",  name:"Lean Body Mass",           icon:"💪", desc:"Fat-free mass calculation using multiple formulas with body composition breakdown", popular:false, hasChart:false, isNew:true,
+    formula:"LBM = Weight × (1 - Body Fat%)" },
+  { id:"army-body-fat",        slug:"army-body-fat-calculator",       cat:"health",  name:"Army Body Fat Calculator", icon:"🎖️", desc:"US Army body fat percentage using circumference method with regulation thresholds", popular:false, hasChart:false, isNew:true },
+  { id:"protein",              slug:"protein-calculator",             cat:"health",  name:"Protein Calculator",       icon:"🥩", desc:"Daily protein needs by weight, activity level and fitness goal", popular:false, hasChart:false, isNew:true,
+    formula:"Protein = Weight(kg) × 1.6-2.2g (active adults)", tips:["Most active adults need 1.6-2.2g protein per kg bodyweight for muscle maintenance and growth."] },
+  { id:"fat-intake",           slug:"fat-intake-calculator",          cat:"health",  name:"Fat Intake Calculator",    icon:"🥑", desc:"Daily fat intake recommendation by total calories and health goal", popular:false, hasChart:false, isNew:true },
+  { id:"conception",           slug:"conception-calculator",          cat:"health",  name:"Conception Calculator",    icon:"🌸", desc:"Estimated conception date from due date or last menstrual period", popular:false, hasChart:false, isNew:true },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ── PHASE 2 ADDITIONS — MATH GAPS ────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  { id:"lcm-gcf",              slug:"lcm-gcf-calculator",             cat:"math",    name:"LCM & GCF Calculator",     icon:"🔢", desc:"Least Common Multiple and Greatest Common Factor with step-by-step solution", popular:false, hasChart:false, isNew:true,
+    formula:"GCF via Euclidean Algorithm: GCF(a,b) = GCF(b, a mod b)\nLCM(a,b) = |a × b| / GCF(a,b)" },
+  { id:"factor",               slug:"factor-calculator",              cat:"math",    name:"Factor Calculator",        icon:"✖️", desc:"All factors and prime factorization of any integer with visual breakdown", popular:false, hasChart:false, isNew:true },
+  { id:"exponent",             slug:"exponent-calculator",            cat:"math",    name:"Exponent Calculator",      icon:"🔺", desc:"Power and root calculations with scientific notation output", popular:false, hasChart:false, isNew:true },
+  { id:"root",                 slug:"root-calculator",                cat:"math",    name:"Root Calculator",          icon:"√",  desc:"Square root, cube root, and nth root with step-by-step solution", popular:false, hasChart:false, isNew:true },
+  { id:"volume",               slug:"volume-calculator",              cat:"math",    name:"Volume Calculator",        icon:"📦", desc:"Volume of cube, sphere, cylinder, cone and other 3D shapes", popular:false, hasChart:false, isNew:true },
+  { id:"surface-area",         slug:"surface-area-calculator",        cat:"math",    name:"Surface Area Calculator",  icon:"🔲", desc:"Surface area of sphere, cube, cylinder, cone with formula display", popular:false, hasChart:false, isNew:true },
+  { id:"triangle",             slug:"triangle-calculator",            cat:"math",    name:"Triangle Calculator",      icon:"📐", desc:"Solve any triangle — sides, angles, area, perimeter (SSS, SAS, ASA, AAS)", popular:true,  hasChart:false, isNew:true },
+  { id:"circle",               slug:"circle-calculator",              cat:"math",    name:"Circle Calculator",        icon:"⭕", desc:"Circumference, area, diameter and arc length from radius or diameter", popular:false, hasChart:false, isNew:true },
+  { id:"distance",             slug:"distance-calculator",            cat:"math",    name:"Distance Calculator",      icon:"📍", desc:"2D/3D coordinate distance with midpoint and slope calculation", popular:false, hasChart:false, isNew:true,
+    formula:"Distance = √((x₂-x₁)² + (y₂-y₁)²)" },
+  { id:"z-score",              slug:"z-score-calculator",             cat:"math",    name:"Z-Score Calculator",       icon:"📊", desc:"Standardize data points with Z-score, percentile rank and normal distribution", popular:false, hasChart:false, isNew:true,
+    formula:"Z = (X - μ) / σ" },
+  { id:"confidence-interval",  slug:"confidence-interval-calculator", cat:"math",    name:"Confidence Interval",      icon:"📉", desc:"Calculate confidence intervals with margin of error for population means", popular:false, hasChart:false, isNew:true },
+  { id:"sample-size",          slug:"sample-size-calculator",         cat:"math",    name:"Sample Size Calculator",   icon:"🔬", desc:"Required sample size for surveys and experiments with confidence and margin", popular:false, hasChart:false, isNew:true },
+  { id:"permutation",          slug:"permutation-combination-calculator", cat:"math", name:"Permutation & Combination", icon:"🎲", desc:"nPr and nCr calculations with factorial steps and formula explanation", popular:false, hasChart:false, isNew:true,
+    formula:"P(n,r) = n! / (n-r)!\nC(n,r) = n! / (r! × (n-r)!)" },
+  { id:"probability",          slug:"probability-calculator",         cat:"math",    name:"Probability Calculator",   icon:"🎯", desc:"Event probability, odds, and compound events with visual probability tree", popular:false, hasChart:false, isNew:true,
+    formula:"P(A) = Favorable Outcomes / Total Outcomes" },
+  { id:"binary",               slug:"binary-calculator",              cat:"math",    name:"Binary Calculator",        icon:"💾", desc:"Binary arithmetic (+,-,×,÷) and binary↔decimal↔hex conversions", popular:false, hasChart:false, isNew:true },
+  { id:"number-sequence",      slug:"number-sequence-calculator",     cat:"math",    name:"Number Sequence Calculator", icon:"🔢", desc:"Find nth term, sum, and pattern of arithmetic, geometric, and Fibonacci sequences", popular:false, hasChart:false, isNew:true },
+  { id:"average",              slug:"average-calculator",             cat:"math",    name:"Average Calculator",       icon:"➗", desc:"Mean, weighted mean, and running average for any dataset", popular:false, hasChart:false, isNew:true },
+  { id:"matrix",               slug:"matrix-calculator",              cat:"math",    name:"Matrix Calculator",        icon:"🔲", desc:"Matrix addition, subtraction, multiplication, determinant and inverse operations", popular:false, hasChart:false, isNew:true },
+  { id:"linear-equation",      slug:"linear-equation-solver",         cat:"math",    name:"Linear Equation Solver",   icon:"📝", desc:"Solve single and system of linear equations with step-by-step solution", popular:false, hasChart:false, isNew:true },
+  { id:"random-number",        slug:"random-number-generator-adv",    cat:"math",    name:"Random Number Generator",  icon:"🎲", desc:"Generate random integers or decimals with custom range and count", popular:false, hasChart:false, isNew:true },
+  { id:"percent-error",        slug:"percent-error-calculator",       cat:"math",    name:"Percent Error Calculator", icon:"❗", desc:"Calculate percent error between experimental and theoretical values", popular:false, hasChart:false, isNew:true,
+    formula:"% Error = |Experimental - Theoretical| / |Theoretical| × 100",
+    tips:["A percent error under 5% is generally considered acceptable in most scientific experiments."] },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ── PHASE 3 — CONSTRUCTION & ENGINEERING ─────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  { id:"concrete",             slug:"concrete-calculator",            cat:"construction", name:"Concrete Calculator",      icon:"🧱", desc:"Concrete volume and bags required for slabs, walls, footings and columns", popular:true,  hasChart:false, isNew:true,
+    formula:"Volume = Length × Width × Depth\nBags = Volume(cu ft) × 0.45 / Bag weight",
+    tips:["Add 10% waste factor for any concrete pour to account for spillage and overfilling."] },
+  { id:"cement",               slug:"cement-calculator",              cat:"construction", name:"Cement Calculator",        icon:"🏗️", desc:"Cement bags, sand and aggregate for any mix ratio and volume", popular:false, hasChart:false, isNew:true },
+  { id:"sand",                 slug:"sand-calculator",                cat:"construction", name:"Sand Calculator",          icon:"⛱️", desc:"Sand volume and weight for landscaping, concrete mix and foundation work", popular:false, hasChart:false, isNew:true },
+  { id:"gravel",               slug:"gravel-calculator",              cat:"construction", name:"Gravel Calculator",        icon:"🪨", desc:"Gravel cubic yards and tons for driveways, paths and drainage", popular:false, hasChart:false, isNew:true },
+  { id:"asphalt",              slug:"asphalt-calculator",             cat:"construction", name:"Asphalt Calculator",       icon:"🛣️", desc:"Asphalt weight and cost for roads and driveways", popular:false, hasChart:false, isNew:true },
+  { id:"paint",                slug:"paint-calculator",               cat:"construction", name:"Paint Calculator",         icon:"🎨", desc:"Paint quantity for walls, ceilings and rooms with coverage rate and cost", popular:true,  hasChart:false, isNew:true,
+    formula:"Paint Needed = Wall Area / Coverage Rate per Gallon × Number of Coats",
+    tips:["Standard coverage: 1 gallon covers approximately 350-400 sq ft with one coat."] },
+  { id:"roofing",              slug:"roofing-calculator",             cat:"construction", name:"Roofing Calculator",       icon:"🏠", desc:"Roofing area, shingles and material cost with pitch and waste factor", popular:false, hasChart:false, isNew:true },
+  { id:"sq-footage",           slug:"square-footage-calculator",      cat:"construction", name:"Square Footage Calculator", icon:"📐", desc:"Total square footage for rooms, flooring, tiling and painting projects", popular:true,  hasChart:false, isNew:true,
+    tips:["Add 10-15% overage when ordering flooring to account for cuts, waste and future repairs."] },
+  { id:"cubic-yard",           slug:"cubic-yard-calculator",          cat:"construction", name:"Cubic Yard Calculator",    icon:"📦", desc:"Convert dimensions to cubic yards for bulk material ordering", popular:false, hasChart:false, isNew:true },
+  { id:"construction-cost",    slug:"construction-cost-calculator",   cat:"construction", name:"Construction Cost",        icon:"💰", desc:"Project cost estimate with area, labor rate, material cost and contingency", popular:true,  hasChart:true,  isNew:true,
+    tips:["Always add 10-20% contingency to construction budgets for unexpected costs."] },
+  { id:"electrical-load",      slug:"electrical-load-calculator",     cat:"construction", name:"Electrical Load Calculator", icon:"⚡", desc:"Total electrical load, recommended breaker size for home appliances", popular:false, hasChart:false, isNew:true,
+    formula:"Total Load (Watts) = Σ(Appliance Wattage × Daily Hours)\nAmperage = Watts / Voltage" },
+  { id:"pipe-volume",          slug:"pipe-volume-calculator",         cat:"construction", name:"Pipe Volume Calculator",   icon:"🔧", desc:"Volume capacity and flow rate of cylindrical pipes with unit conversion", popular:false, hasChart:false, isNew:true,
+    formula:"Volume = π × (Diameter/2)² × Length" },
+  { id:"density",              slug:"density-calculator",             cat:"construction", name:"Density Calculator",       icon:"⚖️", desc:"Mass, volume and density — solve for any one given the other two", popular:false, hasChart:false, isNew:true,
+    formula:"Density = Mass / Volume" },
+  { id:"pressure",             slug:"pressure-calculator",            cat:"construction", name:"Pressure Calculator",      icon:"🌡️", desc:"Pressure from force and area with unit conversions (Pa, PSI, bar, atm)", popular:false, hasChart:false, isNew:true,
+    formula:"Pressure = Force / Area" },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ── PHASE 3 — TECHNOLOGY / NETWORK ───────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  { id:"subnet",               slug:"subnet-calculator",              cat:"technology", name:"Subnet Calculator",        icon:"🌐", desc:"IP subnet mask, network/broadcast address, usable hosts and CIDR notation", popular:true,  hasChart:false, isNew:true,
+    tips:["CIDR /24 = 254 usable hosts, /16 = 65,534 hosts, /8 = 16,777,214 hosts."] },
+  { id:"hex-calc",             slug:"hexadecimal-calculator",         cat:"technology", name:"Hexadecimal Calculator",   icon:"0x", desc:"Hex arithmetic and conversion between hex, decimal, binary and octal", popular:false, hasChart:false, isNew:true },
+  { id:"ascii",                slug:"ascii-converter",                cat:"technology", name:"ASCII / Unicode Converter", icon:"🔤", desc:"Convert text to ASCII codes, Unicode code points and UTF-8 bytes", popular:false, hasChart:false, isNew:true },
+  { id:"data-transfer",        slug:"data-transfer-calculator",       cat:"technology", name:"Data Transfer Calculator", icon:"📡", desc:"File download/upload time at any internet speed with unit conversions", popular:true,  hasChart:false, isNew:true,
+    formula:"Time = File Size / Transfer Speed" },
+  { id:"bandwidth",            slug:"bandwidth-calculator",           cat:"technology", name:"Bandwidth Calculator",     icon:"📶", desc:"Network bandwidth requirements for concurrent users and usage patterns", popular:false, hasChart:false, isNew:true },
+  { id:"hash-generator",       slug:"hash-generator",                 cat:"technology", name:"Hash Generator",           icon:"🔐", desc:"Generate MD5, SHA-1, SHA-256, SHA-512 hashes from any text input", popular:false, hasChart:false, isNew:true },
+  { id:"password-strength",    slug:"password-strength-calculator",   cat:"technology", name:"Password Strength",        icon:"🛡️", desc:"Password entropy, strength score, crack time estimate and improvement tips", popular:true,  hasChart:false, isNew:true,
+    tips:["A 12-character password with mixed case, numbers and symbols would take centuries to crack by brute force."] },
+  { id:"ip-range",             slug:"ip-range-calculator",            cat:"technology", name:"IP Range Calculator",      icon:"🔌", desc:"Calculate IP address range from network address and subnet mask", popular:false, hasChart:false, isNew:true },
+  { id:"number-base",          slug:"number-base-converter",          cat:"technology", name:"Number Base Converter",    icon:"🔢", desc:"Convert between binary, octal, decimal and hexadecimal number systems", popular:false, hasChart:false, isNew:true },
+  { id:"random-string",        slug:"random-string-generator",        cat:"technology", name:"Random String Generator",  icon:"🎲", desc:"Generate random strings for testing, tokens and security applications", popular:false, hasChart:false, isNew:true },
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ── PHASE 3 — BUSINESS & PRODUCTIVITY ────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  { id:"markup",               slug:"markup-calculator",              cat:"business", name:"Markup Calculator",         icon:"💹", desc:"Calculate selling price from cost and markup percentage or reverse-calculate margin", popular:true,  hasChart:false, isNew:true,
+    formula:"Selling Price = Cost × (1 + Markup%/100)\nMargin = Markup / (100 + Markup) × 100",
+    tips:["Markup of 50% gives a margin of 33.3% — markup and margin are not the same number."] },
+  { id:"inventory-turnover",   slug:"inventory-turnover-calculator",  cat:"business", name:"Inventory Turnover",        icon:"📦", desc:"Inventory turnover ratio, days in inventory and efficiency vs industry benchmark", popular:false, hasChart:false, isNew:true,
+    formula:"Turnover = COGS / Average Inventory\nDays in Inventory = 365 / Turnover" },
+  { id:"eoq",                  slug:"eoq-calculator",                 cat:"business", name:"EOQ Calculator",            icon:"🔄", desc:"Economic Order Quantity for minimum inventory costs with reorder point", popular:false, hasChart:false, isNew:true,
+    formula:"EOQ = √(2 × Demand × Order Cost / Holding Cost per Unit)" },
+  { id:"time-card",            slug:"time-card-calculator",           cat:"business", name:"Time Card Calculator",      icon:"⏱️", desc:"Employee hours with break deduction, overtime calculation and weekly totals", popular:false, hasChart:false, isNew:true },
+  { id:"overtime",             slug:"overtime-calculator",            cat:"business", name:"Overtime Calculator",       icon:"⏰", desc:"Overtime pay with regular/OT/double-time rates and total weekly earnings", popular:false, hasChart:false, isNew:true,
+    formula:"OT Pay = (Hourly Rate × 1.5) × Overtime Hours" },
+  { id:"salary-to-hourly",     slug:"salary-to-hourly-calculator",    cat:"business", name:"Salary to Hourly",          icon:"💵", desc:"Convert annual salary to hourly, daily, weekly and monthly equivalent rates", popular:true,  hasChart:false, isNew:true },
+  { id:"meeting-cost",         slug:"meeting-cost-calculator",        cat:"business", name:"Meeting Cost Calculator",   icon:"🤝", desc:"Real cost of meetings by attendee count, hourly rate and duration", popular:false, hasChart:false, isNew:true,
+    tips:["A 1-hour meeting with 10 people at $50/hour average salary costs the company $500 minimum."] },
+  { id:"conversion-rate",      slug:"conversion-rate-calculator",     cat:"business", name:"Conversion Rate Calculator", icon:"📈", desc:"Marketing conversion rate, leads needed, revenue potential and optimization impact", popular:false, hasChart:false, isNew:true,
+    formula:"Conversion Rate = (Conversions / Total Visitors) × 100" },
+  { id:"clv",                  slug:"customer-lifetime-value-calculator", cat:"business", name:"Customer Lifetime Value", icon:"👤", desc:"CLV calculation with average order value, purchase frequency and retention", popular:false, hasChart:false, isNew:true,
+    formula:"CLV = Average Purchase Value × Purchase Frequency × Customer Lifespan",
+    tips:["Increasing customer retention by 5% can increase profits by 25-95%."] },
+  { id:"cpc-cpa",              slug:"cpc-cpa-calculator",             cat:"business", name:"CPC / CPA Calculator",      icon:"📣", desc:"Ad campaign cost-per-click, cost-per-acquisition and ROAS metrics", popular:false, hasChart:false, isNew:true,
+    formula:"CPA = Total Cost / Conversions\nROAS = Revenue / Ad Spend × 100" },
+  { id:"employee-cost",        slug:"employee-cost-calculator",       cat:"business", name:"Employee Cost Calculator",  icon:"👔", desc:"True cost of employment: salary, benefits, taxes, overhead and productivity", popular:false, hasChart:true,  isNew:true,
+    tips:["The true cost of an employee is typically 1.25-1.4× their base salary when including all costs."] },
 ];
 
 export const BY_CATEGORY = ALL_CALCULATORS.reduce((acc, c) => {
