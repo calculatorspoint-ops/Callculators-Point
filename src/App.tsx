@@ -58,11 +58,11 @@ export default function App() {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <div className="app-root" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Navbar />
-        <main style={{ flex: 1 }} id="main-content">
-          <ScrollToTop />
+    <div className="app-root" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Navbar />
+      <main style={{ flex: 1 }} id="main-content">
+        <ScrollToTop />
+        <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/"                     element={<Home />} />
@@ -80,24 +80,24 @@ export default function App() {
               <Route path="*"                      element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
-        </main>
-        <Footer />
-        <PWAInstallPrompt />
-        <FloatingRegionSwitcher position="bottom-left" />
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: 'var(--surface)',
-              color: 'var(--text)',
-              border: '1.5px solid var(--border)',
-              borderRadius: 'var(--r-lg)',
-              fontSize: 13,
-              fontWeight: 600,
-            },
-          }}
-        />
-      </div>
-    </ErrorBoundary>
+        </ErrorBoundary>
+      </main>
+      <Footer />
+      <PWAInstallPrompt />
+      <FloatingRegionSwitcher position="bottom-left" />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: 'var(--surface)',
+            color: 'var(--text)',
+            border: '1.5px solid var(--border)',
+            borderRadius: 'var(--r-lg)',
+            fontSize: 13,
+            fontWeight: 600,
+          },
+        }}
+      />
+    </div>
   );
 }
