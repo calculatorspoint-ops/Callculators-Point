@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { writeFileSync } from 'fs';
+
+const INVESTMENT = `import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
@@ -307,3 +309,7 @@ export function DividendYieldForm() {
     </>
   );
 }
+`;
+
+writeFileSync('src/components/calculator-core/forms/InvestmentForms.jsx', INVESTMENT, 'utf8');
+console.log('InvestmentForms.jsx written:', INVESTMENT.split('\n').length, 'lines');

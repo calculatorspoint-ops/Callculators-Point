@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { writeFileSync } from 'fs';
+
+const LOAN_DEBT = `import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
@@ -385,3 +387,7 @@ export function DebtPayoffForm() {
     </>
   );
 }
+`;
+
+writeFileSync('src/components/calculator-core/forms/LoanDebtForms.jsx', LOAN_DEBT, 'utf8');
+console.log('LoanDebtForms.jsx written:', LOAN_DEBT.split('\n').length, 'lines');

@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { writeFileSync } from 'fs';
+
+const CONTENT = `import { useState, useEffect } from "react";
 import {
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
@@ -855,3 +857,7 @@ export function LoanCompareForm() {
   );
   return <CalcLayout inputs={inputs} result={res} label="Loan Comparison" />;
 }
+`;
+
+writeFileSync('src/components/calculator-core/forms/CoreFinanceForms.jsx', CONTENT, 'utf8');
+console.log('CoreFinanceForms.jsx written. Lines:', CONTENT.split('\n').length);

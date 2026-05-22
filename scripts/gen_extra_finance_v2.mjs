@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { writeFileSync } from 'fs';
+
+const EXTRA = `import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
@@ -473,3 +475,7 @@ export function CommissionForm() {
     </>
   );
 }
+`;
+
+writeFileSync('src/components/calculator-core/forms/ExtraFinanceForms.jsx', EXTRA, 'utf8');
+console.log('ExtraFinanceForms.jsx written:', EXTRA.split('\n').length, 'lines');

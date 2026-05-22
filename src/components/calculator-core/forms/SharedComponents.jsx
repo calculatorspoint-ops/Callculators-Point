@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { parseLocalizedNumber, formatInputNumber } from "@/utils/validation.js";
 import { useCurrencyStore, formatMoney as _fmtMoney } from "@/store/useCurrencyStore.js";
 import { useGeoStore } from "@/core/geo-engine/geoStore.js";
@@ -16,10 +16,20 @@ import { CalcToolbar, ResultArea, exportToCSV } from "@/components/calculator-co
 // Currency-aware money formatter
 export const formatMoney = (n) => { try { return _fmtMoney(n, useCurrencyStore.getState().currency); } catch { return String(n); } };
 
-export const L = ({t, id}) => <label htmlFor={id} style={{display:"block",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:".06em",color:"var(--text3)",marginBottom:6}}>{t}</label>;
+// ── Label ──────────────────────────────────────────────────────────────
+export const L = ({ t, id }) => (
+  <label htmlFor={id} style={{
+    display: "block", fontSize: 12, fontWeight: 700,
+    color: "var(--text2)", marginBottom: 7, letterSpacing: ".01em"
+  }}>
+    {t}
+  </label>
+);
 
-export function N({label,id,value,onChange,unit,placeholder="0",min,max,step,hint,type="text"}){
+// ── Number Input ───────────────────────────────────────────────────────
+export function N({ label, id, value, onChange, unit, placeholder = "0", min, max, step, hint, type = "text", icon, prefix }) {
   const [displayValue, setDisplayValue] = useState("");
+  const [focused, setFocused] = useState(false);
   useEffect(() => {
     if (document.activeElement?.id !== id) {
       if (value === "" || value === null || value === undefined) {
@@ -45,58 +55,146 @@ export function N({label,id,value,onChange,unit,placeholder="0",min,max,step,hin
   };
 
   const handleBlur = (e) => {
+    setFocused(false);
     if (type !== "number" && displayValue !== "") {
       const parsed = parseLocalizedNumber(displayValue);
       setDisplayValue(formatInputNumber(parsed));
       onChange(parsed);
     }
-    e.target.style.borderColor="var(--border)";
-    e.target.style.boxShadow="none";
   };
 
+  const hasLeft = icon || prefix;
+
   return (
-    <div style={{marginBottom:16}}>
-      {label&&<L t={label} id={id}/>}
-      <div style={{position:"relative"}}>
-        <input id={id} type={type} value={displayValue} onChange={handleChange} placeholder={placeholder} min={min} max={max} step={step}
+    <div style={{ marginBottom: 14 }}>
+      {label && <L t={label} id={id} />}
+      <div style={{ position: "relative" }}>
+        {hasLeft && (
+          <div style={{
+            position: "absolute", left: 0, top: 0, bottom: 0,
+            width: 44, display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: prefix ? 13 : 16, color: focused ? "var(--brand)" : "var(--text3)",
+            fontWeight: 700, pointerEvents: "none", transition: "color .15s",
+            borderRight: "1px solid var(--border)", zIndex: 1
+          }}>
+            {icon || prefix}
+          </div>
+        )}
+        <input
+          id={id} type={type} value={displayValue} onChange={handleChange}
+          placeholder={placeholder} min={min} max={max} step={step}
           aria-label={label || placeholder}
-          style={{width:"100%",height:42,padding:unit?"0 44px 0 14px":"0 14px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontSize:14,fontWeight:500,color:"var(--text)",outline:"none",fontFamily:"var(--font)",transition:"border-color .15s,box-shadow .15s"}}
-          onFocus={e=>{e.target.style.borderColor="var(--brand)";e.target.style.boxShadow="0 0 0 3px var(--p50)";}}
-          onBlur={handleBlur}/>
-        {unit&&<span style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",fontSize:11,fontWeight:700,color:"var(--text3)",pointerEvents:"none"}}>{unit}</span>}
+          style={{
+            width: "100%", height: 46,
+            paddingLeft: hasLeft ? 52 : (unit ? 14 : 14),
+            paddingRight: unit ? 48 : 14,
+            background: focused ? "var(--surface)" : "var(--surface2)",
+            border: focused ? "2px solid var(--brand)" : "1.5px solid var(--border)",
+            borderRadius: "var(--r-md)", fontSize: 15, fontWeight: 600,
+            color: "var(--text)", outline: "none", fontFamily: "var(--font)",
+            transition: "all .18s",
+            boxShadow: focused ? "0 0 0 4px rgba(67,97,238,.1)" : "none"
+          }}
+          onFocus={(e) => { setFocused(true); }}
+          onBlur={handleBlur}
+        />
+        {unit && (
+          <span style={{
+            position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
+            fontSize: 12, fontWeight: 700, color: focused ? "var(--brand)" : "var(--text3)",
+            pointerEvents: "none", transition: "color .15s"
+          }}>{unit}</span>
+        )}
       </div>
-      {hint&&<p style={{fontSize:11,color:"var(--text3)",marginTop:4,lineHeight:1.4}}>{hint}</p>}
+      {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 5, lineHeight: 1.5 }}>{hint}</p>}
     </div>
   );
 }
 
-export function Sl({label,id,min,max,step=1,value,onChange,fmt:fmtFn}){
-  const display=fmtFn?fmtFn(value):value;
+// ── Slider ─────────────────────────────────────────────────────────────
+export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn }) {
+  const display = fmtFn ? fmtFn(value) : value;
+  const pct = Math.round(((value - min) / (max - min)) * 100);
+
   return (
-    <div style={{marginBottom:20}}>
-      <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-        {label&&<L t={label} id={id}/>}
-        <span style={{fontSize:14,fontWeight:800,color:"var(--brand)",background:"var(--p50)",padding:"1px 10px",borderRadius:"var(--r-sm)"}}>{display}</span>
+    <div style={{ marginBottom: 22 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+        {label && (
+          <label htmlFor={id} style={{ fontSize: 12, fontWeight: 700, color: "var(--text2)", letterSpacing: ".01em" }}>
+            {label}
+          </label>
+        )}
+        <span style={{
+          fontSize: 13, fontWeight: 800, color: "var(--brand)",
+          background: "var(--brand-l)", padding: "3px 12px",
+          borderRadius: 100, letterSpacing: "-.01em",
+          border: "1px solid var(--brand-ll)"
+        }}>{display}</span>
       </div>
-      <input type="range" id={id} min={min} max={max} step={step} value={value} onChange={e=>onChange(+e.target.value)} aria-label={label}/>
+      <div style={{ position: "relative" }}>
+        <div style={{
+          position: "absolute", top: "50%", left: 0,
+          width: pct + "%", height: 5, borderRadius: 10,
+          background: "linear-gradient(90deg, var(--brand-d), var(--brand))",
+          transform: "translateY(-50%)", pointerEvents: "none", zIndex: 0,
+          transition: "width .1s"
+        }} />
+        <input
+          type="range" id={id} min={min} max={max} step={step} value={value}
+          onChange={e => onChange(+e.target.value)}
+          aria-label={label}
+          style={{ position: "relative", zIndex: 1, background: "transparent" }}
+        />
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+        <span style={{ fontSize: 10, color: "var(--text3)", fontWeight: 600 }}>{fmtFn ? fmtFn(min) : min}</span>
+        <span style={{ fontSize: 10, color: "var(--text3)", fontWeight: 600 }}>{fmtFn ? fmtFn(max) : max}</span>
+      </div>
     </div>
   );
 }
 
-export function Sel({label,id,value,onChange,opts}){
+// ── Select ─────────────────────────────────────────────────────────────
+export function Sel({ label, id, value, onChange, opts }) {
   return (
-    <div style={{marginBottom:16}}>
-      {label&&<L t={label} id={id}/>}
-      <select id={id} value={value} onChange={e=>onChange(e.target.value)} aria-label={label} className="f-select">{opts.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}</select>
+    <div style={{ marginBottom: 14 }}>
+      {label && <L t={label} id={id} />}
+      <select
+        id={id} value={value} onChange={e => onChange(e.target.value)}
+        aria-label={label} className="f-select"
+        style={{ height: 46, fontSize: 15, fontWeight: 600 }}
+      >
+        {opts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+      </select>
     </div>
   );
 }
 
-export function Tabs({tabs,active,onChange}){
+// ── Tabs ───────────────────────────────────────────────────────────────
+export function Tabs({ tabs, active, onChange }) {
   return (
-    <div style={{display:"flex",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",overflow:"hidden",marginBottom:16}}>
-      {tabs.map(t=>(
-        <button key={t} onClick={()=>onChange(t)} aria-label={`Switch to ${t}`} aria-pressed={active===t} style={{flex:1,padding:"8px 4px",fontSize:13,fontWeight:600,border:"none",cursor:"pointer",fontFamily:"var(--font)",transition:"all .15s",background:active===t?"var(--brand)":"transparent",color:active===t?"#fff":"var(--text3)"}}>
+    <div style={{
+      display: "flex", background: "var(--surface2)",
+      border: "1.5px solid var(--border)", borderRadius: "var(--r-lg)",
+      overflow: "hidden", marginBottom: 20, padding: 4, gap: 4
+    }}>
+      {tabs.map(t => (
+        <button
+          key={t} onClick={() => onChange(t)}
+          aria-label={"Switch to " + t} aria-pressed={active === t}
+          style={{
+            flex: 1, padding: "9px 8px", fontSize: 13, fontWeight: 700,
+            border: "none", cursor: "pointer", fontFamily: "var(--font)",
+            borderRadius: "var(--r-md)",
+            transition: "all .18s cubic-bezier(.4,0,.2,1)",
+            background: active === t
+              ? "linear-gradient(135deg, var(--brand), var(--brand-d))"
+              : "transparent",
+            color: active === t ? "#fff" : "var(--text3)",
+            boxShadow: active === t ? "0 2px 8px rgba(67,97,238,.3)" : "none",
+            transform: active === t ? "scale(1)" : "scale(.97)"
+          }}
+        >
           {t}
         </button>
       ))}
@@ -104,30 +202,166 @@ export function Tabs({tabs,active,onChange}){
   );
 }
 
-export function Row2({children}){return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>{children}</div>;}
-export function Row3({children}){return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>{children}</div>;}
-
-export function Presets({items,onApply}){
-  if(!items?.length) return null;
+// ── Row helpers ────────────────────────────────────────────────────────
+export function Row2({ children }) {
   return (
-    <div style={{display:"flex",flexWrap:"wrap",gap:7,padding:"10px 14px",background:"var(--surface2)",border:"1px solid var(--border2)",borderRadius:"var(--r-md)",marginBottom:18}}>
-      <span style={{fontSize:10,fontWeight:800,textTransform:"uppercase",letterSpacing:".06em",color:"var(--text3)",alignSelf:"center"}}>Try:</span>
-      {items.map((p,i)=>(
-        <button key={i} onClick={()=>onApply(p)} aria-label={`Apply preset ${p.label}`}
-          style={{padding:"5px 12px",borderRadius:100,fontSize:12,fontWeight:600,border:"1.5px solid var(--border)",background:"var(--surface)",color:"var(--text2)",cursor:"pointer",transition:"all .15s"}}
-          onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--brand)";e.currentTarget.style.color="var(--brand)";e.currentTarget.style.background="var(--p50)";}}
-          onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border)";e.currentTarget.style.color="var(--text2)";e.currentTarget.style.background="var(--surface)";}}>
-          {p.label}
-        </button>
-      ))}
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+      className="sc-row2">
+      {children}
+    </div>
+  );
+}
+export function Row3({ children }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}
+      className="sc-row3">
+      {children}
     </div>
   );
 }
 
+// ── Presets ────────────────────────────────────────────────────────────
+export function Presets({ items, onApply }) {
+  if (!items?.length) return null;
+  return (
+    <div style={{
+      padding: "12px 14px", background: "var(--surface2)",
+      border: "1.5px solid var(--border)", borderRadius: "var(--r-lg)",
+      marginBottom: 20
+    }}>
+      <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--text3)", marginBottom: 9 }}>
+        Quick Examples
+      </p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+        {items.map((p, i) => (
+          <button key={i} onClick={() => onApply(p)}
+            aria-label={"Apply preset " + p.label}
+            style={{
+              padding: "7px 14px", borderRadius: "var(--r-md)", fontSize: 12.5,
+              fontWeight: 700, border: "1.5px solid var(--border)",
+              background: "var(--surface)", color: "var(--text2)",
+              cursor: "pointer", transition: "all .18s", lineHeight: 1
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = "var(--brand)";
+              e.currentTarget.style.color = "var(--brand)";
+              e.currentTarget.style.background = "var(--brand-l)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.color = "var(--text2)";
+              e.currentTarget.style.background = "var(--surface)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}>
+            {p.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Input Section ──────────────────────────────────────────────────────
+// Groups related inputs with a gradient header
+export function InputSection({ title, icon, gradient, children }) {
+  const grad = gradient || "linear-gradient(135deg, #4361ee 0%, #3451c7 100%)";
+  return (
+    <div style={{
+      border: "1.5px solid var(--border)", borderRadius: "var(--r-xl)",
+      overflow: "hidden", marginBottom: 14
+    }}>
+      <div style={{
+        background: grad, padding: "10px 16px",
+        display: "flex", alignItems: "center", gap: 9
+      }}>
+        {icon && <span style={{ fontSize: 16 }}>{icon}</span>}
+        <span style={{ fontSize: 12, fontWeight: 800, color: "#fff", letterSpacing: ".02em" }}>
+          {title}
+        </span>
+      </div>
+      <div style={{ padding: "16px 16px 6px", background: "var(--surface)" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ── Toggle Switch ──────────────────────────────────────────────────────
+export function Toggle({ label, id, checked, onChange, hint }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
+      <div
+        onClick={() => onChange(!checked)}
+        style={{
+          width: 44, height: 24, borderRadius: 12, flexShrink: 0,
+          background: checked ? "var(--brand)" : "var(--border)",
+          position: "relative", cursor: "pointer", transition: "background .2s",
+          boxShadow: checked ? "0 0 0 3px rgba(67,97,238,.2)" : "none"
+        }}
+      >
+        <div style={{
+          position: "absolute", top: 3, left: checked ? 23 : 3,
+          width: 18, height: 18, borderRadius: "50%",
+          background: "#fff", transition: "left .2s",
+          boxShadow: "0 1px 3px rgba(0,0,0,.25)"
+        }} />
+      </div>
+      <div>
+        <label htmlFor={id} style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", cursor: "pointer" }}
+          onClick={() => onChange(!checked)}>
+          {label}
+        </label>
+        {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2, lineHeight: 1.4 }}>{hint}</p>}
+      </div>
+    </div>
+  );
+}
+
+// ── Info Callout ────────────────────────────────────────────────────────
+export function InfoBox({ type = "info", children }) {
+  const styles = {
+    tip:  { bg: "rgba(5,150,105,.07)",  border: "#86efac", icon: "💡", color: "#065f46" },
+    warn: { bg: "rgba(217,119,6,.07)",  border: "#fde68a", icon: "⚠️", color: "#78350f" },
+    info: { bg: "rgba(67,97,238,.07)",  border: "var(--brand-ll)", icon: "ℹ️", color: "var(--brand-d)" },
+    bad:  { bg: "rgba(220,53,69,.07)",  border: "#fca5a5", icon: "❌", color: "#7f1d1d" },
+  };
+  const s = styles[type] || styles.info;
+  return (
+    <div style={{
+      background: s.bg, border: "1.5px solid " + s.border,
+      borderRadius: "var(--r-lg)", padding: "11px 14px",
+      display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14
+    }}>
+      <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{s.icon}</span>
+      <p style={{ fontSize: 12.5, color: s.color, lineHeight: 1.65, fontWeight: 500 }}>{children}</p>
+    </div>
+  );
+}
+
+// ── SEO Section ─────────────────────────────────────────────────────────
+export function SEOSection({ title, children }) {
+  return (
+    <div style={{
+      background: "var(--surface2)", border: "1.5px solid var(--border)",
+      borderRadius: "var(--r-xl)", padding: "20px 22px", marginTop: 4
+    }}>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "var(--text)", marginBottom: 10, letterSpacing: "-.02em" }}>
+        {title}
+      </h2>
+      <div style={{ fontSize: 13.5, color: "var(--text2)", lineHeight: 1.8 }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ── Panel ──────────────────────────────────────────────────────────────
 export function Panel({ result, loading, label, shareParams }) {
   const { activeCalc, saveLocally, savedLocally, removeSaved } = useAppStore();
   const [showHistory, setShowHistory] = useState(false);
   const [copied, setCopied] = useState(false);
+  const prevVal = useRef(null);
 
   if (!result && !loading) return (
     <div className="empty-state">
@@ -147,7 +381,7 @@ export function Panel({ result, loading, label, shareParams }) {
         calcName: activeCalc.name,
         result: result.primary.value,
         timestamp: new Date().toISOString(),
-        inputs: result.breakdowns?.map(b => `${b.label}: ${b.value}`).join(", ")
+        inputs: result.breakdowns?.map(b => b.label + ": " + b.value).join(", ")
       });
     }
   };
@@ -156,42 +390,33 @@ export function Panel({ result, loading, label, shareParams }) {
 
   return (
     <div id="calc-result-area">
-      {/* ── Main result card ── */}
       <ResultBox label={result.primary.label} value={result.primary.value} sub={result.primary.sub} />
-
-      {/* ── Stats grid ── */}
       {result.stats?.length > 0 && <StatsGrid items={result.stats} />}
-
-      {/* ── Chart ── */}
       {result.chart && (
         <div style={{ marginTop: 14 }}>
           <CalcChart chartData={result.chart} />
         </div>
       )}
-
-      {/* ── Insights ── */}
       {result.insights?.length > 0 && <InsightBox insights={result.insights} />}
-
-      {/* ── Breakdown table ── */}
       {result.breakdowns?.length > 0 && (
         <Breakdown rows={result.breakdowns} title="Step-by-Step Breakdown" />
       )}
 
-      {/* ── Toolbar: save, export, share ── */}
+      {/* ── Toolbar ── */}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
         <button onClick={handleSaveHistory}
           style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: "var(--surf2)", border: "1px solid var(--border)", color: "var(--text2)", cursor: "pointer", fontFamily: "var(--font)" }}>
           💾 Save Result
         </button>
         {result.breakdowns?.length > 0 && (
-          <button onClick={() => exportToCSV(result.breakdowns, label?.toLowerCase().replace(/\s+/g, "-"))}
+          <button onClick={() => exportToCSV(result.breakdowns, (label || "calc").toLowerCase().replace(/\s+/g, "-"))}
             style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: "var(--surf2)", border: "1px solid var(--border)", color: "var(--text2)", cursor: "pointer", fontFamily: "var(--font)" }}>
             📥 Export CSV
           </button>
         )}
         {shareParams && (
           <button onClick={async () => { await copyShareLink(shareParams); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-            style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: copied ? "var(--brand)" : "var(--surf2)", border: `1px solid ${copied ? "var(--brand)" : "var(--border)"}`, color: copied ? "#fff" : "var(--text2)", cursor: "pointer", fontFamily: "var(--font)", transition: "all .2s" }}>
+            style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: copied ? "var(--brand)" : "var(--surf2)", border: "1px solid " + (copied ? "var(--brand)" : "var(--border)"), color: copied ? "#fff" : "var(--text2)", cursor: "pointer", fontFamily: "var(--font)", transition: "all .2s" }}>
             {copied ? "✅ Link Copied!" : "🔗 Share Link"}
           </button>
         )}
@@ -212,8 +437,7 @@ export function Panel({ result, loading, label, shareParams }) {
           {showHistory && (
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {currentHistory.map(h => (
-                <div key={h.id}
-                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "var(--surf2)", borderRadius: "var(--r-md)", fontSize: 12, border: "1px solid var(--border)" }}>
+                <div key={h.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "var(--surf2)", borderRadius: "var(--r-md)", fontSize: 12, border: "1px solid var(--border)" }}>
                   <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={{ fontWeight: 700, color: "var(--text)" }}>{h.result}</div>
                     <div style={{ fontSize: 10, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{h.inputs}</div>
@@ -230,7 +454,6 @@ export function Panel({ result, loading, label, shareParams }) {
   );
 }
 
-
 export const buildResult = (label, val, stats, insights, chart, breakdowns) => ({
   primary: { label, value: val },
   stats: stats || [],
@@ -240,55 +463,32 @@ export const buildResult = (label, val, stats, insights, chart, breakdowns) => (
 });
 
 export const useCurrency = () => {
-  // Read everything from the geo-engine (single source of truth)
-  const countryCode    = useGeoStore(s => s.countryCode);
-  const rules          = useGeoStore(s => s.rules);
+  const countryCode = useGeoStore(s => s.countryCode);
+  const rules = useGeoStore(s => s.rules);
 
-  const currency       = rules?.currency       ?? 'USD';
-  const sym            = rules?.currencySymbol  ?? '$';
-  const locale         = rules?.locale          ?? 'en-US';
-  const vatLabel       = rules?.taxLabel        ?? 'Tax';
-  const taxRate        = rules?.taxRate         ?? 0;
-  const measureSystem  = rules?.measureSystem   ?? 'metric';
-  const dateFormat     = rules?.dateFormat      ?? 'MM/DD/YYYY';
+  const currency = rules?.currency ?? 'USD';
+  const sym = rules?.currencySymbol ?? '$';
+  const locale = rules?.locale ?? 'en-US';
+  const vatLabel = rules?.taxLabel ?? 'Tax';
+  const taxRate = rules?.taxRate ?? 0;
+  const measureSystem = rules?.measureSystem ?? 'metric';
+  const dateFormat = rules?.dateFormat ?? 'MM/DD/YYYY';
 
   const fm = (value) => {
     try {
-      return new Intl.NumberFormat(locale, {
-        style: 'currency',
-        currency,
-        maximumFractionDigits: 2,
-      }).format(value);
+      return new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 2 }).format(value);
     } catch {
-      return `${sym}${Number(value).toFixed(2)}`;
+      return sym + Number(value).toFixed(2);
     }
   };
 
   const fmSlider = (v) => {
     try {
-      return new Intl.NumberFormat(locale, {
-        style: 'currency',
-        currency,
-        maximumFractionDigits: 0,
-      }).format(v);
+      return new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 0 }).format(v);
     } catch {
-      return `${sym}${fmt(v)}`;
+      return sym + fmt(v);
     }
   };
 
-  return {
-    sym,
-    currency,
-    locale,
-    vatLabel,
-    taxRate,
-    measureSystem,
-    dateFormat,
-    countryCode,
-    rules,
-    fm,
-    fmSlider,
-    // Legacy aliases
-    cur: currency,
-  };
+  return { sym, currency, locale, vatLabel, taxRate, measureSystem, dateFormat, countryCode, rules, fm, fmSlider, cur: currency };
 };

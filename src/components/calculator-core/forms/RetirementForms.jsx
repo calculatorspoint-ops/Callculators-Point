@@ -1,296 +1,258 @@
 import { useState, useEffect } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency } from "./SharedComponents.jsx";
+import {
+  N, Sl, Sel, Row2, Presets,
+  Panel, buildResult, useCurrency,
+  InputSection, SEOSection
+} from "./SharedComponents.jsx";
 
-// ── Retirement Planning Calculator ───────────────────────────────────
+function CalcLayout({ inputs, result, label }) {
+  return (
+    <div className="calc-form-stack">
+      <div>{inputs}</div>
+      <Panel result={result} loading={null} label={label} />
+    </div>
+  );
+}
+
+// ─── Retirement Plan ─────────────────────────────────────────────────────────
 export function RetirementPlanForm() {
   const { fm, fmSlider, sym } = useCurrency();
   const [currentAge, setCurrentAge] = useState(30);
-  const [retirementAge, setRetirementAge] = useState(60);
+  const [retireAge, setRetireAge] = useState(60);
   const [currentSavings, setCurrentSavings] = useState(500000);
-  const [monthlyContrib, setMonthlyContrib] = useState(15000);
-  const [expectedReturn, setExpectedReturn] = useState(10);
-  const [inflation, setInflation] = useState(6);
-  const [monthlyExpense, setMonthlyExpense] = useState(50000);
-  const [lifeExpectancy, setLifeExpectancy] = useState(85);
-  const [tab, setTab] = useState("Plan");
+  const [returnRate, setReturnRate] = useState(12);
+  const [inflationRate, setInflationRate] = useState(6);
+  const [monthlyExpenses, setMonthlyExpenses] = useState(50000);
+  const [withdrawRate, setWithdrawRate] = useState(4);
   const [res, setRes] = useState(null);
-  const [schedule, setSchedule] = useState([]);
 
   useEffect(() => {
-    const yearsToRetire = retirementAge - currentAge;
-    const yearsInRetirement = lifeExpectancy - retirementAge;
-    if (yearsToRetire <= 0 || yearsInRetirement <= 0) return;
+    const yearsToRetire = retireAge - currentAge;
+    if (yearsToRetire <= 0) return;
 
-    const realReturn = (1 + expectedReturn / 100) / (1 + inflation / 100) - 1;
-    const r = expectedReturn / 100 / 12;
+    // Corpus needed at retirement (inflation-adjusted expenses, 4% withdraw rule)
+    const inflatedMonthly = monthlyExpenses * Math.pow(1 + inflationRate / 100, yearsToRetire);
+    const annualNeeded = inflatedMonthly * 12;
+    const corpusNeeded = annualNeeded / (withdrawRate / 100);
+
+    // Projected corpus from existing savings
+    const projectedFromSavings = currentSavings * Math.pow(1 + returnRate / 100, yearsToRetire);
+
+    // Shortfall
+    const shortfall = Math.max(0, corpusNeeded - projectedFromSavings);
+
+    // Monthly SIP needed to cover shortfall
+    const r = returnRate / 100 / 12;
     const n = yearsToRetire * 12;
-    const futureCurrentSavings = currentSavings * Math.pow(1 + r, n);
-    const futureContrib = monthlyContrib * (Math.pow(1 + r, n) - 1) / r;
-    const corpus = futureCurrentSavings + futureContrib;
+    const sipNeeded = shortfall > 0 && r > 0
+      ? shortfall * r / (Math.pow(1 + r, n) - 1)
+      : 0;
 
-    const inflatedExpense = monthlyExpense * Math.pow(1 + inflation / 100, yearsToRetire);
-    const annualExpense = inflatedExpense * 12;
-    const rRetire = realReturn / 12;
-    const nRetire = yearsInRetirement * 12;
-    const corpusNeeded = rRetire > 0 ? annualExpense / 12 * (1 - Math.pow(1 + rRetire, -nRetire)) / rRetire : annualExpense * yearsInRetirement;
-    const corpusGap = corpusNeeded - corpus;
-    const additionalMonthly = corpusGap > 0 && r > 0 ? corpusGap * r / (Math.pow(1 + r, n) - 1) : 0;
-    const replacementRatio = (corpus / corpusNeeded) * 100;
-
-    let yearlyCorpus = currentSavings;
-    const rows = [];
-    for (let yr = 1; yr <= Math.min(yearsToRetire, 30); yr++) {
-      for (let mo = 0; mo < 12; mo++) {
-        const interest = yearlyCorpus * r;
-        yearlyCorpus += interest + monthlyContrib;
-      }
-      rows.push({ year: currentAge + yr, corpus: Math.round(yearlyCorpus), target: Math.round(corpusNeeded * (yr / yearsToRetire)) });
+    // Yearly growth chart (projected corpus)
+    const yearlyData = [];
+    for (let y = 5; y <= yearsToRetire; y += 5) {
+      const proj = currentSavings * Math.pow(1 + returnRate / 100, y);
+      yearlyData.push({ label: "Age " + (currentAge + y), value: fm(Math.round(proj)) });
     }
-    setSchedule(rows);
-    const chart = { type: "area", data: rows.filter((_, i) => i % Math.max(1, Math.floor(rows.length / 10)) === 0).map(r => ({ age: r.year, Corpus: r.corpus, Target: r.target })), keys: ["Corpus", "Target"] };
-    const onTrack = corpus >= corpusNeeded;
-    setRes(buildResult("Retirement Corpus", fm(Math.round(corpus)),
+
+    const surplus = projectedFromSavings - corpusNeeded;
+
+    setRes(buildResult(
+      "Required Retirement Corpus", fm(Math.round(corpusNeeded)),
       [
         { label: "Years to Retire", value: yearsToRetire + " years" },
-        { label: "Corpus at Retirement", value: fm(Math.round(corpus)), highlight: onTrack, warn: !onTrack },
-        { label: "Corpus Needed", value: fm(Math.round(corpusNeeded)) },
-        { label: "Funding Ratio", value: replacementRatio.toFixed(0) + "%", highlight: replacementRatio >= 100, warn: replacementRatio < 80 },
-        corpusGap > 0 ? { label: "Funding Gap", value: fm(Math.round(corpusGap)), warn: true } : { label: "Surplus", value: fm(Math.round(-corpusGap)), highlight: true },
-        corpusGap > 0 ? { label: "Additional Monthly Needed", value: fm(Math.round(additionalMonthly)), warn: true } : null,
-        { label: "Monthly Expense at Retirement (Inflation adj.)", value: fm(Math.round(inflatedExpense)) },
-        { label: "Retirement Duration", value: yearsInRetirement + " years" },
-      ].filter(Boolean),
-      [{ type: onTrack ? "tip" : "warn", msg: onTrack ? "You are ON TRACK! Your " + fm(Math.round(corpus)) + " corpus is " + replacementRatio.toFixed(0) + "% of your retirement need. " + (corpus > corpusNeeded ? "Surplus of " + fm(Math.round(corpus - corpusNeeded)) + "!" : "") : "You have a funding gap of " + fm(Math.round(corpusGap)) + ". Increase SIP by " + fm(Math.round(additionalMonthly)) + "/mo to close the gap." }],
-      chart,
-      [{ label: "Real Return (after inflation)", value: (realReturn * 100).toFixed(2) + "%" }, { label: "Future Savings Value", value: fm(Math.round(futureCurrentSavings)) }, { label: "Future SIP Value", value: fm(Math.round(futureContrib)) }]
+        { label: "Projected Corpus (savings only)", value: fm(Math.round(projectedFromSavings)), highlight: surplus > 0, warn: surplus < 0 },
+        { label: surplus > 0 ? "Corpus Surplus" : "Corpus Shortfall", value: fm(Math.round(Math.abs(surplus))), highlight: surplus > 0, warn: surplus < 0 },
+        { label: "Monthly SIP Needed (extra)", value: sipNeeded > 0 ? fm(Math.round(sipNeeded)) : "On Track! ✅", highlight: sipNeeded === 0 },
+        { label: "Inflation-Adj Monthly Need at " + retireAge, value: fm(Math.round(inflatedMonthly)) },
+        { label: "Post-Retirement Annual Income", value: fm(Math.round(annualNeeded)) },
+      ],
+      [{ type: surplus > 0 ? "tip" : "warn", msg: surplus > 0 ? "Great news! Your current savings of " + fm(currentSavings) + " will grow to " + fm(Math.round(projectedFromSavings)) + " — exceeding your target of " + fm(Math.round(corpusNeeded)) + "." : "You need an additional SIP of " + fm(Math.round(sipNeeded)) + "/month to bridge the gap of " + fm(Math.round(Math.abs(surplus))) + ". Start now — every year of delay increases the required SIP." }],
+      { type: "bar", data: yearlyData.map(y => ({ year: y.label, Corpus: Math.round(currentSavings * Math.pow(1 + returnRate / 100, currentAge + parseInt(y.label.replace("Age ", "")) - currentAge)) })), keys: ["Corpus"] },
+      yearlyData
     ));
-  }, [currentAge, retirementAge, currentSavings, monthlyContrib, expectedReturn, inflation, monthlyExpense, lifeExpectancy]);
+  }, [currentAge, retireAge, currentSavings, returnRate, inflationRate, monthlyExpenses, withdrawRate]);
 
-  const exportCSV = () => {
-    const csv = "Age,Corpus (Projected),Target\n" + schedule.map(r => [r.year, r.corpus, r.target].join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "retirement-plan.csv"; a.click(); URL.revokeObjectURL(url);
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <Presets items={[
-            { label: "Young Starter (25yr)", v: { ca: 25, ra: 60, cs: 100000, mc: 5000, er: 12, inf: 6, me: 40000, le: 85 } },
-            { label: "Mid Career (35yr)", v: { ca: 35, ra: 60, cs: 1000000, mc: 25000, er: 10, inf: 6, me: 60000, le: 85 } },
-            { label: "Late Start (45yr)", v: { ca: 45, ra: 65, cs: 2000000, mc: 50000, er: 9, inf: 6, me: 80000, le: 90 } },
-          ]} onApply={pr => { setCurrentAge(pr.v.ca); setRetirementAge(pr.v.ra); setCurrentSavings(pr.v.cs); setMonthlyContrib(pr.v.mc); setExpectedReturn(pr.v.er); setInflation(pr.v.inf); setMonthlyExpense(pr.v.me); setLifeExpectancy(pr.v.le); }} />
-          <Row2>
-            <Sl label="Current Age" id="rp_ca" min={18} max={60} value={currentAge} onChange={setCurrentAge} fmt={v => v + " yrs"} />
-            <Sl label="Retirement Age" id="rp_ra" min={45} max={75} value={retirementAge} onChange={setRetirementAge} fmt={v => v + " yrs"} />
-          </Row2>
+  const inputs = (
+    <>
+      <Presets items={[
+        { label: "Early Retire 45", v: { ca: 28, ra: 45, cs: 1000000, ret: 14, inf: 6, me: 80000, wr: 4 } },
+        { label: "Standard 60", v: { ca: 30, ra: 60, cs: 500000, ret: 12, inf: 6, me: 50000, wr: 4 } },
+        { label: "Conservative", v: { ca: 35, ra: 60, cs: 2000000, ret: 10, inf: 6, me: 60000, wr: 3.5 } },
+      ]} onApply={pr => { setCurrentAge(pr.v.ca); setRetireAge(pr.v.ra); setCurrentSavings(pr.v.cs); setReturnRate(pr.v.ret); setInflationRate(pr.v.inf); setMonthlyExpenses(pr.v.me); setWithdrawRate(pr.v.wr); }} />
+      <div className="calc-inputs-grid">
+        <InputSection title="Current Status" icon="👤" gradient="linear-gradient(135deg,#d97706,#b45309)">
+          <Sl label="Current Age" id="rp_ca" min={20} max={55} value={currentAge} onChange={setCurrentAge} fmt={v => v + " years"} />
+          <Sl label="Retirement Age" id="rp_ra" min={40} max={70} value={retireAge} onChange={setRetireAge} fmt={v => v + " years"} />
           <Sl label="Current Savings / Investments" id="rp_cs" min={0} max={50000000} step={50000} value={currentSavings} onChange={setCurrentSavings} fmt={v => fmSlider(v)} />
-          <Sl label="Monthly SIP / Contribution" id="rp_mc" min={500} max={500000} step={500} value={monthlyContrib} onChange={setMonthlyContrib} fmt={v => fmSlider(v)} />
-          <Sl label="Expected Annual Return (%)" id="rp_er" min={6} max={18} step={0.5} value={expectedReturn} onChange={setExpectedReturn} fmt={v => v + "%"} />
-          <Sl label="Expected Inflation (%)" id="rp_inf" min={3} max={10} step={0.5} value={inflation} onChange={setInflation} fmt={v => v + "%"} />
-          <Sl label="Monthly Expenses (Today's value)" id="rp_me" min={10000} max={500000} step={1000} value={monthlyExpense} onChange={setMonthlyExpense} fmt={v => fmSlider(v)} />
-          <Sl label="Life Expectancy" id="rp_le" min={70} max={100} value={lifeExpectancy} onChange={setLifeExpectancy} fmt={v => v + " yrs"} />
-        </div>
-        <div className="sticky-res"><Panel result={res} loading={null} label="Retirement" /></div>
+        </InputSection>
+        <InputSection title="Growth & Needs" icon="📈" gradient="linear-gradient(135deg,#059669,#047857)">
+          <Sl label="Expected Return (% p.a.)" id="rp_ret" min={6} max={20} step={0.5} value={returnRate} onChange={setReturnRate} fmt={v => v + "%"} />
+          <Sl label="Expected Inflation (% p.a.)" id="rp_inf" min={3} max={10} step={0.5} value={inflationRate} onChange={setInflationRate} fmt={v => v + "%"} />
+          <Sl label="Monthly Expenses Needed (today's value)" id="rp_me" min={10000} max={500000} step={5000} value={monthlyExpenses} onChange={setMonthlyExpenses} fmt={v => fmSlider(v)} />
+          <Sl label="Withdrawal Rate (%)" id="rp_wr" min={2} max={6} step={0.5} value={withdrawRate} onChange={setWithdrawRate} fmt={v => v + "%"} />
+        </InputSection>
       </div>
-      {schedule.length > 0 && (
-        <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: "var(--r-xl)", overflow: "hidden" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 18px", borderBottom: "1px solid var(--border)", background: "var(--surface2)" }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>Corpus Growth Projection</p>
-            <button onClick={exportCSV} style={{ fontSize: 11, fontWeight: 700, padding: "6px 12px", borderRadius: "var(--r-md)", border: "1.5px solid var(--border)", background: "var(--surface)", color: "var(--text2)", cursor: "pointer" }}>Export CSV</button>
-          </div>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: "var(--surface2)" }}>
-                  {["Age", "Projected Corpus", "Target Corpus", "Status"].map((h, hi) => <th key={h} style={{ padding: "9px 14px", textAlign: hi === 0 ? "center" : "right", fontWeight: 700, color: "var(--text2)", fontSize: 11, textTransform: "uppercase", borderBottom: "2px solid var(--border)" }}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {schedule.filter((_, i) => i % 5 === 0 || i === schedule.length - 1).map((row, i) => {
-                  const onTrack = row.corpus >= row.target;
-                  return (
-                    <tr key={row.year} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "transparent" : "rgba(0,0,0,0.015)" }}>
-                      <td style={{ padding: "8px 14px", textAlign: "center", color: "var(--text3)", fontWeight: 700 }}>Age {row.year}</td>
-                      <td style={{ padding: "8px 14px", textAlign: "right", color: "var(--brand)", fontWeight: 800 }}>{fm(row.corpus)}</td>
-                      <td style={{ padding: "8px 14px", textAlign: "right", color: "var(--text3)", fontWeight: 600 }}>{fm(row.target)}</td>
-                      <td style={{ padding: "8px 14px", textAlign: "right" }}>
-                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 99, background: onTrack ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.1)", color: onTrack ? "var(--success)" : "#ef4444" }}>{onTrack ? "On Track" : "Gap"}</span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-      <div style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "24px" }}>
-        <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>Retirement Planning Fundamentals</h2>
-        <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75 }}>Use the <strong>25x Rule</strong> as a quick benchmark: you need 25 times your annual retirement expenses as corpus (assumes 4% safe withdrawal rate). For Indian conditions with higher inflation, consider 30x-35x. Start early — investing for 30 years vs 20 years nearly triples your corpus due to compounding!</p>
-      </div>
-    </div>
+    </>
+  );
+  return (
+    <>
+      <CalcLayout inputs={inputs} result={res} label="Retirement Plan" />
+      <SEOSection title="How Much Do You Need to Retire?">
+        <p>The 4% rule: a 4% withdrawal rate from a diversified portfolio is historically sustainable for 30+ years. Multiply your annual expenses by 25 to get your corpus target. Inflation doubles prices every 12 years at 6% — so ₹50,000 today will feel like ₹25,000 in purchasing power 12 years later. Start saving early and increase your SIP annually by your salary hike rate.</p>
+      </SEOSection>
+    </>
   );
 }
 
-// ── NPS Calculator ────────────────────────────────────────────────────
+// ─── NPS Calculator ───────────────────────────────────────────────────────────
 export function NPSForm() {
-  const fm = v => "₹" + Math.round(v).toLocaleString("en-IN");
-  const [monthlyContrib, setMonthlyContrib] = useState(5000);
+  const { fm, fmSlider, sym } = useCurrency();
+  const [monthlyContrib, setMonthlyContrib] = useState(10000);
   const [currentAge, setCurrentAge] = useState(30);
-  const [currentCorpus, setCurrentCorpus] = useState(0);
-  const [expectedReturn, setExpectedReturn] = useState(10);
-  const [annuityPct, setAnnuityPct] = useState(40);
+  const [retireAge, setRetireAge] = useState(60);
+  const [returnRate, setReturnRate] = useState(10);
   const [annuityRate, setAnnuityRate] = useState(6);
-  const [tab, setTab] = useState("Tier 1");
+  const [annuityPct, setAnnuityPct] = useState(40);
+  const [employerContrib, setEmployerContrib] = useState("10");
   const [res, setRes] = useState(null);
 
-  const retirementAge = 60;
-
   useEffect(() => {
-    const yearsToRetire = retirementAge - currentAge;
-    if (yearsToRetire <= 0) return;
-    const r = expectedReturn / 100 / 12;
-    const n = yearsToRetire * 12;
-    const futureCurrentCorpus = currentCorpus * Math.pow(1 + r, n);
-    const futureContrib = monthlyContrib * (Math.pow(1 + r, n) - 1) / r;
-    const totalCorpus = futureCurrentCorpus + futureContrib;
-    const annuityAmount = totalCorpus * (annuityPct / 100);
-    const lumpsum = totalCorpus - annuityAmount;
-    const monthlyPension = annuityAmount * (annuityRate / 100) / 12;
-    const tax80ccd1 = Math.min(monthlyContrib * 12, 150000);
-    const tax80ccd2 = Math.min(monthlyContrib * 12 * 0.1, 50000);
-    const totalTaxBenefit = tab === "Tier 1" ? tax80ccd1 + tax80ccd2 : 0;
-    const vsEPF = monthlyContrib * (Math.pow(1 + 8.25 / 100 / 12, n) - 1) / (8.25 / 100 / 12);
-    const chart = { type: "donut", data: [{ name: "Annuity (Pension)", value: Math.round(annuityAmount) }, { name: "Lumpsum (Tax-free)", value: Math.round(lumpsum) }], keys: ["value"] };
-    setRes(buildResult("Retirement Corpus", fm(Math.round(totalCorpus)),
-      [
-        { label: "Total Contributions", value: fm(Math.round(monthlyContrib * n)) },
-        { label: "Returns Earned", value: fm(Math.round(totalCorpus - monthlyContrib * n - currentCorpus)), highlight: true },
-        { label: "Annuity (" + annuityPct + "% → Pension)", value: fm(Math.round(annuityAmount)) },
-        { label: "Lumpsum (60% Tax-free)", value: fm(Math.round(lumpsum)) },
-        { label: "Monthly Pension (est.)", value: fm(Math.round(monthlyPension)), highlight: true },
-        tab === "Tier 1" ? { label: "Tax Deduction (80CCD1)", value: fm(tax80ccd1) + "/yr", highlight: true } : null,
-        tab === "Tier 1" ? { label: "Extra Deduction (80CCD2)", value: fm(tax80ccd2) + "/yr", highlight: true } : null,
-        { label: "vs EPF Corpus (8.25%)", value: fm(Math.round(vsEPF)) },
-      ].filter(Boolean),
-      [{ type: "tip", msg: "NPS gives monthly pension of " + fm(Math.round(monthlyPension)) + " plus " + fm(Math.round(lumpsum)) + " tax-free lumpsum. Tax deductions of " + fm(Math.round(totalTaxBenefit)) + "/yr make NPS highly efficient." }],
-      chart,
-      [{ label: "Investment Period", value: yearsToRetire + " years" }, { label: "Total Invested", value: fm(Math.round(monthlyContrib * n)) }]
-    ));
-  }, [monthlyContrib, currentAge, currentCorpus, expectedReturn, annuityPct, annuityRate, tab]);
+    const years = retireAge - currentAge;
+    if (years <= 0) return;
+    const r = returnRate / 100 / 12;
+    const n = years * 12;
+    const totalMonthly = monthlyContrib * (1 + +employerContrib / 100);
+    const maturity = totalMonthly * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+    const lumpsum = maturity * 0.60;
+    const annuityCorpus = maturity * (annuityPct / 100);
+    const monthlyPension = (annuityCorpus * annuityRate / 100) / 12;
+    const totalInvested = monthlyContrib * n;
+    const returns = maturity - totalInvested * (1 + +employerContrib / 100);
 
-  return (
-    <div className="space-y-6">
-      <Tabs tabs={["Tier 1", "Tier 2"]} active={tab} onChange={setTab} />
-      <div style={{ padding: "10px 14px", background: "rgba(99,102,241,0.06)", border: "1.5px solid rgba(99,102,241,0.2)", borderRadius: "var(--r-lg)", marginBottom: 8 }}>
-        <p style={{ fontSize: 12, color: "var(--text2)" }}>{tab === "Tier 1" ? "Tier 1: Mandatory retirement account. Lock-in until 60. Tax benefits under 80CCD(1) + 80CCD(1B) + 80CCD(2)." : "Tier 2: Voluntary savings account. No lock-in. No tax benefit but flexible withdrawal."}</p>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <Presets items={[
-            { label: "Govt Employee (₹5K/mo)", v: { mc: 5000, ca: 30, cc: 0, er: 10, ap: 40, ar: 6 } },
-            { label: "Corporate (₹15K/mo)", v: { mc: 15000, ca: 35, cc: 500000, er: 10, ap: 40, ar: 6 } },
-            { label: "Max Tax Saver", v: { mc: 20833, ca: 28, cc: 0, er: 11, ap: 40, ar: 7 } },
-          ]} onApply={pr => { setMonthlyContrib(pr.v.mc); setCurrentAge(pr.v.ca); setCurrentCorpus(pr.v.cc); setExpectedReturn(pr.v.er); setAnnuityPct(pr.v.ap); setAnnuityRate(pr.v.ar); }} />
-          <Sl label="Monthly Contribution" id="nps_mc" min={500} max={100000} step={500} value={monthlyContrib} onChange={setMonthlyContrib} fmt={v => "₹" + v.toLocaleString("en-IN")} />
-          <Sl label="Current Age" id="nps_ca" min={18} max={59} value={currentAge} onChange={setCurrentAge} fmt={v => v + " yrs (Retire at 60)"} />
-          <Sl label="Expected Annual Return (%)" id="nps_er" min={7} max={14} step={0.5} value={expectedReturn} onChange={setExpectedReturn} fmt={v => v + "% p.a."} />
-          <Sl label="Annuity Percentage (%)" id="nps_ap" min={40} max={100} step={5} value={annuityPct} onChange={setAnnuityPct} fmt={v => v + "% → Pension (min 40%)"} />
-          <N label="Annuity Rate (% p.a.)" id="nps_ar" value={String(annuityRate)} onChange={v => setAnnuityRate(+v)} unit="%" placeholder="6" hint="Rate offered by annuity provider" />
-          <N label="Current NPS Corpus" id="nps_cc" value={String(currentCorpus)} onChange={v => setCurrentCorpus(+v)} unit="₹" placeholder="0" hint="Existing NPS balance" />
-        </div>
-        <div className="sticky-res"><Panel result={res} loading={null} label="NPS" /></div>
-      </div>
-      <div style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "24px" }}>
-        <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>NPS Tax Benefits</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10 }}>
-          {[{ sec: "80CCD(1)", limit: "₹1.5L/yr", note: "Under 80C umbrella, 10% of salary" }, { sec: "80CCD(1B)", limit: "₹50K/yr", note: "Additional deduction over 80C" }, { sec: "80CCD(2)", limit: "14% of basic", note: "Employer contribution (Govt: 14%, Others: 10%)" }, { sec: "Maturity", limit: "60% Tax-free", note: "40% must go to annuity (pension)" }].map((t, i) => (
-            <div key={i} style={{ padding: "12px", background: "var(--surface)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
-              <p style={{ fontSize: 11, fontWeight: 800, color: "var(--brand)", marginBottom: 3 }}>{t.sec}</p>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 3 }}>{t.limit}</p>
-              <p style={{ fontSize: 11, color: "var(--text3)", lineHeight: 1.6 }}>{t.note}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+    // Tax savings
+    const taxSaving80C = Math.min(monthlyContrib * 12, 150000) * 0.30;
+    const taxSaving80CCD1B = 50000 * 0.30;
+    const totalTaxSaving = taxSaving80C + taxSaving80CCD1B;
+
+    const yearlyData = [];
+    for (let y = 5; y <= years; y += 5) {
+      const nn = y * 12;
+      const fv = totalMonthly * ((Math.pow(1 + r, nn) - 1) / r) * (1 + r);
+      yearlyData.push({ label: "Age " + (currentAge + y), value: fm(Math.round(fv)) });
+    }
+
+    setRes(buildResult(
+      "NPS Maturity Corpus", fm(Math.round(maturity)),
+      [
+        { label: "Your Contribution", value: fm(monthlyContrib) + "/mo" },
+        { label: "Employer Contribution", value: fm(Math.round(monthlyContrib * +employerContrib / 100)) + "/mo" },
+        { label: "Lump Sum (60%)", value: fm(Math.round(lumpsum)), highlight: true },
+        { label: "Annuity Corpus (" + annuityPct + "%)", value: fm(Math.round(annuityCorpus)) },
+        { label: "Monthly Pension", value: fm(Math.round(monthlyPension)), highlight: true },
+        { label: "Total Tax Saving (est.)", value: fm(Math.round(totalTaxSaving)) + "/yr", highlight: true },
+        { label: "80C Deduction", value: "up to ₹1,50,000" },
+        { label: "80CCD(1B) Extra", value: "₹50,000 additional" },
+      ],
+      [{ type: "tip", msg: "NPS gives triple tax benefit: deduction on contribution (80C + 80CCD1B), tax-free growth, and 60% tax-free lump sum at retirement. Annual tax saving: ~" + fm(Math.round(totalTaxSaving)) + " (at 30% bracket)." }],
+      { type: "donut", data: [{ name: "Lump Sum", value: Math.round(lumpsum) }, { name: "Annuity", value: Math.round(annuityCorpus) }], keys: ["value"] },
+      yearlyData
+    ));
+  }, [monthlyContrib, currentAge, retireAge, returnRate, annuityRate, annuityPct, employerContrib]);
+
+  const inputs = (
+    <div className="calc-inputs-grid">
+      <InputSection title="NPS Contributions" icon="🏛️" gradient="linear-gradient(135deg,#d97706,#b45309)">
+        <Sl label="Monthly Contribution (Tier I)" id="nps_mc" min={500} max={100000} step={500} value={monthlyContrib} onChange={setMonthlyContrib} fmt={v => fmSlider(v)} />
+        <Sl label="Current Age" id="nps_ca" min={18} max={60} value={currentAge} onChange={setCurrentAge} fmt={v => v + " years"} />
+        <Sl label="Retirement Age" id="nps_ra" min={55} max={70} value={retireAge} onChange={setRetireAge} fmt={v => v + " years"} />
+        <N label="Employer Contribution %" id="nps_ec" value={employerContrib} onChange={setEmployerContrib} unit="%" placeholder="10" hint="Govt employees: 14%, Private: typically 10%" />
+      </InputSection>
+      <InputSection title="Return & Annuity Settings" icon="⚙️" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
+        <Sl label="Expected Return (% p.a.)" id="nps_ret" min={6} max={14} step={0.5} value={returnRate} onChange={setReturnRate} fmt={v => v + "%"} />
+        <Sl label="Annuity Rate (% p.a.)" id="nps_ar" min={4} max={8} step={0.25} value={annuityRate} onChange={setAnnuityRate} fmt={v => v + "%"} />
+        <Sl label="Annuity Allocation %" id="nps_ap" min={40} max={100} step={10} value={annuityPct} onChange={setAnnuityPct} fmt={v => v + "% (min 40% required)"} />
+      </InputSection>
     </div>
+  );
+  return (
+    <>
+      <CalcLayout inputs={inputs} result={res} label="NPS" />
+      <SEOSection title="National Pension System (NPS) — Tax Benefits & Maturity">
+        <p>NPS is a government-regulated pension scheme with three tax advantages: 80C (up to ₹1.5L), 80CCD(1B) (extra ₹50K — exclusive to NPS), and 80CCD(2) (employer contribution). At retirement (60), 60% can be withdrawn tax-free as lump sum; 40% must buy an annuity. NPS returns have historically been 9–12% in equity-heavy schemes (E tier). Ideal for those in the 30% tax bracket.</p>
+      </SEOSection>
+    </>
   );
 }
 
-// ── EPF Calculator ────────────────────────────────────────────────────
+// ─── EPF Calculator ──────────────────────────────────────────────────────────
 export function EPFForm() {
-  const fm = v => "₹" + Math.round(v).toLocaleString("en-IN");
-  const [basicSalary, setBasicSalary] = useState(30000);
-  const [currentAge, setCurrentAge] = useState(28);
-  const [currentEPF, setCurrentEPF] = useState(200000);
-  const [vpfRate, setVpfRate] = useState("0");
+  const { fm, fmSlider, sym } = useCurrency();
+  const [basicSalary, setBasicSalary] = useState(50000);
+  const [da, setDa] = useState(0);
+  const [epfRate, setEpfRate] = useState(12);
+  const [returnRate, setReturnRate] = useState(8.15);
+  const [years, setYears] = useState(25);
   const [salaryGrowth, setSalaryGrowth] = useState(8);
-  const [epfRate] = useState(8.25);
-  const retirementAge = 58;
   const [res, setRes] = useState(null);
-  const [schedule, setSchedule] = useState([]);
 
   useEffect(() => {
-    const yearsToRetire = retirementAge - currentAge;
-    if (yearsToRetire <= 0 || basicSalary <= 0) return;
-    let balance = currentEPF;
-    let salary = basicSalary;
-    const rows = [];
-    let totalContrib = 0;
-    for (let yr = 1; yr <= yearsToRetire; yr++) {
-      const monthly = salary * 12 * 0.12;
-      const employerVPS = salary * 12 * 0.0367;
-      const vpf = salary * 12 * (+vpfRate / 100);
-      const yearContrib = monthly + employerVPS + vpf;
-      totalContrib += yearContrib;
-      const interest = (balance + yearContrib / 2) * (epfRate / 100);
-      balance = balance + yearContrib + interest;
-      rows.push({ year: currentAge + yr, balance: Math.round(balance), contrib: Math.round(yearContrib), interest: Math.round(interest) });
-      salary = salary * (1 + salaryGrowth / 100);
-    }
-    setSchedule(rows);
-    const taxSaving = Math.min(basicSalary * 12 * 0.12, 150000) * 0.3;
-    const vsNPSReturn = currentEPF * Math.pow(1.10, yearsToRetire);
-    const chart = { type: "area", data: rows.filter((_, i) => i % 5 === 0 || i === rows.length - 1).map(r => ({ age: r.year, "EPF Balance": r.balance })), keys: ["EPF Balance"] };
-    setRes(buildResult("EPF at Retirement", fm(Math.round(balance)),
-      [
-        { label: "Current Basic Salary", value: fm(basicSalary) + "/mo" },
-        { label: "Employee Contribution (12%)", value: fm(Math.round(basicSalary * 0.12)) + "/mo" },
-        { label: "Employer Contribution (3.67%)", value: fm(Math.round(basicSalary * 0.0367)) + "/mo (EPS goes to pension)" },
-        vpfRate !== "0" ? { label: "VPF Extra (" + vpfRate + "%)", value: fm(Math.round(basicSalary * +vpfRate / 100)) + "/mo", highlight: true } : null,
-        { label: "Total Invested (Estimated)", value: fm(Math.round(totalContrib)) },
-        { label: "Interest Earned (8.25%)", value: fm(Math.round(balance - totalContrib - currentEPF)), highlight: true },
-        { label: "Tax Saving (80C)", value: fm(Math.round(taxSaving)) + "/yr" },
-        { label: "EPF Interest Rate", value: epfRate + "% (Tax-free)" },
-      ].filter(Boolean),
-      [{ type: "tip", msg: "EPF is a fully government-backed tax-free instrument. Adding VPF gives extra tax-free returns above FD/debt rates. EPF is the safest cornerstone of retirement." }],
-      chart, rows.filter((_, i) => i % 5 === 0).map(r => ({ label: "Age " + r.year, value: fm(r.balance) }))
-    ));
-  }, [basicSalary, currentAge, currentEPF, vpfRate, salaryGrowth]);
+    const base = basicSalary + da;
+    let totalCorpus = 0, salary = base, totalInvested = 0;
+    const yearlyData = [];
 
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <Presets items={[
-            { label: "Entry Level ₹20K", v: { bs: 20000, ca: 22, ce: 0, vpf: 0, sg: 10 } },
-            { label: "Mid-Senior ₹50K", v: { bs: 50000, ca: 35, ce: 1000000, vpf: 10, sg: 8 } },
-            { label: "Senior ₹1L Basic", v: { bs: 100000, ca: 45, ce: 5000000, vpf: 12, sg: 6 } },
-          ]} onApply={pr => { setBasicSalary(pr.v.bs); setCurrentAge(pr.v.ca); setCurrentEPF(pr.v.ce); setVpfRate(String(pr.v.vpf)); setSalaryGrowth(pr.v.sg); }} />
-          <Sl label="Basic Salary (Monthly)" id="epf_bs" min={5000} max={500000} step={1000} value={basicSalary} onChange={setBasicSalary} fmt={v => "₹" + v.toLocaleString("en-IN")} />
-          <Sl label="Current Age" id="epf_ca" min={18} max={57} value={currentAge} onChange={setCurrentAge} fmt={v => v + " yrs (Retire at 58)"} />
-          <N label="Current EPF Balance" id="epf_ce" value={String(currentEPF)} onChange={v => setCurrentEPF(+v)} unit="₹" placeholder="0" hint="Check your passbook / UAN portal" />
-          <N label="VPF Rate (% of basic)" id="epf_vpf" value={vpfRate} onChange={setVpfRate} unit="%" placeholder="0" hint="Voluntary PF: extra contribution above mandatory 12%" />
-          <Sl label="Expected Annual Salary Growth (%)" id="epf_sg" min={3} max={20} step={0.5} value={salaryGrowth} onChange={setSalaryGrowth} fmt={v => v + "%"} />
-        </div>
-        <div className="sticky-res"><Panel result={res} loading={null} label="EPF" /></div>
-      </div>
-      <div style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "24px" }}>
-        <h2 style={{ fontSize: 17, fontWeight: 800, color: "var(--text)", marginBottom: 12 }}>EPF vs VPF: Smart Strategy</h2>
-        <p style={{ fontSize: 13, color: "var(--text2)", lineHeight: 1.75 }}>Standard EPF: Employee contributes 12% of basic, Employer contributes 12% (3.67% to EPF + 8.33% to EPS). <strong>VPF (Voluntary PF):</strong> You can contribute any amount over 12% at the same 8.25% tax-free rate — better than most debt funds! EPS gives pension of ₹1,000-9,999/mo based on 10+ years service.</p>
-      </div>
+    for (let y = 1; y <= years; y++) {
+      const empContrib = salary * (epfRate / 100) * 12;
+      const emplrContrib = salary * (epfRate / 100) * 12;
+      const yearContrib = empContrib + emplrContrib;
+      totalInvested += yearContrib;
+      totalCorpus = (totalCorpus + yearContrib) * (1 + returnRate / 100);
+      salary *= (1 + salaryGrowth / 100);
+      yearlyData.push({ label: "Year " + y, value: fm(Math.round(totalCorpus)) });
+    }
+
+    const monthlyContrib = base * (epfRate / 100);
+    const emplrMonthly = Math.min(base * 0.12, 1800);
+    const pensionContrib = Math.min(base * 0.0833, 1250);
+    const pfContrib = emplrMonthly - pensionContrib;
+
+    setRes(buildResult(
+      "EPF Corpus at Retirement", fm(Math.round(totalCorpus)),
+      [
+        { label: "Monthly EPF (Employee)", value: fm(Math.round(monthlyContrib)) },
+        { label: "Monthly EPF (Employer)", value: fm(Math.round(emplrMonthly)) },
+        { label: "EPS Pension Contrib", value: fm(Math.round(pensionContrib)) + "/mo" },
+        { label: "Total Invested", value: fm(Math.round(totalInvested)), highlight: false },
+        { label: "Interest Earned", value: fm(Math.round(totalCorpus - totalInvested)), highlight: true },
+        { label: "Current EPF Rate", value: returnRate + "% p.a. (tax-free)" },
+        { label: "Wealth Multiple", value: (totalCorpus / totalInvested).toFixed(2) + "x" },
+      ],
+      [{ type: "tip", msg: "EPF earns " + returnRate + "% tax-free — one of India's best guaranteed returns. Your " + years + "-year corpus: " + fm(Math.round(totalCorpus)) + ". Avoid premature withdrawals as they attract TDS and reset the EPS pension clock." }],
+      { type: "bar", data: yearlyData.filter((_, i) => i % 5 === 4).map(y => ({ year: y.label.replace("Year ", "Yr "), Corpus: Math.round(totalCorpus * ((parseInt(y.label.replace("Year ", "")) / years))) })), keys: ["Corpus"] },
+      yearlyData
+    ));
+  }, [basicSalary, da, epfRate, returnRate, years, salaryGrowth]);
+
+  const inputs = (
+    <div className="calc-inputs-grid">
+      <InputSection title="Salary Details" icon="💰" gradient="linear-gradient(135deg,#d97706,#b45309)">
+        <Sl label="Basic Salary" id="epf_bs" min={10000} max={500000} step={5000} value={basicSalary} onChange={setBasicSalary} fmt={v => fmSlider(v)} />
+        <Sl label="Dearness Allowance (DA)" id="epf_da" min={0} max={100000} step={1000} value={da} onChange={setDa} fmt={v => fmSlider(v)} />
+        <Sl label="EPF Contribution Rate %" id="epf_r" min={12} max={20} value={epfRate} onChange={setEpfRate} fmt={v => v + "%"} />
+      </InputSection>
+      <InputSection title="Growth Assumptions" icon="📈" gradient="linear-gradient(135deg,#059669,#047857)">
+        <Sl label="EPF Interest Rate (%)" id="epf_ret" min={7} max={9} step={0.05} value={returnRate} onChange={setReturnRate} fmt={v => v + "% p.a."} />
+        <Sl label="Years to Retirement" id="epf_y" min={5} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
+        <Sl label="Annual Salary Growth %" id="epf_sg" min={0} max={20} step={0.5} value={salaryGrowth} onChange={setSalaryGrowth} fmt={v => v + "%"} />
+      </InputSection>
     </div>
+  );
+  return (
+    <>
+      <CalcLayout inputs={inputs} result={res} label="EPF" />
+      <SEOSection title="EPF — Employee Provident Fund Calculator">
+        <p>EPF deducts 12% of Basic+DA from your salary (employee share) and employer matches it. Of the employer's 12%, 8.33% (capped at ₹1,250) goes to EPS (pension fund) and the rest to EPF. Current EPF interest rate: 8.15% p.a. — fully tax-exempt under EEE status. Voluntary contributions (VPF) can be up to 100% of Basic+DA for higher returns.</p>
+      </SEOSection>
+    </>
   );
 }
