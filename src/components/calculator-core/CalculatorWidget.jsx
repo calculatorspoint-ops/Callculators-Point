@@ -129,6 +129,12 @@ const Utility = {
   PeriodForm: lazy(() => import("./forms/PeriodForm.jsx").then(m => ({ default: m.PeriodForm }))),
   EVChargingForm: lazy(() => import("../../modules/everyday/ev-charging/EVChargingCalculator.tsx").then(m => ({ default: m.EVChargingCalculator }))),
   LengthConverter: lazy(() => import("../../modules/conversion/length/LengthConverter.tsx").then(m => ({ default: m.LengthConverter }))),
+  // Typed unit converters as proper named lazy components
+  LengthUnitForm: lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: () => m.UnitForm({ type: "length" }) }))),
+  WeightUnitForm: lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: () => m.UnitForm({ type: "weight" }) }))),
+  SpeedUnitForm:  lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: () => m.UnitForm({ type: "speed" }) }))),
+  DataUnitForm:   lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: () => m.UnitForm({ type: "data" }) }))),
+  AreaUnitForm:   lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: () => m.UnitForm({ type: "area" }) }))),
 };
 
 // Construction forms
@@ -144,6 +150,11 @@ const Construction = {
   MaterialForm: lazy(() => import("./forms/ConstructionForms.jsx").then(m => ({ default: m.MaterialForm }))),
   CubicYardForm: lazy(() => import("./forms/ConstructionForms.jsx").then(m => ({ default: m.CubicYardForm }))),
   RoofingForm: lazy(() => import("./forms/ConstructionForms.jsx").then(m => ({ default: m.RoofingForm }))),
+  // Typed material forms as proper named lazy components
+  SandForm:    lazy(() => import("./forms/ConstructionForms.jsx").then(m => ({ default: () => m.MaterialForm({ type: "sand" }) }))),
+  GravelForm:  lazy(() => import("./forms/ConstructionForms.jsx").then(m => ({ default: () => m.MaterialForm({ type: "gravel" }) }))),
+  CementForm:  lazy(() => import("./forms/ConstructionForms.jsx").then(m => ({ default: () => m.MaterialForm({ type: "cement" }) }))),
+  AsphaltForm: lazy(() => import("./forms/ConstructionForms.jsx").then(m => ({ default: () => m.MaterialForm({ type: "asphalt" }) }))),
 };
 
 // Technology forms
@@ -270,12 +281,12 @@ const FORMS = {
 
   // ── Utility / Everyday ────────────────────────────────────────────
   "area-calculator":                   Utility.AreaForm,
-  "length-converter":                  () => <Utility.UnitForm type="length" />,
-  "weight-converter":                  () => <Utility.UnitForm type="weight" />,
+  "length-converter":                  Utility.LengthUnitForm,
+  "weight-converter":                  Utility.WeightUnitForm,
   "temperature-converter":             Utility.TemperatureForm,
-  "speed-converter":                   () => <Utility.UnitForm type="speed" />,
-  "data-storage-converter":            () => <Utility.UnitForm type="data" />,
-  "area-converter":                    () => <Utility.UnitForm type="area" />,
+  "speed-converter":                   Utility.SpeedUnitForm,
+  "data-storage-converter":            Utility.DataUnitForm,
+  "area-converter":                    Utility.AreaUnitForm,
   "age-calculator":                    Utility.AgeForm,
   "date-difference-calculator":        Utility.DateDiffForm,
   "countdown-calculator":              Utility.CountdownForm,
@@ -301,10 +312,10 @@ const FORMS = {
   "density-calculator":                Construction.DensityForm,
   "pressure-calculator":               Construction.PressureForm,
   "pipe-volume-calculator":            Construction.PipeVolumeForm,
-  "sand-calculator":                   () => <Construction.MaterialForm type="sand" />,
-  "gravel-calculator":                 () => <Construction.MaterialForm type="gravel" />,
-  "cement-calculator":                 () => <Construction.MaterialForm type="cement" />,
-  "asphalt-calculator":                () => <Construction.MaterialForm type="asphalt" />,
+  "sand-calculator":                   Construction.SandForm,
+  "gravel-calculator":                 Construction.GravelForm,
+  "cement-calculator":                 Construction.CementForm,
+  "asphalt-calculator":                Construction.AsphaltForm,
   "cubic-yard-calculator":             Construction.CubicYardForm,
   "roofing-calculator":                Construction.RoofingForm,
 
