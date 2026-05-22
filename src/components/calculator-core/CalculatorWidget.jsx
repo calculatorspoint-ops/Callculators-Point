@@ -38,6 +38,26 @@ const Finance = {
   IRRForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.IRRForm }))),
   DownPaymentForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.DownPaymentForm }))),
   CollegeCostForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.CollegeCostForm }))),
+  // New Finance forms
+  HELOCForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.HELOCForm }))),
+  AutoLeaseForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.AutoLeaseForm }))),
+  BondForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.BondForm }))),
+  CDForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.CDForm }))),
+  RothIRAForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.RothIRAForm }))),
+  AnnuityForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.AnnuityForm }))),
+  PensionForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.PensionForm }))),
+  SocialSecurityForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.SocialSecurityForm }))),
+  RMDForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.RMDForm }))),
+  EstateTaxForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.EstateTaxForm }))),
+  MarriageTaxForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.MarriageTaxForm }))),
+  BoatLoanForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.BoatLoanForm }))),
+  DebtConsolidationForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.DebtConsolidationForm }))),
+  FutureValueForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.FutureValueForm }))),
+  AverageReturnForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.AverageReturnForm }))),
+  AmortizationForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.AmortizationForm }))),
+  TVMForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.TVMForm }))),
+  InvestmentCalcForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.InvestmentCalcForm }))),
+  GenericLoanForm: lazy(() => import("./forms/FinanceFormsNew.jsx").then(m => ({ default: m.GenericLoanForm }))),
 };
 
 const Health = {
@@ -301,6 +321,29 @@ const FORMS = {
   "cpc-cpa-calculator":                Business.CPCCPAForm,
   "employee-cost-calculator":          Business.EmployeeCostForm,
 
+  // ── Math (new) ────────────────────────────────────────────────────
+  "lcm-gcf-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.LCMGCFForm }))),
+  "factor-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.FactorForm }))),
+  "exponent-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ExponentForm }))),
+  "root-calculator":                   lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.RootForm }))),
+  "triangle-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.TriangleForm }))),
+  "circle-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.CircleForm }))),
+  "volume-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.VolumeForm }))),
+  "surface-area-calculator":           lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.SurfaceAreaForm }))),
+  "z-score-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ZScoreForm }))),
+  "confidence-interval-calculator":    lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ConfidenceIntervalForm }))),
+  "sample-size-calculator":            lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.SampleSizeForm }))),
+  "permutation-combination-calculator": lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.PermCombForm }))),
+  "probability-calculator":            lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ProbabilityForm }))),
+  "binary-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.BinaryForm }))),
+  "number-sequence-calculator":        lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.NumberSequenceForm }))),
+  "average-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.AverageForm }))),
+  "matrix-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.MatrixForm }))),
+  "linear-equation-solver":            lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.LinearEquationForm }))),
+  "random-number-generator-adv":       lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.RandomNumberForm }))),
+  "percent-error-calculator":          lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.PercentErrorForm }))),
+  "distance-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.DistanceForm }))),
+
   // ── Health (new) ──────────────────────────────────────────────────
   "bsa-calculator":                    lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.BSAForm }))),
   "bac-calculator":                    lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.BACForm }))),
@@ -309,21 +352,31 @@ const FORMS = {
   "healthy-weight-calculator":         lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.HealthyWeightForm }))),
   "fat-intake-calculator":             lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.FatIntakeForm }))),
   "army-body-fat-calculator":          lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.ArmyBodyFatForm }))),
+  "conception-calculator":             lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.ConceptionForm }))),
 
-  // ── Math (new) ────────────────────────────────────────────────────
-  "lcm-gcf-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.LCMGCFForm }))),
-  "factor-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.FactorForm }))),
-  "triangle-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.TriangleForm }))),
-  "circle-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.CircleForm }))),
-  "volume-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.VolumeForm }))),
-  "z-score-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ZScoreForm }))),
-  "permutation-combination-calculator": lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.PermCombForm }))),
-  "average-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.AverageForm }))),
-  "percent-error-calculator":          lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.PercentErrorForm }))),
-  "linear-equation-solver":            lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.LinearEquationForm }))),
-  "distance-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.DistanceForm }))),
+  // ── Finance (new additional) ───────────────────────────────────────
+  "heloc-calculator":                  Finance.HELOCForm,
+  "auto-lease-calculator":             Finance.AutoLeaseForm,
+  "bond-calculator":                   Finance.BondForm,
+  "cd-calculator":                     Finance.CDForm,
+  "roth-ira-calculator":               Finance.RothIRAForm,
+  "annuity-calculator":                Finance.AnnuityForm,
+  "pension-calculator":                Finance.PensionForm,
+  "social-security-calculator":        Finance.SocialSecurityForm,
+  "rmd-calculator":                    Finance.RMDForm,
+  "estate-tax-calculator":             Finance.EstateTaxForm,
+  "marriage-tax-calculator":           Finance.MarriageTaxForm,
+  "boat-loan-calculator":              Finance.BoatLoanForm,
+  "debt-consolidation-calculator":     Finance.DebtConsolidationForm,
+  "future-value-calculator":           Finance.FutureValueForm,
+  "average-return-calculator":         Finance.AverageReturnForm,
+
+  // ── New Calculators from spec ──────────────────────────────────────
+  "amortization-calculator":           Finance.AmortizationForm,
+  "tvm-calculator":                    Finance.TVMForm,
+  "investment-calculator":             Finance.InvestmentCalcForm,
+  "loan-calculator":                   Finance.GenericLoanForm,
 };
-
 export function CalculatorWidget({ calc }) {
   const { setActiveCalc } = useAppStore();
   
