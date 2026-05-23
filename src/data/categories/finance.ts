@@ -95,6 +95,7 @@ export const financeCalculators: CalculatorConfig[] = [
   popular: true,
   hasChart: false,
   isNew: false,
+  privacy: "sensitive",
   tips: [
     "Gross pay is what you earn before taxes and deductions. Net pay is your 'take-home' money after all deductions."
   ]
@@ -151,6 +152,7 @@ export const financeCalculators: CalculatorConfig[] = [
   popular: true,
   hasChart: false,
   isNew: false,
+  privacy: "sensitive",
   tips: [
     'Effective Tax Rate is the actual percentage of your total income paid in taxes, which is usually lower than your top marginal tax bracket.'
   ]

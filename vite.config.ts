@@ -144,54 +144,21 @@ export default defineConfig({
       output: {
         // FIX: More granular code splitting to reduce unused JS per route
         manualChunks(id: string) {
-          // Core React runtime — always needed
+          // Core React runtime
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('scheduler')) {
             return 'react-core';
-          }
-          // Router — must be before vendor catch-all
-          if (id.includes('node_modules/react-router') || id.includes('node_modules/@remix-run')) {
-            return 'react-router';
           }
           // Charting — LARGEST chunk, only loaded on calculator pages with charts
           if (id.includes('recharts') || id.includes('d3-') || id.includes('victory-')) {
             return 'charts';
           }
-          // Form engine
-          if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform')) {
-            return 'forms';
-          }
-          // Icons — tree-shakeable but keep separate for caching
-          if (id.includes('lucide-react')) {
-            return 'icons';
-          }
-          // Math precision
-          if (id.includes('decimal.js')) {
-            return 'math';
-          }
           // Firebase — lazily loaded
           if (id.includes('firebase')) {
             return 'firebase';
           }
-          // FIX: Export utils — separate chunk, only loaded on demand
-          // This is the 151 KiB chunk with 111 KiB unused (jspdf + html2canvas)
+          // Export utils — separate chunk, only loaded on demand
           if (id.includes('jspdf') || id.includes('html2canvas') || id.includes('html-to-image')) {
             return 'export-utils';
-          }
-          // Zustand state
-          if (id.includes('zustand')) {
-            return 'state';
-          }
-          // Helmet
-          if (id.includes('react-helmet')) {
-            return 'helmet';
-          }
-          // Toast notifications
-          if (id.includes('react-hot-toast')) {
-            return 'toast';
-          }
-          // All other node_modules → vendor
-          if (id.includes('node_modules')) {
-            return 'vendor';
           }
         },
         // Content-hash filenames for immutable caching
@@ -201,7 +168,6 @@ export default defineConfig({
       },
       // FIX: Tree shake unused exports
       treeshake: {
-        moduleSideEffects: false,
         propertyReadSideEffects: false,
         unknownGlobalSideEffects: false,
       },

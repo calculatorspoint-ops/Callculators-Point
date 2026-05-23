@@ -32,6 +32,7 @@ export interface CalculatorConfig {
   formula?: string;
   tips?: string[];
   tags?: string[];
+  privacy?: "normal" | "sensitive";
 }
 
 export const CATEGORIES: CalculatorCategory[] = [

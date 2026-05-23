@@ -11,6 +11,7 @@ export const healthCalculators: CalculatorConfig[] = [
   popular: true,
   hasChart: true,
   isNew: false,
+  privacy: "sensitive",
   formula: 'BMI = weight(kg) / height(m)²\n' +
     'For imperial: BMI = 703 × weight(lbs) / height(in)²',
   tips: [
@@ -59,6 +60,7 @@ export const healthCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: false,
+  privacy: "sensitive",
   formula: 'Men: BF% = 495/(1.0324 - 0.19077×log₁₀(waist-neck) + 0.15456×log₁₀(height)) - 450',
   tips: [
     'The Navy method is surprisingly accurate (within 3-4% of DEXA scans) and requires only a tape measure.'

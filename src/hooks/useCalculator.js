@@ -25,9 +25,10 @@ export function useCalculator(config) {
 
   // ── Validate a single input ───────────────────────────
   const validate = useCallback((id, value, inputConfig) => {
-    const v = parseFloat(value);
     if (inputConfig.type === "number" || inputConfig.type === "slider") {
-      if (isNaN(v)) return "Enter a valid number";
+      const isStrictNumber = /^-?\d+(\.\d+)?$/.test(String(value).trim());
+      if (value !== "" && !isStrictNumber) return "Enter a valid number";
+      const v = Number(String(value).trim());
       if (inputConfig.min !== undefined && v < inputConfig.min) return `Minimum is ${inputConfig.min}`;
       if (inputConfig.max !== undefined && v > inputConfig.max) return `Maximum is ${inputConfig.max}`;
     }
@@ -69,13 +70,7 @@ export function useCalculator(config) {
     return () => clearTimeout(timer);
   }, [inputs, errors, config.formula]);
 
-  // ── Track recent usage (once) ────────────────────────
-  useEffect(() => {
-    if (!tracked.current && config.id) {
-      addRecent(config.id);
-      tracked.current = true;
-    }
-  }, [config.id, addRecent]);
+  // Track recent usage is now handled exclusively in Calculator.tsx
 
   // ── Format outputs ─────────────────────────────────────
   const formattedOutputs = result?.outputs

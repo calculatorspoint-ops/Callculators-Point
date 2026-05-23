@@ -3,6 +3,7 @@
 // Pure functions — testable, no side effects
 // ═══════════════════════════════════════════════════════════════════════
 import Decimal from "decimal.js";
+import { Parser } from "expr-eval";
 
 // ── Formatters ────────────────────────────────────────────────────────
 export const round  = (n, dp = 2) => Math.round(n * 10 ** dp) / 10 ** dp;
@@ -25,7 +26,7 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
   const n_val = (+tenure || 1) * 12;
   const ex_val = +extraPayment || 0;
   const B_val = +balloonPayment || 0;
-  if (!P_val || !r_val || !n_val) return null;
+  if (!P_val || !n_val) return null;
 
   const P = new Decimal(P_val);
   const r = new Decimal(r_val);
@@ -34,7 +35,9 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
   const B = new Decimal(B_val);
 
   let emiDec;
-  if (interestOnly) {
+  if (r.isZero()) {
+    emiDec = interestOnly ? new Decimal(0) : P.minus(B).dividedBy(n);
+  } else if (interestOnly) {
     emiDec = P.times(r);
   } else {
     const onePlusRToN = new Decimal(1).plus(r).pow(n);
@@ -98,7 +101,9 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
     const r2 = new Decimal(+compareRate).dividedBy(1200);
     const onePlusR2ToN = new Decimal(1).plus(r2).pow(n);
     let emi2Dec;
-    if (interestOnly) {
+    if (r2.isZero()) {
+      emi2Dec = interestOnly ? new Decimal(0) : P.minus(B).dividedBy(n);
+    } else if (interestOnly) {
       emi2Dec = P.times(r2);
     } else {
       const pvB2 = B.dividedBy(onePlusR2ToN);
@@ -240,18 +245,24 @@ export function calcCompound({ principal, rate, years, frequency="12", contribut
 export function calcSIP({ monthlyAmount, annualReturn, duration, stepUp=0 }) {
   const m_val = +monthlyAmount||0, r_val = (+annualReturn||0)/1200, y_val = +duration||1, su_val = (+stepUp||0)/100;
   const n_val = y_val * 12;
-  if (!m_val || !r_val) return null;
+  if (!m_val) return null;
 
   const m = new Decimal(m_val);
   const r = new Decimal(r_val);
   const n = new Decimal(n_val);
   const su = new Decimal(su_val);
 
-  // Regular SIP: FV = P × ((1 + r)^n - 1) / r × (1 + r)
-  const onePlusR = new Decimal(1).plus(r);
-  const onePlusRToN = onePlusR.pow(n);
-  const fvRegularDec = m.times(onePlusRToN.minus(1)).dividedBy(r).times(onePlusR);
-  const invRegularDec = m.times(n);
+  // Regular SIP
+  let fvRegularDec, invRegularDec;
+  if (r.isZero()) {
+    fvRegularDec = m.times(n);
+    invRegularDec = m.times(n);
+  } else {
+    const onePlusR = new Decimal(1).plus(r);
+    const onePlusRToN = onePlusR.pow(n);
+    fvRegularDec = m.times(onePlusRToN.minus(1)).dividedBy(r).times(onePlusR);
+    invRegularDec = m.times(n);
+  }
 
   const fvRegular = fvRegularDec.toNumber();
   const invRegular = invRegularDec.toNumber();
@@ -264,11 +275,16 @@ export function calcSIP({ monthlyAmount, annualReturn, duration, stepUp=0 }) {
   
   for (let yr = 1; yr <= y_val; yr++) {
     if (yr > 1) monthlyNow = monthlyNow.times(new Decimal(1).plus(su));
-    const months = new Decimal(12);
-    const onePlusRTo12 = new Decimal(1).plus(r).pow(months);
-    const fvYear = monthlyNow.times(onePlusRTo12.minus(1)).dividedBy(r).times(new Decimal(1).plus(r));
-    const remMonths = new Decimal((y_val - yr) * 12);
-    const fvYearEnd = fvYear.times(new Decimal(1).plus(r).pow(remMonths));
+    let fvYearEnd;
+    if (r.isZero()) {
+      fvYearEnd = monthlyNow.times(12);
+    } else {
+      const months = new Decimal(12);
+      const onePlusRTo12 = new Decimal(1).plus(r).pow(months);
+      const fvYear = monthlyNow.times(onePlusRTo12.minus(1)).dividedBy(r).times(new Decimal(1).plus(r));
+      const remMonths = new Decimal((y_val - yr) * 12);
+      fvYearEnd = fvYear.times(new Decimal(1).plus(r).pow(remMonths));
+    }
     
     fvStepUp = fvStepUp.plus(fvYearEnd);
     invStepUp = invStepUp.plus(monthlyNow.times(12));
@@ -285,7 +301,7 @@ export function calcSIP({ monthlyAmount, annualReturn, duration, stepUp=0 }) {
     { label:"🚀 Best (18%)",  r:18/1200,color:"#22c55e" },
   ].map(s => {
     const s_r = new Decimal(s.r);
-    const fv = m.times(new Decimal(1).plus(s_r).pow(n).minus(1)).dividedBy(s_r).times(new Decimal(1).plus(s_r)).toNumber();
+    const fv = s_r.isZero() ? m.times(n).toNumber() : m.times(new Decimal(1).plus(s_r).pow(n).minus(1)).dividedBy(s_r).times(new Decimal(1).plus(s_r)).toNumber();
     return { ...s, fv:round(fv), gains:round(fv-invRegular) };
   });
 
@@ -293,7 +309,7 @@ export function calcSIP({ monthlyAmount, annualReturn, duration, stepUp=0 }) {
     const months = new Decimal(i*12);
     let corpus = 0;
     if (i > 0) {
-      corpus = m.times(new Decimal(1).plus(r).pow(months).minus(1)).dividedBy(r).times(new Decimal(1).plus(r)).toNumber();
+      corpus = r.isZero() ? m.times(months).toNumber() : m.times(new Decimal(1).plus(r).pow(months).minus(1)).dividedBy(r).times(new Decimal(1).plus(r)).toNumber();
     }
     return { year:`Y${i}`, corpus:round(corpus), invested:round(m_val*i*12) };
   });
@@ -691,10 +707,11 @@ export function calcFuel({ distance, fuelPrice, efficiency, passengers=1, trips=
 }
 
 // ── Date Diff Engine ──────────────────────────────────────────────────
-export function calcDateDiff({ date1, date2, excludeWeekends=false, holidays=[] }) {
+export function calcDateDiff({ date1, date2, excludeWeekends=false, holidays=[], includeEndDate=false }) {
   const d1=new Date(date1), d2=new Date(date2);
   if(!date1||!date2) return null;
-  const totalDays=Math.abs(Math.floor((d2-d1)/86400000));
+  let totalDays=Math.abs(Math.floor((d2-d1)/86400000));
+  if (includeEndDate) totalDays++;
 
   let businessDays=0;
   let holidaysHit = 0;
@@ -705,7 +722,7 @@ export function calcDateDiff({ date1, date2, excludeWeekends=false, holidays=[] 
       try { return new Date(h).toISOString().split('T')[0]; } catch(e) { return null; }
     }).filter(Boolean);
 
-    while(cur<=end){
+    while(includeEndDate ? cur <= end : cur < end){
       const day=cur.getDay();
       const curStr = cur.toISOString().split('T')[0];
       const isWeekend = day === 0 || day === 6;
@@ -1105,6 +1122,7 @@ export function calcHeartRate({ age, restingHR=60 }) {
 export function calcBodyFat({ height, neck, waist, hip, gender }) {
   const h=+height,n=+neck,w=+waist,hi=+hip;
   if(!h||!n||!w) return null;
+  if(gender!=="male" && !hi) return { error: "Hip measurement is required for female body-fat calculation." };
   let bf;
   if(gender==="male")   bf=495/(1.0324-0.19077*Math.log10(w-n)+0.15456*Math.log10(h))-450;
   else                  bf=495/(1.29579-0.35004*Math.log10(w+hi-n)+0.221*Math.log10(h))-450;
@@ -1149,6 +1167,7 @@ export function calcIdealWeight({ height, gender }) {
 export function calcOneRepMax({ weight, reps }) {
   const w=+weight,r=+reps;
   if(!w||r<1) return null;
+  if(r>=37) return { error: "Reps must be below 37 for Brzycki formula." };
   const epley=round(w*(1+r/30),1);
   const brzycki=round(w*(36/(37-r)),1);
   const lander=round(w*100/(101.3-2.67123*r),1);
@@ -1257,13 +1276,13 @@ export function calcFraction({ n1, d1, n2, d2, op }) {
 // ── Simple Interest (with flat vs reducing) ────────────────────────────
 export function calcSimpleInterest({ principal, rate, time, unit="years" }) {
   const P=+principal||0, r=+rate||0, tRaw=+time||0;
-  if(!P||!r) return null;
+  if(!P || !tRaw) return null;
   const t=unit==="months"?tRaw/12:unit==="days"?tRaw/365:tRaw;
   const si=round(P*r*t/100);
   const total=round(P+si);
   // Reducing balance comparison
   const rMonthly=r/1200, nMonths=Math.round(t*12);
-  const emi=(P*rMonthly*Math.pow(1+rMonthly,nMonths))/(Math.pow(1+rMonthly,nMonths)-1);
+  const emi=rMonthly === 0 ? P / (nMonths || 1) : (P*rMonthly*Math.pow(1+rMonthly,nMonths))/(Math.pow(1+rMonthly,nMonths)-1);
   const riTotal=round(emi*nMonths);
   const riInterest=round(riTotal-P);
   return {
@@ -1393,7 +1412,12 @@ export function calcBase64({ text, mode }) {
 // ── Random Number ─────────────────────────────────────────────────────
 export function calcRandom({ min=1, max=100, count=1, type="integer" }) {
   const mn=+min,mx=+max,cnt=Math.min(+count,50);
-  const gen=()=>type==="decimal"?round(Math.random()*(mx-mn)+mn,4):Math.floor(Math.random()*(mx-mn+1))+mn;
+  const secureRandom = () => {
+    const arr = new Uint32Array(1);
+    crypto.getRandomValues(arr);
+    return arr[0] / (0xFFFFFFFF + 1);
+  };
+  const gen=()=>type==="decimal"?round(secureRandom()*(mx-mn)+mn,4):Math.floor(secureRandom()*(mx-mn+1))+mn;
   const nums=Array.from({length:cnt},gen);
   return { numbers:nums, sum:round(nums.reduce((a,b)=>a+b,0),4), avg:round(nums.reduce((a,b)=>a+b,0)/cnt,4) };
 }
@@ -1485,12 +1509,22 @@ export function calcPythagorean({ a, b, c, solve="c" }) {
 // ── Scientific Calculator ─────────────────────────────────────────────
 export function calcScientific({ expr, degMode=true }) {
   try {
-    const toRad=v=>degMode?v*Math.PI/180:v;
-    const safe=expr.replace(/\^/g,"**").replace(/sin\(/g,`Math.sin(toRad(`).replace(/cos\(/g,`Math.cos(toRad(`).replace(/tan\(/g,`Math.tan(toRad(`).replace(/toRad\(([^)]+)\)/g,(_,v)=>`toRad(${v})`).replace(/log\(/g,"Math.log10(").replace(/ln\(/g,"Math.log(").replace(/sqrt\(/g,"Math.sqrt(").replace(/abs\(/g,"Math.abs(").replace(/π/g,"Math.PI").replace(/e(?!\w)/g,"Math.E");
-    const toRadFn=v=>degMode?v*Math.PI/180:v;
-    const result=Function("toRad",`"use strict";return(${safe})`)(toRadFn);
+    const parser = new Parser();
+    const toRad = v => degMode ? v * Math.PI / 180 : v;
+    
+    // Configure parser with custom functions
+    parser.functions.sin = (x) => Math.sin(toRad(x));
+    parser.functions.cos = (x) => Math.cos(toRad(x));
+    parser.functions.tan = (x) => Math.tan(toRad(x));
+    parser.functions.ln = (x) => Math.log(x);
+    parser.functions.log = (x) => Math.log10(x);
+    
+    // Map greek letters or symbols if needed
+    const safeExpr = expr.replace(/π/g, 'PI');
+    
+    const result = parser.evaluate(safeExpr);
     return {result:round(result,8), expression:expr, valid:true};
-  } catch {
+  } catch(e) {
     return {result:null,expression:expr,valid:false,error:"Invalid expression"};
   }
 }

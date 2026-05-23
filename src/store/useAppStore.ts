@@ -73,10 +73,12 @@ export const useAppStore = create<AppState>()(
             : [...s.favorites, id],
         })),
 
-      saveLocally: (calc) =>
+      saveLocally: (calc) => {
+        if (calc.privacy === "sensitive") return;
         set(s => ({
           savedLocally: [{ ...calc, id: Date.now(), ts: new Date().toISOString() }, ...s.savedLocally].slice(0, 50),
-        })),
+        }));
+      },
 
       removeSaved: (id) =>
         set(s => ({ savedLocally: s.savedLocally.filter(c => c.id !== id) })),
@@ -90,10 +92,12 @@ export const useAppStore = create<AppState>()(
 
       clearSearchHistory: () => set({ searchHistory: [] }),
 
-      addCalcHistory: (entry) =>
+      addCalcHistory: (entry) => {
+        if (entry.privacy === "sensitive") return;
         set(s => ({
           calcHistory: [{ ...entry, id: Date.now(), ts: new Date().toISOString() }, ...s.calcHistory].slice(0, 100),
-        })),
+        }));
+      },
 
       clearCalcHistory: () => set({ calcHistory: [] }),
     }),
@@ -105,9 +109,6 @@ export const useAppStore = create<AppState>()(
         unitSystem:    s.unitSystem,
         favorites:     s.favorites,
         recent:        s.recent,
-        savedLocally:  s.savedLocally,
-        searchHistory: s.searchHistory,
-        calcHistory:   s.calcHistory,
       }),
     }
   )

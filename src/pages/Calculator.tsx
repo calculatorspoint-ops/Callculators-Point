@@ -1,156 +1,23 @@
-import { useState, useEffect, lazy } from "react";
+import { lazy } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { useAppStore } from "@/store/useAppStore";
-import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated, CalculatorConfig } from "@/data/calculatorConfigs.js";
+import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated } from "@/data/calculatorConfigs.js";
 import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
-import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
-import { track } from "@vercel/analytics/react";
+import { Share2, Bookmark, BookmarkCheck } from "lucide-react";
+
+import { SEOHead } from "@/components/seo/SEOHead";
+import { CrossCalcRecommendations } from "@/components/calculator-core/CrossRecommendations";
+import { FAQSection } from "@/components/calculator-core/FAQSection";
+import { FeedbackWidget } from "@/components/calculator-core/FeedbackWidget";
 
 const CalculatorWidget = lazy(() => import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget })));
 const CurrencyBanner = lazy(() => import('@/components/ui/CurrencyBanner'));
 const ExportToolbar = lazy(() => import("@/core/export-engine/ExportToolbar.tsx").then(m => ({ default: m.ExportToolbar })));
 
-/* ── Smart cross-calculator recommendations ──────────────────── */
-const CROSS_LINKS: Record<string, string[]> = {
-  "bmi-calculator": ["calorie-calculator", "body-fat-calculator", "ideal-weight-calculator"],
-  "calorie-calculator": ["bmr-calculator", "macro-calculator", "bmi-calculator"],
-  "bmr-calculator": ["calorie-calculator", "macro-calculator", "water-intake-calculator"],
-  "body-fat-calculator": ["bmi-calculator", "ideal-weight-calculator", "one-rep-max-calculator"],
-  "ideal-weight-calculator": ["bmi-calculator", "body-fat-calculator", "calorie-calculator"],
-  "macro-calculator": ["calorie-calculator", "bmr-calculator", "water-intake-calculator"],
-  "water-intake-calculator": ["calorie-calculator", "bmr-calculator", "macro-calculator"],
-  "heart-rate-calculator": ["calorie-calculator", "bmi-calculator", "body-fat-calculator"],
-  "one-rep-max-calculator": ["body-fat-calculator", "macro-calculator", "calorie-calculator"],
-  "loan-emi-calculator": ["mortgage-calculator", "simple-interest-calculator", "compound-interest-calculator"],
-  "mortgage-calculator": ["loan-emi-calculator", "compound-interest-calculator", "tax-calculator"],
-  "sip-calculator": ["compound-interest-calculator", "ppf-calculator", "roi-calculator"],
-  "compound-interest-calculator": ["sip-calculator", "simple-interest-calculator", "roi-calculator"],
-  "simple-interest-calculator": ["compound-interest-calculator", "loan-emi-calculator", "roi-calculator"],
-  "roi-calculator": ["compound-interest-calculator", "sip-calculator", "profit-margin-calculator"],
-  "salary-calculator": ["tax-calculator", "gst-calculator", "work-hours-calculator"],
-  "tax-calculator": ["salary-calculator", "gst-calculator", "roi-calculator"],
-  "gst-calculator": ["tax-calculator", "discount-calculator", "profit-margin-calculator"],
-  "discount-calculator": ["gst-calculator", "profit-margin-calculator", "percentage-calculator"],
-  "profit-margin-calculator": ["break-even-calculator", "roi-calculator", "discount-calculator"],
-  "break-even-calculator": ["profit-margin-calculator", "roi-calculator", "discount-calculator"],
-  "tip-calculator": ["discount-calculator", "percentage-calculator", "gst-calculator"],
-  "ppf-calculator": ["sip-calculator", "compound-interest-calculator", "roi-calculator"],
-  "percentage-calculator": ["discount-calculator", "gst-calculator", "statistics-calculator"],
-  "gpa-calculator": ["target-gpa-calculator", "cgpa-percentage-calculator", "final-grade-calculator"],
-  "grade-calculator": ["required-grade-calculator", "gpa-calculator", "final-grade-calculator"],
-  "final-grade-calculator": ["required-grade-calculator", "gpa-calculator", "marks-percentage-calculator"],
-  "cgpa-percentage-calculator": ["gpa-calculator", "target-gpa-calculator", "marks-percentage-calculator"],
-  "marks-percentage-calculator": ["gpa-calculator", "attendance-calculator", "required-grade-calculator"],
-  "attendance-calculator": ["marks-percentage-calculator", "gpa-calculator", "study-timer"],
-  "ielts-band-calculator": ["sat-score-calculator", "marks-percentage-calculator", "study-timer"],
-  "sat-score-calculator": ["ielts-band-calculator", "target-gpa-calculator", "study-timer"],
-  "study-timer": ["marks-percentage-calculator", "attendance-calculator", "target-gpa-calculator"],
-  "target-gpa-calculator": ["gpa-calculator", "required-grade-calculator", "cgpa-percentage-calculator"],
-  "required-grade-calculator": ["final-grade-calculator", "gpa-calculator", "marks-percentage-calculator"],
-  "age-calculator": ["date-difference-calculator", "countdown-calculator", "pregnancy-due-date"],
-  "date-difference-calculator": ["age-calculator", "countdown-calculator", "work-hours-calculator"],
-  "countdown-calculator": ["date-difference-calculator", "age-calculator", "work-hours-calculator"],
-  "password-generator": ["random-number-generator", "base64-encoder", "word-counter"],
-  "fuel-cost-calculator": ["ev-charging-calculator", "discount-calculator", "percentage-calculator"],
-  "ev-charging-calculator": ["fuel-cost-calculator", "roi-calculator", "percentage-calculator"],
-  "quadratic-calculator": ["pythagorean-calculator", "statistics-calculator", "scientific-calculator"],
-  "statistics-calculator": ["percentage-calculator", "scientific-calculator", "quadratic-calculator"],
-  "scientific-calculator": ["quadratic-calculator", "statistics-calculator", "percentage-calculator"],
-};
-
-function CrossCalcRecommendations({ slug }: { slug?: string }) {
-  const links = slug ? CROSS_LINKS[slug] : [];
-  if (!links?.length) return null;
-  const calcs = links.map(s => getCalcBySlug(s)).filter((c): c is CalculatorConfig => !!c).slice(0, 3);
-  if (!calcs.length) return null;
-  return (
-    <div className="side-card" style={{ borderRadius:"var(--r-xl)", overflow:"hidden" }}>
-      <div style={{ padding:"12px 16px", background:"var(--surf2)", borderBottom:"1px solid var(--border)", display:"flex", alignItems:"center", gap:8 }}>
-        <Lightbulb size={14} style={{ color:"var(--text-accent)" }} />
-        <span style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".05em", color:"var(--text-accent)" }}>Recommended Next</span>
-      </div>
-      {calcs.map(c => (
-        <Link key={c.id} to={`/calculator/${c.slug}`} className="side-item" style={{ gap:10, display:"flex", padding:12, alignItems:"center", textDecoration:"none", borderBottom:"1px solid var(--border)" }}>
-          <span style={{ fontSize:16, width:28, textAlign:"center", flexShrink:0 }}>{c.icon}</span>
-          <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontSize:13, fontWeight:600, color:"var(--text)" }}>{c.name}</div>
-            <div style={{ fontSize:11, color:"var(--text3)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.desc}</div>
-          </div>
-          <ArrowRight size={13} style={{ color:"var(--text3)", flexShrink:0 }} />
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-/* ── Rich FAQ section with JSON-LD ──────────────────────────── */
-function FAQSection({ faqs }: { faqs?: { q: string; a: string }[] }) {
-  if (!faqs?.length) return null;
-  return (
-    <div>
-      <h2 style={{ fontFamily:"var(--font-display)", fontSize:"1.3rem", fontWeight:800, color:"var(--text)", marginBottom:16, letterSpacing:"-.02em" }}>
-        Frequently Asked Questions
-      </h2>
-      {faqs.map((f, i) => (
-        <details key={i}>
-          <summary>{f.q}</summary>
-          <div className="faq-body">{f.a}</div>
-        </details>
-      ))}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context":"https://schema.org","@type":"FAQPage",
-        mainEntity: faqs.map(f=>({ "@type":"Question", name:f.q, acceptedAnswer:{"@type":"Answer",text:f.a} }))
-      })}} />
-    </div>
-  );
-}
-
-function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcSlug: string }) {
-  const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
-
-  const handleFeedback = (type: "up" | "down") => {
-    setFeedback(type);
-    try {
-      track('Feedback', { calculator: calcSlug, helpful: type });
-    } catch {
-      // Ignore if analytics is blocked
-    }
-  };
-
-  return (
-    <div style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--border)", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text2)" }}>Was this calculator helpful?</span>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={() => handleFeedback("up")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "up" ? "var(--brand)" : "var(--border)", background: feedback === "up" ? "var(--brand-l)" : "var(--surface)", color: feedback === "up" ? "var(--brand)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
-            <ThumbsUp size={14} /> Yes
-          </button>
-          <button onClick={() => handleFeedback("down")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "down" ? "var(--red)" : "var(--border)", background: feedback === "down" ? "rgba(220,53,69,.08)" : "var(--surface)", color: feedback === "down" ? "var(--red)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
-            <ThumbsDown size={14} /> No
-          </button>
-        </div>
-        {feedback && <span style={{ fontSize: 12, color: "var(--text3)", animation: "fade-in .3s" }}>Thanks for your feedback!</span>}
-      </div>
-      
-      <Link to={`/contact?type=accuracy&subject=Issue with ${calcName}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: "var(--text3)", textDecoration: "none", padding: "6px 12px", borderRadius: 100, background: "var(--surf2)" }}>
-        <Flag size={12} /> Report an Issue
-      </Link>
-    </div>
-  );
-}
-
-
-
 export default function Calculator() {
   const { slug } = useParams();
   const calc = slug ? getCalcBySlug(slug) : null;
-  const { toggleFavorite, favorites, addRecent } = useAppStore();
-
-  // ── Track recently used calculators ──────────────────────────
-  useEffect(() => {
-    if (calc?.id) addRecent(calc.id);
-  }, [calc?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const { toggleFavorite, favorites } = useAppStore();
 
   if (!calc) return <Navigate to="/calculators" replace />;
 
@@ -170,42 +37,7 @@ export default function Calculator() {
 
   return (
     <>
-      <Helmet>
-        <title>{`Free ${calc.name} Online — ${calc.desc?.slice(0, 60)} | CalculatorsPoint`}</title>
-        <meta name="description" content={`Use our free ${calc.name} online with instant results, visual charts & step-by-step breakdowns. ${calc.desc}. No signup — 100% private & accurate.`} />
-        <meta name="keywords" content={`${calc.name.toLowerCase()}, free ${calc.name.toLowerCase()}, online ${calc.name.toLowerCase()}, ${cat?.name?.toLowerCase() || ''} calculator`} />
-        <meta property="og:title" content={`${calc.name} — Free Online Calculator | CalculatorsPoint`} />
-        <meta property="og:description" content={`Free ${calc.name}: ${calc.desc}. Instant results with charts & insights.`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://calculatorspoint.com/calculator/${calc.slug}`} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${calc.name} — Free Online Calculator`} />
-        <meta name="twitter:description" content={calc.desc} />
-        <link rel="canonical" href={`https://calculatorspoint.com/calculator/${calc.slug}`} />
-        {/* BreadcrumbList Schema */}
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://calculatorspoint.com/" },
-            { "@type": "ListItem", "position": 2, "name": "Calculators", "item": "https://calculatorspoint.com/calculators" },
-            { "@type": "ListItem", "position": 3, "name": cat?.name || "Tools", "item": `https://calculatorspoint.com/category/${calc.cat}` },
-            { "@type": "ListItem", "position": 4, "name": calc.name }
-          ]
-        })}</script>
-        {/* WebApplication Schema */}
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebApplication",
-          "name": calc.name,
-          "description": calc.desc,
-          "url": `https://calculatorspoint.com/calculator/${calc.slug}`,
-          "applicationCategory": cat?.name === "Finance & Money" ? "FinanceApplication" : cat?.name === "Health & Fitness" ? "HealthApplication" : "UtilityApplication",
-          "operatingSystem": "All",
-          "browserRequirements": "Requires JavaScript",
-          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-        })}</script>
-      </Helmet>
+      <SEOHead calc={calc} catName={cat?.name || "Tools"} />
 
       {/* ══════════ PAGE HEADER ══════════ */}
       <div className="calc-page-header premium-card-bg relative overflow-hidden rounded-b-[2.5rem] shadow-sm mb-6 border-b border-[var(--border)]">
@@ -425,4 +257,3 @@ export default function Calculator() {
     </>
   );
 }
-
