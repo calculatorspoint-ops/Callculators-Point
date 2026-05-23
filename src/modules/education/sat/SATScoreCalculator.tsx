@@ -48,7 +48,7 @@ function rawToSection(correct: number, total: number): number {
 }
 
 export function SATScoreCalculator() {
-  const [mode, setMode] = useState<'section' | 'total'>('section');
+  const [mode] = useState<'section' | 'total'>('section');
   const [inputType, setInputType] = useState<'raw' | 'scaled'>('scaled');
 
   // Section scores (scaled 200-800)

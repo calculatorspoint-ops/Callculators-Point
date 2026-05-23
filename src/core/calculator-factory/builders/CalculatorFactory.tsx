@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FieldValues, FormProvider, Control } from 'react-hook-form';
+import { FieldValues, FormProvider } from 'react-hook-form';
 import { NumericInput } from '../../form-engine/components/NumericInput';
 import { TextInput } from '../../form-engine/components/TextInput';
 import { SelectInput } from '../../form-engine/components/SelectInput';

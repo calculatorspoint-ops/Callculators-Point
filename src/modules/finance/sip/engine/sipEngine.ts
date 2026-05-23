@@ -1,4 +1,4 @@
-import Decimal from "decimal.js";
+
 import { SIPParams, SIPResult, SIPSchedulePoint } from "../types";
 
 export function calculateDeterministicSIP(params: SIPParams): SIPResult {

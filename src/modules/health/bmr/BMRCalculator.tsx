@@ -3,7 +3,7 @@ import { CalculatorFactory } from '../../../core/calculator-factory';
 import { NumericInput } from '../../../core/form-engine/components/NumericInput';
 import { SelectInput } from '../../../core/form-engine/components/SelectInput';
 import { GlossaryTooltip, InterpretationCardProps } from '../../../core/ui-system';
-import { BMRSchema, BMRForm } from './schemas/bmrSchema';
+import { BMRSchema } from './schemas/bmrSchema';
 import { calculateBMR, BMRResult } from './engine/bmrEngine';
 
 function BMRFormUI({ control }: { control: any }) {
@@ -100,7 +100,7 @@ function BMRResultUI({ result }: { result: BMRResult }) {
   );
 }
 
-function interpretBMR(result: BMRResult, form: BMRForm): InterpretationCardProps {
+function interpretBMR(result: BMRResult): InterpretationCardProps {
   const { tdee, bmr } = result;
   const deficit500 = tdee - 500;
   const surplus250 = tdee + 250;

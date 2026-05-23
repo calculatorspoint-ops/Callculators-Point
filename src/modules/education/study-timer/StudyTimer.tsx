@@ -63,9 +63,9 @@ export function StudyTimer() {
   const [remaining, setRemaining] = useState<number>(25 * 60);
   const [pomodoroCount, setPomodoroCount] = useState(0);
   const [totalFocusSeconds, setTotalFocusSeconds] = useState(0);
-  const [sessionCount, setSessionCount] = useState(0);
+  const [, setSessionCount] = useState(0);
   const [sound, setSound] = useState('none');
-  const [streakDays, setStreakDays] = useState(3);
+  const [streakDays] = useState(3);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastPhaseRef = useRef<Phase>('work');
 
@@ -143,7 +143,7 @@ export function StudyTimer() {
 
   const focusHours = Math.floor(totalFocusSeconds / 3600);
   const focusMins = Math.floor((totalFocusSeconds % 3600) / 60);
-  const productivity = Math.min(100, Math.round((totalFocusSeconds / (sessionCount * mode.work * 60 + 1)) * 100));
+
 
   const inp = { padding: '8px 10px', background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 8, fontSize: 13, color: 'var(--text)', outline: 'none', width: '100%' } as React.CSSProperties;
 

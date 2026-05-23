@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 export interface InterpretationCardProps {
   /** Primary plain-English sentence summarising the result */

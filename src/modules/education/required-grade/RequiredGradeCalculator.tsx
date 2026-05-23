@@ -212,7 +212,7 @@ export function RequiredGradeCalculator() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase' }}>Component Contributions</p>
             {result.assignments.map((a: any, i: number) => {
-              const contributionPct = a.w > 0 ? (a.contribution / a.w) * 100 : 0;
+              
               return (
                 <div key={i} style={{ padding: '10px 12px', background: a.sc === null ? 'linear-gradient(to right,var(--surface),var(--brand-l))' : 'var(--surface)', border: '1px solid var(--border)', borderRadius: 9 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: a.sc !== null ? 6 : 0 }}>

@@ -9,7 +9,7 @@ export function useFormEngine<TForm extends FieldValues, TDerived = any>(
   const { schema, defaultValues, debounceMs = 150, onDerive, mode = 'onChange' } = config;
 
   const form = useForm<TForm>({
-    resolver: zodResolver(schema) as any,
+    resolver: zodResolver(schema as any),
     defaultValues,
     mode
   });

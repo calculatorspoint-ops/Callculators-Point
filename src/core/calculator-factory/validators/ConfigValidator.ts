@@ -1,7 +1,7 @@
 import { CalculatorConfig } from '../types/blueprint';
 
 export class ConfigValidator {
-  static validate<TForm, TResult>(config: CalculatorConfig<TForm, TResult>) {
+  static validate<TForm extends Record<string, any>, TResult>(config: CalculatorConfig<TForm, TResult>) {
     const errors: string[] = [];
 
     // 1. Schema Validity Gate

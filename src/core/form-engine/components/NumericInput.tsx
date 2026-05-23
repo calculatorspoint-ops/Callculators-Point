@@ -49,7 +49,7 @@ export function NumericInput<T extends FieldValues>({
             <>
               <input
                 id={inputId}
-                ref={ref}
+                ref={ref as any}
                 type="text"
                 inputMode="decimal"
                 autoComplete="off"

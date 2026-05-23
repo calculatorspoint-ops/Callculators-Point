@@ -1,7 +1,7 @@
 import React from 'react';
 import { CalculatorFactory } from '../../../core/calculator-factory';
 import { NumericInput } from '../../../core/form-engine/components/NumericInput';
-import { ProgressiveDisclosure } from '../../../core/ui-system';
+
 import { BMISchema } from './schemas/bmiSchema';
 import { calculateBMI, BMIResult } from './engine/bmiEngine';
 import { generateBMIInsights } from './insights/bmiInsights';
@@ -71,7 +71,7 @@ function interpretBMI(result: BMIResult): InterpretationCardProps | null {
   }
 
   if (category === 'Underweight') {
-    const weightToGain = (healthyWeightRange[0] - 0).toFixed(1);
+
     return {
       tone: 'warning',
       headline: `A BMI of ${bmi} indicates Underweight (below 18.5). Your healthy target weight is ${healthyWeightRange[0]}–${healthyWeightRange[1]} kg.`,

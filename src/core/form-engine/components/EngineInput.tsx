@@ -50,7 +50,6 @@ export function EngineInput<T extends FieldValues>({
     
     // 1. Snapshot cursor state context
     const textBeforeCursorOld = displayValue.substring(0, selectionStart);
-    const nonDigitsBeforeOld = (textBeforeCursorOld.match(/[^0-9.-]/g) || []).length;
     
     // 2. Apply Live Formatting
     const formatted = liveFormatter ? liveFormatter(rawVal) : rawVal;
@@ -84,7 +83,7 @@ export function EngineInput<T extends FieldValues>({
     });
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = () => {
     setIsFocused(false);
     field.onBlur();
     

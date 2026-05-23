@@ -181,7 +181,7 @@ function SalaryResultUI({ result }: { result: SalaryResult }) {
   );
 }
 
-function interpretSalary(result: SalaryResult, form: SalaryForm): InterpretationCardProps {
+function interpretSalary(result: SalaryResult, _form: SalaryForm): InterpretationCardProps {
   const sym = result.currencySymbol;
   const { annual, effectiveTaxRate, marginalRate, countryConfig } = result;
   const retentionPct = annual.gross > 0 ? ((annual.net / annual.gross) * 100).toFixed(1) : '0';
