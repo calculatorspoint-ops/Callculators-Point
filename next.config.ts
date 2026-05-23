@@ -13,15 +13,6 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
 
-  // ── Disable built-in CSS minifier ─────────────────────────────────────────
-  // Next.js bundles cssnano-simple which cannot parse modern CSS features used
-  // by Tailwind (e.g. fractional selectors like .left-1\/2, col-span-* etc).
-  // Disabling it prevents the Vercel build crash. CSS is still served correctly
-  // — it just won't be micro-minified (Gzip/Brotli compression covers this).
-  experimental: {
-    optimizeCss: false,
-  },
-
   // ── Images ────────────────────────────────────────────────────────────────
   images: {
     remotePatterns: [],
@@ -49,12 +40,25 @@ const nextConfig: NextConfig = {
   },
 
   // ── Webpack ───────────────────────────────────────────────────────────────
-  webpack(config) {
+  webpack(config, { dev, isServer }) {
     // Resolve @/ → src/
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, 'src'),
     };
+
+    // ── Remove CssMinimizerPlugin ──────────────────────────────────────────
+    // Next.js bundles cssnano-simple which crashes on modern CSS used by
+    // Tailwind (e.g. fractional selectors like .left-1\/2, .w-1\/2).
+    // The plugin lives in config.optimization.minimizer — we remove it here.
+    // CSS is still served correctly; Vercel compresses via Gzip/Brotli.
+    if (!dev && !isServer && config.optimization?.minimizer) {
+      config.optimization.minimizer = (config.optimization.minimizer as any[]).filter(
+        (plugin: any) =>
+          !(plugin?.constructor?.name === 'CssMinimizerPlugin') &&
+          !(plugin?.__proto__?.constructor?.name === 'CssMinimizerPlugin')
+      );
+    }
 
     return config;
   },
