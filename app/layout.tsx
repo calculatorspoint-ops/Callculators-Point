@@ -6,13 +6,17 @@
  * - Provides i18n, Toaster, analytics
  * - All child pages render inside {children}
  */
-import type { Metadata } from 'next';
+import type { Viewport, Metadata } from 'next';
 import './globals.css';
 import '../src/styles/index.css';
 import '../src/styles/mobile.css';
 import '../src/styles/mobile-overflow-killer.css';
 import '../src/styles/all-calculators.css';
 import { ClientProviders } from './client-providers';
+
+export const viewport: Viewport = {
+  themeColor: '#0f172a',
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://calculatorspoint.com'),
@@ -43,6 +47,7 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true },
   },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
