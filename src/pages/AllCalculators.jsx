@@ -24,7 +24,7 @@ export default function AllCalculators() {
       <section className="hero-premium">
         <div className="hero-premium-inner">
           <h1 className="hero-title-premium">
-            <span className="text-gradient">55+ Powerful Tools</span><br/>
+            <span className="text-gradient">{ALL_CALCULATORS.length}+ Powerful Tools</span><br/>
             For Everyday Calculations
           </h1>
           <p className="hero-subtitle-premium">

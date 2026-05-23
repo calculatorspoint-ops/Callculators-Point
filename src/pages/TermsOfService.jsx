@@ -42,7 +42,7 @@ export default function TermsOfService() {
         </S>
 
         <S id="description" n="2" title="Description of Service">
-          <P>Calculators Point provides a free, browser-based calculation platform offering 53+ calculators across multiple categories including finance, health, mathematics, education, unit conversions, and everyday utilities.</P>
+          <P>Calculators Point provides a free, browser-based calculation platform offering 200+ calculators across multiple categories including finance, health, mathematics, education, unit conversions, and everyday utilities.</P>
           <P>The Service is provided free of charge, supported by advertising. We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.</P>
         </S>
 

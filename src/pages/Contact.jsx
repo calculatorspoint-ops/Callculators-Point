@@ -214,7 +214,7 @@ export default function Contact() {
               {[
                 ["Privacy Policy", "/privacy-policy", "How we handle data"],
                 ["Disclaimer", "/disclaimer", "About result accuracy"],
-                ["All Calculators", "/calculators", "Browse all 53+ tools"],
+                ["All Calculators", "/calculators", "Browse all 200+ tools"],
               ].map(([l, h, d]) => (
                 <Link key={h} to={h}
                   style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:"1px solid var(--bord2)", textDecoration:"none", fontSize:13, color:"var(--text2)", transition:"color .15s" }}

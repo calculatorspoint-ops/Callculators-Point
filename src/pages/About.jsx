@@ -228,7 +228,7 @@ export default function About() {
           <div style={{ fontSize:36, marginBottom:12 }}>🚀</div>
           <h3 style={{ fontFamily:"var(--font-hd)", fontSize:"1.4rem", fontWeight:900, color:"#fff", marginBottom:8, letterSpacing:"-.03em" }}>Ready to Calculate?</h3>
           <p style={{ fontSize:14, color:"rgba(255,255,255,.65)", marginBottom:20 }}>
-            53+ free tools waiting for you. No signup, no credit card.
+            {ALL_CALCULATORS.length}+ free tools waiting for you. No signup, no credit card.
           </p>
           <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
             <Link to="/calculators" className="btn-ghost">Browse All Calculators</Link>
