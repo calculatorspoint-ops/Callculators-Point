@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Clock, TrendingUp } from "lucide-react";
+import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore.js";
 import { ALL_CALCULATORS, CATEGORIES, POPULAR } from "@/data/calculatorConfigs.js";
 import { CurrencySelector } from "./CurrencySelector.jsx";
+import { SettingsModal } from "./SettingsModal.jsx";
+import { useTranslation } from "react-i18next";
+import { signInWithGoogle, logout } from "@/firebase/auth.js";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 /* ── Search aliases: map user intent → calculator IDs ──────────── */
 const ALIASES = {
@@ -146,13 +150,16 @@ function SearchDropdown({ results, query, onClose, activeIdx }) {
 }
 
 export function Navbar() {
+  const { t, i18n } = useTranslation();
   const { theme, toggleTheme, searchHistory, addSearchHistory } = useAppStore();
   const [q, setQ]             = useState("");
   const [results, setResults] = useState([]);
   const [open, setOpen]       = useState(false);
   const [mob, setMob]         = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeIdx, setActiveIdx]   = useState(-1);
+  const [user, setUser] = useState(null);
   const ref       = useRef(null);
   const searchRef = useRef(null);
   const inputRef  = useRef(null);
@@ -163,6 +170,14 @@ export function Navbar() {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => { setMob(false); setOpen(false); setSearchOpen(false); setQ(""); setActiveIdx(-1); }, [loc.pathname]);
 
@@ -252,11 +267,11 @@ export function Navbar() {
           <nav className="navbar-nav" aria-label="Main navigation">
             {CATEGORIES.slice(0, 5).map(c => (
               <Link key={c.id} to={`/category/${c.id}`} className="nav-link">
-                {c.icon} {c.name}
+                {c.icon} {t(`categories.${c.id}`, c.name)}
               </Link>
             ))}
             <Link to="/calculators" className="nav-link nav-link-all">
-              All Tools
+              {t('nav.calculators', 'All Tools')}
             </Link>
           </nav>
 
@@ -310,6 +325,27 @@ export function Navbar() {
               <CurrencySelector />
             </div>
 
+            {/* Language toggle */}
+            <button
+              onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
+              className="navbar-icon-btn desktop-only"
+              aria-label="Toggle language"
+              title="Toggle English / Español"
+            >
+              <span style={{ fontSize: 13, fontWeight: 700 }}>{i18n.language === 'es' ? 'ES' : 'EN'}</span>
+            </button>
+
+            {/* Auth toggle */}
+            {user ? (
+              <button onClick={logout} className="navbar-icon-btn desktop-only" aria-label="Sign Out" title="Sign Out">
+                <span style={{ fontSize: 13, fontWeight: 700 }}>Out</span>
+              </button>
+            ) : (
+              <button onClick={signInWithGoogle} className="navbar-icon-btn desktop-only" aria-label="Sign In" title="Sign In">
+                <span style={{ fontSize: 13, fontWeight: 700 }}>In</span>
+              </button>
+            )}
+
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
@@ -317,6 +353,15 @@ export function Navbar() {
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
               {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+
+            {/* Settings toggle */}
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="navbar-icon-btn desktop-only"
+              aria-label="Settings"
+            >
+              <Settings size={16} />
             </button>
 
             {/* Mobile hamburger */}
@@ -363,6 +408,8 @@ export function Navbar() {
         )}
       </header>
 
+      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
+
       {/* ── Mobile full-screen menu overlay ── */}
       {mob && (
         <div className="mob-overlay" onClick={() => setMob(false)} />
@@ -400,6 +447,11 @@ export function Navbar() {
             <span>Contact</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </Link>
+          <button onClick={() => { setSettingsOpen(true); setMob(false); }} className="mob-menu-link" style={{ background: "none", border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}>
+            <span>⚙️</span>
+            <span>Settings</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
+          </button>
         </div>
 
         <div className="mob-menu-divider" />

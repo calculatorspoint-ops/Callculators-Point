@@ -6,6 +6,7 @@ export const useAppStore = create(
     (set, get) => ({
       theme:        "light",
       currency:     "USD",   // geo-engine overrides this on first load
+      unitSystem:   "metric", // "metric" or "imperial"
       favorites:    [],
       recent:       [],      // recently visited calculator IDs
       savedLocally: [],
@@ -19,6 +20,7 @@ export const useAppStore = create(
         document.documentElement.classList.toggle("dark", next === "dark");
       },
       setCurrency: (c) => set({ currency: c }),
+      setUnitSystem: (system) => set({ unitSystem: system }),
       setActiveCalc: (calc) => set({ activeCalc: calc }),
 
       addRecent: (id) =>
@@ -60,6 +62,7 @@ export const useAppStore = create(
       partialize: s => ({
         theme:         s.theme,
         currency:      s.currency,
+        unitSystem:    s.unitSystem,
         favorites:     s.favorites,
         recent:        s.recent,
         savedLocally:  s.savedLocally,

@@ -8,6 +8,7 @@ import { PWAInstallPrompt } from './core/pwa-engine/PWAInstallPrompt';
 import { ScrollToTop } from './components/ui/ScrollToTop';
 import { initGeoDetection } from './core/geo-engine/geoStore.js';
 import { FloatingRegionSwitcher } from './core/geo-engine/FloatingRegionSwitcher.jsx';
+import { Analytics } from '@vercel/analytics/react';
 
 // ── Lazily-loaded pages (code splitting per route) ────────────────────
 const Home           = lazy(() => import('./pages/Home.jsx'));
@@ -85,19 +86,20 @@ export default function App() {
       <Footer />
       <PWAInstallPrompt />
       <FloatingRegionSwitcher position="bottom-left" />
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          style: {
-            background: 'var(--surface)',
-            color: 'var(--text)',
-            border: '1.5px solid var(--border)',
-            borderRadius: 'var(--r-lg)',
-            fontSize: 13,
-            fontWeight: 600,
-          },
-        }}
-      />
-    </div>
-  );
-}
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: 'var(--surface)',
+              color: 'var(--text)',
+              border: '1.5px solid var(--border)',
+              borderRadius: 'var(--r-lg)',
+              fontSize: 13,
+              fontWeight: 600,
+            },
+          }}
+        />
+        <Analytics />
+      </div>
+    );
+  }

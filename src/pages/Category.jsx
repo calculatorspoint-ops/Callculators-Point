@@ -189,22 +189,22 @@ export default function Category() {
       </div>
 
       {/* Stats strip */}
-      <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", display: "flex" }}>
+      <div className="cat-stats-row">
         {[
           { n: calcs.length + "+", l: "Tools" },
           { n: popular.length, l: "Popular" },
           { n: newCalcs.length, l: "New" },
           { n: "100%", l: "Free" },
         ].map(s => (
-          <div key={s.l} style={{ flex: 1, padding: "12px 8px", textAlign: "center", borderRight: "1px solid var(--border)" }}>
-            <div style={{ fontFamily: "var(--font-hd)", fontSize: 18, fontWeight: 800, color: cat.color }}>{s.n}</div>
-            <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)" }}>{s.l}</div>
+          <div key={s.l} className="cat-stats-item" style={{ flex: 1, padding: "12px 8px", textAlign: "center", borderRight: "1px solid var(--border)", minWidth: 0 }}>
+            <div className="cat-stats-val" style={{ fontFamily: "var(--font-hd)", fontSize: 18, fontWeight: 800, color: cat.color }}>{s.n}</div>
+            <div className="cat-stats-lbl" style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.l}</div>
           </div>
         ))}
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 20px 64px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 24 }}>
+        <div className="category-page-layout">
 
           {/* Main content */}
           <div>
@@ -215,14 +215,9 @@ export default function Category() {
                   <Star size={16} style={{ color: "#f59e0b" }} />
                   <h2 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text)" }}>Most Popular</h2>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 10 }}>
+                <div className="cat-calcs-grid">
                   {popular.map(c => (
-                    <Link key={c.id} to={`/calculator/${c.slug}`} style={{
-                      display: "flex", alignItems: "center", gap: 12, padding: "13px 16px",
-                      background: "var(--surface)", border: `1.5px solid ${cat.color}30`,
-                      borderRadius: "var(--r-xl)", textDecoration: "none", color: "var(--text)",
-                      transition: "all .15s", boxShadow: "var(--sh1)",
-                    }}
+                    <Link key={c.id} to={`/calculator/${c.slug}`} className="cat-calc-card" style={{ borderColor: `${cat.color}30` }}
                       onMouseEnter={e => { e.currentTarget.style.borderColor = cat.color; e.currentTarget.style.boxShadow = `0 4px 16px ${cat.color}25`; e.currentTarget.style.transform = "translateY(-2px)"; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = `${cat.color}30`; e.currentTarget.style.boxShadow = "var(--sh1)"; e.currentTarget.style.transform = "none"; }}>
                       <div style={{
@@ -230,9 +225,9 @@ export default function Category() {
                         display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0,
                       }}>{c.icon}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700 }}>{c.name}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</div>
                         <div style={{ fontSize: 11, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
-                        <div style={{ display: "flex", gap: 4, marginTop: 4 }}>
+                        <div style={{ display: "flex", gap: 4, marginTop: 4, flexWrap: "wrap" }}>
                           <span className="badge badge-green">Popular</span>
                           {c.hasChart && <span className="badge badge-blue">Charts</span>}
                         </div>
@@ -251,20 +246,16 @@ export default function Category() {
                   <span style={{ fontSize: 16 }}>🆕</span>
                   <h2 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text)" }}>Recently Added</h2>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 10 }}>
+                <div className="cat-calcs-grid">
                   {newCalcs.map(c => (
-                    <Link key={c.id} to={`/calculator/${c.slug}`} style={{
-                      display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
-                      background: "var(--surface)", border: "1.5px solid var(--border)",
-                      borderRadius: "var(--r-xl)", textDecoration: "none", color: "var(--text)", transition: "all .15s",
-                    }}
+                    <Link key={c.id} to={`/calculator/${c.slug}`} className="cat-calc-card"
                       onMouseEnter={e => { e.currentTarget.style.borderColor = cat.color; e.currentTarget.style.transform = "translateY(-1px)"; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; }}>
                       <span style={{ fontSize: 22, width: 36, textAlign: "center", flexShrink: 0 }}>{c.icon}</span>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
-                          <span style={{ fontSize: 13, fontWeight: 700 }}>{c.name}</span>
-                          <span className="badge badge-red">New</span>
+                        <div style={{ display: "flex", gap: 5, alignItems: "center", overflow: "hidden" }}>
+                          <span style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</span>
+                          <span className="badge badge-red" style={{ flexShrink: 0 }}>New</span>
                         </div>
                         <div style={{ fontSize: 11, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
                       </div>
@@ -279,18 +270,14 @@ export default function Category() {
             {rest.length > 0 && (
               <div style={{ marginBottom: 28 }}>
                 <h2 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text)", marginBottom: 14 }}>All {cat.name} Tools</h2>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 10 }}>
+                <div className="cat-calcs-grid">
                   {rest.map(c => (
-                    <Link key={c.id} to={`/calculator/${c.slug}`} style={{
-                      display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
-                      background: "var(--surface)", border: "1.5px solid var(--border)",
-                      borderRadius: "var(--r-xl)", textDecoration: "none", color: "var(--text)", transition: "all .15s",
-                    }}
+                    <Link key={c.id} to={`/calculator/${c.slug}`} className="cat-calc-card"
                       onMouseEnter={e => { e.currentTarget.style.borderColor = cat.color; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}>
                       <span style={{ fontSize: 22, width: 36, textAlign: "center", flexShrink: 0 }}>{c.icon}</span>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600 }}>{c.name}</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</div>
                         <div style={{ fontSize: 11, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
                       </div>
                       <ArrowRight size={13} style={{ color: "var(--text3)", flexShrink: 0 }} />

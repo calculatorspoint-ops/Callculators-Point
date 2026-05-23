@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles/index.css';
 import './styles/mobile.css'; // Comprehensive mobile-first overrides
+import './i18n';
 
 
 const container = document.getElementById('root')!;

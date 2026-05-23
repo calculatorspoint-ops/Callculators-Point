@@ -81,7 +81,7 @@ const Health = {
   SleepForm: lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.SleepForm }))),
   PeriodCalc: lazy(() => import("../../modules/health/women-health/PeriodCalculator.jsx")),
   // New Health Forms
-  HealthFormsNew: lazy(() => import("./forms/HealthFormsNew.jsx")),
+  HealthForms: lazy(() => import("./forms/HealthForms.jsx")),
 };
 
 const MathCalcs = {
@@ -98,7 +98,7 @@ const MathCalcs = {
   RatioForm: lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.RatioForm }))),
   ReadingTimeForm: lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.ReadingTimeForm }))),
   // New Math Forms
-  MathFormsNew: lazy(() => import("./forms/MathFormsNew.jsx")),
+  MathForms: lazy(() => import("./forms/MathForms.jsx")),
 };
 
 const Education = {
@@ -345,37 +345,37 @@ const FORMS = {
   "employee-cost-calculator":          Business.EmployeeCostForm,
 
   // ── Math (new) ────────────────────────────────────────────────────
-  "lcm-gcf-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.LCMGCFForm }))),
-  "factor-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.FactorForm }))),
-  "exponent-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ExponentForm }))),
-  "root-calculator":                   lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.RootForm }))),
-  "triangle-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.TriangleForm }))),
-  "circle-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.CircleForm }))),
-  "volume-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.VolumeForm }))),
-  "surface-area-calculator":           lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.SurfaceAreaForm }))),
-  "z-score-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ZScoreForm }))),
-  "confidence-interval-calculator":    lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ConfidenceIntervalForm }))),
-  "sample-size-calculator":            lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.SampleSizeForm }))),
-  "permutation-combination-calculator": lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.PermCombForm }))),
-  "probability-calculator":            lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.ProbabilityForm }))),
-  "binary-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.BinaryForm }))),
-  "number-sequence-calculator":        lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.NumberSequenceForm }))),
-  "average-calculator":                lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.AverageForm }))),
-  "matrix-calculator":                 lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.MatrixForm }))),
-  "linear-equation-solver":            lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.LinearEquationForm }))),
-  "random-number-generator-adv":       lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.RandomNumberForm }))),
-  "percent-error-calculator":          lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.PercentErrorForm }))),
-  "distance-calculator":               lazy(() => import("./forms/MathFormsNew.jsx").then(m => ({ default: m.DistanceForm }))),
+  "lcm-gcf-calculator":                lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.LCMGCFForm }))),
+  "factor-calculator":                 lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.FactorForm }))),
+  "exponent-calculator":               lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.ExponentForm }))),
+  "root-calculator":                   lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.RootForm }))),
+  "triangle-calculator":               lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.TriangleForm }))),
+  "circle-calculator":                 lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.CircleForm }))),
+  "volume-calculator":                 lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.VolumeForm }))),
+  "surface-area-calculator":           lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.SurfaceAreaForm }))),
+  "z-score-calculator":                lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.ZScoreForm }))),
+  "confidence-interval-calculator":    lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.ConfidenceIntervalForm }))),
+  "sample-size-calculator":            lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.SampleSizeForm }))),
+  "permutation-combination-calculator": lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.PermCombForm }))),
+  "probability-calculator":            lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.ProbabilityForm }))),
+  "binary-calculator":                 lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.BinaryForm }))),
+  "number-sequence-calculator":        lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.NumberSequenceForm }))),
+  "average-calculator":                lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.AverageForm }))),
+  "matrix-calculator":                 lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.MatrixForm }))),
+  "linear-equation-solver":            lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.LinearEquationForm }))),
+  "random-number-generator-adv":       lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.RandomNumberForm }))),
+  "percent-error-calculator":          lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.PercentErrorForm }))),
+  "distance-calculator":               lazy(() => import("./forms/MathForms.jsx").then(m => ({ default: m.DistanceForm }))),
 
   // ── Health (new) ──────────────────────────────────────────────────
-  "bsa-calculator":                    lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.BSAForm }))),
-  "bac-calculator":                    lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.BACForm }))),
-  "lean-body-mass-calculator":         lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.LeanBodyMassForm }))),
-  "protein-calculator":                lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.ProteinForm }))),
-  "healthy-weight-calculator":         lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.HealthyWeightForm }))),
-  "fat-intake-calculator":             lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.FatIntakeForm }))),
-  "army-body-fat-calculator":          lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.ArmyBodyFatForm }))),
-  "conception-calculator":             lazy(() => import("./forms/HealthFormsNew.jsx").then(m => ({ default: m.ConceptionForm }))),
+  "bsa-calculator":                    lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.BSAForm }))),
+  "bac-calculator":                    lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.BACForm }))),
+  "lean-body-mass-calculator":         lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.LeanBodyMassForm }))),
+  "protein-calculator":                lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.ProteinForm }))),
+  "healthy-weight-calculator":         lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.HealthyWeightForm }))),
+  "fat-intake-calculator":             lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.FatIntakeForm }))),
+  "army-body-fat-calculator":          lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.ArmyBodyFatForm }))),
+  "conception-calculator":             lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.ConceptionForm }))),
 
   // ── Finance (new additional) ───────────────────────────────────────
   "heloc-calculator":                  Finance.HELOCForm,

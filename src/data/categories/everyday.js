@@ -1,0 +1,145 @@
+export const everydayCalculators = [
+  {
+  id: 'age',
+  slug: 'age-calculator',
+  cat: 'everyday',
+  name: 'Age Calculator',
+  icon: '🎂',
+  desc: 'Exact age with zodiac, next birthday countdown, live seconds & time-of-birth precision mode',
+  popular: true,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'date-diff',
+  slug: 'date-difference-calculator',
+  cat: 'everyday',
+  name: 'Date Difference',
+  icon: '📆',
+  desc: 'Days between dates with business-days-only mode',
+  popular: true,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'countdown',
+  slug: 'countdown-calculator',
+  cat: 'everyday',
+  name: 'Countdown Timer',
+  icon: '⏳',
+  desc: 'Live countdown to any event with real-time seconds',
+  popular: false,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'work-hours',
+  slug: 'work-hours-calculator',
+  cat: 'everyday',
+  name: 'Work Hours',
+  icon: '⏰',
+  desc: 'Daily/weekly/monthly hours with break deduction & earnings',
+  popular: false,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'fuel',
+  slug: 'fuel-cost-calculator',
+  cat: 'everyday',
+  name: 'Fuel Cost Calculator',
+  icon: '⛽',
+  desc: 'Trip cost with passenger split, round trip & monthly estimate',
+  popular: false,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'ev-charging',
+  slug: 'ev-charging-calculator',
+  cat: 'everyday',
+  name: 'EV Charging Calculator',
+  icon: '⚡',
+  desc: 'Calculate EV battery charge time, added range, and cost with various charger levels',
+  popular: false,
+  hasChart: false,
+  isNew: true
+},
+  {
+  id: 'random',
+  slug: 'random-number-generator',
+  cat: 'everyday',
+  name: 'Random Number Generator',
+  icon: '🎲',
+  desc: 'Integer or decimal random numbers — up to 50 at once',
+  popular: false,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'password',
+  slug: 'password-generator',
+  cat: 'everyday',
+  name: 'Password Generator',
+  icon: '🔐',
+  desc: 'Secure passwords with entropy bits, strength rating & crack time',
+  popular: true,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'roman',
+  slug: 'roman-numeral-converter',
+  cat: 'everyday',
+  name: 'Roman Numeral Converter',
+  icon: '🏛️',
+  desc: 'Bidirectional: numbers to Roman and back (1–3999)',
+  popular: false,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'word-count',
+  slug: 'word-counter',
+  cat: 'everyday',
+  name: 'Word Counter',
+  icon: '📝',
+  desc: 'Words, chars, sentences, paragraphs, read time & speak time',
+  popular: false,
+  hasChart: false,
+  isNew: false
+},
+  {
+  id: 'base64',
+  slug: 'base64-encoder',
+  cat: 'everyday',
+  name: 'Base64 Encoder/Decoder',
+  icon: '🔠',
+  desc: 'Encode & decode Base64 with copy and reverse button',
+  popular: false,
+  hasChart: false,
+  isNew: true
+},
+  {
+  id: 'timezone',
+  slug: 'time-zone-converter',
+  cat: 'everyday',
+  name: 'Time Zone Converter',
+  icon: '🌍',
+  desc: 'Convert time between 50+ world time zones with DST support',
+  popular: false,
+  hasChart: false,
+  isNew: true
+},
+  {
+  id: 'reading-time',
+  slug: 'reading-time-calculator',
+  cat: 'everyday',
+  name: 'Reading Time Calculator',
+  icon: '📖',
+  desc: 'Estimate reading time for any text, book, or article by word count',
+  popular: false,
+  hasChart: false,
+  isNew: true
+},
+];
