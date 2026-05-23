@@ -92,6 +92,7 @@ export default function Home() {
   const recentCalcs   = recent.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
   const favoriteCalcs = favorites.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
   const [showAllPopular, setShowAllPopular] = useState(false);
+  const [showAllNew, setShowAllNew] = useState(false);
 
   return (
     <>
@@ -360,7 +361,7 @@ export default function Home() {
                   <span className="sidebar-card-title">New Additions</span>
                 </div>
                 <div>
-                  {NEW_CALCS.map(c => (
+                  {(showAllNew ? NEW_CALCS : NEW_CALCS.slice(0, 10)).map(c => (
                     <Link key={c.id} to={`/calculator/${c.slug}`} className="sidebar-item">
                       <span style={{ fontSize: 16, flexShrink: 0 }}>{c.icon}</span>
                       <div>
@@ -370,6 +371,16 @@ export default function Home() {
                     </Link>
                   ))}
                 </div>
+                {NEW_CALCS.length > 10 && (
+                  <button 
+                    onClick={() => setShowAllNew(!showAllNew)} 
+                    style={{ width: "100%", padding: "10px", background: "transparent", border: "none", borderTop: "1px solid var(--border)", color: "var(--brand)", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "var(--font)", transition: "background .15s" }}
+                    onMouseEnter={e => e.currentTarget.style.background = "var(--surf2)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                  >
+                    {showAllNew ? "View Less" : `View More (${NEW_CALCS.length - 10})`}
+                  </button>
+                )}
               </div>
             )}
 
