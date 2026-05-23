@@ -46,6 +46,7 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
   const emi = emiDec.toNumber();
 
   const schedule = [];
+  const fullSchedule = [];
   let bal = P;
   let cumP = new Decimal(0);
   let cumI = new Decimal(0);
@@ -72,9 +73,19 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
     cumP = cumP.plus(pp);
     cumI = cumI.plus(ip);
     
+    const emiPayment = ip.plus(pp);
+    
+    fullSchedule.push({ 
+      month: i, 
+      principal: round(pp.toNumber()), 
+      interest: round(ip.toNumber()), 
+      balance: round(bal.toNumber()), 
+      emi: round(emiPayment.toNumber()) 
+    });
+    
     const step = Math.max(1, Math.floor(n_val / 24));
     if (i % step === 0 || i === n_val || bal.isZero()) {
-      schedule.push({ month: `M${i}`, principal: round(cumP.toNumber()), interest: round(cumI.toNumber()), balance: round(bal.toNumber()), emi: round(ip.plus(pp).toNumber()) });
+      schedule.push({ month: `M${i}`, principal: round(cumP.toNumber()), interest: round(cumI.toNumber()), balance: round(bal.toNumber()), emi: round(emiPayment.toNumber()) });
     }
     if (bal.isZero() && ex_val > 0 && i < n_val) { actualMonths = i; break; }
   }
@@ -107,7 +118,7 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
     principalRatio: round(P_val/total*100, 1),
     actualMonths, savedMonths: n_val - actualMonths,
     savedInterest: ex_val > 0 ? round(interest * 0.15) : 0,
-    schedule, compareResult,
+    schedule, fullSchedule, compareResult,
     affordIncome40: affordEMI40, affordIncome50: affordEMI50,
     breakdowns: [
       { label: "Principal (P)",         value: fmtC(P_val) },
@@ -489,6 +500,14 @@ export function calcPercentage({ x, y }) {
       {q:`${x} decreased by ${y}%?`,         a:round(xv*(1-yv/100),4)},
     ],
     insights:[{type:"info",msg:"All 6 percentage modes calculated simultaneously."}],
+    steps: [
+      {title:"1. What is X% of Y?", desc:`(${xv} / 100) * ${yv} = ${round(xv/100*yv,4)}`},
+      {title:"2. X is what % of Y?", desc:`(${xv} / ${yv}) * 100 = ${xv&&yv?round(xv/yv*100,4):0}%`},
+      {title:"3. % change from X to Y", desc:`((${yv} - ${xv}) / ${xv}) * 100 = ${xv?round((yv-xv)/xv*100,4):0}%`},
+      {title:"4. Y% of X", desc:`(${yv} / 100) * ${xv} = ${round(yv/100*xv,4)}`},
+      {title:"5. X increased by Y%", desc:`${xv} + (${yv}% of ${xv}) = ${round(xv*(1+yv/100),4)}`},
+      {title:"6. X decreased by Y%", desc:`${xv} - (${yv}% of ${xv}) = ${round(xv*(1-yv/100),4)}`}
+    ]
   };
 }
 
@@ -1205,8 +1224,24 @@ export function calcFraction({ n1, d1, n2, d2, op }) {
   else { rn=n1v*d2v; rd=d1v*n2v; }
   const g=gcd(Math.abs(rn),Math.abs(rd));
   const srn=rn/g, srd=rd/g;
+
+  let steps = [];
+  if (op === "+" || op === "-") {
+    steps.push({ title: "1. Find Common Denominator", desc: `${d1v} × ${d2v} = ${d1v*d2v}` });
+    steps.push({ title: "2. Adjust Numerators", desc: `${n1v}×${d2v} ${op} ${n2v}×${d1v} = ${n1v*d2v} ${op} ${n2v*d1v}` });
+    steps.push({ title: "3. Combine", desc: `${rn} / ${rd}` });
+  } else if (op === "×") {
+    steps.push({ title: "1. Multiply Numerators", desc: `${n1v} × ${n2v} = ${rn}` });
+    steps.push({ title: "2. Multiply Denominators", desc: `${d1v} × ${d2v} = ${rd}` });
+  } else {
+    steps.push({ title: "1. Invert Second Fraction", desc: `${n2v}/${d2v} → ${d2v}/${n2v}` });
+    steps.push({ title: "2. Multiply Numerators", desc: `${n1v} × ${d2v} = ${rn}` });
+    steps.push({ title: "3. Multiply Denominators", desc: `${d1v} × ${n2v} = ${rd}` });
+  }
+  if (g > 1) steps.push({ title: "4. Simplify", desc: `Divide by GCD (${g}) → ${srn}/${srd}` });
+
   return {
-    result:`${srn}/${srd}`, decimal:round(srn/srd,6),
+    result:`${srn}/${srd}`, decimal:round(srn/srd,6), steps,
     mixed:Math.abs(srn)>Math.abs(srd)?`${Math.trunc(srn/srd)} ${Math.abs(srn%srd)}/${Math.abs(srd)}`:"",
     breakdowns:[
       {label:"Operation",value:`${n1}/${d1} ${op} ${n2}/${d2}`},
@@ -1417,8 +1452,26 @@ export function calcPythagorean({ a, b, c, solve="c" }) {
   const sides=solve==="c"?{a:av,b:bv,c:result}:solve==="a"?{a:result,b:bv,c:cv}:{a:av,b:result,c:cv};
   const area=round(0.5*sides.a*sides.b,4);
   const perimeter=round(sides.a+sides.b+sides.c,4);
+  let steps = [];
+  if (solve === "c") {
+    steps.push({ title: "1. Pythagorean Theorem", desc: "c² = a² + b²" });
+    steps.push({ title: "2. Substitute Values", desc: `c² = ${av}² + ${bv}²` });
+    steps.push({ title: "3. Square Values", desc: `c² = ${av**2} + ${bv**2} = ${av**2 + bv**2}` });
+    steps.push({ title: "4. Take Square Root", desc: `c = √${av**2 + bv**2} = ${result}` });
+  } else if (solve === "a") {
+    steps.push({ title: "1. Pythagorean Theorem", desc: "a² = c² - b²" });
+    steps.push({ title: "2. Substitute Values", desc: `a² = ${cv}² - ${bv}²` });
+    steps.push({ title: "3. Square Values", desc: `a² = ${cv**2} - ${bv**2} = ${cv**2 - bv**2}` });
+    steps.push({ title: "4. Take Square Root", desc: `a = √${cv**2 - bv**2} = ${result}` });
+  } else if (solve === "b") {
+    steps.push({ title: "1. Pythagorean Theorem", desc: "b² = c² - a²" });
+    steps.push({ title: "2. Substitute Values", desc: `b² = ${cv}² - ${av}²` });
+    steps.push({ title: "3. Square Values", desc: `b² = ${cv**2} - ${av**2} = ${cv**2 - av**2}` });
+    steps.push({ title: "4. Take Square Root", desc: `b = √${cv**2 - av**2} = ${result}` });
+  }
+
   return {
-    result, formula, sides, area, perimeter,
+    result, formula, sides, area, perimeter, steps,
     breakdowns:[
       {label:"Formula",    value:formula},
       {label:`Side ${solve.toUpperCase()}`, value:result,bold:true},

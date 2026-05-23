@@ -119,8 +119,9 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
 
 // ── Slider ─────────────────────────────────────────────────────────────
 export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn }) {
-  const display = fmtFn ? fmtFn(value) : value;
-  const pct = Math.round(((value - min) / (max - min)) * 100);
+  const pct = Math.round(((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100);
+  // Extract unit from formatter if possible
+  const unitStr = fmtFn ? fmtFn(1).toString().replace(/[0-9.]/g, '').trim() : "";
 
   return (
     <div style={{ marginBottom: 22 }}>
@@ -130,26 +131,47 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
             {label}
           </label>
         )}
-        <span style={{
-          fontSize: 14, fontWeight: 800, color: "var(--brand)",
-          background: "var(--brand-l)", padding: "4px 14px",
-          borderRadius: 100, letterSpacing: "-.01em",
-          border: "1px solid var(--brand-ll)"
-        }}>{display}</span>
+        <div style={{
+          display: "flex", alignItems: "center", background: "var(--brand-l)",
+          borderRadius: 100, border: "1px solid var(--brand-ll)", overflow: "hidden",
+          padding: "2px 10px 2px 2px", boxShadow: "inset 0 1px 3px rgba(0,0,0,0.02)"
+        }}>
+          <input
+            type="number"
+            value={value}
+            onChange={e => {
+              const v = e.target.value === '' ? '' : Number(e.target.value);
+              onChange(v);
+            }}
+            onBlur={() => {
+              if (value === '' || isNaN(value)) onChange(min);
+              else if (value < min) onChange(min);
+              else if (value > max) onChange(max);
+            }}
+            aria-label={label + " input"}
+            style={{
+              width: 55, background: "transparent", border: "none", outline: "none",
+              textAlign: "right", fontSize: 14, fontWeight: 800, color: "var(--brand)",
+              padding: "4px 4px 4px 10px", minWidth: 0,
+              appearance: "none", MozAppearance: "textfield"
+            }}
+          />
+          {unitStr && <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand)", marginLeft: 2, pointerEvents: "none" }}>{unitStr}</span>}
+        </div>
       </div>
       <div style={{ position: "relative" }}>
         <div style={{
           position: "absolute", top: "50%", left: 0,
-          width: pct + "%", height: 5, borderRadius: 10,
+          width: Math.min(Math.max(pct, 0), 100) + "%", height: 5, borderRadius: 10,
           background: "linear-gradient(90deg, var(--brand-d), var(--brand))",
           transform: "translateY(-50%)", pointerEvents: "none", zIndex: 0,
           transition: "width .1s"
         }} />
         <input
-          type="range" id={id} min={min} max={max} step={step} value={value}
+          type="range" id={id} min={min} max={max} step={step} value={value === '' ? min : value}
           onChange={e => onChange(+e.target.value)}
           aria-label={label}
-          style={{ position: "relative", zIndex: 1, background: "transparent" }}
+          style={{ position: "relative", zIndex: 1, background: "transparent", width: "100%" }}
         />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
@@ -404,6 +426,56 @@ export function Panel({ result, loading, label, shareParams }) {
       {result.breakdowns?.length > 0 && (
         <Breakdown rows={result.breakdowns} title="Step-by-Step Breakdown" />
       )}
+      
+      {result.schedule?.length > 0 && (
+        <div style={{ marginTop: 14, background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", overflow: "hidden" }}>
+          <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h4 style={{ fontSize: 12, fontWeight: 800, color: "var(--text)", textTransform: "uppercase", letterSpacing: ".05em" }}>Amortization Schedule</h4>
+          </div>
+          <div style={{ maxHeight: 300, overflowY: "auto", overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, textAlign: "right" }}>
+              <thead style={{ position: "sticky", top: 0, background: "var(--surface2)", zIndex: 1, boxShadow: "0 1px 0 var(--border)" }}>
+                <tr>
+                  <th style={{ padding: "8px 12px", color: "var(--text3)", fontWeight: 700, textAlign: "center" }}>Mo</th>
+                  <th style={{ padding: "8px 12px", color: "var(--text3)", fontWeight: 700 }}>Principal</th>
+                  <th style={{ padding: "8px 12px", color: "var(--text3)", fontWeight: 700 }}>Interest</th>
+                  <th style={{ padding: "8px 12px", color: "var(--text3)", fontWeight: 700 }}>Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.schedule.map((row, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "var(--surface)" : "var(--surface2)" }}>
+                    <td style={{ padding: "8px 12px", color: "var(--text2)", textAlign: "center", fontWeight: 600 }}>{row.month}</td>
+                    <td style={{ padding: "8px 12px", color: "var(--text)" }}>{new Intl.NumberFormat().format(row.principal)}</td>
+                    <td style={{ padding: "8px 12px", color: "#f59e0b" }}>{new Intl.NumberFormat().format(row.interest)}</td>
+                    <td style={{ padding: "8px 12px", color: "var(--brand)", fontWeight: 700 }}>{new Intl.NumberFormat().format(row.balance)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── Steps ── */}
+      {result.steps?.length > 0 && (
+        <div style={{ marginTop: 14, textAlign: "left" }}>
+          <details style={{ background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", padding: "2px 16px" }}>
+            <summary style={{ fontSize: 12, fontWeight: 800, color: "var(--brand)", textTransform: "uppercase", letterSpacing: ".05em", cursor: "pointer", padding: "10px 0", outline: "none", listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>Step-by-Step Explanation</span>
+              <span style={{fontSize: 14}}>▾</span>
+            </summary>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingBottom: 16 }}>
+              {result.steps.map((step, i) => (
+                <div key={i} style={{ padding: "10px 14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-md)" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", marginBottom: 4 }}>{step.title}</div>
+                  <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{step.desc}</div>
+                </div>
+              ))}
+            </div>
+          </details>
+        </div>
+      )}
 
       {/* ── Toolbar ── */}
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
@@ -457,12 +529,14 @@ export function Panel({ result, loading, label, shareParams }) {
   );
 }
 
-export const buildResult = (label, val, stats, insights, chart, breakdowns) => ({
+export const buildResult = (label, val, stats, insights, chart, breakdowns, schedule, steps) => ({
   primary: { label, value: val },
   stats: stats || [],
   insights: insights || [],
   chart: chart || null,
-  breakdowns: breakdowns || []
+  breakdowns: breakdowns || [],
+  schedule: schedule || null,
+  steps: steps || null
 });
 
 export const useCurrency = () => {

@@ -48,7 +48,7 @@ export function EMIForm(){
         {label:"Affordable If Income",value:fm(d.affordIncome40)+"/mo"}
       ];
 
-      setRes(buildResult("Monthly EMI",fm(d.emi), stats, d.insights, chart, d.breakdowns));
+      setRes(buildResult("Monthly EMI",fm(d.emi), stats, d.insights, chart, d.breakdowns, d.fullSchedule));
       setLoad(false);
     },150); // slight debounce for smooth slider feel
     return()=>clearTimeout(t);

@@ -29,6 +29,24 @@ export function PercentageForm(){
               <span style={{fontSize:18,fontWeight:800,color:"var(--brand)",fontFamily:"var(--font-display)"}}>{r.signed&&r.a>0?"+":""}{r.a}{r.unit||""}</span>
             </div>
           ))}
+          {res.steps?.length > 0 && (
+            <div style={{ marginTop: 14, textAlign: "left" }}>
+              <details style={{ background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", padding: "2px 16px" }}>
+                <summary style={{ fontSize: 12, fontWeight: 800, color: "var(--brand)", textTransform: "uppercase", letterSpacing: ".05em", cursor: "pointer", padding: "10px 0", outline: "none", listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>Step-by-Step Explanation</span>
+                  <span style={{fontSize: 14}}>▾</span>
+                </summary>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingBottom: 16 }}>
+                  {res.steps.map((step, i) => (
+                    <div key={i} style={{ padding: "10px 14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-md)" }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", marginBottom: 4 }}>{step.title}</div>
+                      <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{step.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -72,7 +90,7 @@ export function QuadraticForm(){
       const chart=d.pts?{type:"line",data:d.pts,xKey:"x",keys:["y"]}:null;
       const resultObj = buildResult("Roots",d.roots.length?d.roots.join(", "):d.rootType,
         [{label:"Discriminant",value:d.discriminant},{label:"Root Type",value:d.rootType},{label:"Vertex X",value:d.vertex.x},{label:"Vertex Y",value:d.vertex.y}],
-        d.insights,chart,d.breakdowns);
+        d.insights,chart,d.breakdowns, null, d.steps);
       resultObj.raw = d;
       setRes(resultObj);
     },80);
@@ -86,26 +104,7 @@ export function QuadraticForm(){
       <Row3><N label="a (x²)" id="qa" value={a} onChange={setA}/><N label="b (x)" id="qb" value={b} onChange={setB}/><N label="c (constant)" id="qc" value={c} onChange={setC}/></Row3>
       {res&&(
         <>
-          <ResultBox label={res.primary.label} value={res.primary.value}/>
-          <StatsGrid items={res.stats}/>
-          
-          {res.raw?.steps && (
-            <div style={{marginTop: 16, marginBottom: 16}}>
-              <p style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:".08em",color:"var(--text3)",marginBottom:8}}>Step-by-Step Explanation</p>
-              <div style={{display: "flex", flexDirection: "column", gap: 8}}>
-                {res.raw.steps.map((step, i) => (
-                  <div key={i} style={{padding: "12px 16px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)"}}>
-                    <div style={{fontSize: 11, fontWeight: 700, color: "var(--brand)", textTransform: "uppercase", marginBottom: 4}}>{step.title}</div>
-                    <div style={{fontSize: 14, fontFamily: "var(--font-mono)", color: "var(--text)"}}>{step.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <InsightBox insights={res.insights}/>
-          <CalcChart chartData={res.chart}/>
-          <Breakdown rows={res.breakdowns}/>
+          <Panel result={res} loading={null} label="Quadratic" />
         </>
       )}
     </div>
@@ -129,7 +128,7 @@ export function PythagoreanForm(){
       if(!d){setRes(null);return;}
       setRes(buildResult(`Side ${solve.toUpperCase()}`,d.result.toString(),
         [{label:"Perimeter",value:d.perimeter},{label:"Area",value:d.area},{label:"All Sides",value:`${d.sides.a}, ${d.sides.b}, ${d.sides.c}`}],
-        d.insights,null,d.breakdowns));
+        d.insights,null,d.breakdowns, null, d.steps));
     },80);
     return()=>clearTimeout(t);
   },[a,b,solve]);
@@ -137,7 +136,7 @@ export function PythagoreanForm(){
     <div>
       <Tabs tabs={["Find c","Find a","Find b"]} active={`Find ${solve}`} onChange={v=>setSolve(v.split(" ")[1])}/>
       <Row2><N label="Side a" id="pa" value={a} onChange={setA}/><N label="Side b" id="pb" value={b} onChange={setB}/></Row2>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><Breakdown rows={res.breakdowns}/></>}
+      {res&&<Panel result={res} loading={null} label="Pythagorean" />}
     </div>
   );
 }
@@ -150,7 +149,7 @@ export function FractionForm(){
     const t=setTimeout(()=>{
       const d=calcFraction({n1,d1,n2,d2,op});
       if(!d){setRes(null);return;}
-      setRes(buildResult("Result",d.result,[{label:"Decimal",value:d.decimal},{label:"Mixed",value:d.mixed||"N/A"}],d.insights,null,d.breakdowns));
+      setRes(buildResult("Result",d.result,[{label:"Decimal",value:d.decimal},{label:"Mixed",value:d.mixed||"N/A"}],d.insights,null,d.breakdowns, null, d.steps));
     },80);
     return()=>clearTimeout(t);
   },[n1,d1,n2,d2,op]);
