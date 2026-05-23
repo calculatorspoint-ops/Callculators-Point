@@ -1,4 +1,6 @@
-export const constructionCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const constructionCalculators: CalculatorConfig[] = [
   {
   id: 'concrete',
   slug: 'concrete-calculator',

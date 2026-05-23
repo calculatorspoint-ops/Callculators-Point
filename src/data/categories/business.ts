@@ -1,4 +1,6 @@
-export const businessCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const businessCalculators: CalculatorConfig[] = [
   {
   id: 'markup',
   slug: 'markup-calculator',

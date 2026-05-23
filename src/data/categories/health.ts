@@ -1,4 +1,6 @@
-export const healthCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const healthCalculators: CalculatorConfig[] = [
   {
   id: 'bmi',
   slug: 'bmi-calculator',

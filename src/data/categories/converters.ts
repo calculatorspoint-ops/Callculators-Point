@@ -1,4 +1,6 @@
-export const convertersCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const convertersCalculators: CalculatorConfig[] = [
   {
   id: 'length',
   slug: 'length-converter',

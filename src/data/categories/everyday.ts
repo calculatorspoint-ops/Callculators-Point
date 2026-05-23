@@ -1,4 +1,6 @@
-export const everydayCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const everydayCalculators: CalculatorConfig[] = [
   {
   id: 'age',
   slug: 'age-calculator',

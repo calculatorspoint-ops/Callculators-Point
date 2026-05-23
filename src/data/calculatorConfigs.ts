@@ -1,13 +1,13 @@
-import { financeCalculators } from './categories/finance.js';
-import { healthCalculators } from './categories/health.js';
-import { mathCalculators } from './categories/math.js';
-import { educationCalculators } from './categories/education.js';
-import { convertersCalculators } from './categories/converters.js';
-import { everydayCalculators } from './categories/everyday.js';
-import { futureCalculators } from './categories/future.js';
-import { constructionCalculators } from './categories/construction.js';
-import { technologyCalculators } from './categories/technology.js';
-import { businessCalculators } from './categories/business.js';
+import { financeCalculators } from './categories/finance';
+import { healthCalculators } from './categories/health';
+import { mathCalculators } from './categories/math';
+import { educationCalculators } from './categories/education';
+import { convertersCalculators } from './categories/converters';
+import { everydayCalculators } from './categories/everyday';
+import { futureCalculators } from './categories/future';
+import { constructionCalculators } from './categories/construction';
+import { technologyCalculators } from './categories/technology';
+import { businessCalculators } from './categories/business';
 
 export interface CalculatorCategory {
   id: string;

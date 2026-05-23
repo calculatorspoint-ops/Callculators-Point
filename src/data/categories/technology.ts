@@ -1,4 +1,6 @@
-export const technologyCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const technologyCalculators: CalculatorConfig[] = [
   {
   id: 'subnet',
   slug: 'subnet-calculator',

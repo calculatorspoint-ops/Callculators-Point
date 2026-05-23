@@ -1,4 +1,6 @@
-export const futureCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const futureCalculators: CalculatorConfig[] = [
   {
   id: 'fv',
   slug: 'future-value-calculator',

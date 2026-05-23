@@ -1,4 +1,6 @@
-export const mathCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const mathCalculators: CalculatorConfig[] = [
   {
   id: 'percentage',
   slug: 'percentage-calculator',

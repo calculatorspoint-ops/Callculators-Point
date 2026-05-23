@@ -1,4 +1,6 @@
-export const educationCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const educationCalculators: CalculatorConfig[] = [
   {
   id: 'gpa',
   slug: 'gpa-calculator',

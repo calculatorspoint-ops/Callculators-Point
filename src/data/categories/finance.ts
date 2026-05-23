@@ -1,4 +1,6 @@
-export const financeCalculators = [
+import type { CalculatorConfig } from '../calculatorConfigs';
+
+export const financeCalculators: CalculatorConfig[] = [
   {
   id: 'emi',
   slug: 'loan-emi-calculator',
