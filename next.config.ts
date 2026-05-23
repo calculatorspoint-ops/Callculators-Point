@@ -12,6 +12,16 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
+
+  // ── Disable built-in CSS minifier ─────────────────────────────────────────
+  // Next.js bundles cssnano-simple which cannot parse modern CSS features used
+  // by Tailwind (e.g. fractional selectors like .left-1\/2, col-span-* etc).
+  // Disabling it prevents the Vercel build crash. CSS is still served correctly
+  // — it just won't be micro-minified (Gzip/Brotli compression covers this).
+  experimental: {
+    optimizeCss: false,
+  },
+
   // ── Images ────────────────────────────────────────────────────────────────
   images: {
     remotePatterns: [],
@@ -39,49 +49,12 @@ const nextConfig: NextConfig = {
   },
 
   // ── Webpack ───────────────────────────────────────────────────────────────
-  webpack(config, { isServer, webpack }) {
+  webpack(config) {
     // Resolve @/ → src/
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.resolve(__dirname, 'src'),
     };
-
-    // Allow .js imports to resolve to .ts files (Vite ESM pattern)
-// ── Patch CSS minimizer to handle modern CSS ────────────────────────────
-    // Next's built-in cssnano-simple fails on modern CSS features:
-    //   - grid-column: span 1 / span 1  (used by Tailwind col-span-*)
-    //   - .left-1\/2 selector           (Tailwind fractional utilities)
-    // We patch the CssMinimizerPlugin.optimizeAsset to catch parse errors
-    // and fall back to unminified CSS rather than crashing the build.
-    if (!isServer) {
-      config.plugins.push({
-        apply(compiler: any) {
-          compiler.hooks.afterPlugins.tap('PatchCssMinimizer', () => {
-            for (const plugin of compiler.options.plugins || []) {
-              // Find the CssMinimizerPlugin by its constructor name
-              if (plugin && plugin.constructor && plugin.constructor.name === 'CssMinimizerPlugin') {
-                const original = (plugin as { optimizeAsset?: Function }).optimizeAsset?.bind(plugin);
-                if (original) {
-                  (plugin as { optimizeAsset?: Function }).optimizeAsset = async function(file: string, asset: unknown) {
-                    try {
-                      return await original(file, asset);
-                    } catch (err) {
-                      console.warn(
-                        `[CSS] cssnano-simple failed on ${file} — using unminified fallback. Error: ${(err as Error).message}`
-                      );
-                      // Return the asset as-is (unminified) rather than crashing
-                      const { sources } = require('webpack');
-                      const source = (asset as { source: () => string }).source();
-                      return new sources.RawSource(source);
-                    }
-                  };
-                }
-              }
-            }
-          });
-        },
-      });
-    }
 
     return config;
   },
