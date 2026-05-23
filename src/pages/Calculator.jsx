@@ -4,7 +4,8 @@ import { Helmet } from "react-helmet-async";
 import { useAppStore } from "@/store/useAppStore.js";
 import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated } from "@/data/calculatorConfigs.js";
 import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
-import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, BarChart2, FileText, HelpCircle, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
+import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
+import { track } from "@vercel/analytics/react";
 
 const CalculatorWidget = lazy(() => import("@/components/calculator-core/CalculatorWidget.jsx").then(m => ({ default: m.CalculatorWidget })));
 const CurrencyBanner = lazy(() => import("@/components/ui/CurrencyBanner.jsx"));
@@ -84,7 +85,7 @@ function CrossCalcRecommendations({ slug }) {
 }
 
 /* ── Rich FAQ section with JSON-LD ──────────────────────────── */
-function FAQSection({ faqs, calcName }) {
+function FAQSection({ faqs }) {
   if (!faqs?.length) return null;
   return (
     <div>
@@ -108,15 +109,24 @@ function FAQSection({ faqs, calcName }) {
 function FeedbackWidget({ calcName, calcSlug }) {
   const [feedback, setFeedback] = useState(null);
 
+  const handleFeedback = (type) => {
+    setFeedback(type);
+    try {
+      track('Feedback', { calculator: calcSlug, helpful: type });
+    } catch (e) {
+      // Ignore if analytics is blocked
+    }
+  };
+
   return (
     <div style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--border)", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text2)" }}>Was this calculator helpful?</span>
         <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={() => setFeedback("up")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "up" ? "var(--brand)" : "var(--border)", background: feedback === "up" ? "var(--brand-l)" : "var(--surface)", color: feedback === "up" ? "var(--brand)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
+          <button onClick={() => handleFeedback("up")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "up" ? "var(--brand)" : "var(--border)", background: feedback === "up" ? "var(--brand-l)" : "var(--surface)", color: feedback === "up" ? "var(--brand)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
             <ThumbsUp size={14} /> Yes
           </button>
-          <button onClick={() => setFeedback("down")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "down" ? "var(--red)" : "var(--border)", background: feedback === "down" ? "rgba(220,53,69,.08)" : "var(--surface)", color: feedback === "down" ? "var(--red)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
+          <button onClick={() => handleFeedback("down")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "down" ? "var(--red)" : "var(--border)", background: feedback === "down" ? "rgba(220,53,69,.08)" : "var(--surface)", color: feedback === "down" ? "var(--red)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
             <ThumbsDown size={14} /> No
           </button>
         </div>
@@ -247,7 +257,7 @@ export default function Calculator() {
           {/* Section Nav */}
           <div className="calc-tabs mt-8 flex gap-2" aria-label="Calculator sections">
             {["Calculator","About","FAQ"].map(t => (
-              <button key={t} className={`calc-tab px-6 py-2.5 rounded-full text-sm font-bold transition-all ${t==="Calculator" ? "bg-[var(--text)] text-[var(--surface)] shadow-md" : "glass-panel hover:bg-white/50 dark:hover:bg-black/50 text-[var(--text2)]"}`}
+              <button key={t} className="calc-tab px-6 py-2.5 rounded-full text-sm font-bold transition-all glass-panel hover:bg-white/50 dark:hover:bg-black/50 text-[var(--text2)]"
                 onClick={() => document.getElementById(`tab-${t.toLowerCase()}`)?.scrollIntoView({ behavior:"smooth", block:"start" })}>
                 {t}
               </button>
@@ -322,7 +332,7 @@ export default function Calculator() {
 
           {/* FAQ */}
           <div id="tab-faq" className="content-card" role="tabpanel" aria-label="FAQ">
-            <FAQSection faqs={faqs} calcName={calc.name} />
+            <FAQSection faqs={faqs} />
           </div>
         </div>
 

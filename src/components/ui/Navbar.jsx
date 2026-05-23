@@ -99,7 +99,7 @@ function searchCalculators(query) {
 }
 
 /* ── Search Dropdown ──────────────────────────────────────────── */
-function SearchDropdown({ results, query, onClose, activeIdx }) {
+function SearchDropdown({ results, query, activeIdx }) {
   const noResults = query.trim().length > 1 && results.length === 0;
   const suggestions = noResults
     ? POPULAR.slice(0, 4)
@@ -108,7 +108,6 @@ function SearchDropdown({ results, query, onClose, activeIdx }) {
   return (
     <div className="navbar-search-drop" role="listbox" aria-label="Search results">
       {results.map((r, i) => {
-        const cat = CATEGORIES.find(c => c.id === r.cat);
         return (
           <Link
             key={r.id}
@@ -260,7 +259,7 @@ function SearchBox({ isMobile, isOpen, onClose }) {
           )}
         </div>
         {open && (
-          <SearchDropdown results={results} query={q} onClose={() => { setOpen(false); if (onClose) onClose(); }} activeIdx={activeIdx} />
+          <SearchDropdown results={results} query={q} activeIdx={activeIdx} />
         )}
       </div>
     );
@@ -295,7 +294,7 @@ function SearchBox({ isMobile, isOpen, onClose }) {
         )}
       </div>
       {open && (
-        <SearchDropdown results={results} query={q} onClose={() => setOpen(false)} activeIdx={activeIdx} />
+        <SearchDropdown results={results} query={q} activeIdx={activeIdx} />
       )}
     </div>
   );
@@ -307,25 +306,11 @@ export function Navbar() {
   const [mob, setMob]         = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const loc       = useLocation();
+  const loc = useLocation();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
-
-  useEffect(() => {
-    // if (!ENABLE_FIREBASE_AUTH) return;
-    // try {
-    //   const auth = getAuth();
-    //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    //     setUser(currentUser);
-    //   });
-    //   return () => unsubscribe();
-    // } catch (e) {
-    //   console.error("Firebase auth init error:", e);
-    // }
-  }, []);
 
   useEffect(() => { setMob(false); setSearchOpen(false); }, [loc.pathname]);
 
