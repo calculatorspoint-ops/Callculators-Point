@@ -58,8 +58,8 @@ const nextConfig: NextConfig = {
         apply(compiler: any) {
           compiler.hooks.afterPlugins.tap('PatchCssMinimizer', () => {
             for (const plugin of compiler.options.plugins || []) {
-              // Find the CssMinimizerPlugin by its internal marker
-              if (plugin && (plugin as { __next_css_remove?: boolean }).__next_css_remove) {
+              // Find the CssMinimizerPlugin by its constructor name
+              if (plugin && plugin.constructor && plugin.constructor.name === 'CssMinimizerPlugin') {
                 const original = (plugin as { optimizeAsset?: Function }).optimizeAsset?.bind(plugin);
                 if (original) {
                   (plugin as { optimizeAsset?: Function }).optimizeAsset = async function(file: string, asset: unknown) {
