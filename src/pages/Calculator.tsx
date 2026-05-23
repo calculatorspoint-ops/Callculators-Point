@@ -2,7 +2,7 @@ import { useState, useEffect, lazy } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAppStore } from "@/store/useAppStore.js";
-import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated } from "@/data/calculatorConfigs.js";
+import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated, CalculatorConfig } from "@/data/calculatorConfigs.js";
 import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
 import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
 import { track } from "@vercel/analytics/react";
@@ -12,7 +12,7 @@ const CurrencyBanner = lazy(() => import("@/components/ui/CurrencyBanner.jsx"));
 const ExportToolbar = lazy(() => import("@/core/export-engine/ExportToolbar.tsx").then(m => ({ default: m.ExportToolbar })));
 
 /* ── Smart cross-calculator recommendations ──────────────────── */
-const CROSS_LINKS = {
+const CROSS_LINKS: Record<string, string[]> = {
   "bmi-calculator": ["calorie-calculator", "body-fat-calculator", "ideal-weight-calculator"],
   "calorie-calculator": ["bmr-calculator", "macro-calculator", "bmi-calculator"],
   "bmr-calculator": ["calorie-calculator", "macro-calculator", "water-intake-calculator"],
@@ -59,10 +59,10 @@ const CROSS_LINKS = {
   "scientific-calculator": ["quadratic-calculator", "statistics-calculator", "percentage-calculator"],
 };
 
-function CrossCalcRecommendations({ slug }) {
-  const links = CROSS_LINKS[slug];
+function CrossCalcRecommendations({ slug }: { slug?: string }) {
+  const links = slug ? CROSS_LINKS[slug] : [];
   if (!links?.length) return null;
-  const calcs = links.map(s => getCalcBySlug(s)).filter(Boolean).slice(0, 3);
+  const calcs = links.map(s => getCalcBySlug(s)).filter((c): c is CalculatorConfig => !!c).slice(0, 3);
   if (!calcs.length) return null;
   return (
     <div className="side-card" style={{ borderRadius:"var(--r-xl)", overflow:"hidden" }}>
@@ -85,7 +85,7 @@ function CrossCalcRecommendations({ slug }) {
 }
 
 /* ── Rich FAQ section with JSON-LD ──────────────────────────── */
-function FAQSection({ faqs }) {
+function FAQSection({ faqs }: { faqs?: { q: string; a: string }[] }) {
   if (!faqs?.length) return null;
   return (
     <div>
@@ -106,10 +106,10 @@ function FAQSection({ faqs }) {
   );
 }
 
-function FeedbackWidget({ calcName, calcSlug }) {
-  const [feedback, setFeedback] = useState(null);
+function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcSlug: string }) {
+  const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
 
-  const handleFeedback = (type) => {
+  const handleFeedback = (type: "up" | "down") => {
     setFeedback(type);
     try {
       track('Feedback', { calculator: calcSlug, helpful: type });
@@ -144,7 +144,7 @@ function FeedbackWidget({ calcName, calcSlug }) {
 
 export default function Calculator() {
   const { slug } = useParams();
-  const calc = getCalcBySlug(slug);
+  const calc = slug ? getCalcBySlug(slug) : null;
   const { toggleFavorite, favorites, addRecent } = useAppStore();
 
   // ── Track recently used calculators ──────────────────────────
@@ -157,7 +157,7 @@ export default function Calculator() {
   const isFav   = favorites.includes(calc.id);
   const related = getRelated(calc, 7);
   const cat     = CATEGORIES.find(c => c.id === calc.cat);
-  const faqs    = [...(CALC_FAQS[slug] || []), ...BASE_FAQS];
+  const faqs    = [...(slug && (CALC_FAQS as Record<string, { q: string; a: string }[]>)[slug] ? (CALC_FAQS as Record<string, { q: string; a: string }[]>)[slug] : []), ...BASE_FAQS];
   const popular = ALL_CALCULATORS.filter(c => c.cat === calc.cat && c.id !== calc.id && c.popular).slice(0, 6);
 
   const share = () => {
