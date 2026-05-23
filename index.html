@@ -185,6 +185,24 @@
       }
     }
     </script>
+    <script>
+      (function() {
+        try {
+          var store = localStorage.getItem('app-storage');
+          if (store) {
+            var state = JSON.parse(store).state;
+            if (state && state.theme === 'dark') {
+              document.documentElement.classList.add('dark');
+            }
+          } else {
+            // Default to dark mode or system preference if preferred
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              document.documentElement.classList.add('dark');
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <!-- ── STATIC HERO SHELL: Renders immediately before React JS loads.

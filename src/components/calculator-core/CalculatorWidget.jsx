@@ -196,7 +196,7 @@ function FormLoader() {
   );
 }
 
-const FORMS = {
+export const FORMS = {
   // ── Finance (existing) ────────────────────────────────────────────
   "loan-emi-calculator":               Finance.EMIForm,
   "mortgage-calculator":               Finance.MortgageForm,

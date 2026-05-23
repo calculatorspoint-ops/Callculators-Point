@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense, useCallback } from "react";
+import { useState, useEffect, lazy } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAppStore } from "@/store/useAppStore.js";
@@ -64,7 +64,7 @@ function CrossCalcRecommendations({ slug }) {
   const calcs = links.map(s => getCalcBySlug(s)).filter(Boolean).slice(0, 3);
   if (!calcs.length) return null;
   return (
-    <div style={{ background:"var(--surface)", border:"1.5px solid var(--border)", borderRadius:"var(--r-xl)", overflow:"hidden", boxShadow:"var(--sh2)" }}>
+    <div className="side-card" style={{ borderRadius:"var(--r-xl)", overflow:"hidden" }}>
       <div style={{ padding:"12px 16px", background:"var(--surf2)", borderBottom:"1px solid var(--border)", display:"flex", alignItems:"center", gap:8 }}>
         <Lightbulb size={14} style={{ color:"var(--text-accent)" }} />
         <span style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".05em", color:"var(--text-accent)" }}>Recommended Next</span>
@@ -136,7 +136,6 @@ export default function Calculator() {
   const { slug } = useParams();
   const calc = getCalcBySlug(slug);
   const { toggleFavorite, favorites, addRecent } = useAppStore();
-  const [activeTab, setActiveTab] = useState("calculator");
 
   // ── Track recently used calculators ──────────────────────────
   useEffect(() => {
@@ -194,8 +193,7 @@ export default function Calculator() {
           "applicationCategory": cat?.name === "Finance & Money" ? "FinanceApplication" : cat?.name === "Health & Fitness" ? "HealthApplication" : "UtilityApplication",
           "operatingSystem": "All",
           "browserRequirements": "Requires JavaScript",
-          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-          "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "ratingCount": "1250", "bestRating": "5" }
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
         })}</script>
       </Helmet>
 
@@ -246,13 +244,10 @@ export default function Calculator() {
             </div>
           </div>
 
-          {/* Tab nav */}
-          <div className="calc-tabs mt-8 flex gap-2" role="tablist" aria-label="Calculator sections">
+          {/* Section Nav */}
+          <div className="calc-tabs mt-8 flex gap-2" aria-label="Calculator sections">
             {["Calculator","About","FAQ"].map(t => (
               <button key={t} className={`calc-tab px-6 py-2.5 rounded-full text-sm font-bold transition-all ${t==="Calculator" ? "bg-[var(--text)] text-[var(--surface)] shadow-md" : "glass-panel hover:bg-white/50 dark:hover:bg-black/50 text-[var(--text2)]"}`}
-                role="tab"
-                aria-controls={`tab-${t.toLowerCase()}`}
-                aria-selected={t === "Calculator"}
                 onClick={() => document.getElementById(`tab-${t.toLowerCase()}`)?.scrollIntoView({ behavior:"smooth", block:"start" })}>
                 {t}
               </button>
@@ -279,8 +274,10 @@ export default function Calculator() {
               <p style={{ fontSize:12, color:"var(--text3)", maxWidth:400 }}>{calc.desc}</p>
             </div>
             <div className="calc-card-body calculator-export-root">
-              <CalculatorWidget calc={calc} />
-              <ExportToolbar targetSelector=".calculator-export-root" filenamePrefix={calc.name.replace(/\s+/g, '_')} />
+              <div className="calculator-result-zone">
+                <CalculatorWidget calc={calc} />
+              </div>
+              <ExportToolbar targetSelector=".calculator-result-zone" filenamePrefix={calc.name.replace(/\s+/g, '_')} />
               <FeedbackWidget calcName={calc.name} calcSlug={calc.slug} />
             </div>
           </div>
@@ -301,14 +298,18 @@ export default function Calculator() {
             )}
             <p>
               Our {calc.name.toLowerCase()} is designed for students, professionals, business owners, and
-              everyday users who need quick, reliable answers. Results include <strong>visual charts</strong>, a <strong>step-by-step
-              breakdown</strong>, and <strong>smart insights</strong> so you don't just get a number — you understand it.
+              everyday users who need quick, reliable answers. 
+              {calc.hasChart || calc.hasSteps ? (
+                <> Results include {calc.hasChart && <strong>visual charts, </strong>}{calc.hasSteps && <strong>step-by-step breakdowns, </strong>}and <strong>smart insights</strong> so you don't just get a number — you understand it.</>
+              ) : (
+                <> Results include <strong>smart insights</strong> so you don't just get a number — you understand it.</>
+              )}
             </p>
             <h3 style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginTop:16, marginBottom:8 }}>✨ Key Features</h3>
             <ul style={{ fontSize:14, color:"var(--text2)", lineHeight:1.8, paddingLeft:20, marginBottom:12 }}>
               <li><strong>Instant results</strong> — no loading, no server roundtrips</li>
-              <li><strong>Visual charts</strong> — understand your data at a glance</li>
-              <li><strong>Step-by-step breakdown</strong> — see exactly how results are calculated</li>
+              {calc.hasChart && <li><strong>Visual charts</strong> — understand your data at a glance</li>}
+              {calc.hasSteps && <li><strong>Step-by-step breakdown</strong> — see exactly how results are calculated</li>}
               <li><strong>Smart insights</strong> — contextual tips based on your specific inputs</li>
               <li><strong>Save & export</strong> — download CSV or save results for comparison</li>
               <li><strong>100% private</strong> — all data stays in your browser</li>
@@ -383,13 +384,7 @@ export default function Calculator() {
             </div>
           )}
 
-          {/* Ad slot */}
-          <div style={{ border:"2px dashed var(--border)", borderRadius:"var(--r-xl)", padding:16, textAlign:"center", background:"var(--surface2)" }}>
-            <p style={{ fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:".08em", color:"var(--text3)", marginBottom:10 }}>Advertisement</p>
-            <div style={{ height:250, background:"var(--surface)", border:"1px solid var(--border2)", borderRadius:"var(--r-lg)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <span style={{ fontSize:11, color:"var(--text3)" }}>300×250</span>
-            </div>
-          </div>
+
 
           {/* Popular in category */}
           {popular.length > 0 && (

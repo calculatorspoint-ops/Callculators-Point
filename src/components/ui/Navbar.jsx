@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore.js";
 import { ALL_CALCULATORS, CATEGORIES, POPULAR } from "@/data/calculatorConfigs.js";
@@ -151,42 +151,25 @@ function SearchDropdown({ results, query, onClose, activeIdx }) {
   );
 }
 
-export function Navbar() {
-  const { t, i18n } = useTranslation();
-  const { theme, toggleTheme, searchHistory, addSearchHistory } = useAppStore();
-  const [q, setQ]             = useState("");
+function SearchBox({ isMobile, isOpen, onClose }) {
+  const navigate = useNavigate();
+  const { addSearchHistory } = useAppStore();
+  const [q, setQ] = useState("");
   const [results, setResults] = useState([]);
-  const [open, setOpen]       = useState(false);
-  const [mob, setMob]         = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [activeIdx, setActiveIdx]   = useState(-1);
-  const [user, setUser] = useState(null);
-  const ref       = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(-1);
+  const inputRef = useRef(null);
   const searchRef = useRef(null);
-  const inputRef  = useRef(null);
-  const mobInputRef = useRef(null);
-  const loc       = useLocation();
   const debounceRef = useRef(null);
+  const loc = useLocation();
 
+  useEffect(() => { setOpen(false); setQ(""); setActiveIdx(-1); }, [loc.pathname]);
+  
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
-
-  useEffect(() => {
-    // if (!ENABLE_FIREBASE_AUTH) return;
-    // try {
-    //   const auth = getAuth();
-    //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-    //     setUser(currentUser);
-    //   });
-    //   return () => unsubscribe();
-    // } catch (e) {
-    //   console.error("Firebase auth init error:", e);
-    // }
-  }, []);
-
-  useEffect(() => { setMob(false); setOpen(false); setSearchOpen(false); setQ(""); setActiveIdx(-1); }, [loc.pathname]);
+    if (isMobile && isOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isMobile, isOpen]);
 
   // Debounced search
   useEffect(() => {
@@ -209,28 +192,21 @@ export function Navbar() {
   // Click outside to close
   useEffect(() => {
     const h = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
         setOpen(false);
         setActiveIdx(-1);
-      }
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setSearchOpen(false);
-        setQ("");
-        setActiveIdx(-1);
+        if (isMobile && onClose) {
+           onClose();
+        }
       }
     };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("mob-menu-open", mob);
-    return () => { document.documentElement.classList.remove("mob-menu-open"); };
-  }, [mob]);
+  }, [isMobile, onClose]);
 
   // Keyboard navigation
   const handleKeyDown = useCallback((e) => {
-    if (!open) return;
+    if (!open && !isMobile) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setActiveIdx(i => Math.min(i + 1, results.length - 1));
@@ -241,19 +217,122 @@ export function Navbar() {
       setOpen(false);
       setQ("");
       setActiveIdx(-1);
+      if (isMobile && onClose) onClose();
     } else if (e.key === "Enter" && activeIdx >= 0 && results[activeIdx]) {
       e.preventDefault();
       addSearchHistory(q);
-      window.location.href = `/calculator/${results[activeIdx].slug}`;
+      navigate(`/calculator/${results[activeIdx].slug}`);
+      setOpen(false);
+      if (isMobile && onClose) onClose();
+    } else if (e.key === "Enter" && q.trim() && results.length > 0 && activeIdx === -1) {
+      e.preventDefault();
+      addSearchHistory(q);
+      navigate(`/calculator/${results[0].slug}`);
+      setOpen(false);
+      if (isMobile && onClose) onClose();
     }
-  }, [open, activeIdx, results, q, addSearchHistory]);
+  }, [open, activeIdx, results, q, addSearchHistory, isMobile, navigate, onClose]);
 
-  const handleSubmit = useCallback(() => {
-    if (q.trim()) addSearchHistory(q);
-    if (activeIdx >= 0 && results[activeIdx]) {
-      window.location.href = `/calculator/${results[activeIdx].slug}`;
-    }
-  }, [q, activeIdx, results, addSearchHistory]);
+  if (isMobile && !isOpen) return null;
+
+  if (isMobile) {
+    return (
+      <div className="navbar-mobile-search" ref={searchRef}>
+        <div className="navbar-mobile-search-inner">
+          <Search size={15} style={{ color: "var(--text3)", flexShrink: 0 }} />
+          <input
+            ref={inputRef}
+            value={q}
+            onChange={e => setQ(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={`Search ${ALL_CALCULATORS.length}+ calculators…`}
+            className="navbar-search-input"
+            aria-label="Search calculators"
+            autoComplete="off"
+          />
+          {q && (
+            <button
+              onClick={() => { setQ(""); setOpen(false); }}
+              className="navbar-search-clear"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        {open && (
+          <SearchDropdown results={results} query={q} onClose={() => { setOpen(false); if (onClose) onClose(); }} activeIdx={activeIdx} />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div ref={searchRef} className="navbar-search-desktop">
+      <div className="navbar-search-box">
+        <Search size={14} className="navbar-search-icon" />
+        <input
+          ref={inputRef}
+          value={q}
+          onChange={e => setQ(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => q.trim() && setOpen(true)}
+          placeholder="Search calculators…"
+          className="navbar-search-input"
+          aria-label="Search calculators"
+          aria-expanded={open}
+          aria-haspopup="listbox"
+          role="combobox"
+          autoComplete="off"
+        />
+        {q && (
+          <button
+            onClick={() => { setQ(""); setOpen(false); inputRef.current?.focus(); }}
+            className="navbar-search-clear"
+            aria-label="Clear search"
+          >
+            ×
+          </button>
+        )}
+      </div>
+      {open && (
+        <SearchDropdown results={results} query={q} onClose={() => setOpen(false)} activeIdx={activeIdx} />
+      )}
+    </div>
+  );
+}
+
+export function Navbar() {
+  const { t, i18n } = useTranslation();
+  const { theme, toggleTheme } = useAppStore();
+  const [mob, setMob]         = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const loc       = useLocation();
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
+  useEffect(() => {
+    // if (!ENABLE_FIREBASE_AUTH) return;
+    // try {
+    //   const auth = getAuth();
+    //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    //     setUser(currentUser);
+    //   });
+    //   return () => unsubscribe();
+    // } catch (e) {
+    //   console.error("Firebase auth init error:", e);
+    // }
+  }, []);
+
+  useEffect(() => { setMob(false); setSearchOpen(false); }, [loc.pathname]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("mob-menu-open", mob);
+    return () => { document.documentElement.classList.remove("mob-menu-open"); };
+  }, [mob]);
 
   return (
     <>
@@ -286,37 +365,7 @@ export function Navbar() {
           <div className="navbar-controls">
 
             {/* Desktop search */}
-            <div ref={ref} className="navbar-search-desktop">
-              <div className="navbar-search-box">
-                <Search size={14} className="navbar-search-icon" />
-                <input
-                  ref={inputRef}
-                  value={q}
-                  onChange={e => setQ(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  onFocus={() => q.trim() && setOpen(true)}
-                  placeholder="Search calculators…"
-                  className="navbar-search-input"
-                  aria-label="Search calculators"
-                  aria-expanded={open}
-                  aria-haspopup="listbox"
-                  role="combobox"
-                  autoComplete="off"
-                />
-                {q && (
-                  <button
-                    onClick={() => { setQ(""); setOpen(false); inputRef.current?.focus(); }}
-                    className="navbar-search-clear"
-                    aria-label="Clear search"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-              {open && (
-                <SearchDropdown results={results} query={q} onClose={() => setOpen(false)} activeIdx={activeIdx} />
-              )}
-            </div>
+            <SearchBox isMobile={false} />
 
             {/* Mobile search icon */}
             <button
@@ -386,35 +435,7 @@ export function Navbar() {
         </div>
 
         {/* ── Mobile search bar (expands below header) ── */}
-        {searchOpen && (
-          <div className="navbar-mobile-search" ref={searchRef}>
-            <div className="navbar-mobile-search-inner">
-              <Search size={15} style={{ color: "var(--text3)", flexShrink: 0 }} />
-              <input
-                ref={mobInputRef}
-                value={q}
-                onChange={e => setQ(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={`Search ${ALL_CALCULATORS.length}+ calculators…`}
-                className="navbar-search-input"
-                autoFocus
-                aria-label="Search calculators"
-                autoComplete="off"
-              />
-              {q && (
-                <button
-                  onClick={() => { setQ(""); setOpen(false); }}
-                  className="navbar-search-clear"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-            {open && (
-              <SearchDropdown results={results} query={q} onClose={() => { setSearchOpen(false); setOpen(false); }} activeIdx={activeIdx} />
-            )}
-          </div>
-        )}
+        <SearchBox isMobile={true} isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       </header>
 
       {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
