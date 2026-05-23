@@ -37,7 +37,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
     const saved = localStorage.getItem(`calc_input_${id}`);
     if (saved !== null) {
       isRestored.current = true;
-      const parsed = type === "number" ? saved : parseLocalizedNumber(saved);
+      const parsed = (type === "number" || type === "time" || type === "date") ? saved : parseLocalizedNumber(saved);
       if (String(parsed) !== String(value) && String(parsed) !== "NaN") {
         onChange(parsed);
       }
@@ -48,7 +48,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
     if (document.activeElement?.id !== id) {
       if (value === "" || value === null || value === undefined) {
         setDisplayValue("");
-      } else if (type === "number") {
+      } else if (type === "number" || type === "time" || type === "date") {
         setDisplayValue(String(value));
       } else {
         const parsed = parseLocalizedNumber(String(value));
@@ -61,7 +61,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
     const val = e.target.value;
     setDisplayValue(val);
     if (id) localStorage.setItem(`calc_input_${id}`, val);
-    if (type === "number") {
+    if (type === "number" || type === "time" || type === "date") {
       onChange(val);
     } else {
       const parsed = parseLocalizedNumber(val);
@@ -71,7 +71,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
 
   const handleBlur = (e) => {
     setFocused(false);
-    if (type !== "number" && displayValue !== "") {
+    if (type !== "number" && type !== "time" && type !== "date" && displayValue !== "") {
       const parsed = parseLocalizedNumber(displayValue);
       if (!isNaN(parsed)) {
         setDisplayValue(formatInputNumber(parsed));
@@ -149,22 +149,21 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
     }
   }, [id, value, onChange]);
 
-  const pct = Math.round(((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100);
-  // Extract unit from formatter if possible
+  const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100)) || 0;
   const unitStr = fmtFn ? fmtFn(1).toString().replace(/[0-9.]/g, '').trim() : "";
 
   return (
-    <div style={{ marginBottom: 22 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+    <div style={{ marginBottom: 28 }} className="mobile-premium-slider">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         {label && (
-          <label htmlFor={id} style={{ fontSize: 14, fontWeight: 700, color: "var(--text2)", letterSpacing: ".01em" }}>
+          <label htmlFor={id} style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", letterSpacing: ".01em" }}>
             {label}
           </label>
         )}
-        <div style={{
-          display: "flex", alignItems: "center", background: "var(--brand-l)",
-          borderRadius: 100, border: "1px solid var(--brand-ll)", overflow: "hidden",
-          padding: "2px 10px 2px 2px", boxShadow: "inset 0 1px 3px rgba(0,0,0,0.02)"
+        <div className="glass-panel" style={{
+          display: "flex", alignItems: "center", 
+          borderRadius: "var(--r-md)", border: "1px solid var(--border)", overflow: "hidden",
+          padding: "2px 10px 2px 2px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
         }}>
           <input
             type="number"
@@ -181,23 +180,39 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
             }}
             aria-label={label + " input"}
             style={{
-              width: 55, background: "transparent", border: "none", outline: "none",
-              textAlign: "right", fontSize: 14, fontWeight: 800, color: "var(--brand)",
-              padding: "4px 4px 4px 10px", minWidth: 0,
+              width: 65, background: "transparent", border: "none", outline: "none",
+              textAlign: "right", fontSize: 16, fontWeight: 800, color: "var(--brand)",
+              padding: "6px 4px 6px 10px", minWidth: 0,
               appearance: "none", MozAppearance: "textfield"
             }}
           />
-          {unitStr && <span style={{ fontSize: 13, fontWeight: 700, color: "var(--brand)", marginLeft: 2, pointerEvents: "none" }}>{unitStr}</span>}
+          {unitStr && <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text3)", marginLeft: 2, pointerEvents: "none" }}>{unitStr}</span>}
         </div>
       </div>
-      <div style={{ position: "relative" }}>
+      
+      {/* COMPLETELY REDESIGNED THICK PILL SLIDER */}
+      <div style={{ position: "relative", height: 48, borderRadius: 24, background: "var(--surface2)", border: "1.5px solid var(--border)", boxShadow: "inset 0 2px 6px rgba(0,0,0,0.03)" }}>
+        
+        {/* Fill Track */}
         <div style={{
-          position: "absolute", top: "50%", left: 0,
-          width: Math.min(Math.max(pct, 0), 100) + "%", height: 5, borderRadius: 10,
-          background: "linear-gradient(90deg, var(--brand-d), var(--brand))",
-          transform: "translateY(-50%)", pointerEvents: "none", zIndex: 0,
-          transition: "width .1s"
-        }} />
+          position: "absolute", top: 0, left: 0, bottom: 0,
+          width: `calc(${pct}% + ${48 - (pct/100)*48}px)`,
+          background: "linear-gradient(135deg, var(--brand), #3a0ca3)",
+          borderRadius: 24,
+          transition: "width 0.1s ease-out",
+          boxShadow: "inset 0 2px 4px rgba(255,255,255,0.2), 0 2px 8px rgba(37,99,235,0.2)"
+        }}>
+           {/* Dragger Affordance (inner pill inside the fill) */}
+           <div style={{
+             position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
+             display: "flex", gap: 3
+           }}>
+             <div style={{ width: 3, height: 16, borderRadius: 2, background: "rgba(255,255,255,0.6)" }} />
+             <div style={{ width: 3, height: 16, borderRadius: 2, background: "rgba(255,255,255,0.6)" }} />
+           </div>
+        </div>
+        
+        {/* Invisible Input */}
         <input
           type="range" id={id} min={min} max={max} step={step} value={value === '' ? min : value}
           onChange={e => {
@@ -206,12 +221,13 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
             onChange(v);
           }}
           aria-label={label}
-          style={{ position: "relative", zIndex: 1, background: "transparent", width: "100%" }}
+          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0, cursor: "pointer", margin: 0, zIndex: 10, WebkitTapHighlightColor: "transparent" }}
         />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-        <span style={{ fontSize: 10, color: "var(--text3)", fontWeight: 600 }}>{fmtFn ? fmtFn(min) : min}</span>
-        <span style={{ fontSize: 10, color: "var(--text3)", fontWeight: 600 }}>{fmtFn ? fmtFn(max) : max}</span>
+      
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, padding: "0 8px" }}>
+        <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(min) : min}</span>
+        <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(max) : max}</span>
       </div>
     </div>
   );
@@ -262,18 +278,8 @@ export function Tabs({ tabs, active, onChange }) {
         <button
           key={t} onClick={() => onChange(t)}
           aria-label={"Switch to " + t} aria-pressed={active === t}
-          style={{
-            flex: tabs.length > 3 ? "1 1 45%" : 1, padding: "9px 8px", fontSize: 13, fontWeight: 700,
-            border: "none", cursor: "pointer", fontFamily: "var(--font)",
-            borderRadius: "var(--r-md)",
-            transition: "all .18s cubic-bezier(.4,0,.2,1)",
-            background: active === t
-              ? "linear-gradient(135deg, var(--brand), var(--brand-d))"
-              : "transparent",
-            color: active === t ? "#fff" : "var(--text3)",
-            boxShadow: active === t ? "0 2px 8px rgba(67,97,238,.3)" : "none",
-            transform: active === t ? "scale(1)" : "scale(.97)"
-          }}
+          className={`f-tab ${active === t ? 'active' : ''}`}
+          style={{ flex: tabs.length > 3 ? "1 1 45%" : 1 }}
         >
           {t}
         </button>
@@ -314,23 +320,7 @@ export function Presets({ items, onApply }) {
         {items.map((p, i) => (
           <button key={i} onClick={() => onApply(p)}
             aria-label={"Apply preset " + p.label}
-            style={{
-              padding: "8px 14px", borderRadius: "var(--r-md)", fontSize: 12.5,
-              fontWeight: 700, border: "1.5px solid var(--border)",
-              background: "var(--surface)", color: "var(--text2)",
-              cursor: "pointer", transition: "all .18s", lineHeight: 1,
-              minHeight: 38, whiteSpace: "nowrap", flexShrink: 0
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = "var(--brand)";
-              e.currentTarget.style.color = "var(--brand)";
-              e.currentTarget.style.background = "var(--brand-l)";
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = "var(--border)";
-              e.currentTarget.style.color = "var(--text2)";
-              e.currentTarget.style.background = "var(--surface)";
-            }}>
+            className="preset-chip">
             {p.label}
           </button>
         ))}

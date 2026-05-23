@@ -200,44 +200,46 @@ export default function Calculator() {
       </Helmet>
 
       {/* ══════════ PAGE HEADER ══════════ */}
-      <div className="calc-page-header">
-        <div className="cph-inner">
+      <div className="calc-page-header premium-card-bg relative overflow-hidden rounded-b-[2.5rem] shadow-sm mb-6 border-b border-[var(--border)]">
+        {/* Subtle decorative glowing orbs */}
+        <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-[var(--brand)] rounded-full mix-blend-multiply filter blur-[80px] opacity-10 pointer-events-none"></div>
+        <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-purple-500 rounded-full mix-blend-multiply filter blur-[80px] opacity-10 pointer-events-none"></div>
+        
+        <div className="cph-inner relative z-10">
           {/* Breadcrumb */}
-          <nav className="cph-breadcrumb">
-            <Link to="/">Home</Link>
-            <span className="cph-breadcrumb-sep">/</span>
-            <Link to="/calculators">Calculators</Link>
-            <span className="cph-breadcrumb-sep">/</span>
-            <Link to={`/category/${calc.cat}`}>{cat?.name}</Link>
-            <span className="cph-breadcrumb-sep">/</span>
-            <span style={{ color:"rgba(255,255,255,.9)", fontWeight:600 }}>{calc.name}</span>
+          <nav className="cph-breadcrumb backdrop-blur-md bg-white/5 dark:bg-black/5 px-4 py-1.5 rounded-full border border-[var(--border)] inline-flex mb-6 shadow-sm">
+            <Link to="/" className="hover:text-[var(--brand)] transition-colors">Home</Link>
+            <span className="cph-breadcrumb-sep opacity-50">/</span>
+            <Link to="/calculators" className="hover:text-[var(--brand)] transition-colors">Calculators</Link>
+            <span className="cph-breadcrumb-sep opacity-50">/</span>
+            <Link to={`/category/${calc.cat}`} className="hover:text-[var(--brand)] transition-colors">{cat?.name}</Link>
+            <span className="cph-breadcrumb-sep opacity-50">/</span>
+            <span style={{ color:"var(--brand)", fontWeight:700 }}>{calc.name}</span>
           </nav>
 
           {/* Title row */}
           <div className="cph-title-row">
-            <div className="cph-icon">
+            <div className="cph-icon glass-panel flex items-center justify-center shadow-lg" style={{ width: 80, height: 80, borderRadius: 24, fontSize: 36 }}>
               {calc.icon}
             </div>
             <div className="cph-title-content">
-              <h1 className="cph-title">{calc.name}</h1>
-              <div className="cph-meta">
-                <div className="cph-badges">
-                  <span className="badge" style={{ background:"rgba(255,255,255,.15)", color:"rgba(255,255,255,.85)", border:"1px solid rgba(255,255,255,.2)", fontSize:11 }}>
+              <h1 className="cph-title text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-[var(--text)] to-[var(--text2)]">{calc.name}</h1>
+              <div className="cph-meta mt-4 flex flex-wrap gap-4 items-center">
+                <div className="cph-badges flex gap-2">
+                  <span className="badge glass-panel" style={{ fontSize:12, fontWeight: 600 }}>
                     {cat?.icon} {cat?.name}
                   </span>
-                  {calc.popular  && <span className="badge badge-green">⭐ Popular</span>}
-                  {calc.isNew    && <span className="badge badge-red">🆕 New</span>}
-                  {calc.hasChart && <span className="badge badge-blue">📊 Charts</span>}
+                  {calc.popular  && <span className="badge badge-green glass-panel !bg-green-500/10 !border-green-500/20 !text-green-700 dark:!text-green-400">⭐ Popular</span>}
+                  {calc.isNew    && <span className="badge badge-red glass-panel !bg-red-500/10 !border-red-500/20 !text-red-700 dark:!text-red-400">🆕 New</span>}
+                  {calc.hasChart && <span className="badge badge-blue glass-panel !bg-blue-500/10 !border-blue-500/20 !text-blue-700 dark:!text-blue-400">📊 Charts</span>}
                 </div>
-                <div className="cph-actions">
-                  <button onClick={() => toggleFavorite(calc.id)} className="cph-action-btn"
-                    onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.22)"}
-                    onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.12)"}>
-                    {isFav ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
-                    <span>{isFav ? "Saved" : "Save"}</span>
+                <div className="cph-actions flex gap-2">
+                  <button onClick={() => toggleFavorite(calc.id)} className="glass-panel hover:bg-white/40 dark:hover:bg-black/40 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all shadow-sm">
+                    {isFav ? <BookmarkCheck size={16} className="text-[var(--brand)]" /> : <Bookmark size={16} className="text-[var(--text2)]" />}
+                    <span className={isFav ? "text-[var(--brand)]" : "text-[var(--text2)]"}>{isFav ? "Saved" : "Save"}</span>
                   </button>
-                  <button onClick={share} className="cph-action-btn">
-                    <Share2 size={13} /> <span>Share</span>
+                  <button onClick={share} className="glass-panel hover:bg-white/40 dark:hover:bg-black/40 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold text-[var(--text2)] transition-all shadow-sm">
+                    <Share2 size={16} /> <span>Share</span>
                   </button>
                 </div>
               </div>
@@ -245,9 +247,9 @@ export default function Calculator() {
           </div>
 
           {/* Tab nav */}
-          <div className="calc-tabs" role="tablist" aria-label="Calculator sections">
+          <div className="calc-tabs mt-8 flex gap-2" role="tablist" aria-label="Calculator sections">
             {["Calculator","About","FAQ"].map(t => (
-              <button key={t} className={`calc-tab${t==="Calculator"?" active":""}`}
+              <button key={t} className={`calc-tab px-6 py-2.5 rounded-full text-sm font-bold transition-all ${t==="Calculator" ? "bg-[var(--text)] text-[var(--surface)] shadow-md" : "glass-panel hover:bg-white/50 dark:hover:bg-black/50 text-[var(--text2)]"}`}
                 role="tab"
                 aria-controls={`tab-${t.toLowerCase()}`}
                 aria-selected={t === "Calculator"}
@@ -328,7 +330,8 @@ export default function Calculator() {
 
           {/* Pro Tips / Intelligence */}
           {(calc.tips || calc.formula) && (
-            <div className="side-card" style={{ borderRadius:"var(--r-xl)", background:"linear-gradient(to bottom, var(--brand-l), var(--surface))", borderColor:"var(--border)", boxShadow:"0 4px 20px -5px rgba(67, 97, 238, 0.14)" }}>
+            <div className="side-card glass-panel relative overflow-hidden" style={{ borderRadius:"var(--r-xl)", borderColor:"var(--border)", boxShadow:"0 4px 30px -5px rgba(67, 97, 238, 0.15)" }}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--brand)] rounded-full mix-blend-multiply filter blur-[40px] opacity-20 pointer-events-none"></div>
               <div className="sec-head" style={{ background:"transparent", borderBottom:"1px solid var(--border)" }}>
                 <div className="sec-head-icon" style={{ background:"var(--surface)", boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>💡</div>
                 <span style={{ fontWeight:800, fontSize:13, color:"var(--brand)", textTransform:"uppercase", letterSpacing:".05em" }}>Pro Tips & Intel</span>
@@ -359,7 +362,7 @@ export default function Calculator() {
 
           {/* Related tools */}
           {related.length > 0 && (
-            <div className="side-card" style={{ borderRadius:"var(--r-xl)" }}>
+            <div className="side-card glass-panel" style={{ borderRadius:"var(--r-xl)" }}>
               <div className="sec-head" style={{ background: cat?.bg || "var(--surface2)" }}>
                 <div className="sec-head-icon" style={{ background: cat?.color + "30" || "var(--border)" }}>
                   {cat?.icon}
@@ -390,7 +393,7 @@ export default function Calculator() {
 
           {/* Popular in category */}
           {popular.length > 0 && (
-            <div className="side-card" style={{ borderRadius:"var(--r-xl)" }}>
+            <div className="side-card glass-panel" style={{ borderRadius:"var(--r-xl)" }}>
               <div className="sec-head" style={{ background:"var(--sec-popular-bg)" }}>
                 <div className="sec-head-icon" style={{ background:"var(--sec-popular-icon)" }}>⭐</div>
                 <span style={{ fontWeight:700, fontSize:13, color:"var(--sec-popular-text)" }}>Popular Tools</span>
@@ -405,7 +408,7 @@ export default function Calculator() {
           )}
 
           {/* Share box */}
-          <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:"var(--r-xl)", padding:16, textAlign:"center", boxShadow:"var(--s1)" }}>
+          <div className="glass-panel" style={{ border:"1px solid var(--border)", borderRadius:"var(--r-xl)", padding:16, textAlign:"center", boxShadow:"var(--s1)" }}>
             <p style={{ fontSize:13, fontWeight:600, color:"var(--text)", marginBottom:5 }}>Found this useful?</p>
             <p style={{ fontSize:12, color:"var(--text3)", marginBottom:14 }}>Share with someone who needs it</p>
             <button onClick={share} className="btn-outline" style={{ width:"100%", justifyContent:"center" }}>
