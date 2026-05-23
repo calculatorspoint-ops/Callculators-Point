@@ -91,6 +91,7 @@ export default function Home() {
   const { recent, favorites } = useAppStore();
   const recentCalcs   = recent.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
   const favoriteCalcs = favorites.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
+  const [showAllPopular, setShowAllPopular] = useState(false);
 
   return (
     <>
@@ -329,7 +330,7 @@ export default function Home() {
                 <span className="sidebar-card-title">Most Popular</span>
               </div>
               <div>
-                {POPULAR.map((c, i) => (
+                {(showAllPopular ? POPULAR : POPULAR.slice(0, 10)).map((c, i) => (
                   <Link key={c.id} to={`/calculator/${c.slug}`} className="sidebar-item">
                     <div className="sidebar-item-rank" style={{ background: i < 3 ? "var(--brand)" : "var(--surf2)", color: i < 3 ? "#fff" : "var(--text3)" }}>
                       {i + 1}
@@ -339,6 +340,16 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
+              {POPULAR.length > 10 && (
+                <button 
+                  onClick={() => setShowAllPopular(!showAllPopular)} 
+                  style={{ width: "100%", padding: "10px", background: "transparent", border: "none", borderTop: "1px solid var(--border)", color: "var(--brand)", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "var(--font)", transition: "background .15s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "var(--surf2)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                >
+                  {showAllPopular ? "View Less" : `View More (${POPULAR.length - 10})`}
+                </button>
+              )}
             </div>
 
             {/* New tools */}
