@@ -5,8 +5,8 @@
  */
 import { useState } from 'react';
 import { ChevronDown, Check, Globe, Info, X } from 'lucide-react';
-import { useGeoStore } from '@/core/geo-engine/geoStore.js';
-import { ALL_COUNTRIES, COUNTRIES_BY_CONTINENT, CONTINENTS } from '@/core/geo-engine/countryRules.js';
+import { useGeoStore } from '@/core/geo-engine/geoStore';
+import { ALL_COUNTRIES, COUNTRIES_BY_CONTINENT, CONTINENTS } from '@/core/geo-engine/countryRules';
 
 export function CurrencyBanner({ minimal = false }) {
   const countryCode  = useGeoStore(s => s.countryCode);

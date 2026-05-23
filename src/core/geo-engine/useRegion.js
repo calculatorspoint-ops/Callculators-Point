@@ -11,7 +11,7 @@
  */
 
 import { useMemo } from 'react';
-import { useGeoStore } from './geoStore.js';
+import { useGeoStore } from './geoStore';
 import {
   getRules,
   formatCurrency,
@@ -20,7 +20,7 @@ import {
   ALL_COUNTRIES,
   COUNTRIES_BY_CONTINENT,
   CONTINENTS,
-} from './countryRules.js';
+} from './countryRules';
 
 /**
  * @typedef {Object} RegionAPI

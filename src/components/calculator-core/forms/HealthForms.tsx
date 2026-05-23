@@ -5,7 +5,7 @@ import {
   calcBMI, calcCalorie, calcBMR, calcMacro, calcWater, 
   calcHeartRate, calcBodyFat, calcIdealWeight, calcOneRepMax, calcPregnancy,
   calcCaloriesBurned, calcSleep, MET_ACTIVITIES, round, fmtC, fmt 
-} from "@/core/calculationEngine.js";
+} from "@/core/calculationEngine";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
 } from './SharedComponents';
@@ -14,7 +14,7 @@ import { StatsGrid } from '@/components/ui/StatsGrid';
 import { InsightBox } from '@/components/ui/InsightBox';
 import { Breakdown } from '@/components/ui/Breakdown';
 import { CalcChart } from '@/components/charts/LazyCalcChart';
-import { readCalcParams } from "@/utils/urlParams.js";
+import { readCalcParams } from "@/utils/urlParams";
 
 // ── BMI ──────────────────────────────────────────────────────────────
 export function BMIForm(){
@@ -1448,11 +1448,11 @@ export function ConceptionForm() {
 }
 
 export function BodyTypeForm() {
-  return <ComingSoon name="Body Type" />;
+  return null;
 }
 
 export function GFRForm() {
-  return <ComingSoon name="GFR" />;
+  return null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

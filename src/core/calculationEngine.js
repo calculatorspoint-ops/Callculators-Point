@@ -1417,7 +1417,7 @@ export function calcRandom({ min=1, max=100, count=1, type="integer" }) {
     crypto.getRandomValues(arr);
     return arr[0] / (0xFFFFFFFF + 1);
   };
-  const gen=()=>type==="decimal"?round(secureRandom()*(mx-mn)+mn,4):Math.floor(secureRandom()*(mx-mn+1))+mn;
+  const gen=()=>type==="decimal.js"?round(secureRandom()*(mx-mn)+mn,4):Math.floor(secureRandom()*(mx-mn+1))+mn;
   const nums=Array.from({length:cnt},gen);
   return { numbers:nums, sum:round(nums.reduce((a,b)=>a+b,0),4), avg:round(nums.reduce((a,b)=>a+b,0)/cnt,4) };
 }

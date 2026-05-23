@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calcEMI, calcCompound, calcBMI } from "./calculationEngine.js";
+import { calcEMI, calcCompound, calcBMI } from "./calculationEngine";
 
 describe("Calculation Engine Core Functions", () => {
   it("calculates EMI correctly for standard loan", () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { compute, formatOutput } from "../utils/calculationEngine.js";
+import { compute, formatOutput } from "../utils/calculationEngine";
 import { useAppStore } from "../store/useAppStore";
 
 /**

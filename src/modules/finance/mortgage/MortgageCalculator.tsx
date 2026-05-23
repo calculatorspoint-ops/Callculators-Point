@@ -6,8 +6,8 @@ import { buildProjectionChart } from '../../../core/chart-engine';
 import { MortgageSchema } from './schemas/mortgageSchema';
 import { calculateMortgage, MortgageResult } from './engine/mortgageEngine';
 import { generateMortgageInsights } from './insights/mortgageInsights';
-import { useRegionCurrency } from '../../../core/geo-engine/useRegion.js';
-import { useGeoStore } from '../../../core/geo-engine/geoStore.js';
+import { useRegionCurrency } from '../../../core/geo-engine/useRegion';
+import { useGeoStore } from '../../../core/geo-engine/geoStore';
 
 // ── Form ──────────────────────────────────────────────────────────────────────
 function MortgageFormUI({ control }: { control: any }) {

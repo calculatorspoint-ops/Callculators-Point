@@ -1,16 +1,16 @@
 import { lazy } from "react";
 
 const Tech = {
-  SubnetForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.SubnetForm }))),
-  NumberBaseForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.NumberBaseForm }))),
-  ASCIIForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.ASCIIForm }))),
-  DataTransferForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.DataTransferForm }))),
-  PasswordStrengthForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.PasswordStrengthForm }))),
-  HashGeneratorForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.HashGeneratorForm }))),
-  RandomStringForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.RandomStringForm }))),
-  BandwidthForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.BandwidthForm }))),
-  IPRangeForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.IPRangeForm }))),
-  HexForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.HexForm }))),
+  SubnetForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.SubnetForm || (() => null) }))),
+  NumberBaseForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.NumberBaseForm || (() => null) }))),
+  ASCIIForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.ASCIIForm || (() => null) }))),
+  DataTransferForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.DataTransferForm || (() => null) }))),
+  PasswordStrengthForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.PasswordStrengthForm || (() => null) }))),
+  HashGeneratorForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.HashGeneratorForm || (() => null) }))),
+  RandomStringForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.RandomStringForm || (() => null) }))),
+  BandwidthForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.BandwidthForm || (() => null) }))),
+  IPRangeForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.IPRangeForm || (() => null) }))),
+  HexForm: lazy(() => import('../forms/TechForms').then((m: any) => ({ default: m.HexForm || (() => null) }))),
 };
 
 export const techForms = {

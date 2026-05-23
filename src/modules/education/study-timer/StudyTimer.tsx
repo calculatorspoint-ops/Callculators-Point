@@ -93,7 +93,7 @@ export function StudyTimer() {
       gain.gain.setValueAtTime(0.3, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
       osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.8);
-    } catch (_) {}
+    } catch (_) { /* empty */ }
   }, [phase]);
 
   const switchPhase = useCallback((newPhase: Phase) => {

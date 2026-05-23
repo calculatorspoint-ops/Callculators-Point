@@ -1,0 +1,58 @@
+/**
+ * app/tools/[slug]/page.tsx — SEO Landing Pages (SSG)
+ *
+ * These are pre-filled calculator landing pages targeting specific long-tail keywords.
+ * e.g., /tools/emi-calculator-for-car-loan
+ */
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import SEOLandingClient from './seo-landing-client';
+
+// Lazy-load landing data to avoid bundle bloat
+async function getLandingData(slug: string) {
+  const { getLandingBySlug, SEO_LANDING_PAGES } = await import('@/data/seoLandingData');
+  return { landing: getLandingBySlug(slug), all: SEO_LANDING_PAGES };
+}
+
+export async function generateStaticParams() {
+  try {
+    const { SEO_LANDING_PAGES } = await import('@/data/seoLandingData');
+    return (SEO_LANDING_PAGES || []).map((l: { slug: string }) => ({ slug: l.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { landing } = await getLandingData(slug);
+  if (!landing) return { title: 'Page Not Found' };
+
+  return {
+    title: `${landing.title} | CalculatorsPoint`,
+    description: landing.description,
+    keywords: landing.keywords,
+    alternates: { canonical: `https://calculatorspoint.com/tools/${slug}` },
+    openGraph: {
+      title: landing.title,
+      description: landing.description,
+      url: `https://calculatorspoint.com/tools/${slug}`,
+      type: 'website',
+    },
+  };
+}
+
+export default async function SEOLandingPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const { landing } = await getLandingData(slug);
+  if (!landing) notFound();
+  return <SEOLandingClient slug={slug} />;
+}

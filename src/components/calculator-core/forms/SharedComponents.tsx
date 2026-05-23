@@ -1,12 +1,12 @@
 // @ts-nocheck
 /* eslint-disable react-refresh/only-export-components */
 import { useState, useEffect, useRef } from "react";
-import { parseLocalizedNumber, formatInputNumber } from "@/utils/validation.js";
-import { useCurrencyStore, formatMoney as _fmtMoney } from "@/store/useCurrencyStore.js";
-import { useGeoStore } from "@/core/geo-engine/geoStore.js";
+import { parseLocalizedNumber, formatInputNumber } from "@/utils/validation";
+import { useCurrencyStore, formatMoney as _fmtMoney } from "@/store/useCurrencyStore";
+import { useGeoStore } from "@/core/geo-engine/geoStore";
 import { useAppStore } from "@/store/useAppStore";
-import { fmt, CURRENCIES } from "@/core/calculationEngine.js";
-import { copyShareLink } from "@/utils/urlParams.js";
+import { fmt, CURRENCIES } from "@/core/calculationEngine";
+import { copyShareLink } from "@/utils/urlParams";
 import { ResultBox } from '@/components/ui/ResultBox';
 import { StatsGrid } from '@/components/ui/StatsGrid';
 import { InsightBox } from '@/components/ui/InsightBox';
@@ -102,7 +102,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
         <input
           id={id} type={type} value={displayValue} onChange={handleChange}
           placeholder={placeholder} min={min} max={max} step={step}
-          inputMode={type === "number" ? "decimal" : undefined}
+          inputMode={type === "number" ? "decimal.js" : undefined}
           aria-label={label || placeholder}
           className="N-input"
           style={{

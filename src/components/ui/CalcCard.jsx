@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 export function CalcCard({ calc }) {
   return (
-    <Link to={`/calculator/${calc.slug}`}
+    <Link href={`/calculator/${calc.slug}`}
       className="block no-underline rounded-2xl border p-5 card-hover"
       style={{ background: "var(--card)", borderColor: "var(--border)" }}>
       <div className="flex items-start gap-4">

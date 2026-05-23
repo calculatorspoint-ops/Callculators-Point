@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { 
   calcPercentage, calcStatistics, calcQuadratic, calcPythagorean, 
   calcFraction, calcGPA, calcCGPA, calcScientific, calcLog, calcRatio, calcReadingTime, round, fmtC, fmt 
-} from "@/core/calculationEngine.js";
+} from "@/core/calculationEngine";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
 } from './SharedComponents';

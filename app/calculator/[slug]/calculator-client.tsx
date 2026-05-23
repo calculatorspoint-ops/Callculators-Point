@@ -1,0 +1,196 @@
+/**
+ * app/calculator/[slug]/calculator-client.tsx
+ *
+ * Client component that renders the existing Calculator.tsx page logic.
+ * We keep the calculator engine client-side (as designed by the migration plan).
+ */
+'use client';
+
+import { Suspense, lazy } from 'react';
+import { useAppStore } from '@/store/useAppStore';
+import { getCalcBySlug, getRelated, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
+import { BASE_FAQS, CALC_FAQS } from '@/data/faqData';
+import { Share2, Bookmark, BookmarkCheck } from 'lucide-react';
+import Link from 'next/link';
+import { CrossCalcRecommendations } from '@/components/calculator-core/CrossRecommendations';
+import { FAQSection } from '@/components/calculator-core/FAQSection';
+import { FeedbackWidget } from '@/components/calculator-core/FeedbackWidget';
+import { InfoAlert } from '@/components/ui/InfoAlert';
+
+const CalculatorWidget = lazy(() =>
+  import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget }))
+);
+const CurrencyBanner = lazy(() => import('@/components/ui/CurrencyBanner'));
+const ExportToolbar = lazy(() =>
+  import('@/core/export-engine/ExportToolbar').then(m => ({ default: m.ExportToolbar }))
+);
+
+function FormFallback() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300, flexDirection: 'column', gap: 12 }}>
+      <div style={{ width: 28, height: 28, border: '2.5px solid var(--border)', borderTopColor: 'var(--brand)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text3)' }}>Loading Calculator...</p>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+export function CalculatorPageClient({ slug }: { slug: string }) {
+  const calc = getCalcBySlug(slug);
+  const { toggleFavorite, favorites } = useAppStore();
+
+  if (!calc) return null;
+
+  const isFav   = favorites.includes(calc.id);
+  const related = getRelated(calc, 7);
+  const cat     = CATEGORIES.find(c => c.id === calc.cat);
+  const faqs    = [...((CALC_FAQS as Record<string, { q: string; a: string }[]>)[slug] ?? []), ...BASE_FAQS];
+  const popular = ALL_CALCULATORS.filter(c => c.cat === calc.cat && c.id !== calc.id && c.popular).slice(0, 6);
+
+  const share = () => {
+    if (navigator.share) {
+      navigator.share({ title: calc.name, text: `Free ${calc.name} — ${calc.desc}`, url: window.location.href }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(window.location.href).catch(() => {});
+    }
+  };
+
+  return (
+    <>
+      {/* ── Page Header ── */}
+      <div className="calc-page-head">
+        <div className="cph-inner">
+          <nav className="cph-breadcrumb" aria-label="Breadcrumb">
+            <Link href="/">Home</Link>
+            <span className="cph-breadcrumb-sep">›</span>
+            {cat && <Link href={`/category/${cat.id}`}>{cat.icon} {cat.name}</Link>}
+            <span className="cph-breadcrumb-sep">›</span>
+            <span style={{ color: 'rgba(255,255,255,.72)' }}>{calc.name}</span>
+          </nav>
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flexWrap: 'wrap' }}>
+            <div style={{ fontSize: 34, lineHeight: 1 }}>{calc.icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h1 className="cph-title">{calc.name}</h1>
+              {calc.desc && (
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', lineHeight: 1.6, marginBottom: 8 }}>
+                  {calc.desc}
+                </p>
+              )}
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {calc.popular && <span className="badge badge-amber">🔥 Popular</span>}
+                {calc.isNew && <span className="badge badge-green">✨ New</span>}
+                {calc.hasChart && <span className="badge badge-blue">📊 Chart</span>}
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <button
+                onClick={() => toggleFavorite(calc.id)}
+                className="nav-icon-btn"
+                aria-label={isFav ? 'Remove from favorites' : 'Save to favorites'}
+                style={{ background: 'rgba(255,255,255,.08)', borderColor: 'rgba(255,255,255,.15)', color: '#fff' }}
+              >
+                {isFav ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+              </button>
+              <button
+                onClick={share}
+                className="nav-icon-btn"
+                aria-label="Share calculator"
+                style={{ background: 'rgba(255,255,255,.08)', borderColor: 'rgba(255,255,255,.15)', color: '#fff' }}
+              >
+                <Share2 size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main layout ── */}
+      <div className="calc-layout">
+        {/* Left column: calculator */}
+        <div style={{ minWidth: 0 }}>
+          {/* Currency banner for finance calculators */}
+          {calc.cat === 'finance' && (
+            <Suspense fallback={null}>
+              <CurrencyBanner />
+            </Suspense>
+          )}
+
+
+
+          {/* Calculator form */}
+          <div className="calc-card" style={{ marginBottom: 16 }}>
+            <Suspense fallback={<FormFallback />}>
+              <CalculatorWidget calc={calc} />
+            </Suspense>
+          </div>
+
+          {/* Export toolbar */}
+          <Suspense fallback={null}>
+            <ExportToolbar filenamePrefix={calc.name} />
+          </Suspense>
+
+          {/* Feedback */}
+          <FeedbackWidget calcName={calc.name} calcSlug={calc.slug} />
+
+          {/* FAQ */}
+          {faqs.length > 0 && <FAQSection faqs={faqs} />}
+        </div>
+
+        {/* Right sidebar */}
+        <aside style={{ minWidth: 0 }}>
+          {/* Cross-recommendations */}
+          <CrossCalcRecommendations slug={slug} />
+
+          {/* Popular in category */}
+          {popular.length > 0 && (
+            <div className="side-card" style={{ marginTop: 16 }}>
+              <div className="sec-head" style={{ background: 'var(--surf2)' }}>
+                <span>🔥</span>
+                <span>Popular in {cat?.name}</span>
+              </div>
+              {popular.map(c => (
+                <Link
+                  key={c.id}
+                  href={`/calculator/${c.slug}`}
+                  className="calc-row"
+                >
+                  <span className="calc-row-icon">{c.icon}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {c.name}
+                  </span>
+                  <span className="calc-row-arrow">›</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Related calculators */}
+          {related.length > 0 && (
+            <div className="side-card" style={{ marginTop: 16 }}>
+              <div className="sec-head" style={{ background: 'var(--surf2)' }}>
+                <span>🔗</span>
+                <span>Related Tools</span>
+              </div>
+              {related.map(c => (
+                <Link
+                  key={c.id}
+                  href={`/calculator/${c.slug}`}
+                  className="calc-row"
+                >
+                  <span className="calc-row-icon">{c.icon}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {c.name}
+                  </span>
+                  <span className="calc-row-arrow">›</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </aside>
+      </div>
+    </>
+  );
+}

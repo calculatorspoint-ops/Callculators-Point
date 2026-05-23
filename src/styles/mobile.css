@@ -1,4 +1,4 @@
-/* ══════════════════════════════════════════════════════════════
+﻿/* ══════════════════════════════════════════════════════════════
    MOBILE COMPLETE FIX v3 — All pages, all breakpoints
    Covers: Home, AllCalculators, Category, Calculator, Footer,
            Navbar, Hero, Stat strip, Forms, Results
@@ -455,7 +455,7 @@ html.mob-menu-open body { overflow: hidden; }
     padding-bottom: env(safe-area-inset-bottom);
   }
   .footer {
-    padding-bottom: calc(max(20px, env(safe-area-inset-bottom)) + 8px);
+    padding-bottom: max(calc(20px + 8px), calc(env(safe-area-inset-bottom) + 8px));
   }
 }
 
@@ -483,7 +483,7 @@ html.mob-menu-open body { overflow: hidden; }
 
 /* ── AllCalculators card grid: safe minmax ── */
 .calc-grid-premium {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 
 /* ── Hero feature pills: wrap on mobile ── */

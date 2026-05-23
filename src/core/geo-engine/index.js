@@ -4,10 +4,10 @@
  */
 
 export { COUNTRY_RULES, ALL_COUNTRIES, COUNTRIES_BY_CONTINENT, CONTINENTS,
-         getRules, formatNumber, formatCurrency, formatDate } from './countryRules.js';
+         getRules, formatNumber, formatCurrency, formatDate } from './countryRules';
 
-export { useGeoStore, initGeoDetection } from './geoStore.js';
+export { useGeoStore, initGeoDetection } from './geoStore';
 
-export { useRegion, useRegionCurrency, useRegionTax, useRegionMeasure } from './useRegion.js';
+export { useRegion, useRegionCurrency, useRegionTax, useRegionMeasure } from './useRegion';
 
 export { FloatingRegionSwitcher } from './FloatingRegionSwitcher';

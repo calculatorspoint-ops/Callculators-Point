@@ -1,4 +1,4 @@
-import { useGeoStore } from "@/core/geo-engine/geoStore.js";
+import { useGeoStore } from "@/core/geo-engine/geoStore";
 
 export function InputField({ config, value, onChange, error }) {
   const currencySymbol = useGeoStore(s => s.rules?.currencySymbol ?? '$');

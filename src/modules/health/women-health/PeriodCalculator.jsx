@@ -1,5 +1,5 @@
+'use client';
 import { useState, useCallback } from "react";
-import { Helmet } from "react-helmet-async";
 import { Calendar, Heart, Info, ChevronDown, ChevronUp, Lock, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -117,21 +117,7 @@ export default function PeriodCalculator() {
 
   return (
     <>
-      <Helmet>
-        <title>Period Calculator — Cycle, Ovulation & Fertile Window Predictor | CalculatorsPoint</title>
-        <meta name="description" content="Free period calculator with ovulation predictor, fertile window tracker, and cycle phase analysis. AI-powered with irregular cycle detection. 100% private — no data stored." />
-        <meta name="keywords" content="period calculator, ovulation calculator, fertile window calculator, menstrual cycle calculator, next period date, period tracker" />
-        <link rel="canonical" href="https://calculatorspoint.com/calculator/period-calculator" />
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: [
-            { "@type": "Question", name: "How accurate is this period calculator?", acceptedAnswer: { "@type": "Answer", text: "Accuracy improves with more data. With 6+ tracked cycles, predictions are highly personalized. Single-entry predictions assume a standard 28-day cycle." } },
-            { "@type": "Question", name: "What is the fertile window?", acceptedAnswer: { "@type": "Answer", text: "The fertile window spans 5 days before ovulation plus the day of ovulation itself — up to 6 days total when pregnancy is possible." } },
-            { "@type": "Question", name: "Is my data private?", acceptedAnswer: { "@type": "Answer", text: "Yes. All calculations run entirely in your browser. No health data is ever sent to any server." } },
-          ]
-        })}</script>
-      </Helmet>
+      {/* SEO metadata handled by generateMetadata in app/calculator/period-calculator/page.tsx */}
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px 60px" }}>
 

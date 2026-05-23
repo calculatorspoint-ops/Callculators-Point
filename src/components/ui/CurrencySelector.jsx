@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { ChevronDown, Search, Globe, MapPin } from "lucide-react";
-import { useRegion } from "@/core/geo-engine/useRegion.js";
+import { useRegion } from "@/core/geo-engine/useRegion";
 
 export function CurrencySelector() {
   const { 

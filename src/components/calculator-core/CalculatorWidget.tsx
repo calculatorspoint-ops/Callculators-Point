@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense } from "react";
-import { CalculatorConfig } from "@/data/calculatorConfigs.js";
+import { CalculatorConfig } from "@/data/calculatorConfigs";
 import { useAppStore } from "@/store/useAppStore";
 
 import { financeForms } from "./registries/financeForms";
@@ -43,8 +43,8 @@ export function CalculatorWidget({ calc }: { calc: CalculatorConfig | null }) {
 
   const FormComponent = calc?.slug ? FORMS[calc.slug] : undefined;
 
-  if (import.meta.env.DEV && calc?.slug && !FormComponent) {
-    throw new Error(`Calculator form for slug '${calc.slug}' is missing in CalculatorWidget registry.`);
+  if (!FormComponent && process.env.NODE_ENV !== "production") {
+    throw new Error(`Calculator form for slug '${calc?.slug}' is missing in CalculatorWidget registry.`);
   }
 
   if (!FormComponent) return (
@@ -62,3 +62,4 @@ export function CalculatorWidget({ calc }: { calc: CalculatorConfig | null }) {
     </Suspense>
   );
 }
+

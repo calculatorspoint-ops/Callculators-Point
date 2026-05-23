@@ -5,7 +5,7 @@ import {
   ResponsiveContainer, Cell, PieChart, Pie, ReferenceLine,
 } from "recharts";
 import { Download, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
-import { useGeoStore } from "@/core/geo-engine/geoStore.js";
+import { useGeoStore } from "@/core/geo-engine/geoStore";
 
 /* ── Color palette — calm professional ───────────────────────────────── */
 const C = {

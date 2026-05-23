@@ -1,15 +1,14 @@
+'use client';
+
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig } from "@/data/calculatorConfigs.js";
+import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig } from "@/data/calculatorConfigs";
 import { CurrencySelector } from './CurrencySelector';
 import { SettingsModal } from './SettingsModal';
 import { useTranslation } from "react-i18next";
-// import { signInWithGoogle, logout } from "@/firebase/auth.js";
-// import { getAuth, onAuthStateChanged } from "firebase/auth";
-
-// const ENABLE_FIREBASE_AUTH = false; // Feature flag to toggle auth system
 
 /* ── Fuzzy-ish search: name + desc + keywords ──────────── */
 function searchCalculators(query: string): CalculatorConfig[] {
@@ -27,7 +26,6 @@ function searchCalculators(query: string): CalculatorConfig[] {
     
     if (descL.includes(lq))                  score += 15;
     
-    // Check keywords array
     if (c.keywords?.some(kw => lq.includes(kw.toLowerCase()) || kw.toLowerCase().includes(lq))) {
       score += 50;
     }
@@ -58,7 +56,7 @@ function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdow
           <Link
             key={r.id}
             id={`${listboxId}-option-${i}`}
-            to={`/calculator/${r.slug}`}
+            href={`/calculator/${r.slug}`}
             className={`navbar-search-item${i === activeIdx ? " navbar-search-item--active" : ""}`}
             role="option"
             aria-selected={i === activeIdx}
@@ -83,7 +81,7 @@ function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdow
             No results — try these popular tools
           </div>
           {suggestions?.map((r) => (
-            <Link key={r.id} to={`/calculator/${r.slug}`} className="navbar-search-item" role="option">
+            <Link key={r.id} href={`/calculator/${r.slug}`} className="navbar-search-item" role="option">
               <span className="navbar-search-item-icon">{r.icon}</span>
               <div>
                 <div className="navbar-search-item-name">{r.name}</div>
@@ -98,7 +96,7 @@ function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdow
 }
 
 function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: boolean; onClose?: () => void }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { addSearchHistory } = useAppStore();
   const [q, setQ] = useState("");
   const [results, setResults] = useState<CalculatorConfig[]>([]);
@@ -107,9 +105,9 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
   const inputRef = useRef<HTMLInputElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const loc = useLocation();
+  const pathname = usePathname();
 
-  useEffect(() => { setOpen(false); setQ(""); setActiveIdx(-1); }, [loc.pathname]);
+  useEffect(() => { setOpen(false); setQ(""); setActiveIdx(-1); }, [pathname]);
   
   useEffect(() => {
     if (isMobile && isOpen) {
@@ -167,17 +165,17 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
     } else if (e.key === "Enter" && activeIdx >= 0 && results[activeIdx]) {
       e.preventDefault();
       addSearchHistory(q);
-      navigate(`/calculator/${results[activeIdx].slug}`);
+      router.push(`/calculator/${results[activeIdx].slug}`);
       setOpen(false);
       if (isMobile && onClose) onClose();
     } else if (e.key === "Enter" && q.trim() && results.length > 0 && activeIdx === -1) {
       e.preventDefault();
       addSearchHistory(q);
-      navigate(`/calculator/${results[0].slug}`);
+      router.push(`/calculator/${results[0].slug}`);
       setOpen(false);
       if (isMobile && onClose) onClose();
     }
-  }, [open, activeIdx, results, q, addSearchHistory, isMobile, navigate, onClose]);
+  }, [open, activeIdx, results, q, addSearchHistory, isMobile, router, onClose]);
 
   if (isMobile && !isOpen) return null;
 
@@ -260,13 +258,13 @@ export function Navbar() {
   const [mob, setMob]         = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const loc = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  useEffect(() => { setMob(false); setSearchOpen(false); }, [loc.pathname]);
+  useEffect(() => { setMob(false); setSearchOpen(false); }, [pathname]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("mob-menu-open", mob);
@@ -279,7 +277,7 @@ export function Navbar() {
         <div className="navbar-inner">
 
           {/* ── Logo ── */}
-          <Link to="/" className="navbar-logo" aria-label="CalculatorsPoint home">
+          <Link href="/" className="navbar-logo" aria-label="CalculatorsPoint home">
             <div className="navbar-logo-icon">
               <Calculator size={19} color="#fff" strokeWidth={2.5} />
             </div>
@@ -291,11 +289,11 @@ export function Navbar() {
           {/* ── Desktop Nav ── */}
           <nav className="navbar-nav" aria-label="Main navigation">
             {CATEGORIES.slice(0, 5).map(c => (
-              <Link key={c.id} to={`/category/${c.id}`} className="nav-link">
+              <Link key={c.id} href={`/category/${c.id}`} className="nav-link">
                 {c.icon} {t(`categories.${c.id}`, c.name)}
               </Link>
             ))}
-            <Link to="/calculators" className="nav-link nav-link-all">
+            <Link href="/calculators" className="nav-link nav-link-all">
               {t('nav.calculators', 'All Tools')}
             </Link>
           </nav>
@@ -329,19 +327,6 @@ export function Navbar() {
             >
               <span style={{ fontSize: 13, fontWeight: 700 }}>{i18n.language === 'es' ? 'ES' : 'EN'}</span>
             </button>
-
-            {/* Auth toggle (Disabled for now) */}
-            {/* ENABLE_FIREBASE_AUTH && (
-              user ? (
-                <button onClick={logout} className="navbar-icon-btn desktop-only" aria-label="Sign Out" title="Sign Out">
-                  <span style={{ fontSize: 13, fontWeight: 700 }}>Out</span>
-                </button>
-              ) : (
-                <button onClick={signInWithGoogle} className="navbar-icon-btn desktop-only" aria-label="Sign In" title="Sign In">
-                  <span style={{ fontSize: 13, fontWeight: 700 }}>In</span>
-                </button>
-              )
-            ) */}
 
             {/* Theme toggle */}
             <button
@@ -388,7 +373,7 @@ export function Navbar() {
         <div className="mob-menu-section">
           <p className="mob-menu-section-title">Categories</p>
           {CATEGORIES.map(c => (
-            <Link key={c.id} to={`/category/${c.id}`} className="mob-menu-link">
+            <Link key={c.id} href={`/category/${c.id}`} className="mob-menu-link">
               <span className="mob-menu-link-icon">{c.icon}</span>
               <span>{c.name}</span>
               <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
@@ -401,17 +386,17 @@ export function Navbar() {
         {/* Quick links */}
         <div className="mob-menu-section">
           <p className="mob-menu-section-title">Quick Links</p>
-          <Link to="/calculators" className="mob-menu-link mob-menu-link--featured">
+          <Link href="/calculators" className="mob-menu-link mob-menu-link--featured">
             <span>📊</span>
             <span>All {ALL_CALCULATORS.length}+ Tools</span>
             <ChevronRight size={14} style={{ marginLeft: "auto" }} />
           </Link>
-          <Link to="/about" className="mob-menu-link">
+          <Link href="/about" className="mob-menu-link">
             <span>ℹ️</span>
             <span>About</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </Link>
-          <Link to="/contact" className="mob-menu-link">
+          <Link href="/contact" className="mob-menu-link">
             <span>✉️</span>
             <span>Contact</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />

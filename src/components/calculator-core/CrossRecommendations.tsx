@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Lightbulb, ArrowRight } from "lucide-react";
-import { getCalcBySlug, CalculatorConfig } from "@/data/calculatorConfigs.js";
+import { getCalcBySlug, CalculatorConfig } from "@/data/calculatorConfigs";
 
 const CROSS_LINKS: Record<string, string[]> = {
   "bmi-calculator": ["calorie-calculator", "body-fat-calculator", "ideal-weight-calculator"],
@@ -61,7 +61,7 @@ export function CrossCalcRecommendations({ slug }: { slug?: string }) {
         <span style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".05em", color:"var(--text-accent)" }}>Recommended Next</span>
       </div>
       {calcs.map(c => (
-        <Link key={c.id} to={`/calculator/${c.slug}`} className="side-item" style={{ gap:10, display:"flex", padding:12, alignItems:"center", textDecoration:"none", borderBottom:"1px solid var(--border)" }}>
+        <Link key={c.id} href={`/calculator/${c.slug}`} className="side-item" style={{ gap:10, display:"flex", padding:12, alignItems:"center", textDecoration:"none", borderBottom:"1px solid var(--border)" }}>
           <span style={{ fontSize:16, width:28, textAlign:"center", flexShrink:0 }}>{c.icon}</span>
           <div style={{ flex:1, minWidth:0 }}>
             <div style={{ fontSize:13, fontWeight:600, color:"var(--text)" }}>{c.name}</div>

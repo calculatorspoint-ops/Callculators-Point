@@ -16,7 +16,7 @@
 import React, {
   useState, useRef, useEffect, useCallback, useMemo,
 } from 'react';
-import { useRegion } from './useRegion.js';
+import { useRegion } from './useRegion';
 
 // ── Styles (scoped CSS-in-JS object approach) ─────────────────────────────
 

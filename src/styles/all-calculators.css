@@ -1,4 +1,4 @@
-/* ══════════════════════════════════════════════════════════════
+﻿/* ══════════════════════════════════════════════════════════════
    ALL CALCULATORS - PREMIUM REDESIGN
 ══════════════════════════════════════════════════════════════ */
 
@@ -170,7 +170,7 @@
 /* ── Premium Cards ── */
 .calc-grid-premium {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: clamp(10px, 2vw, 20px);
   padding: clamp(16px, 4vw, 40px) clamp(12px, 3vw, 24px);
   max-width: 1280px;

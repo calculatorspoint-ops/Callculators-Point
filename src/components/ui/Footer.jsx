@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { CATEGORIES, POPULAR, ALL_CALCULATORS } from "@/data/calculatorConfigs.js";
+import Link from "next/link";
+import { CATEGORIES, POPULAR, ALL_CALCULATORS } from "@/data/calculatorConfigs";
 import { Calculator } from "lucide-react";
 
 export function Footer() {
@@ -21,7 +21,7 @@ export function Footer() {
             </p>
             <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
               {[["Privacy","/privacy-policy"],["Terms","/terms-of-service"],["Disclaimer","/disclaimer"]].map(([l,h])=>(
-                <Link key={h} to={h} style={{ padding:"4px 10px", borderRadius:6, fontSize:11, fontWeight:600, background:"var(--footer-bg-surface)", border:"1px solid var(--footer-bg-border)", color:"var(--footer-text)", transition:"color .15s" }}
+                <Link key={h} href={h} style={{ padding:"4px 10px", borderRadius:6, fontSize:11, fontWeight:600, background:"var(--footer-bg-surface)", border:"1px solid var(--footer-bg-border)", color:"var(--footer-text)", transition:"color .15s" }}
                   onMouseEnter={e=>e.currentTarget.style.color="var(--footer-link-hover)"}
                   onMouseLeave={e=>e.currentTarget.style.color="var(--footer-text)"}>
                   {l}
@@ -34,7 +34,7 @@ export function Footer() {
           <div>
             <p className="footer-head">Categories</p>
             {CATEGORIES.map(c=>(
-              <Link key={c.id} to={`/category/${c.id}`} className="footer-link" style={{ marginBottom:8 }}>
+              <Link key={c.id} href={`/category/${c.id}`} className="footer-link" style={{ marginBottom:8 }}>
                 <span>{c.icon}</span> {c.name}
               </Link>
             ))}
@@ -44,7 +44,7 @@ export function Footer() {
           <div>
             <p className="footer-head">Popular Tools</p>
             {POPULAR.slice(0,8).map(c=>(
-              <Link key={c.id} to={`/calculator/${c.slug}`} className="footer-link" style={{ marginBottom:8 }}>
+              <Link key={c.id} href={`/calculator/${c.slug}`} className="footer-link" style={{ marginBottom:8 }}>
                 {c.name}
               </Link>
             ))}
@@ -54,11 +54,11 @@ export function Footer() {
           <div>
             <p className="footer-head">Company</p>
             {[["About Us","/about"],["Contact Us","/contact"],["All Calculators","/calculators"],["Sitemap","/sitemap"]].map(([l,h])=>(
-              <Link key={h} to={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
+              <Link key={h} href={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
             ))}
             <p className="footer-head" style={{ marginTop:20 }}>Legal</p>
             {[["Privacy Policy","/privacy-policy"],["Terms of Service","/terms-of-service"],["Disclaimer","/disclaimer"]].map(([l,h])=>(
-              <Link key={h} to={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
+              <Link key={h} href={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
             ))}
           </div>
         </div>
@@ -69,8 +69,8 @@ export function Footer() {
           Calculators Point is free to use and supported by non-intrusive advertising via Google AdSense.
           Ads are clearly labeled and never influence our calculator results or editorial content.
           See our{" "}
-          <Link to="/privacy-policy" style={{ color:"var(--footer-link-hover)" }}>Privacy Policy</Link> and{" "}
-          <Link to="/disclaimer" style={{ color:"var(--footer-link-hover)" }}>Disclaimer</Link> for details.
+          <Link href="/privacy-policy" style={{ color:"var(--footer-link-hover)" }}>Privacy Policy</Link> and{" "}
+          <Link href="/disclaimer" style={{ color:"var(--footer-link-hover)" }}>Disclaimer</Link> for details.
         </div>
 
         <div className="footer-bottom">

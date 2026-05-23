@@ -29,11 +29,11 @@ import {
   formatCurrency,
   formatNumber,
   formatDate,
-} from './countryRules.js';
+} from './countryRules';
 
 // ── Debug logger ─────────────────────────────────────────────────────────────
 
-const DEV = import.meta.env.DEV;
+const DEV = (process.env.NODE_ENV !== 'production');
 
 function geoLog(...args) {
   if (DEV) console.log('[GeoEngine]', ...args);

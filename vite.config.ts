@@ -62,11 +62,11 @@ export default defineConfig({
         // not pre-fetched on page load (which causes "unused JS" in Lighthouse).
         globIgnores: [
           '**/bundle-report.html',
-          '**/export-utils-*.js',   // html2canvas + jsPDF — only on Export click
-          '**/charts-*.js',          // recharts + d3 — only on calculator pages with charts
-          '**/firebase-*.js',        // Firebase — only if auth needed
-          '**/sw.js',
-          '**/workbox-*.js',
+          '**/export-utils-*',   // html2canvas + jsPDF — only on Export click
+          '**/charts-*',          // recharts + d3 — only on calculator pages with charts
+          '**/firebase-*',        // Firebase — only if auth needed
+          '**/sw',
+          '**/workbox-*',
         ],
         cleanupOutdatedCaches: true,
         skipWaiting: true,
@@ -193,8 +193,8 @@ export default defineConfig({
           }
         },
         // Content-hash filenames for immutable caching
-        entryFileNames:  'assets/[name]-[hash].js',
-        chunkFileNames:  'assets/[name]-[hash].js',
+        entryFileNames:  'assets/[name]-[hash]',
+        chunkFileNames:  'assets/[name]-[hash]',
         assetFileNames:  'assets/[name]-[hash][extname]',
       },
       // FIX: Tree shake unused exports
@@ -206,6 +206,6 @@ export default defineConfig({
   },
 
   test: {
-    exclude: ['**/node_modules/**', '**/dist/**', 'tests/**/*.spec.ts', 'tests/**/*.spec.js'],
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/**/*.spec.ts', 'tests/**/*.spec'],
   },
 });

@@ -4,7 +4,7 @@ import {
   calcAge, calcDateDiff, calcCountdown, calcWorkHours, calcFuel, 
   calcRandom, calcPassword, toRoman, fromRoman, calcWordCount, 
   calcBase64, UNIT_DEFS, round, fmtC, fmt 
-} from "@/core/calculationEngine.js";
+} from "@/core/calculationEngine";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, ComingSoon 
 } from './SharedComponents';
@@ -570,7 +570,7 @@ export function RandomForm(){
       <Row2><N label="Min" id="rmin" value={min} onChange={setMin}/><N label="Max" id="rmax" value={max} onChange={setMax}/></Row2>
       <Row2>
         <Sl label="Count" id="rcount" min={1} max={50} value={count} onChange={setCount} fmt={v=>`${v} numbers`}/>
-        <Sel label="Type" id="rtype" value={type} onChange={setType} opts={[{v:"integer",l:"Integers"},{v:"decimal",l:"Decimals"}]}/>
+        <Sel label="Type" id="rtype" value={type} onChange={setType} opts={[{v:"integer",l:"Integers"},{v:"decimal.js",l:"Decimals"}]}/>
       </Row2>
       <button onClick={gen} className="calculate-btn" style={{width:"100%",marginBottom:16}}>
         🎲 Generate Random Numbers
@@ -590,5 +590,5 @@ export function RandomForm(){
 
 // ── Time Zone ─────────────────────────────────────────────────────────
 export function TimeZoneForm() {
-  return <ComingSoon name="Time Zone" />;
+  return null;
 }

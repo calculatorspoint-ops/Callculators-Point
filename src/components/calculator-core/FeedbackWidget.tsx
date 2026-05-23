@@ -1,5 +1,6 @@
+'use client';
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ThumbsUp, ThumbsDown, Flag } from "lucide-react";
 import { track } from "@vercel/analytics/react";
 
@@ -30,7 +31,7 @@ export function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcS
         {feedback && <span style={{ fontSize: 12, color: "var(--text3)", animation: "fade-in .3s" }}>Thanks for your feedback!</span>}
       </div>
       
-      <Link to={`/contact?type=accuracy&subject=Issue with ${calcName}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: "var(--text3)", textDecoration: "none", padding: "6px 12px", borderRadius: 100, background: "var(--surf2)" }}>
+      <Link href={`/contact?type=accuracy&subject=Issue with ${calcName}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: "var(--text3)", textDecoration: "none", padding: "6px 12px", borderRadius: 100, background: "var(--surf2)" }}>
         <Flag size={12} /> Report an Issue
       </Link>
     </div>

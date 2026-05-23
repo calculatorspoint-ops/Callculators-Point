@@ -10,7 +10,7 @@ import { SIPSchema, SIPForm } from './schemas/sipSchema';
 import { calculateProbabilisticSIP } from './engine/sipEngine';
 import { generateSIPInsights } from './insights/sipInsights';
 import { SIPResult } from './types';
-import { useRegionCurrency } from '../../../core/geo-engine/useRegion.js';
+import { useRegionCurrency } from '../../../core/geo-engine/useRegion';
 
 export function SIPCalculator() {
   const { currencySymbol, locale } = useRegionCurrency();

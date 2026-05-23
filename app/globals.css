@@ -1,0 +1,11 @@
+/**
+ * app/globals.css
+ * Next.js App Router global CSS entry point.
+ *
+ * The src/styles/*.css files are imported directly in app/layout.tsx
+ * using TypeScript import statements, which Next.js handles correctly.
+ *
+ * This file is kept for any app/-level CSS overrides or additions.
+ */
+
+/* Any app-specific overrides can go here */

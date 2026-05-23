@@ -5,7 +5,7 @@ const RandomSchema = z.object({
   min: z.number(),
   max: z.number(),
   count: z.number().min(1).max(500),
-  type: z.enum(['integer', 'decimal']),
+  type: z.enum(['integer', 'decimal.js']),
 });
 
 type FormValues = z.infer<typeof RandomSchema>;
@@ -26,7 +26,7 @@ function calculateRandom(data: FormValues): RandomResult {
   }
   
   const gen = () => {
-    if (data.type === "decimal") {
+    if (data.type === "decimal.js") {
       return Number((Math.random() * (mx - mn) + mn).toFixed(4));
     }
     return Math.floor(Math.random() * (mx - mn + 1)) + mn;
@@ -50,7 +50,7 @@ export const RandomGenerator = CalculatorFactory.createSimple<FormValues, Random
     { name: 'min', label: 'Minimum', type: 'numeric' },
     { name: 'max', label: 'Maximum', type: 'numeric' },
     { name: 'count', label: 'How many numbers?', type: 'numeric', tooltip: 'Generate up to 500 numbers at once' },
-    { name: 'type', label: 'Number Type', type: 'select', options: [{label: 'Integer (Whole)', value: 'integer'}, {label: 'Decimal', value: 'decimal'}] }
+    { name: 'type', label: 'Number Type', type: 'select', options: [{label: 'Integer (Whole)', value: 'integer'}, {label: 'Decimal', value: 'decimal.js'}] }
   ],
   resultLabel: 'Random Numbers',
   resultFormatter: (res) => res.numbers.join(', '),

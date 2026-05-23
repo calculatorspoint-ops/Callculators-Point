@@ -12,8 +12,8 @@
  *   - toLocal(amount, code)      → amount (rates not tracked)
  */
 
-import { useGeoStore } from '../core/geo-engine/geoStore.js';
-import { COUNTRY_RULES, formatCurrency } from '../core/geo-engine/countryRules.js';
+import { useGeoStore } from '../core/geo-engine/geoStore';
+import { COUNTRY_RULES, formatCurrency } from '../core/geo-engine/countryRules';
 
 // ── CURRENCIES — legacy shape ─────────────────────────────────────────────────
 export const CURRENCIES = {};
