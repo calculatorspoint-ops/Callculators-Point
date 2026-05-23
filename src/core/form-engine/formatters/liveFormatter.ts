@@ -17,7 +17,7 @@ export function numericLiveFormatter(value: string | number): string {
   if (normalizedStr === '-' || normalizedStr === '.' || normalizedStr === '-.') {
     return normalizedStr.replace('.', decimalChar);
   }
-  if (/^[-]?\d+e[-+]?\d*$/i.test(normalizedStr)) return rawStr; // Scientific notation transient state
+  if (/^[-]?\d+(\.\d+)?e[-+]?\d*$/i.test(normalizedStr)) return rawStr; // Scientific notation transient state
 
   // Split integer and decimal parts
   const [intPart, decPart] = normalizedStr.split('.');

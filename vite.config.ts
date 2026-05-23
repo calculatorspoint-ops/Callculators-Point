@@ -208,4 +208,7 @@ export default defineConfig({
     },
   },
 
+  test: {
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/**/*.spec.ts', 'tests/**/*.spec.js'],
+  },
 });

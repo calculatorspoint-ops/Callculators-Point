@@ -180,9 +180,9 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
             }}
             aria-label={label + " input"}
             style={{
-              width: 90, background: "transparent", border: "none", outline: "none",
+              width: 120, background: "transparent", border: "none", outline: "none",
               textAlign: "right", fontSize: 16, fontWeight: 800, color: "var(--brand)",
-              padding: "6px 4px 6px 10px", minWidth: 60,
+              padding: "6px 4px 6px 10px", minWidth: 80,
               appearance: "none", MozAppearance: "textfield"
             }}
           />

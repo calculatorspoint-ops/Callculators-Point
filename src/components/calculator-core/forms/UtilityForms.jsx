@@ -5,7 +5,7 @@ import {
   calcBase64, UNIT_DEFS, round, fmtC, fmt 
 } from "@/core/calculationEngine.js";
 import { 
-  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
+  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, ComingSoon 
 } from "./SharedComponents.jsx";
 import { ResultBox } from "@/components/ui/ResultBox.jsx";
 import { StatsGrid } from "@/components/ui/StatsGrid.jsx";
@@ -585,4 +585,9 @@ export function RandomForm(){
       )}
     </div>
   );
+}
+
+// ── Time Zone ─────────────────────────────────────────────────────────
+export function TimeZoneForm() {
+  return <ComingSoon name="Time Zone" />;
 }

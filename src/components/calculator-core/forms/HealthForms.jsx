@@ -1446,6 +1446,14 @@ export function ConceptionForm() {
   );
 }
 
+export function BodyTypeForm() {
+  return <ComingSoon name="Body Type" />;
+}
+
+export function GFRForm() {
+  return <ComingSoon name="GFR" />;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Default export — named components
 // ─────────────────────────────────────────────────────────────────────────────

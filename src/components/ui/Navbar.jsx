@@ -248,6 +248,11 @@ function SearchBox({ isMobile, isOpen, onClose }) {
             placeholder={`Search ${ALL_CALCULATORS.length}+ calculators…`}
             className="navbar-search-input"
             aria-label="Search calculators"
+            aria-expanded={open}
+            aria-haspopup="listbox"
+            role="combobox"
+            aria-controls="search-dropdown-list"
+            aria-activedescendant={open && activeIdx >= 0 ? `search-option-${activeIdx}` : undefined}
             autoComplete="off"
           />
           {q && (

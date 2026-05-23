@@ -301,6 +301,7 @@ export const FORMS = {
   "ovulation-calculator":              Health.PeriodCalc,
   "fertility-window-calculator":       Health.PeriodCalc,
   "implantation-calculator":           Health.PeriodCalc,
+  "time-zone-converter":               lazy(() => import("./forms/UtilityForms.jsx").then(m => ({ default: m.TimeZoneForm }))),
   "ev-charging-calculator":            Utility.EVChargingForm,
 
   // ── Construction & Engineering ────────────────────────────────────
@@ -375,7 +376,9 @@ export const FORMS = {
   "healthy-weight-calculator":         lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.HealthyWeightForm }))),
   "fat-intake-calculator":             lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.FatIntakeForm }))),
   "army-body-fat-calculator":          lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.ArmyBodyFatForm }))),
-  "conception-calculator":             lazy(() => import("./forms/HealthForms.jsx").then(m => ({ default: m.ConceptionForm }))),
+  "conception-calculator":             lazy(() => import("./forms/HealthForms").then(m => ({ default: m.ConceptionForm }))),
+  "body-type-calculator":              lazy(() => import("./forms/HealthForms").then(m => ({ default: m.BodyTypeForm }))),
+  "gfr-calculator":                    lazy(() => import("./forms/HealthForms").then(m => ({ default: m.GFRForm }))),
 
   // ── Finance (new additional) ───────────────────────────────────────
   "heloc-calculator":                  Finance.HELOCForm,
