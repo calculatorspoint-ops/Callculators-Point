@@ -1,4 +1,4 @@
-export const BASE_FAQS = [
+export const BASE_FAQS: { q: string; a: string }[] = [
   { q:"Is this calculator free to use?", a:"Yes — 100% free with no registration, no login, and no hidden fees. All Calculators Point calculators are permanently free." },
   { q:"How accurate are the results?", a:"Our calculators use industry-standard formulas verified against professional tools. Results are for informational purposes — always verify important financial or health decisions with a qualified professional." },
   { q:"Can I share my calculation?", a:"Yes! Click the Share button on any result to copy a shareable link with your exact inputs pre-filled." },
@@ -6,7 +6,7 @@ export const BASE_FAQS = [
   { q:"Can I use this on mobile?", a:"Absolutely. Calculators Point is mobile-first — sliders, inputs and charts are all optimized for touch screens." },
 ];
 
-export const CALC_FAQS = {
+export const CALC_FAQS: Record<string, { q: string; a: string }[]> = {
   "loan-emi-calculator": [
     { q:"What is EMI?", a:"EMI (Equated Monthly Installment) is a fixed monthly payment covering both principal repayment and interest. It stays constant throughout the loan tenure when using the reducing balance method." },
     { q:"How is EMI calculated?", a:"EMI = P × r × (1+r)ⁿ / ((1+r)ⁿ − 1), where P = principal, r = monthly interest rate (annual rate ÷ 12), and n = total months. For example, ₹5L at 10% p.a. for 5 years = ₹10,624/month." },

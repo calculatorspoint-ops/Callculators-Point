@@ -1,3 +1,4 @@
+export interface SEOLandingPage { slug: string; title: string; h1: string; description: string; keywords: string[]; calcSlug: string; prefilledParams?: Record<string, any>; content?: { intro: string; howItWorks: string[]; tips: string[]; }; faq?: { q: string; a: string }[]; }
 /**
  * Programmatic SEO Landing Page Data
  * 
@@ -8,7 +9,7 @@
  * keyword-targeted educational content for organic search discoverability.
  */
 
-export const SEO_LANDING_PAGES = [
+export const SEO_LANDING_PAGES: SEOLandingPage[] = [
   // ── Finance Long-Tail ───────────────────────────────────────────────
   {
     slug: "home-loan-emi-calculator",
@@ -354,13 +355,15 @@ export const SEO_LANDING_PAGES = [
 ];
 
 // ── Utility getters ─────────────────────────────────────────────────
-export function getLandingBySlug(slug) {
+// Helper to get landing page by exact slug
+export const getLandingBySlug = (slug: string) => {
   return SEO_LANDING_PAGES.find(p => p.slug === slug) || null;
-}
+};
 
-export function getLandingsByCalc(calcSlug) {
+// Helper to check if a calculator has SEO landing pages
+export const getLandingsByCalc = (calcSlug: string) => {
   return SEO_LANDING_PAGES.filter(p => p.calcSlug === calcSlug);
-}
+};
 
 export function getAllLandingSlugs() {
   return SEO_LANDING_PAGES.map(p => p.slug);
