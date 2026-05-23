@@ -612,3 +612,12 @@ export const useCurrency = () => {
 
   return { sym, currency, locale, vatLabel, taxRate, measureSystem, dateFormat, countryCode, rules, fm, fmSlider, cur: currency };
 };
+
+export function ComingSoon({ name }) {
+  return (
+    <div style={{ padding: 40, textAlign: "center", color: "var(--text2)" }}>
+      <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>{name} Calculator</h3>
+      <p style={{ fontSize: 15, color: "var(--text3)" }}>This calculator is coming soon!</p>
+    </div>
+  );
+}

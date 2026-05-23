@@ -1,7 +1,47 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export const useAppStore = create(
+export type Theme = "light" | "dark";
+export type UnitSystem = "metric" | "imperial";
+
+export interface SavedCalculation {
+  id?: number | string;
+  ts?: string;
+  [key: string]: any;
+}
+
+export interface CalculationHistory {
+  id?: number | string;
+  ts?: string;
+  [key: string]: any;
+}
+
+export interface AppState {
+  theme: Theme;
+  currency: string;
+  unitSystem: UnitSystem;
+  favorites: string[];
+  recent: string[];
+  savedLocally: SavedCalculation[];
+  activeCalc: unknown | null;
+  searchHistory: string[];
+  calcHistory: CalculationHistory[];
+
+  toggleTheme: () => void;
+  setCurrency: (currency: string) => void;
+  setUnitSystem: (system: UnitSystem) => void;
+  setActiveCalc: (calc: unknown | null) => void;
+  addRecent: (id: string) => void;
+  toggleFavorite: (id: string) => void;
+  saveLocally: (calc: Omit<SavedCalculation, "id" | "ts">) => void;
+  removeSaved: (id: number | string) => void;
+  addSearchHistory: (query: string) => void;
+  clearSearchHistory: () => void;
+  addCalcHistory: (entry: Omit<CalculationHistory, "id" | "ts">) => void;
+  clearCalcHistory: () => void;
+}
+
+export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
       theme:        "light",
