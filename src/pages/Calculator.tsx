@@ -9,6 +9,7 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { CrossCalcRecommendations } from "@/components/calculator-core/CrossRecommendations";
 import { FAQSection } from "@/components/calculator-core/FAQSection";
 import { FeedbackWidget } from "@/components/calculator-core/FeedbackWidget";
+import { InfoAlert } from "@/components/ui/InfoAlert";
 
 const CalculatorWidget = lazy(() => import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget })));
 const CurrencyBanner = lazy(() => import('@/components/ui/CurrencyBanner'));
@@ -72,6 +73,8 @@ export default function Calculator() {
                   {calc.popular  && <span className="badge badge-green glass-panel !bg-green-500/10 !border-green-500/20 !text-green-700 dark:!text-green-400">⭐ Popular</span>}
                   {calc.isNew    && <span className="badge badge-red glass-panel !bg-red-500/10 !border-red-500/20 !text-red-700 dark:!text-red-400">🆕 New</span>}
                   {calc.hasChart && <span className="badge badge-blue glass-panel !bg-blue-500/10 !border-blue-500/20 !text-blue-700 dark:!text-blue-400">📊 Charts</span>}
+                  {calc.status === 'beta' && <span className="badge badge-amber glass-panel !bg-amber-500/10 !border-amber-500/20 !text-amber-700 dark:!text-amber-400">🚧 Beta</span>}
+                  {calc.status === 'deprecated' && <span className="badge badge-gray glass-panel !bg-gray-500/10 !border-gray-500/20 !text-gray-700 dark:!text-gray-400">⚠️ Legacy</span>}
                 </div>
                 <div className="cph-actions flex gap-2">
                   <button onClick={() => toggleFavorite(calc.id)} className="glass-panel hover:bg-white/40 dark:hover:bg-black/40 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all shadow-sm">
@@ -110,55 +113,71 @@ export default function Calculator() {
           {/* Calculator card */}
           <div id="tab-calculator" className="calc-card" role="tabpanel" aria-label="Calculator">
             <div className="calc-card-head">
-              <h2 style={{ fontSize:15, fontWeight:700, color:"var(--text)" }}>
-                {calc.icon} {calc.name}
-              </h2>
-              <p style={{ fontSize:12, color:"var(--text3)", maxWidth:400 }}>{calc.desc}</p>
+              <div>
+                <h2 style={{ fontSize:15, fontWeight:700, color:"var(--text)", display:"flex", alignItems:"center", gap:8 }}>
+                  <span aria-hidden="true">{calc.icon}</span> {calc.name}
+                </h2>
+                <p style={{ fontSize:12, color:"var(--text3)", maxWidth:500, marginTop:3 }}>{calc.desc}</p>
+              </div>
             </div>
             <div className="calc-card-body calculator-export-root">
               <div className="calculator-result-zone">
+                {calc.disclaimer && (
+                  <InfoAlert variant="warning" className="mb-6 mx-5 mt-5">
+                    {calc.disclaimer}
+                  </InfoAlert>
+                )}
                 <CalculatorWidget calc={calc} />
               </div>
               <ExportToolbar targetSelector=".calculator-result-zone" filenamePrefix={calc.name.replace(/\s+/g, '_')} />
               <FeedbackWidget calcName={calc.name} calcSlug={calc.slug} />
+              {/* Trust signals bar */}
+              <div className="calc-trust-bar">
+                <span className="calc-trust-item"><span className="calc-trust-dot" aria-hidden="true" />&nbsp;100% Private</span>
+                <span className="calc-trust-item">⚡ Instant Results</span>
+                <span className="calc-trust-item">📴 Works Offline</span>
+                <span className="calc-trust-item">🔓 No Sign-up</span>
+              </div>
             </div>
           </div>
 
           {/* About section — enriched with SEO keywords and educational content */}
-          <div id="tab-about" className="content-card" role="tabpanel" aria-label="About">
-            <h2>About {calc.name}</h2>
+          <div id="tab-about" className="about-card" role="tabpanel" aria-label="About">
+            <h2>📖 About {calc.name}</h2>
             <p>
               The <strong>{calc.name}</strong> is a free, professional-grade online tool that helps you {calc.desc.toLowerCase()}.
-              All calculations are performed instantly in your browser using industry-standard, precision-verified formulas —
-              no data is ever sent to a server, no signup is required, and it works offline.
+              All calculations run instantly in your browser using precision-verified formulas —
+              no data is ever sent to a server, no signup required, and it works offline.
             </p>
+
             {calc.formula && (
-              <div style={{ padding:"14px 16px", background:"var(--surf2)", borderRadius:"var(--r-lg)", border:"1px solid var(--bord2)", marginBottom:12 }}>
-                <h3 style={{ fontSize:13, fontWeight:700, color:"var(--text)", marginBottom:6 }}>📐 Formula Used</h3>
-                <pre style={{ fontFamily:"var(--font-mono)", fontSize:12, color:"var(--text2)", whiteSpace:"pre-wrap", margin:0, lineHeight:1.7 }}>{calc.formula}</pre>
+              <div className="about-formula-block">
+                <div className="about-formula-label">📐 Formula Used</div>
+                <pre className="about-formula-code">{calc.formula}</pre>
               </div>
             )}
+
             <p>
-              Our {calc.name.toLowerCase()} is designed for students, professionals, business owners, and
-              everyday users who need quick, reliable answers. 
-              {calc.hasChart || calc.hasSteps ? (
-                <> Results include {calc.hasChart && <strong>visual charts, </strong>}{calc.hasSteps && <strong>step-by-step breakdowns, </strong>}and <strong>smart insights</strong> so you don't just get a number — you understand it.</>
+              Designed for students, professionals, business owners and everyday users who need quick, reliable answers.
+              {(calc.hasChart || calc.hasSteps) ? (
+                <> Results include {calc.hasChart && <strong>visual charts, </strong>}{calc.hasSteps && <strong>step-by-step breakdowns, </strong>}and <strong>smart insights</strong> — so you understand the number, not just see it.</>
               ) : (
-                <> Results include <strong>smart insights</strong> so you don't just get a number — you understand it.</>
+                <> Results include <strong>smart insights</strong> — so you understand the number, not just see it.</>
               )}
             </p>
-            <h3 style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginTop:16, marginBottom:8 }}>✨ Key Features</h3>
-            <ul style={{ fontSize:14, color:"var(--text2)", lineHeight:1.8, paddingLeft:20, marginBottom:12 }}>
+
+            <h3>✨ Key Features</h3>
+            <ul>
               <li><strong>Instant results</strong> — no loading, no server roundtrips</li>
               {calc.hasChart && <li><strong>Visual charts</strong> — understand your data at a glance</li>}
-              {calc.hasSteps && <li><strong>Step-by-step breakdown</strong> — see exactly how results are calculated</li>}
+              {calc.hasSteps && <li><strong>Step-by-step breakdown</strong> — see exactly how the result is calculated</li>}
               <li><strong>Smart insights</strong> — contextual tips based on your specific inputs</li>
-              <li><strong>Save & export</strong> — download CSV or save results for comparison</li>
-              <li><strong>100% private</strong> — all data stays in your browser</li>
+              <li><strong>Save &amp; export</strong> — download as CSV or save results for later</li>
+              <li><strong>100% private</strong> — all data stays in your browser, never leaves your device</li>
             </ul>
-            <p style={{ padding:"12px 16px", background:"var(--surf2)", border:"1px solid var(--bord2)", borderRadius:"var(--r-md)", borderLeft:"3px solid var(--brand)", fontSize:13, fontStyle:"italic", color:"var(--text2)" }}>
-              ⚠️ Results are for informational purposes only. Always consult a qualified professional before
-              making important financial, health or legal decisions.
+
+            <p className="about-disclaimer">
+              ⚠️ Results are for informational purposes only. Always consult a qualified professional before making important financial, health or legal decisions.
             </p>
           </div>
 

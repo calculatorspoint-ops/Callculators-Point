@@ -61,9 +61,9 @@ export function exportToCSV(rows, filename = "Calculators Point-result") {
 
 /* ── Action toolbar (shared by every calculator) ───────────────── */
 export function CalcToolbar({ title, onReset, result, shareParams, formulaContent, faqItems }) {
-  const [copied,  setCopied]  = useState(false);
-  const [showFrm, setShowFrm] = useState(false);
-  const [showFAQ, setShowFAQ] = useState(false);
+  const [copied,      setCopied]      = useState(false);
+  const [showFrm,     setShowFrm]     = useState(false);
+  const [showFAQ,     setShowFAQ]     = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
 
   const copyResult = useCallback(() => {
@@ -81,63 +81,53 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
   const doExportPDF = () => exportToPDF(title || "Calculator");
   const doExportCSV = () => result?.breakdowns?.length && exportToCSV(result.breakdowns, title?.toLowerCase().replace(/\s+/g,"-"));
 
-  const BtnStyle = { display:"flex", alignItems:"center", gap:5, padding:"6px 11px", borderRadius:"var(--r-md)", fontSize:12, fontWeight:600, border:"1.5px solid var(--border)", background:"var(--surf2)", color:"var(--text2)", cursor:"pointer", transition:"all .15s", fontFamily:"var(--font)", whiteSpace:"nowrap" };
-
   return (
     <div>
       {/* Toolbar */}
       <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:16, paddingBottom:14, borderBottom:"1px solid var(--bord2)" }}>
         {/* Reset */}
-        <button onClick={onReset} style={BtnStyle} title="Reset all inputs"
-          onMouseEnter={e => e.currentTarget.style.color="var(--red)"}
-          onMouseLeave={e => e.currentTarget.style.color="var(--text2)"}>
+        <button onClick={onReset} className="calc-tool-btn danger" title="Reset all inputs">
           <RotateCcw size={12}/> Reset
         </button>
 
         {/* Copy result */}
         {result?.primary?.value && (
-          <button onClick={copyResult} style={BtnStyle}
-            onMouseEnter={e => e.currentTarget.style.color="var(--green)"}
-            onMouseLeave={e => e.currentTarget.style.color="var(--text2)"}>
+          <button onClick={copyResult} className={`calc-tool-btn ${copied ? "active success" : ""}`}>
             {copied ? <Check size={12}/> : <Copy size={12}/>}
             {copied ? "Copied!" : "Copy Result"}
           </button>
         )}
 
         {/* Share URL */}
-        <button onClick={copyShare} style={BtnStyle}
-          onMouseEnter={e => e.currentTarget.style.color="var(--brand)"}
-          onMouseLeave={e => e.currentTarget.style.color="var(--text2)"}>
+        <button onClick={copyShare} className={`calc-tool-btn ${shareCopied ? "active" : ""}`}>
           {shareCopied ? <Check size={12}/> : <Link size={12}/>}
           {shareCopied ? "Link Copied!" : "Share"}
         </button>
 
         {/* Formula */}
         {formulaContent && (
-          <button onClick={() => setShowFrm(!showFrm)} style={{ ...BtnStyle, ...(showFrm ? { borderColor:"var(--brand)", color:"var(--brand)", background:"var(--brand-l)" } : {}) }}>
+          <button onClick={() => setShowFrm(!showFrm)} className={`calc-tool-btn ${showFrm ? "active" : ""}`}>
             <BookOpen size={12}/> {showFrm ? "Hide" : "Formula"}
           </button>
         )}
 
         {/* Export PDF */}
-        <button onClick={doExportPDF} style={BtnStyle}
-          onMouseEnter={e => e.currentTarget.style.color="var(--violet)"}
-          onMouseLeave={e => e.currentTarget.style.color="var(--text2)"}>
+        <button onClick={doExportPDF} className="calc-tool-btn">
           <Download size={12}/> PDF
         </button>
 
         {/* Export CSV */}
         {result?.breakdowns?.length > 0 && (
-          <button onClick={doExportCSV} style={BtnStyle}
-            onMouseEnter={e => e.currentTarget.style.color="var(--green)"}
-            onMouseLeave={e => e.currentTarget.style.color="var(--text2)"}>
+          <button onClick={doExportCSV} className="calc-tool-btn success">
             <Download size={12}/> CSV
           </button>
         )}
 
         {/* FAQ */}
         {faqItems?.length > 0 && (
-          <button onClick={() => setShowFAQ(!showFAQ)} style={{ ...BtnStyle, marginLeft:"auto", ...(showFAQ ? { borderColor:"var(--amber)", color:"var(--amber)", background:"var(--amber-l)" } : {}) }}>
+          <button onClick={() => setShowFAQ(!showFAQ)}
+            className={`calc-tool-btn ${showFAQ ? "active" : ""}`}
+            style={{ marginLeft:"auto" }}>
             ❓ {showFAQ ? "Hide FAQ" : "FAQ"}
           </button>
         )}
@@ -145,21 +135,29 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
 
       {/* Formula panel */}
       {showFrm && formulaContent && (
-        <div style={{ background:"var(--surf2)", border:"1px solid var(--border)", borderRadius:"var(--r-lg)", padding:"16px 18px", marginBottom:16 }}>
-          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:10 }}>
-            <p style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".06em", color:"var(--text3)" }}>📘 Formula & Method</p>
-            <button onClick={() => setShowFrm(false)} style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer" }}><X size={14}/></button>
+        <div className="formula-box" style={{ marginBottom: 16 }}>
+          <div className="formula-box-head">
+            <span className="formula-box-label">📘 Formula &amp; Method</span>
+            <button onClick={() => setShowFrm(false)}
+              style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center" }}>
+              <X size={14}/>
+            </button>
           </div>
-          <div style={{ fontSize:13, lineHeight:1.8, color:"var(--text2)" }}>{formulaContent}</div>
+          <div className="formula-box-body">{formulaContent}</div>
         </div>
       )}
 
       {/* FAQ panel */}
       {showFAQ && faqItems?.length > 0 && (
         <div style={{ marginBottom:16 }}>
-          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:10 }}>
-            <p style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".06em", color:"var(--text3)" }}>❓ Frequently Asked Questions</p>
-            <button onClick={() => setShowFAQ(false)} style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer" }}><X size={14}/></button>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10, paddingBottom:8, borderBottom:"1px solid var(--border)" }}>
+            <p style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".06em", color:"var(--text3)", display:"flex", alignItems:"center", gap:6 }}>
+              ❓ Frequently Asked
+            </p>
+            <button onClick={() => setShowFAQ(false)}
+              style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center" }}>
+              <X size={14}/>
+            </button>
           </div>
           {faqItems.map((faq, i) => (
             <details key={i} style={{ marginBottom:6 }}>

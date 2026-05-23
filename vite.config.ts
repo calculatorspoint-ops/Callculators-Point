@@ -4,6 +4,16 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
 import viteCompression from 'vite-plugin-compression';
+import prerender from '@prerenderer/rollup-plugin';
+import puppeteerRenderer from '@prerenderer/renderer-puppeteer';
+
+// Import data for dynamic routes
+import { ALL_CALCULATORS, CATEGORIES } from './src/data/calculatorConfigs';
+
+const calcRoutes = ALL_CALCULATORS.map(c => `/calculator/${c.slug}`);
+const catRoutes = CATEGORIES.map(c => `/category/${c.id}`);
+const staticRoutes = ['/', '/about', '/contact', '/privacy-policy', '/terms-of-service', '/disclaimer', '/sitemap', '/calculators'];
+const allRoutes = [...staticRoutes, ...catRoutes, ...calcRoutes];
 
 const isAnalyze = process.env.ANALYZE === 'true';
 
@@ -105,6 +115,27 @@ export default defineConfig({
           },
         ],
       },
+    }),
+
+    prerender({
+      routes: allRoutes,
+      renderer: new puppeteerRenderer({
+        maxConcurrentRoutes: 4,
+        inject: { prerendered: true },
+        // Optional: wait for React to be fully mounted
+        renderAfterDocumentEvent: 'render-event',
+        renderAfterTime: 2000,
+      }),
+      postProcess(renderedRoute) {
+        // Minify or modify the HTML here if needed
+        renderedRoute.html = renderedRoute.html.replace(
+          /<script[^>]*>[\s\S]*?<\/script>/gi,
+          (match) => {
+             // Keep Vite module preloads but could remove dev scripts
+             return match;
+          }
+        );
+      }
     }),
   ].filter(Boolean),
 

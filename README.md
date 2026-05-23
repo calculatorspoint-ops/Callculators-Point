@@ -5,9 +5,7 @@
 - **Tailwind CSS** (design system)
 - **React Router v6** (client-side routing)
 - **Recharts** (interactive charts)
-- **Zustand** (state management)
-- **Firebase Hosting** (deployment)
-- **Firestore** (saved calculations)
+- **Zustand** (state management and local storage)
 - **Firebase Analytics** (usage tracking)
 
 ## Quick Start
@@ -39,7 +37,6 @@ src/
     calculatorConfigs.js → Master config for ALL calculators
   firebase/
     config.js        → Firebase init
-    firestore.js     → DB helpers (save, load calculations)
   hooks/
     useCalculator.js → Core hook: inputs → calculation → outputs
   pages/
@@ -63,19 +60,16 @@ src/
 - FAQ schema for rich snippets
 - Canonical URLs for all pages
 - Firebase Hosting CDN caches assets with aggressive headers
-- Optional: `react-snap` for pre-rendering static HTML
-
+- Pre-rendering via `vite-plugin-prerender` for static HTML generation
 ## Firebase Setup
 1. Create project at console.firebase.google.com
-2. Enable Firestore (start in test mode)
-3. Enable Analytics
-4. Enable Hosting
-5. Copy credentials to .env.local
-6. `firebase deploy`
+2. Enable Analytics
+3. Enable Hosting
+4. Copy credentials to .env.local
+5. `firebase deploy`
 
-## SEO Pre-rendering (Optional but recommended)
+## Validation & Testing
+We have added scripts to validate the calculator configs and ensure no duplicate slugs exist.
 ```bash
-npm install -D react-snap
-# Add to package.json: "postbuild": "react-snap"
+npm run validate:calculators
 ```
-This generates static HTML snapshots for search bots.

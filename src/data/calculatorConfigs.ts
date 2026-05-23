@@ -4,7 +4,6 @@ import { mathCalculators } from './categories/math';
 import { educationCalculators } from './categories/education';
 import { convertersCalculators } from './categories/converters';
 import { everydayCalculators } from './categories/everyday';
-import { futureCalculators } from './categories/future';
 import { constructionCalculators } from './categories/construction';
 import { technologyCalculators } from './categories/technology';
 import { businessCalculators } from './categories/business';
@@ -32,6 +31,9 @@ export interface CalculatorConfig {
   formula?: string;
   tips?: string[];
   tags?: string[];
+  keywords?: string[];
+  status?: "live" | "draft" | "coming-soon";
+  disclaimer?: string;
   privacy?: "normal" | "sensitive";
 }
 
@@ -54,7 +56,6 @@ export const ALL_CALCULATORS: CalculatorConfig[] = [
   ...educationCalculators,
   ...convertersCalculators,
   ...everydayCalculators,
-  ...futureCalculators,
   ...constructionCalculators,
   ...technologyCalculators,
   ...businessCalculators

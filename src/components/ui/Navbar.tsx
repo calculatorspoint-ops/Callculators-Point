@@ -11,70 +11,10 @@ import { useTranslation } from "react-i18next";
 
 // const ENABLE_FIREBASE_AUTH = false; // Feature flag to toggle auth system
 
-/* ── Search aliases: map user intent → calculator IDs ──────────── */
-const ALIASES: Record<string, string[]> = {
-  "grade needed": ["required-grade", "final-grade", "gpa"],
-  "grade required": ["required-grade", "final-grade"],
-  "period": ["period", "ovulation", "fertility"],
-  "pregnancy": ["pregnancy", "implantation", "ovulation"],
-  "fertile": ["fertility", "ovulation", "implantation"],
-  "cycle": ["period", "ovulation", "fertility"],
-  "mortgage": ["mortgage", "emi", "compound"],
-  "home loan": ["mortgage", "emi"],
-  "emi": ["emi", "mortgage", "simple-interest"],
-  "installment": ["emi", "mortgage"],
-  "investment": ["sip", "compound", "ppf", "roi"],
-  "calories": ["calorie", "bmr", "macro"],
-  "diet": ["calorie", "macro", "bmi"],
-  "lose weight": ["bmi", "calorie", "bmr"],
-  "body mass": ["bmi", "ideal-weight"],
-  "tax": ["tax", "gst", "salary"],
-  "vat": ["gst", "tax"],
-  "gst": ["gst", "tax", "discount"],
-  "salary": ["salary", "tax", "work-hours"],
-  "age": ["age", "date-diff", "countdown"],
-  "birthday": ["age", "countdown"],
-  "timer": ["countdown", "study-timer", "work-hours"],
-  "password": ["password", "random", "base64"],
-  "secure": ["password", "base64"],
-  "convert": ["length", "weight", "temperature", "speed", "data"],
-  "length": ["length", "area-conv"],
-  "weight": ["weight", "bmi", "ideal-weight"],
-  "temperature": ["temperature"],
-  "speed": ["speed"],
-  "data": ["data"],
-  "percentage": ["percentage", "marks-percentage", "discount"],
-  "discount": ["discount", "gst", "percentage"],
-  "profit": ["profit-margin", "roi", "break-even"],
-  "gpa": ["gpa", "target-gpa", "marks-percentage"],
-  "cgpa": ["cgpa-to-percent", "gpa", "target-gpa"],
-  "ielts": ["ielts", "sat", "study-timer"],
-  "sat": ["sat", "ielts", "gpa"],
-  "study": ["study-timer", "attendance", "marks-percentage"],
-  "attendance": ["attendance", "study-timer"],
-  "fuel": ["fuel", "ev-charging"],
-  "ev": ["ev-charging", "fuel"],
-  "word": ["word-count", "reading-time"],
-  "read": ["reading-time", "word-count"],
-  "bmi": ["bmi", "ideal-weight", "calorie"],
-  "sip": ["sip", "compound", "ppf"],
-  "interest": ["compound", "simple-interest", "emi"],
-  "loan": ["emi", "mortgage", "simple-interest"],
-  "retirement": ["retirement", "sip", "compound"],
-  "sleeping": ["sleep"],
-  "sleep": ["sleep", "study-timer"],
-  "exercise": ["calories-burned", "heart-rate", "bmi"],
-  "workout": ["calories-burned", "one-rep-max", "heart-rate"],
-};
-
-/* ── Fuzzy-ish search: alias + name + desc + keywords ──────────── */
+/* ── Fuzzy-ish search: name + desc + keywords ──────────── */
 function searchCalculators(query: string): CalculatorConfig[] {
   if (!query?.trim()) return [];
   const lq = query.toLowerCase().trim();
-
-  // Check aliases first
-  const aliasKey = Object.keys(ALIASES).find(k => lq.includes(k) || k.includes(lq));
-  const aliasIds = aliasKey ? ALIASES[aliasKey] : [];
 
   const scored = ALL_CALCULATORS.map(c => {
     const nameL = c.name.toLowerCase();
@@ -84,8 +24,14 @@ function searchCalculators(query: string): CalculatorConfig[] {
     if (nameL === lq)                         score += 100;
     else if (nameL.startsWith(lq))            score += 60;
     else if (nameL.includes(lq))             score += 40;
+    
     if (descL.includes(lq))                  score += 15;
-    if (aliasIds.includes(c.id))             score += 50;
+    
+    // Check keywords array
+    if (c.keywords?.some(kw => lq.includes(kw.toLowerCase()) || kw.toLowerCase().includes(lq))) {
+      score += 50;
+    }
+    
     if (c.popular)                           score += 5;
 
     return { calc: c, score };

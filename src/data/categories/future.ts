@@ -1,16 +1,9 @@
 import type { CalculatorConfig } from '../calculatorConfigs';
 
-export const futureCalculators: CalculatorConfig[] = [
-  {
-  id: 'fv',
-  slug: 'future-value-calculator',
-  cat: 'future',
-  name: 'Future Value (FV)',
-  icon: '⏭️',
-  desc: 'Future value of investments with regular contributions',
-  popular: false,
-  hasChart: true,
-  isNew: true,
-  formula: 'FV = PV × (1 + r)^n + PMT × ((1 + r)^n - 1) / r'
-},
-];
+/**
+ * Placeholder for future calculators.
+ * NOTE: Do not add slugs here that already exist in other category files.
+ * This file is intentionally empty — new calculators should be added to
+ * the appropriate category file and registry when their form is ready.
+ */
+export const futureCalculators: CalculatorConfig[] = [];

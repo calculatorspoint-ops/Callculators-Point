@@ -1,6 +1,10 @@
 import { useState, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { Calendar, Heart, Info, ChevronDown, ChevronUp, Lock, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Card, CardHeader, CardBody } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { InfoAlert } from "@/components/ui/InfoAlert";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import {
   predictCycles,
   generateFertilityInsights,
@@ -35,30 +39,22 @@ function PhasePill({ phase }) {
 /* ── Timeline row ── */
 function TimelineRow({ icon, label, date, highlight = false, color = "var(--brand)" }) {
   return (
-    <div style={{
-      display: "flex", alignItems: "center", gap: 12, padding: "11px 0",
-      borderBottom: "1px solid var(--bord2)",
-    }}>
-      <div style={{
-        width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-        background: highlight ? color : "var(--surf2)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 16, border: highlight ? `1.5px solid ${color}60` : "1px solid var(--border)",
-      }}>
+    <div className={`flex items-center gap-3 py-3 border-b border-gray-100 dark:border-slate-800 ${highlight ? 'bg-opacity-10' : ''}`}>
+      <div 
+        className={`w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center text-base border`}
+        style={{
+          background: highlight ? color : "var(--surf2)",
+          borderColor: highlight ? `${color}60` : "var(--border)",
+        }}
+      >
         {icon}
       </div>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: highlight ? color : "var(--text2)" }}>{label}</div>
-        <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)" }}>{date}</div>
+      <div className="flex-1">
+        <div className="text-xs font-bold" style={{ color: highlight ? color : "var(--text2)" }}>{label}</div>
+        <div className="text-sm font-extrabold text-gray-900 dark:text-white">{date}</div>
       </div>
       {highlight && (
-        <div style={{
-          padding: "3px 10px", borderRadius: 100,
-          background: color + "20", color,
-          fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".04em",
-        }}>
-          Next
-        </div>
+        <Badge style={{ background: `${color}20`, color }}>Next</Badge>
       )}
     </div>
   );
@@ -66,21 +62,15 @@ function TimelineRow({ icon, label, date, highlight = false, color = "var(--bran
 
 /* ── Insight card ── */
 function InsightCard({ insight }) {
-  const styles = {
-    info: { bg: "var(--brand-l)", border: "#bfdbfe", color: "#1e3a8a" },
-    tip: { bg: "var(--green-l)", border: "#86efac", color: "#14532d" },
-    warning: { bg: "var(--amber-l)", border: "#fde68a", color: "#78350f" },
+  const mapType = {
+    info: 'info',
+    tip: 'success',
+    warning: 'warning'
   };
-  const s = styles[insight.type];
   return (
-    <div style={{
-      padding: "12px 14px", borderRadius: "var(--r-lg)",
-      background: s.bg, border: `1px solid ${s.border}`,
-      marginBottom: 8,
-    }}>
-      <div style={{ fontSize: 13, fontWeight: 800, color: s.color, marginBottom: 4 }}>{insight.title}</div>
-      <div style={{ fontSize: 13, color: s.color, opacity: .85, lineHeight: 1.6 }}>{insight.message}</div>
-    </div>
+    <InfoAlert variant={mapType[insight.type] || 'info'} title={insight.title} className="mb-2">
+      {insight.message}
+    </InfoAlert>
   );
 }
 
@@ -146,13 +136,11 @@ export default function PeriodCalculator() {
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "24px 16px 60px" }}>
 
         {/* Privacy banner */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 8, padding: "8px 16px",
-          background: "var(--green-l)", border: "1px solid #86efac", borderRadius: 100,
-          fontSize: 12, fontWeight: 600, color: "#14532d", marginBottom: 20, width: "fit-content",
-        }}>
-          <Lock size={12} /> 100% Private — All data stays in your browser. Never stored or shared.
-        </div>
+        <InfoAlert variant="success" className="mb-5 w-max">
+          <div className="flex items-center gap-2 text-xs font-semibold">
+            <Lock size={12} /> 100% Private — All data stays in your browser. Never stored or shared.
+          </div>
+        </InfoAlert>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
 
@@ -160,31 +148,21 @@ export default function PeriodCalculator() {
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
             {/* Main input card */}
-            <div style={{
-              background: "var(--surface)", border: "1.5px solid var(--border)",
-              borderRadius: "var(--r-xl)", overflow: "hidden", boxShadow: "var(--sh2)",
-            }}>
-              <div style={{
-                padding: "14px 18px", background: "linear-gradient(135deg, #fce7f3, #fdf2f8)",
-                borderBottom: "1px solid #fbcfe8", display: "flex", alignItems: "center", gap: 8,
-              }}>
-                <span style={{ fontSize: 20 }}>🌸</span>
+            <Card>
+              <div className="bg-gradient-to-br from-pink-100 to-pink-50 dark:from-pink-900/30 dark:to-pink-900/10 border-b border-pink-200 dark:border-pink-900/50 p-4 flex items-center gap-2">
+                <span className="text-xl">🌸</span>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "#9d174d" }}>Period Tracker</div>
-                  <div style={{ fontSize: 11, color: "#be185d" }}>Predict your next cycle with AI precision</div>
+                  <div className="text-sm font-extrabold text-pink-900 dark:text-pink-300">Period Tracker</div>
+                  <div className="text-xs text-pink-700 dark:text-pink-400">Predict your next cycle with smart analysis</div>
                 </div>
                 {irregular && (
-                  <div style={{
-                    marginLeft: "auto", padding: "4px 10px", borderRadius: 100,
-                    background: "#fef3c7", border: "1px solid #fde68a",
-                    fontSize: 10, fontWeight: 800, color: "#92400e",
-                  }}>
+                  <Badge variant="warning" className="ml-auto">
                     ⚡ Irregular Detected
-                  </div>
+                  </Badge>
                 )}
               </div>
 
-              <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+              <CardBody className="flex flex-col gap-4">
                 {/* Last Period */}
                 <div>
                   <label className="f-label">First Day of Last Period</label>
@@ -232,16 +210,10 @@ export default function PeriodCalculator() {
                 <div>
                   <button
                     onClick={() => setShowPastCycles(!showPastCycles)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 6, width: "100%",
-                      padding: "8px 12px", borderRadius: "var(--r-md)",
-                      background: "var(--surf2)", border: "1.5px solid var(--border)",
-                      fontSize: 12, fontWeight: 700, color: "var(--brand)", cursor: "pointer",
-                      fontFamily: "var(--font)",
-                    }}
+                    className="flex items-center gap-1.5 w-full py-2 px-3 rounded-lg bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-xs font-bold text-blue-600 dark:text-blue-400 cursor-pointer"
                   >
-                    <Zap size={13} /> Improve Accuracy with Past Cycles (AI Mode)
-                    {showPastCycles ? <ChevronUp size={13} style={{ marginLeft: "auto" }} /> : <ChevronDown size={13} style={{ marginLeft: "auto" }} />}
+                    <Zap size={13} /> Improve Accuracy with Past Cycles (Smart Prediction)
+                    {showPastCycles ? <ChevronUp size={13} className="ml-auto" /> : <ChevronDown size={13} className="ml-auto" />}
                   </button>
                   {showPastCycles && (
                     <div style={{ marginTop: 10 }}>
@@ -271,33 +243,23 @@ export default function PeriodCalculator() {
 
                 <button
                   onClick={calculate}
-                  className="btn-primary"
-                  style={{ justifyContent: "center", gap: 8 }}
+                  className="btn-primary w-full flex justify-center items-center gap-2 mt-2"
                 >
                   <Calendar size={15} /> Predict My Cycle
                 </button>
-              </div>
-            </div>
+              </CardBody>
+            </Card>
 
             {/* Insights */}
             {insights.length > 0 && (
-              <div style={{
-                background: "var(--surface)", border: "1.5px solid var(--border)",
-                borderRadius: "var(--r-xl)", overflow: "hidden",
-              }}>
-                <div style={{
-                  padding: "12px 16px", background: "var(--surf2)",
-                  borderBottom: "1px solid var(--border)",
-                  fontSize: 12, fontWeight: 800, color: "var(--text2)",
-                  textTransform: "uppercase", letterSpacing: ".05em",
-                  display: "flex", alignItems: "center", gap: 6,
-                }}>
-                  <Info size={13} style={{ color: "var(--brand)" }} /> Smart Insights
+              <Card>
+                <div className="px-4 py-3 bg-gray-50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800 text-xs font-extrabold uppercase tracking-wide flex items-center gap-1.5">
+                  <Info size={13} className="text-blue-600 dark:text-blue-400" /> Smart Insights
                 </div>
-                <div style={{ padding: 16 }}>
+                <CardBody>
                   {insights.map((ins, i) => <InsightCard key={i} insight={ins} />)}
-                </div>
-              </div>
+                </CardBody>
+              </Card>
             )}
           </div>
 
@@ -338,19 +300,11 @@ export default function PeriodCalculator() {
               </div>
 
               {/* Key dates */}
-              <div style={{
-                background: "var(--surface)", border: "1.5px solid var(--border)",
-                borderRadius: "var(--r-xl)", overflow: "hidden",
-              }}>
-                <div style={{
-                  padding: "12px 18px", background: "linear-gradient(135deg, #0f172a, #1a1040)",
-                  borderBottom: "1px solid var(--border)",
-                  fontSize: 13, fontWeight: 800, color: "#fff",
-                  display: "flex", alignItems: "center", gap: 8,
-                }}>
-                  <Calendar size={14} style={{ color: "#93c5fd" }} /> Key Dates Forecast
+              <Card>
+                <div className="px-4 py-3 bg-gradient-to-br from-slate-900 to-slate-800 border-b border-slate-700 text-sm font-extrabold text-white flex items-center gap-2">
+                  <Calendar size={14} className="text-blue-300" /> Key Dates Forecast
                 </div>
-                <div style={{ padding: "0 18px 4px" }}>
+                <div className="px-4 pb-1">
                   <TimelineRow
                     icon="🩸" label="Next Period Starts"
                     date={formatCycleDate(result.nextPeriodDate)}
@@ -376,7 +330,7 @@ export default function PeriodCalculator() {
                     date={`${formatCycleDate(result.implantationStart)} – ${formatCycleDate(result.implantationEnd)}`}
                   />
                 </div>
-              </div>
+              </Card>
 
               {/* Day counters */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
@@ -414,16 +368,8 @@ export default function PeriodCalculator() {
               </div>
 
               {/* 6-cycle forecast */}
-              <div style={{
-                background: "var(--surface)", border: "1.5px solid var(--border)",
-                borderRadius: "var(--r-xl)", overflow: "hidden",
-              }}>
-                <div style={{
-                  padding: "12px 16px", background: "var(--surf2)",
-                  borderBottom: "1px solid var(--border)",
-                  fontSize: 12, fontWeight: 800, color: "var(--text2)",
-                  textTransform: "uppercase", letterSpacing: ".05em",
-                }}>
+              <Card>
+                <div className="px-4 py-3 bg-gray-50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800 text-xs font-extrabold uppercase tracking-wide">
                   📅 6-Month Forecast
                 </div>
                 {shownCycles.map((c, i) => (
@@ -448,58 +394,44 @@ export default function PeriodCalculator() {
                 ))}
                 <button
                   onClick={() => setShowAllCycles(!showAllCycles)}
-                  style={{
-                    width: "100%", padding: "10px 16px", background: "transparent",
-                    border: "none", fontSize: 12, fontWeight: 700, color: "var(--brand)",
-                    cursor: "pointer", fontFamily: "var(--font)", display: "flex",
-                    alignItems: "center", justifyContent: "center", gap: 5,
-                  }}
+                  className="w-full py-2.5 bg-transparent border-none text-xs font-bold text-blue-600 dark:text-blue-400 cursor-pointer flex items-center justify-center gap-1.5 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   {showAllCycles ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
                   {showAllCycles ? "Show less" : "Show all 6 cycles"}
                 </button>
-              </div>
+              </Card>
             </div>
           )}
         </div>
 
         {/* Educational content */}
-        <div style={{
-          background: "var(--surface)", border: "1.5px solid var(--border)",
-          borderRadius: "var(--r-xl)", padding: 24, marginTop: 24,
-        }}>
-          <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text)", marginBottom: 16 }}>
-            📚 Understanding Your Cycle
-          </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+        {/* Educational content */}
+        <Card className="mt-6 p-6">
+          <SectionHeader title="📚 Understanding Your Cycle" className="!mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[
-              { phase: "Menstrual", days: "Days 1–5", icon: "🩸", color: "#dc2626", desc: "Uterine lining sheds. Progesterone and estrogen are at their lowest." },
-              { phase: "Follicular", days: "Days 1–13", icon: "🌱", color: "#2563eb", desc: "FSH stimulates follicle growth. Estrogen rises, building the uterine lining." },
-              { phase: "Ovulation", days: "Day 14 (±)", icon: "🌸", color: "#16a34a", desc: "LH surge triggers egg release. Peak fertility. 12–24 hour egg viability window." },
-              { phase: "Luteal", days: "Days 15–28", icon: "🌙", color: "#7c3aed", desc: "Progesterone rises. Body prepares for potential pregnancy. PMS may occur." },
+              { phase: "Menstrual", days: "Days 1–5", icon: "🩸", color: "text-red-600", bg: "bg-red-50 dark:bg-red-900/10", border: "border-red-200 dark:border-red-900/30", desc: "Uterine lining sheds. Progesterone and estrogen are at their lowest." },
+              { phase: "Follicular", days: "Days 1–13", icon: "🌱", color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-900/10", border: "border-blue-200 dark:border-blue-900/30", desc: "FSH stimulates follicle growth. Estrogen rises, building the uterine lining." },
+              { phase: "Ovulation", days: "Day 14 (±)", icon: "🌸", color: "text-green-600", bg: "bg-green-50 dark:bg-green-900/10", border: "border-green-200 dark:border-green-900/30", desc: "LH surge triggers egg release. Peak fertility. 12–24 hour egg viability window." },
+              { phase: "Luteal", days: "Days 15–28", icon: "🌙", color: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-900/10", border: "border-purple-200 dark:border-purple-900/30", desc: "Progesterone rises. Body prepares for potential pregnancy. PMS may occur." },
             ].map(p => (
-              <div key={p.phase} style={{
-                padding: 14, borderRadius: "var(--r-lg)",
-                border: `1.5px solid ${p.color}30`, background: `${p.color}08`,
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <span style={{ fontSize: 18 }}>{p.icon}</span>
+              <div key={p.phase} className={`p-3.5 rounded-xl border ${p.bg} ${p.border}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">{p.icon}</span>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: p.color }}>{p.phase}</div>
-                    <div style={{ fontSize: 11, color: "var(--text3)" }}>{p.days}</div>
+                    <div className={`text-sm font-extrabold ${p.color}`}>{p.phase}</div>
+                    <div className="text-xs text-gray-500">{p.days}</div>
                   </div>
                 </div>
-                <p style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.6, margin: 0 }}>{p.desc}</p>
+                <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed m-0">{p.desc}</p>
               </div>
             ))}
           </div>
-          <p style={{
-            fontSize: 12, color: "var(--text3)", marginTop: 16, padding: "10px 14px",
-            background: "var(--surf2)", borderRadius: "var(--r-md)", borderLeft: "3px solid var(--border)",
-          }}>
-            ⚠️ This calculator is for informational purposes only. It does not constitute medical advice. If you experience irregular periods, severe pain, or other concerns, please consult a qualified gynecologist.
-          </p>
-        </div>
+          
+          <InfoAlert variant="warning" className="mt-4">
+            This calculator is for informational purposes only. It does not constitute medical advice. If you experience irregular periods, severe pain, or other concerns, please consult a qualified gynecologist.
+          </InfoAlert>
+        </Card>
       </div>
     </>
   );

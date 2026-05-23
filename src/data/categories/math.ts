@@ -136,45 +136,12 @@ export const mathCalculators: CalculatorConfig[] = [
   isNew: true
 },
   {
-  id: 'exponent',
-  slug: 'exponent-calculator',
-  cat: 'math',
-  name: 'Exponent Calculator',
-  icon: '🔺',
-  desc: 'Power and root calculations with scientific notation output',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'root',
-  slug: 'root-calculator',
-  cat: 'math',
-  name: 'Root Calculator',
-  icon: '√',
-  desc: 'Square root, cube root, and nth root with step-by-step solution',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
   id: 'volume',
   slug: 'volume-calculator',
   cat: 'math',
   name: 'Volume Calculator',
   icon: '📦',
   desc: 'Volume of cube, sphere, cylinder, cone and other 3D shapes',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'surface-area',
-  slug: 'surface-area-calculator',
-  cat: 'math',
-  name: 'Surface Area Calculator',
-  icon: '🔲',
-  desc: 'Surface area of sphere, cube, cylinder, cone with formula display',
   popular: false,
   hasChart: false,
   isNew: true
@@ -202,18 +169,6 @@ export const mathCalculators: CalculatorConfig[] = [
   isNew: true
 },
   {
-  id: 'distance',
-  slug: 'distance-calculator',
-  cat: 'math',
-  name: 'Distance Calculator',
-  icon: '📍',
-  desc: '2D/3D coordinate distance with midpoint and slope calculation',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'Distance = √((x₂-x₁)² + (y₂-y₁)²)'
-},
-  {
   id: 'z-score',
   slug: 'z-score-calculator',
   cat: 'math',
@@ -226,28 +181,6 @@ export const mathCalculators: CalculatorConfig[] = [
   formula: 'Z = (X - μ) / σ'
 },
   {
-  id: 'confidence-interval',
-  slug: 'confidence-interval-calculator',
-  cat: 'math',
-  name: 'Confidence Interval',
-  icon: '📉',
-  desc: 'Calculate confidence intervals with margin of error for population means',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'sample-size',
-  slug: 'sample-size-calculator',
-  cat: 'math',
-  name: 'Sample Size Calculator',
-  icon: '🔬',
-  desc: 'Required sample size for surveys and experiments with confidence and margin',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
   id: 'permutation',
   slug: 'permutation-combination-calculator',
   cat: 'math',
@@ -258,40 +191,6 @@ export const mathCalculators: CalculatorConfig[] = [
   hasChart: false,
   isNew: true,
   formula: 'P(n,r) = n! / (n-r)!\nC(n,r) = n! / (r! × (n-r)!)'
-},
-  {
-  id: 'probability',
-  slug: 'probability-calculator',
-  cat: 'math',
-  name: 'Probability Calculator',
-  icon: '🎯',
-  desc: 'Event probability, odds, and compound events with visual probability tree',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'P(A) = Favorable Outcomes / Total Outcomes'
-},
-  {
-  id: 'binary',
-  slug: 'binary-calculator',
-  cat: 'math',
-  name: 'Binary Calculator',
-  icon: '💾',
-  desc: 'Binary arithmetic (+,-,×,÷) and binary↔decimal↔hex conversions',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'number-sequence',
-  slug: 'number-sequence-calculator',
-  cat: 'math',
-  name: 'Number Sequence Calculator',
-  icon: '🔢',
-  desc: 'Find nth term, sum, and pattern of arithmetic, geometric, and Fibonacci sequences',
-  popular: false,
-  hasChart: false,
-  isNew: true
 },
   {
   id: 'average',

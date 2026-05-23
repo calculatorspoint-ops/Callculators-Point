@@ -265,108 +265,12 @@ export const healthCalculators: CalculatorConfig[] = [
   isNew: true
 },
   {
-  id: 'bsa',
-  slug: 'bsa-calculator',
-  cat: 'health',
-  name: 'Body Surface Area (BSA)',
-  icon: '📐',
-  desc: 'BSA using Mosteller formula — used for drug dosage calculations',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'BSA = √(Height(cm) × Weight(kg) / 3600)'
-},
-  {
-  id: 'bac',
-  slug: 'bac-calculator',
-  cat: 'health',
-  name: 'BAC Calculator',
-  icon: '🍺',
-  desc: 'Blood alcohol content estimation with legal limit warning and clearance time',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'BAC = (Alcohol grams / (Body weight × r)) - (0.015 × Hours)\n' +
-    'r = 0.68 for men, 0.55 for women'
-},
-  {
   id: 'gfr',
   slug: 'gfr-calculator',
   cat: 'health',
   name: 'GFR Calculator',
   icon: '🫀',
   desc: 'Glomerular filtration rate (kidney function) using CKD-EPI formula',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'healthy-weight',
-  slug: 'healthy-weight-calculator',
-  cat: 'health',
-  name: 'Healthy Weight Range',
-  icon: '⚖️',
-  desc: 'BMI-based healthy weight range for your height with multiple formula comparison',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'lean-body-mass',
-  slug: 'lean-body-mass-calculator',
-  cat: 'health',
-  name: 'Lean Body Mass',
-  icon: '💪',
-  desc: 'Fat-free mass calculation using multiple formulas with body composition breakdown',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'LBM = Weight × (1 - Body Fat%)'
-},
-  {
-  id: 'army-body-fat',
-  slug: 'army-body-fat-calculator',
-  cat: 'health',
-  name: 'Army Body Fat Calculator',
-  icon: '🎖️',
-  desc: 'US Army body fat percentage using circumference method with regulation thresholds',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'protein',
-  slug: 'protein-calculator',
-  cat: 'health',
-  name: 'Protein Calculator',
-  icon: '🥩',
-  desc: 'Daily protein needs by weight, activity level and fitness goal',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'Protein = Weight(kg) × 1.6-2.2g (active adults)',
-  tips: [
-    'Most active adults need 1.6-2.2g protein per kg bodyweight for muscle maintenance and growth.'
-  ]
-},
-  {
-  id: 'fat-intake',
-  slug: 'fat-intake-calculator',
-  cat: 'health',
-  name: 'Fat Intake Calculator',
-  icon: '🥑',
-  desc: 'Daily fat intake recommendation by total calories and health goal',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'conception',
-  slug: 'conception-calculator',
-  cat: 'health',
-  name: 'Conception Calculator',
-  icon: '🌸',
-  desc: 'Estimated conception date from due date or last menstrual period',
   popular: false,
   hasChart: false,
   isNew: true
@@ -393,6 +297,7 @@ export const healthCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: true,
+  formula: 'BAC = (Alcohol grams / (Body weight × r)) - (0.015 × Hours)\nr = 0.68 for men, 0.55 for women',
   tips: [
     'Your liver clears ~0.015% BAC per hour. A BAC of 0.08% takes 5-6 hours to clear.'
   ]
@@ -406,10 +311,11 @@ export const healthCalculators: CalculatorConfig[] = [
   desc: 'Lean muscle mass using Boer, James and Hume formulas with fat vs lean body composition chart',
   popular: false,
   hasChart: true,
-  isNew: true
+  isNew: true,
+  formula: 'LBM = Weight × (1 - Body Fat%)'
 },
   {
-  id: 'protein-calc',
+  id: 'protein',
   slug: 'protein-calculator',
   cat: 'health',
   name: 'Protein Calculator',
@@ -418,6 +324,7 @@ export const healthCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: true,
+  formula: 'Protein = Weight(kg) × 1.6-2.2g (active adults)',
   tips: [
     'Athletes need 1.6-2.2g/kg. Aim for 30-40g protein per meal for optimal muscle synthesis.'
   ]

@@ -328,17 +328,6 @@ export const financeCalculators: CalculatorConfig[] = [
   ]
 },
   {
-  id: 'heloc',
-  slug: 'heloc-calculator',
-  cat: 'finance',
-  name: 'HELOC Calculator',
-  icon: '🏦',
-  desc: 'Home equity line of credit payments — draw period and repayment phase',
-  popular: false,
-  hasChart: true,
-  isNew: true
-},
-  {
   id: 'down-payment',
   slug: 'down-payment-calculator',
   cat: 'finance',
@@ -419,29 +408,6 @@ export const financeCalculators: CalculatorConfig[] = [
   ]
 },
   {
-  id: 'debt-consolidation',
-  slug: 'debt-consolidation-calculator',
-  cat: 'finance',
-  name: 'Debt Consolidation',
-  icon: '🔗',
-  desc: 'Compare consolidation loan vs individual debts — total cost and monthly savings',
-  popular: false,
-  hasChart: true,
-  isNew: true
-},
-  {
-  id: 'auto-lease',
-  slug: 'auto-lease-calculator',
-  cat: 'finance',
-  name: 'Auto Lease Calculator',
-  icon: '🚙',
-  desc: 'Car lease monthly payment with money factor, residual & total cost vs buy',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'Monthly Payment = (Selling Price - Residual + Fees) / Months + (Selling Price + Residual) × Money Factor'
-},
-  {
   id: 'pv',
   slug: 'present-value-calculator',
   cat: 'finance',
@@ -469,41 +435,6 @@ export const financeCalculators: CalculatorConfig[] = [
   ]
 },
   {
-  id: 'bond',
-  slug: 'bond-calculator',
-  cat: 'finance',
-  name: 'Bond Calculator',
-  icon: '📜',
-  desc: 'Bond price, yield to maturity, current yield & duration',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'Bond Price = Σ(Coupon / (1+r)^t) + Face Value / (1+r)^n'
-},
-  {
-  id: 'cd',
-  slug: 'cd-calculator',
-  cat: 'finance',
-  name: 'CD / Certificate of Deposit',
-  icon: '🏦',
-  desc: 'CD maturity value with APY comparison across term lengths',
-  popular: false,
-  hasChart: true,
-  isNew: true
-},
-  {
-  id: 'avg-return',
-  slug: 'average-return-calculator',
-  cat: 'finance',
-  name: 'Average Return Calculator',
-  icon: '📊',
-  desc: 'Arithmetic vs geometric average return on investment portfolio',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'CAGR = (End Value / Start Value)^(1/Years) - 1'
-},
-  {
   id: '401k',
   slug: '401k-calculator',
   cat: 'finance',
@@ -517,91 +448,6 @@ export const financeCalculators: CalculatorConfig[] = [
     "Always contribute at least enough to get the full employer match — it's free money with 100% instant return.",
     'Tax-deferred growth means you pay taxes on withdrawal, not during accumulation.'
   ]
-},
-  {
-  id: 'roth-ira',
-  slug: 'roth-ira-calculator',
-  cat: 'finance',
-  name: 'Roth IRA Calculator',
-  icon: '💼',
-  desc: 'Roth IRA tax-free growth with contribution limits and income phase-out',
-  popular: false,
-  hasChart: true,
-  isNew: true,
-  tips: [
-    'Roth IRA contributions are after-tax but withdrawals in retirement are 100% tax-free.'
-  ]
-},
-  {
-  id: 'pension',
-  slug: 'pension-calculator',
-  cat: 'finance',
-  name: 'Pension Calculator',
-  icon: '👴',
-  desc: 'Defined benefit pension monthly income estimate with years of service formula',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'annuity',
-  slug: 'annuity-calculator',
-  cat: 'finance',
-  name: 'Annuity Calculator',
-  icon: '♾️',
-  desc: 'Annuity present value, future value, payment & accumulated value',
-  popular: false,
-  hasChart: true,
-  isNew: true,
-  formula: 'PV Annuity = PMT × [1-(1+r)^-n]/r'
-},
-  {
-  id: 'rmd',
-  slug: 'rmd-calculator',
-  cat: 'finance',
-  name: 'RMD Calculator',
-  icon: '📋',
-  desc: 'Required Minimum Distribution from IRA/401k using IRS life expectancy tables',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'RMD = Account Balance / IRS Life Expectancy Factor'
-},
-  {
-  id: 'social-security',
-  slug: 'social-security-calculator',
-  cat: 'finance',
-  name: 'Social Security Calculator',
-  icon: '🏛️',
-  desc: 'Estimated Social Security benefit based on earnings history and claiming age',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  tips: [
-    'Claiming at 70 instead of 62 can increase monthly benefits by up to 77%.'
-  ]
-},
-  {
-  id: 'estate-tax',
-  slug: 'estate-tax-calculator',
-  cat: 'finance',
-  name: 'Estate Tax Calculator',
-  icon: '📜',
-  desc: 'Federal estate tax estimate with exemption threshold and marginal rates',
-  popular: false,
-  hasChart: false,
-  isNew: true
-},
-  {
-  id: 'marriage-tax',
-  slug: 'marriage-tax-calculator',
-  cat: 'finance',
-  name: 'Marriage Tax Calculator',
-  icon: '💍',
-  desc: 'Marriage tax bonus or penalty — compare single vs married filing status',
-  popular: false,
-  hasChart: false,
-  isNew: true
 },
   {
   id: 'commission',
@@ -640,17 +486,6 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'The 50/30/20 rule: 50% needs, 30% wants, 20% savings — a popular starting framework.'
   ]
-},
-  {
-  id: 'boat-loan',
-  slug: 'boat-loan-calculator',
-  cat: 'finance',
-  name: 'Boat Loan Calculator',
-  icon: '⛵',
-  desc: 'Marine loan EMI with insurance cost and total ownership cost analysis',
-  popular: false,
-  hasChart: false,
-  isNew: true
 },
   {
   id: 'college-cost',
@@ -930,6 +765,96 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'Compare loans using APR (Annual Percentage Rate), not just the monthly payment — APR includes fees and gives the true cost of borrowing.',
     'Shorter loan terms have higher monthly payments but significantly less total interest paid.'
+  ]
+},
+  {
+  id: 'nps',
+  slug: 'nps-calculator',
+  cat: 'finance',
+  name: 'NPS Calculator',
+  icon: '🏛️',
+  desc: 'National Pension System corpus with Tier-I & Tier-II projections, tax savings and annuity income estimate',
+  popular: false,
+  hasChart: true,
+  isNew: true,
+  formula: 'Maturity = Contributions × (1 + r)^n compounded annually\n60% lump sum tax-free; 40% used to purchase annuity',
+  tips: [
+    'NPS offers an additional ₹50,000 deduction under Section 80CCD(1B) over and above the ₹1.5L limit.'
+  ]
+},
+  {
+  id: 'epf',
+  slug: 'epf-calculator',
+  cat: 'finance',
+  name: 'EPF Calculator',
+  icon: '🏢',
+  desc: 'Employee Provident Fund maturity with employer & employee contributions, interest compounding and tax-free status',
+  popular: false,
+  hasChart: true,
+  isNew: true,
+  formula: 'Employee contribution: 12% of basic salary\nEmployer: 8.33% to EPS + 3.67% to EPF\nInterest compounded monthly',
+  tips: [
+    'EPF enjoys EEE (Exempt-Exempt-Exempt) tax status — contribution, interest and maturity are all tax-free after 5 years.'
+  ]
+},
+  {
+  id: 'stock-return',
+  slug: 'stock-return-calculator',
+  cat: 'finance',
+  name: 'Stock Return Calculator',
+  icon: '📈',
+  desc: 'Stock investment return with dividend reinvestment, capital gains and annualized CAGR comparison',
+  popular: false,
+  hasChart: true,
+  isNew: true,
+  formula: 'Total Return = (End Price - Start Price + Dividends) / Start Price × 100\nCAGR = (End/Start)^(1/Years) - 1',
+  tips: [
+    'Total return includes both price appreciation and dividend income — always compare total return, not just price change.'
+  ]
+},
+  {
+  id: 'npv',
+  slug: 'npv-calculator',
+  cat: 'finance',
+  name: 'NPV Calculator',
+  icon: '📊',
+  desc: 'Net Present Value of a series of cash flows with IRR comparison and investment decision signal',
+  popular: false,
+  hasChart: true,
+  isNew: true,
+  formula: 'NPV = Σ [CFt / (1 + r)^t] - Initial Investment\nPositive NPV = value-creating investment',
+  tips: [
+    'NPV > 0 means the investment creates value. NPV < 0 means it destroys value at the given discount rate.'
+  ]
+},
+  {
+  id: 'portfolio-rebalance',
+  slug: 'portfolio-rebalance-calculator',
+  cat: 'finance',
+  name: 'Portfolio Rebalancer',
+  icon: '⚖️',
+  desc: 'Rebalance a multi-asset portfolio to target allocations — see exact buy/sell amounts needed',
+  popular: false,
+  hasChart: true,
+  isNew: true,
+  tips: [
+    'Rebalancing once or twice per year is sufficient for most long-term investors.',
+    'Use new contributions to rebalance rather than selling — avoids capital gains taxes.'
+  ]
+},
+  {
+  id: 'dividend-yield',
+  slug: 'dividend-yield-calculator',
+  cat: 'finance',
+  name: 'Dividend Yield Calculator',
+  icon: '💵',
+  desc: 'Dividend yield, annual income, payout ratio and dividend growth rate projection',
+  popular: false,
+  hasChart: true,
+  isNew: true,
+  formula: 'Dividend Yield = Annual Dividend per Share / Share Price × 100',
+  tips: [
+    'A high yield (>6%) may signal a dividend cut risk — always check the payout ratio (should be below 80%).'
   ]
 },
 ];

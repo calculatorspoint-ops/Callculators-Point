@@ -292,18 +292,12 @@ export function Row3({ children }) {
 export function Presets({ items, onApply }) {
   if (!items?.length) return null;
   return (
-    <div style={{
-      padding: "10px 12px", background: "var(--surface2)",
-      border: "1.5px solid var(--border)", borderRadius: "var(--r-lg)",
-      marginBottom: 16
-    }}>
-      <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--text3)", marginBottom: 8 }}>
-        Quick Examples
-      </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+    <div className="presets-section">
+      <p className="presets-label">Quick Examples</p>
+      <div className="presets-row">
         {items.map((p, i) => (
           <button key={i} onClick={() => onApply(p)}
-            aria-label={"Apply preset " + p.label}
+            aria-label={"Apply example: " + p.label}
             className="preset-chip">
             {p.label}
           </button>
@@ -315,23 +309,32 @@ export function Presets({ items, onApply }) {
 
 // ── Input Section ──────────────────────────────────────────────────────
 // Groups related inputs with a gradient header
-export function InputSection({ title, icon, gradient, children }) {
-  const grad = gradient || "linear-gradient(135deg, #4361ee 0%, #3451c7 100%)";
+export function InputSection({ title, icon, gradient, accentClass, children }) {
+  // Map legacy gradient colours -> CSS accent class for the left-border
+  const gradToAccent: Record<string, string> = {
+    "#4361ee": "accent-finance", "#3451c7": "accent-finance",
+    "#059669": "accent-invest",  "#047857": "accent-invest",
+    "#7c3aed": "accent-violet",  "#5b21b6": "accent-violet",
+    "#d97706": "accent-tax",     "#b45309": "accent-tax",
+    "#dc2626": "accent-loan",    "#b91c1c": "accent-loan",
+    "#0891b2": "accent-math",    "#0e7490": "accent-math",
+    "#db2777": "accent-health",  "#be185d": "accent-health",
+    "#374151": "accent-tech",    "#1f2937": "accent-tech",
+  };
+  let detectedAccent = "accent-finance";
+  if (gradient) {
+    for (const [hex, cls] of Object.entries(gradToAccent)) {
+      if (gradient.includes(hex)) { detectedAccent = cls; break; }
+    }
+  }
+  const accent = accentClass || detectedAccent;
   return (
-    <div style={{
-      border: "1.5px solid var(--border)", borderRadius: "var(--r-xl)",
-      overflow: "hidden", marginBottom: 14
-    }}>
-      <div style={{
-        background: grad, padding: "10px 16px",
-        display: "flex", alignItems: "center", gap: 9
-      }}>
-        {icon && <span style={{ fontSize: 16 }}>{icon}</span>}
-        <span style={{ fontSize: 12, fontWeight: 800, color: "#fff", letterSpacing: ".02em" }}>
-          {title}
-        </span>
+    <div className="input-section-wrap">
+      <div className={`input-section-head ${accent}`}>
+        {icon && <span className="input-section-icon" aria-hidden="true">{icon}</span>}
+        <span className="input-section-title">{title}</span>
       </div>
-      <div style={{ padding: "16px 16px 6px", background: "var(--surface)" }}>
+      <div className="input-section-body">
         {children}
       </div>
     </div>
@@ -389,21 +392,12 @@ export function Toggle({ label, id, checked, onChange, hint }) {
 
 // ── Info Callout ────────────────────────────────────────────────────────
 export function InfoBox({ type = "info", children }) {
-  const styles = {
-    tip:  { bg: "rgba(5,150,105,.07)",  border: "#86efac", icon: "💡", color: "#065f46" },
-    warn: { bg: "rgba(217,119,6,.07)",  border: "#fde68a", icon: "⚠️", color: "#78350f" },
-    info: { bg: "rgba(67,97,238,.07)",  border: "var(--brand-ll)", icon: "ℹ️", color: "var(--brand-d)" },
-    bad:  { bg: "rgba(220,53,69,.07)",  border: "#fca5a5", icon: "❌", color: "#7f1d1d" },
-  };
-  const s = styles[type] || styles.info;
+  const icons = { tip: "💡", warn: "⚠️", info: "ℹ️", bad: "❌" };
+  const icon = icons[type] || icons.info;
   return (
-    <div style={{
-      background: s.bg, border: "1.5px solid " + s.border,
-      borderRadius: "var(--r-lg)", padding: "11px 14px",
-      display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 14
-    }}>
-      <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{s.icon}</span>
-      <p style={{ fontSize: 12.5, color: s.color, lineHeight: 1.65, fontWeight: 500 }}>{children}</p>
+    <div className={`info-box info-box-${type}`} role={type === "warn" || type === "bad" ? "alert" : "note"}>
+      <span className="info-box-icon" aria-hidden="true">{icon}</span>
+      <p className="info-box-text">{children}</p>
     </div>
   );
 }
@@ -411,16 +405,9 @@ export function InfoBox({ type = "info", children }) {
 // ── SEO Section ─────────────────────────────────────────────────────────
 export function SEOSection({ title, children }) {
   return (
-    <div style={{
-      background: "var(--surface2)", border: "1.5px solid var(--border)",
-      borderRadius: "var(--r-xl)", padding: "20px 22px", marginTop: 4
-    }}>
-      <h2 style={{ fontSize: 16, fontWeight: 800, color: "var(--text)", marginBottom: 10, letterSpacing: "-.02em" }}>
-        {title}
-      </h2>
-      <div style={{ fontSize: 13.5, color: "var(--text2)", lineHeight: 1.8 }}>
-        {children}
-      </div>
+    <div className="seo-section-wrap">
+      <h2 className="seo-section-title">📘 {title}</h2>
+      <div className="seo-section-body">{children}</div>
     </div>
   );
 }
@@ -458,7 +445,7 @@ export function Panel({ result, loading, label, shareParams }) {
   const currentHistory = savedLocally.filter(s => s.calcId === activeCalc?.id).slice(0, 5);
 
   return (
-    <div id="calc-result-area" style={{ minWidth: 0, width: "100%", margin: "0 auto", textAlign: "center" }}>
+    <div id="calc-result-area" className="result-live-region" aria-live="polite" aria-atomic="false" style={{ minWidth: 0, width: "100%", margin: "0 auto", textAlign: "center" }}>
       <ResultBox label={result.primary.label} value={result.primary.value} sub={result.primary.sub} />
       {result.stats?.length > 0 && <StatsGrid items={result.stats} />}
       {result.chart && (
@@ -522,47 +509,44 @@ export function Panel({ result, loading, label, shareParams }) {
       )}
 
       {/* ── Toolbar ── */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
-        <button onClick={handleSaveHistory}
-          style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: "var(--surf2)", border: "1px solid var(--border)", color: "var(--text2)", cursor: "pointer", fontFamily: "var(--font)" }}>
-          💾 Save Result
+      <div className="panel-toolbar">
+        <button onClick={handleSaveHistory} className="calc-tool-btn" title="Save this result">
+          💾 Save
         </button>
         {result.breakdowns?.length > 0 && (
           <button onClick={() => exportToCSV(result.breakdowns, (label || "calc").toLowerCase().replace(/\s+/g, "-"))}
-            style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: "var(--surf2)", border: "1px solid var(--border)", color: "var(--text2)", cursor: "pointer", fontFamily: "var(--font)" }}>
+            className="calc-tool-btn success" title="Download as CSV">
             📥 Export CSV
           </button>
         )}
         {shareParams && (
           <button onClick={async () => { await copyShareLink(shareParams); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-            style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700, background: copied ? "var(--brand)" : "var(--surf2)", border: "1px solid " + (copied ? "var(--brand)" : "var(--border)"), color: copied ? "#fff" : "var(--text2)", cursor: "pointer", fontFamily: "var(--font)", transition: "all .2s" }}>
-            {copied ? "✅ Link Copied!" : "🔗 Share Link"}
+            className={`calc-tool-btn ${copied ? "active" : ""}`} title="Copy shareable link">
+            {copied ? "✅ Copied!" : "🔗 Share"}
           </button>
         )}
       </div>
 
       {/* ── History ── */}
       {currentHistory.length > 0 && (
-        <div style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 12 }}>
+        <div style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 14, textAlign: "left" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".05em", color: "var(--text3)" }}>
-              Recent History
+            <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".05em", color: "var(--text3)", display: "flex", alignItems: "center", gap: 5 }}>
+              🕐 Recent History
             </h4>
-            <button onClick={() => setShowHistory(!showHistory)}
-              style={{ fontSize: 11, fontWeight: 700, color: "var(--brand)", background: "none", border: "none", cursor: "pointer" }}>
+            <button onClick={() => setShowHistory(!showHistory)} className="calc-tool-btn" style={{ padding: "4px 10px", fontSize: 11 }}>
               {showHistory ? "Hide" : "Show"}
             </button>
           </div>
           {showHistory && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div>
               {currentHistory.map(h => (
-                <div key={h.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "var(--surf2)", borderRadius: "var(--r-md)", fontSize: 12, border: "1px solid var(--border)" }}>
+                <div key={h.id} className="history-row">
                   <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontWeight: 700, color: "var(--text)" }}>{h.result}</div>
-                    <div style={{ fontSize: 10, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{h.inputs}</div>
+                    <div className="history-val">{h.result}</div>
+                    <div className="history-meta">{h.inputs}</div>
                   </div>
-                  <button onClick={() => removeSaved(h.id)}
-                    style={{ color: "var(--text3)", background: "none", border: "none", padding: 4, cursor: "pointer" }} aria-label="Delete result">×</button>
+                  <button onClick={() => removeSaved(h.id)} className="history-del-btn" aria-label="Remove saved result">×</button>
                 </div>
               ))}
             </div>
