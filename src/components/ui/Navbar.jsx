@@ -6,8 +6,10 @@ import { ALL_CALCULATORS, CATEGORIES, POPULAR } from "@/data/calculatorConfigs.j
 import { CurrencySelector } from "./CurrencySelector.jsx";
 import { SettingsModal } from "./SettingsModal.jsx";
 import { useTranslation } from "react-i18next";
-import { signInWithGoogle, logout } from "@/firebase/auth.js";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+// import { signInWithGoogle, logout } from "@/firebase/auth.js";
+// import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const ENABLE_FIREBASE_AUTH = false; // Feature flag to toggle auth system
 
 /* ── Search aliases: map user intent → calculator IDs ──────────── */
 const ALIASES = {
@@ -172,11 +174,16 @@ export function Navbar() {
   }, [theme]);
 
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
+    // if (!ENABLE_FIREBASE_AUTH) return;
+    // try {
+    //   const auth = getAuth();
+    //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    //     setUser(currentUser);
+    //   });
+    //   return () => unsubscribe();
+    // } catch (e) {
+    //   console.error("Firebase auth init error:", e);
+    // }
   }, []);
 
   useEffect(() => { setMob(false); setOpen(false); setSearchOpen(false); setQ(""); setActiveIdx(-1); }, [loc.pathname]);
@@ -335,16 +342,18 @@ export function Navbar() {
               <span style={{ fontSize: 13, fontWeight: 700 }}>{i18n.language === 'es' ? 'ES' : 'EN'}</span>
             </button>
 
-            {/* Auth toggle */}
-            {user ? (
-              <button onClick={logout} className="navbar-icon-btn desktop-only" aria-label="Sign Out" title="Sign Out">
-                <span style={{ fontSize: 13, fontWeight: 700 }}>Out</span>
-              </button>
-            ) : (
-              <button onClick={signInWithGoogle} className="navbar-icon-btn desktop-only" aria-label="Sign In" title="Sign In">
-                <span style={{ fontSize: 13, fontWeight: 700 }}>In</span>
-              </button>
-            )}
+            {/* Auth toggle (Disabled for now) */}
+            {/* ENABLE_FIREBASE_AUTH && (
+              user ? (
+                <button onClick={logout} className="navbar-icon-btn desktop-only" aria-label="Sign Out" title="Sign Out">
+                  <span style={{ fontSize: 13, fontWeight: 700 }}>Out</span>
+                </button>
+              ) : (
+                <button onClick={signInWithGoogle} className="navbar-icon-btn desktop-only" aria-label="Sign In" title="Sign In">
+                  <span style={{ fontSize: 13, fontWeight: 700 }}>In</span>
+                </button>
+              )
+            ) */}
 
             {/* Theme toggle */}
             <button
