@@ -2,17 +2,17 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore.js";
-import { ALL_CALCULATORS, CATEGORIES, POPULAR } from "@/data/calculatorConfigs.js";
+import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig } from "@/data/calculatorConfigs.js";
 import { CurrencySelector } from "./CurrencySelector.jsx";
 import { SettingsModal } from "./SettingsModal.jsx";
 import { useTranslation } from "react-i18next";
 // import { signInWithGoogle, logout } from "@/firebase/auth.js";
 // import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const ENABLE_FIREBASE_AUTH = false; // Feature flag to toggle auth system
+// const ENABLE_FIREBASE_AUTH = false; // Feature flag to toggle auth system
 
 /* ── Search aliases: map user intent → calculator IDs ──────────── */
-const ALIASES = {
+const ALIASES: Record<string, string[]> = {
   "grade needed": ["required-grade", "final-grade", "gpa"],
   "grade required": ["required-grade", "final-grade"],
   "period": ["period", "ovulation", "fertility"],
@@ -68,7 +68,7 @@ const ALIASES = {
 };
 
 /* ── Fuzzy-ish search: alias + name + desc + keywords ──────────── */
-function searchCalculators(query) {
+function searchCalculators(query: string): CalculatorConfig[] {
   if (!query?.trim()) return [];
   const lq = query.toLowerCase().trim();
 
@@ -99,7 +99,7 @@ function searchCalculators(query) {
 }
 
 /* ── Search Dropdown ──────────────────────────────────────────── */
-function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdown-list" }) {
+function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdown-list" }: { results: CalculatorConfig[]; query: string; activeIdx: number; listboxId?: string }) {
   const noResults = query.trim().length > 1 && results.length === 0;
   const suggestions = noResults
     ? POPULAR.slice(0, 4)
@@ -136,7 +136,7 @@ function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdow
           <div style={{ padding: "10px 16px 6px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)" }}>
             No results — try these popular tools
           </div>
-          {suggestions.map((r, i) => (
+          {suggestions?.map((r) => (
             <Link key={r.id} to={`/calculator/${r.slug}`} className="navbar-search-item" role="option">
               <span className="navbar-search-item-icon">{r.icon}</span>
               <div>
@@ -151,16 +151,16 @@ function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdow
   );
 }
 
-function SearchBox({ isMobile, isOpen, onClose }) {
+function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: boolean; onClose?: () => void }) {
   const navigate = useNavigate();
   const { addSearchHistory } = useAppStore();
   const [q, setQ] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<CalculatorConfig[]>([]);
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
-  const inputRef = useRef(null);
-  const searchRef = useRef(null);
-  const debounceRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loc = useLocation();
 
   useEffect(() => { setOpen(false); setQ(""); setActiveIdx(-1); }, [loc.pathname]);
@@ -173,7 +173,7 @@ function SearchBox({ isMobile, isOpen, onClose }) {
 
   // Debounced search
   useEffect(() => {
-    clearTimeout(debounceRef.current);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       if (!q.trim()) {
         setResults([]);
@@ -186,13 +186,13 @@ function SearchBox({ isMobile, isOpen, onClose }) {
       setOpen(true);
       setActiveIdx(-1);
     }, 120);
-    return () => clearTimeout(debounceRef.current);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [q]);
 
   // Click outside to close
   useEffect(() => {
-    const h = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
+    const h = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setOpen(false);
         setActiveIdx(-1);
         if (isMobile && onClose) {
@@ -205,7 +205,7 @@ function SearchBox({ isMobile, isOpen, onClose }) {
   }, [isMobile, onClose]);
 
   // Keyboard navigation
-  const handleKeyDown = useCallback((e) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!open && !isMobile) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
