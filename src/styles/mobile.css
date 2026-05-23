@@ -148,6 +148,25 @@ html.mob-menu-open body { overflow: hidden; }
   .hero-pill  { flex-shrink: 0; font-size: 12px; padding: 5px 12px; white-space: nowrap; min-height: 36px; }
 
   /* ══ STAT STRIP ══════════════════════════════ */
+  .calc-form-stack { flex-wrap: wrap !important; }
+  .calc-form-stack > input, .calc-form-stack > div { flex: 1 1 100% !important; }
+  
+  /* Phase 3 - Form-specific layout tweaks */
+  .swap-arrow-icon { transform: rotate(90deg) !important; }
+  .stats-input-row, .participant-row, .time-card-row { flex-wrap: wrap !important; }
+  .matrix-wrap, .result-table-wrap, .comparison-table-wrap, .amortization-table-wrap, .subnet-table-wrap, .swr-table-wrap { overflow-x: auto !important; }
+  .matrix-input { width: 40px !important; }
+  .triangle-diagram { display: none !important; }
+  .f-tabs { flex-wrap: wrap !important; }
+  .macro-grid, .eoq-results { grid-template-columns: 1fr 1fr !important; }
+  .loan-compare-grid { grid-template-columns: 1fr !important; }
+  .payment-schedule, .credit-card-inputs { flex-direction: column !important; }
+  .debt-item { width: 100% !important; }
+  .calendar-wrap { width: 100% !important; overflow-x: auto !important; }
+  textarea { width: 100% !important; }
+  .ip-result-row { word-break: break-all !important; }
+  table { display: block !important; overflow-x: auto !important; white-space: nowrap !important; width: 100% !important; }
+
   .stat-strip { flex-wrap: wrap !important; overflow: visible !important; }
   .stat-strip-item {
     flex: 0 0 50% !important;
@@ -582,3 +601,34 @@ html.mob-menu-open body { overflow: hidden; }
   .toggle-track { min-width: 44px; min-height: 26px; }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   PHASE 1 — GLOBAL CSS FIXES (MOBILE LAYOUT IMPROVEMENTS)
+══════════════════════════════════════════════════════════════ */
+@media(max-width: 480px) {
+  .sc-row2 { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .stats-grid, .sc-stats-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+}
+
+@media(max-width: 640px) {
+  .sc-row3 { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .calc-card-body { padding: 14px !important; }
+  
+  /* Ensure form inputs / selects are 48px height */
+  .f-input, .f-select, input.N-input, select.f-select {
+    min-height: 48px !important;
+  }
+  
+  /* Breakdown table word-wrap */
+  .breakdown-table td, .breakdown-table th {
+    white-space: normal !important;
+    word-break: break-word;
+  }
+  .breakdown-table {
+    display: table !important; /* Override potential block display */
+  }
+
+  /* Limit chart height */
+  .chart-wrap canvas, .chart-wrap > div {
+    max-height: 250px !important;
+  }
+}

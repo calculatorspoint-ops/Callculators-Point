@@ -338,7 +338,7 @@ export function OneRMForm(){
           <StatsGrid items={res.stats}/>
           <InsightBox insights={res.insights}/>
           <L t="Training Percentages"/>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginTop:8}}>
+          <div className="mob-3col" style={{gap:8,marginTop:8}}>
             {res.pcts?.map(p=>(
               <div key={p.pct} style={{textAlign:"center",padding:"10px 8px",background:"var(--surface2)",border:"1px solid var(--border)",borderRadius:"var(--r-md)"}}>
                 <div style={{fontSize:10,fontWeight:700,color:"var(--text3)"}}>{p.pct}%</div>
@@ -418,9 +418,9 @@ export function CaloriesBurnedForm(){
           <Sl label="Duration" id="cbd" min={5} max={180} step={5} value={duration} onChange={setDuration} fmt={v=>`${v} min`}/>
         </Row2>
         <L t="Select Activity"/>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,maxHeight:260,overflowY:"auto",paddingRight:4}}>
+        <div className="mob-2col" style={{gap:6,maxHeight:260,overflowY:"auto",paddingRight:4}}>
           {MET_ACTIVITIES.map((a,i)=>(
-            <button key={i} onClick={()=>setActIdx(i)} style={{padding:"8px 10px",borderRadius:"var(--r-md)",border:actIdx===i?"2px solid var(--brand)":"1px solid var(--border)",background:actIdx===i?"var(--p50)":"var(--surface)",color:actIdx===i?"var(--brand)":"var(--text2)",fontWeight:actIdx===i?700:500,fontSize:11,cursor:"pointer",textAlign:"left"}}>
+            <button key={i} onClick={()=>setActIdx(i)} style={{padding:"8px 10px",borderRadius:"var(--r-md)",border:actIdx===i?"2px solid var(--brand)":"1px solid var(--border)",background:actIdx===i?"var(--p50)":"var(--surface)",color:actIdx===i?"var(--brand)":"var(--text2)",fontWeight:actIdx===i?700:500,fontSize:11,cursor:"pointer",textAlign:"left",minHeight:36}}>
               {a.label}
             </button>
           ))}

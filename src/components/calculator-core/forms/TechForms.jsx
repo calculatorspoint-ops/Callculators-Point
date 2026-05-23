@@ -885,7 +885,7 @@ export function PasswordStrengthForm() {
 
           {/* Character type checklist */}
           <SectionTitle>Character Types</SectionTitle>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 14 }}>
+          <div className="mob-2col" style={{ gap: 6, marginBottom: 14 }}>
             {[
               ["Lowercase (a-z)", analysis.hasLower],
               ["Uppercase (A-Z)", analysis.hasUpper],

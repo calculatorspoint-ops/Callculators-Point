@@ -94,10 +94,10 @@ export function PaintForm() {
       <div>
         {rooms.map((r, i) => (
           <div key={i} style={{ marginBottom: 16, padding: 14, background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <input value={r.name} onChange={e => updateRoom(i, "name", e.target.value)}
-                style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", background: "transparent", border: "none", outline: "none", flex: 1 }} />
-              {rooms.length > 1 && <button onClick={() => setRooms(p => p.filter((_, idx) => idx !== i))} style={{ color: "var(--text3)", background: "none", border: "none", cursor: "pointer" }}>×</button>}
+                style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", background: "transparent", border: "none", outline: "none", flex: "1 1 100%", marginBottom: 8 }} />
+              {rooms.length > 1 && <button onClick={() => setRooms(p => p.filter((_, idx) => idx !== i))} style={{ color: "var(--text3)", background: "none", border: "none", cursor: "pointer", flex: "1 1 100%", textAlign: "left", paddingBottom: 8 }}>× Remove Room</button>}
             </div>
             <Row3>
               <N label="Length (ft)" id={`rm_l${i}`} value={r.length} onChange={v => updateRoom(i, "length", v)} unit="ft" />
@@ -250,12 +250,14 @@ export function ConstructionCostForm() {
         <N label="Contingency (%)" id="ccc" value={contingency} onChange={setContingency} unit="%" hint="Recommended: 10-20%" />
         <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", marginBottom: 10 }}>Additional Costs</p>
         {extras.map((e, i) => (
-          <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          <div key={i} className="extra-cost-row calc-form-stack" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
             <input value={e.name} onChange={ev => setExtras(p => p.map((x, idx) => idx === i ? { ...x, name: ev.target.value } : x))}
-              style={{ flex: 1, height: 36, padding: "0 10px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--text)", fontFamily: "var(--font)" }} />
+              className="cost-name-input"
+              style={{ flex: "1 1 100%", height: 48, padding: "0 10px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 16, color: "var(--text)", fontFamily: "var(--font)" }} />
             <input value={e.cost} onChange={ev => setExtras(p => p.map((x, idx) => idx === i ? { ...x, cost: ev.target.value } : x))} type="number"
-              style={{ width: 100, height: 36, padding: "0 10px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--text)", fontFamily: "var(--font)" }} />
-            <button onClick={() => setExtras(p => p.filter((_, idx) => idx !== i))} style={{ color: "var(--text3)", background: "none", border: "none", cursor: "pointer", padding: "0 8px" }}>×</button>
+              className="cost-value-input"
+              style={{ flex: "1 1 calc(100% - 40px)", height: 48, padding: "0 10px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 16, color: "var(--text)", fontFamily: "var(--font)" }} />
+            <button onClick={() => setExtras(p => p.filter((_, idx) => idx !== i))} style={{ color: "var(--text3)", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", cursor: "pointer", width: 32, height: 48 }}>×</button>
           </div>
         ))}
         <button onClick={() => setExtras(p => [...p, { name: "Item", cost: "0" }])}
@@ -306,14 +308,18 @@ export function ElectricalLoadForm() {
         <Sel label="Voltage" id="elv" value={voltage} onChange={setVoltage} opts={[{ v: "120", l: "120V (US)" }, { v: "230", l: "230V (EU/Asia)" }, { v: "240", l: "240V (UK/AU)" }]} />
         <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", marginBottom: 10 }}>Appliances</p>
         {appliances.map((a, i) => (
-          <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
+          <div key={i} className="appliance-row calc-form-stack" style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8, alignItems: "center" }}>
             <input value={a.name} onChange={e => updateApp(i, "name", e.target.value)}
-              style={{ flex: 1, height: 36, padding: "0 10px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 12, color: "var(--text)", fontFamily: "var(--font)" }} />
-            <input value={a.watts} onChange={e => updateApp(i, "watts", e.target.value)} type="number" placeholder="Watts"
-              style={{ width: 75, height: 36, padding: "0 8px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 12, color: "var(--text)", fontFamily: "var(--font)" }} />
-            <input value={a.hours} onChange={e => updateApp(i, "hours", e.target.value)} type="number" placeholder="hrs/day"
-              style={{ width: 65, height: 36, padding: "0 8px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 12, color: "var(--text)", fontFamily: "var(--font)" }} />
-            <button onClick={() => setAppliances(p => p.filter((_, idx) => idx !== i))} style={{ color: "var(--text3)", background: "none", border: "none", cursor: "pointer" }}>×</button>
+              style={{ flex: "1 1 100%", height: 48, padding: "0 10px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 16, color: "var(--text)", fontFamily: "var(--font)" }} />
+            <div style={{ display: "flex", gap: 8, flex: "1 1 100%" }}>
+              <input value={a.watts} onChange={e => updateApp(i, "watts", e.target.value)} type="number" placeholder="Watts"
+                className="app-watts"
+                style={{ flex: 1, height: 48, padding: "0 8px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 16, color: "var(--text)", fontFamily: "var(--font)" }} />
+              <input value={a.hours} onChange={e => updateApp(i, "hours", e.target.value)} type="number" placeholder="hrs/day"
+                className="app-hours"
+                style={{ flex: 1, height: 48, padding: "0 8px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 16, color: "var(--text)", fontFamily: "var(--font)" }} />
+              <button onClick={() => setAppliances(p => p.filter((_, idx) => idx !== i))} style={{ color: "var(--text3)", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", cursor: "pointer", width: 48 }}>×</button>
+            </div>
           </div>
         ))}
         <button onClick={() => setAppliances(p => [...p, { name: "Appliance", watts: "100", hours: "4" }])}

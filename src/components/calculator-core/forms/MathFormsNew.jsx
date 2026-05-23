@@ -204,12 +204,12 @@ export function VolumeForm() {
         { v: "sphere", l: "Sphere" }, { v: "cylinder", l: "Cylinder" }, { v: "cone", l: "Cone" },
         { v: "cube", l: "Cube" }, { v: "cuboid", l: "Rectangular Prism (Cuboid)" }, { v: "pyramid", l: "Pyramid" },
       ]} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+      <Row2>
         {needsRadius && <N label="Radius (r)" id="vr" value={r} onChange={setR} unit="units" />}
         {needsHeight && <N label="Height (h)" id="vh" value={h} onChange={setH} unit="units" />}
         {needsLength && <N label={shape === "cube" ? "Side (l)" : "Length (l)"} id="vl" value={l} onChange={setL} unit="units" />}
         {needsWidth && <N label="Width (w)" id="vw" value={w} onChange={setW} unit="units" />}
-      </div>
+      </Row2>
       {res && <Panel result={res} loading={null} label="Volume" />}
     </div>
   );

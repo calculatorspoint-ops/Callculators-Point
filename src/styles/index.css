@@ -1601,3 +1601,334 @@ img { content-visibility: auto; }
   border-color: var(--result-border);
 }
 
+/* ══════════════════════════════════════════════════════════════
+   MOBILE CALCULATOR LAYOUT — Comprehensive overrides
+   Target: 390px (iPhone 14) and 375px (iPhone SE)
+══════════════════════════════════════════════════════════════ */
+
+/* ── Row helpers collapse on mobile ── */
+@media(max-width:600px){
+  .sc-row2{grid-template-columns:1fr!important;gap:0!important;}
+  .sc-row3{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+}
+@media(max-width:400px){
+  .sc-row3{grid-template-columns:1fr!important;gap:0!important;}
+}
+
+/* Mobile-responsive 2-col grid — works even with inline styles via class override */
+.mob-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.mob-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+@media(max-width:640px){
+  .mob-2col { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .mob-3col { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+}
+@media(max-width:400px){
+  .mob-3col { grid-template-columns: 1fr !important; }
+}
+/* Full-width button utility */
+.mob-btn-full { display: flex; width: 100%; }
+
+/* ── Inputs: 16px prevents iOS auto-zoom, 50px for fat fingers ── */
+@media(max-width:767px){
+  .sc-row2{grid-template-columns:1fr!important;gap:0!important;}
+  .sc-row3{grid-template-columns:1fr 1fr!important;gap:8px!important;}
+  /* All inline number inputs in calculator forms */
+  input[type="text"].N-input,
+  input[type="number"].N-input,
+  input[type="text"][style],
+  input[type="number"][style],
+  select[style]{
+    font-size:16px!important;
+    min-height:50px!important;
+  }
+  /* Tabs that have many options — allow 2-column grid */
+  .f-tabs{flex-wrap:wrap;}
+  .f-tab{min-height:44px;font-size:12.5px;}
+  /* Buttons — full width, easy to tap */
+  .calculate-btn,.convert-btn,.reset-btn{
+    width:100%!important;
+    min-height:52px!important;
+    font-size:15px!important;
+    border-radius:14px!important;
+  }
+  /* Stats grid — max 2 columns */
+  .stats-grid{
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+  }
+  /* Chart container — scrollable on mobile */
+  .chart-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  /* Breakdown table — smaller paddings */
+  .brow td{padding:9px 10px!important;font-size:12px!important;}
+  .breakdown-toggle{min-height:48px;padding:11px 12px;}
+  /* Insight cards — smaller padding */
+  .insight-card{padding:10px 12px!important;}
+  /* Empty state — compact */
+  .empty-state{padding:30px 16px!important;}
+  .empty-state-icon{font-size:34px!important;}
+  /* Input section headers */
+  [style*="background: linear-gradient"][style*="padding: 10px 16px"]{
+    padding:8px 12px!important;
+  }
+  /* Reduce gap in form sections */
+  [style*="marginBottom: 14"]{margin-bottom:10px!important;}
+}
+
+/* ── Utility converter arrows: vertical on mobile ── */
+@media(max-width:480px){
+  .conv-arrow-h{display:none!important;}
+  .conv-arrow-v{display:flex!important;}
+}
+
+/* ── Tables in calculators — horizontal scroll ── */
+@media(max-width:767px){
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;}
+  /* Preserve table layout inside scroll container */
+  table thead,table tbody,table tfoot{display:table;width:100%;}
+  table tr{display:table-row;}
+  table td,table th{display:table-cell;white-space:nowrap;font-size:12px;padding:7px 8px!important;}
+}
+
+/* ── Amortization / schedule tables — keep readable ── */
+@media(max-width:767px){
+  .amort-table-wrap{overflow-x:auto;border-radius:var(--r-lg);border:1px solid var(--border);}
+  .amort-table-wrap table{margin:0;border-radius:0;border:none;}
+}
+
+/* ── Period form calendar ── */
+@media(max-width:480px){
+  .period-calendar-day{width:36px!important;height:36px!important;font-size:11px!important;}
+}
+
+/* ── Loan comparison side-by-side → vertical ── */
+@media(max-width:600px){
+  .loan-compare-grid{grid-template-columns:1fr!important;}
+}
+
+/* ── Business form time-card rows ── */
+@media(max-width:480px){
+  .timecard-row{flex-wrap:wrap!important;gap:6px!important;}
+  .timecard-row>*{flex:1 1 100%!important;}
+}
+
+/* ── GPA table compact ── */
+@media(max-width:480px){
+  .gpa-thead,.gpa-row{
+    grid-template-columns:1.8fr 1fr 0.7fr auto!important;
+    padding:6px 8px!important;
+    font-size:11px!important;
+  }
+}
+
+/* ── Scenario compare ── */
+@media(max-width:600px){
+  .scenario-grid{grid-template-columns:1fr!important;}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOUCH: Larger targets, remove hover states on touch devices
+══════════════════════════════════════════════════════════════ */
+@media(hover:none) and (pointer:coarse){
+  /* All interactive buttons and inputs */
+  button,select,input{-webkit-tap-highlight-color:transparent;}
+  /* Preset chips */
+  .preset-chip,.preset-chip-new{padding:8px 14px!important;min-height:40px;}
+  /* Sliders — bigger thumb */
+  input[type="range"]::-webkit-slider-thumb{
+    width:28px!important;height:28px!important;
+    box-shadow:0 0 0 4px var(--brand),0 2px 8px rgba(37,99,235,.4)!important;
+  }
+  /* Remove hover transforms on touch (they feel laggy) */
+  .home-feature-card:hover,.sidebar-card:hover{transform:none!important;}
+  .calc-card:hover{box-shadow:var(--sh2)!important;}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PHASE 3 — FORM-SPECIFIC MOBILE FIXES
+══════════════════════════════════════════════════════════════ */
+
+/* ── Date/Time inputs: same height and font-size as N-input on mobile ── */
+@media(max-width:767px){
+  input[type="date"],
+  input[type="time"]{
+    font-size:16px!important;
+    min-height:50px!important;
+    height:50px!important;
+    padding:0 12px!important;
+  }
+}
+
+/* ── Construction: appliance/extra rows → stack on small screens ── */
+@media(max-width:600px){
+  .appliance-row,
+  .extra-cost-row{
+    flex-wrap:wrap!important;
+    gap:6px!important;
+  }
+  .appliance-row>input,
+  .extra-cost-row>input{
+    flex:1 1 100%!important;
+    min-width:0!important;
+    width:100%!important;
+    height:44px!important;
+    font-size:16px!important;
+  }
+  .appliance-row .app-watts,
+  .appliance-row .app-hours{
+    flex:1 1 calc(50% - 20px)!important;
+    min-width:0!important;
+    height:44px!important;
+    font-size:16px!important;
+  }
+  /* ConstructionCost extras: name takes full width, cost 50% */
+  .extra-cost-row .cost-name-input{
+    flex:1 1 100%!important;
+  }
+  .extra-cost-row .cost-value-input{
+    flex:1 1 auto!important;
+    min-width:80px!important;
+  }
+}
+
+/* ── RoofingForm Row3 (waste+price) → 2 cols is fine, but ensure font ── */
+@media(max-width:767px){
+  .sc-row3.form-row-compact{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+/* ── Matrix calculator cells: smaller on mobile ── */
+@media(max-width:480px){
+  .matrix-cell{
+    width:40px!important;
+    height:40px!important;
+    font-size:13px!important;
+    padding:2px!important;
+  }
+  .matrix-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:4px;
+  }
+}
+
+/* ── Health forms: calorie/macro result cards 2-col ── */
+@media(max-width:640px){
+  .macro-grid{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+/* ── Finance: bank comparison table ── */
+@media(max-width:767px){
+  .bank-compare-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    border-radius:var(--r-lg);
+  }
+}
+
+/* ── Investment: portfolio chart height on mobile ── */
+@media(max-width:640px){
+  .portfolio-chart-wrap{
+    max-height:220px!important;
+  }
+}
+
+/* ── TechForms: subnet result table ── */
+@media(max-width:767px){
+  .subnet-result-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .hash-textarea{
+    width:100%!important;
+    font-size:13px!important;
+  }
+}
+
+/* ── Business: meeting cost participant inputs ── */
+@media(max-width:600px){
+  .participant-row{
+    flex-wrap:wrap!important;
+    gap:6px!important;
+  }
+  .participant-row>*{
+    flex:1 1 100%!important;
+  }
+}
+
+/* ── Period tracker: full-width calendar ── */
+@media(max-width:640px){
+  .period-calendar-wrap{
+    width:100%!important;
+    overflow-x:auto;
+  }
+  .period-calendar-grid{
+    min-width:0!important;
+    width:100%!important;
+  }
+}
+
+/* ── Amortization schedule: ensure proper scroll ── */
+@media(max-width:767px){
+  .amort-schedule-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    border:1px solid var(--border);
+    border-radius:var(--r-lg);
+  }
+  .amort-schedule-wrap table{
+    min-width:480px;
+  }
+}
+
+/* ── Word count textarea: full width ── */
+@media(max-width:767px){
+  .wordcount-textarea{
+    font-size:15px!important;
+    min-height:120px!important;
+  }
+}
+
+/* ── IP Range / subnet wrap rows ── */
+@media(max-width:600px){
+  .ip-result-row{
+    flex-wrap:wrap!important;
+  }
+  .ip-result-row>*{
+    flex:1 1 100%!important;
+    min-width:0!important;
+  }
+}
+
+/* ── Debt payoff list items ── */
+@media(max-width:640px){
+  .debt-item-row{
+    flex-wrap:wrap!important;
+    gap:8px!important;
+  }
+  .debt-item-row>input{
+    flex:1 1 100%!important;
+    font-size:16px!important;
+    min-height:46px!important;
+  }
+}
+
+/* ── SWR table: horizontal scroll ── */
+@media(max-width:767px){
+  .swr-table-wrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+}
+
+/* ── EOQ / markup result cards: 2-col on mobile ── */
+@media(max-width:640px){
+  .eoq-result-grid{
+    grid-template-columns:1fr 1fr!important;
+  }
+}

@@ -43,8 +43,8 @@ export function UnitForm({type="length"}){
 
   return (
     <div>
-      <div style={{ marginBottom: 20, padding: "14px 16px", background: "linear-gradient(to right, var(--brand-l), var(--surface))", borderLeft: "4px solid var(--brand)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--text2)", display: "flex", gap: 10, alignItems: "center" }}>
-        <span style={{ fontSize: 18 }}>💡</span>
+      <div style={{ marginBottom: 16, padding: "12px 14px", background: "linear-gradient(to right, var(--brand-l), var(--surface))", borderLeft: "4px solid var(--brand)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--text2)", display: "flex", gap: 10, alignItems: "flex-start" }}>
+        <span style={{ fontSize: 18, flexShrink: 0 }}>💡</span>
         <span><strong>Omni-Sync Active:</strong> Type a value in <em>any</em> box below, and all other units will instantly synchronize.</span>
       </div>
 
@@ -216,7 +216,7 @@ export function AgeForm() {
       </label>
 
       {showTime && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+        <Row2>
           <div>
             <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>
               Time of Birth
@@ -229,7 +229,7 @@ export function AgeForm() {
             </label>
             <input type="time" value={targetTime} onChange={e => setTargetTime(e.target.value)} style={inputBase} />
           </div>
-        </div>
+        </Row2>
       )}
 
       {/* Target date */}
@@ -378,17 +378,15 @@ export function FuelForm(){
     return()=>clearTimeout(t);
   },[d,p,e,pax,trips]);
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
-        <N label="Distance" id="fd" value={d} onChange={setD} unit="km"/>
-        <N label={`Fuel Price per Litre`} id="fp" value={p} onChange={setP} unit={sym+"/L"}/>
-        <Sl label="Fuel Efficiency" id="fe" min={4} max={30} value={e} onChange={setE} fmt={v=>`${v} km/L`}/>
-        <Row2>
-          <Sl label="Passengers" id="fpax" min={1} max={10} value={pax} onChange={setPax} fmt={v=>`${v} people`}/>
-          <Sl label="Monthly Trips" id="ftrips" min={1} max={60} value={trips} onChange={setTrips} fmt={v=>`${v} trips`}/>
-        </Row2>
-      </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Trip Cost"/></div>
+    <div>
+      <N label="Distance" id="fd" value={d} onChange={setD} unit="km"/>
+      <N label={`Fuel Price per Litre`} id="fp" value={p} onChange={setP} unit={sym+"/L"}/>
+      <Sl label="Fuel Efficiency" id="fe" min={4} max={30} value={e} onChange={setE} fmt={v=>`${v} km/L`}/>
+      <Row2>
+        <Sl label="Passengers" id="fpax" min={1} max={10} value={pax} onChange={setPax} fmt={v=>`${v} people`}/>
+        <Sl label="Monthly Trips" id="ftrips" min={1} max={60} value={trips} onChange={setTrips} fmt={v=>`${v} trips`}/>
+      </Row2>
+      <Panel result={res} loading={null} label="Trip Cost"/>
     </div>
   );
 }
@@ -429,9 +427,9 @@ export function PasswordForm(){
       </div>
       {res&&(
         <>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,padding:"14px 18px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-xl)",marginBottom:12}}>
-            <code style={{fontFamily:"var(--font-mono)",fontSize:15,fontWeight:600,color:"var(--text)",wordBreak:"break-all",flex:1}}>{res.primary.value}</code>
-            <button onClick={()=>navigator.clipboard.writeText(res.primary.value).catch(()=>{})} style={{flexShrink:0,padding:"7px 16px",borderRadius:"var(--r-md)",background:"var(--brand)",color:"#fff",fontSize:13,fontWeight:700,border:"none",cursor:"pointer",fontFamily:"var(--font)"}}>Copy</button>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,padding:"12px 16px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-xl)",marginBottom:12,flexWrap:"wrap"}}>
+            <code style={{fontFamily:"var(--font-mono)",fontSize:14,fontWeight:600,color:"var(--text)",wordBreak:"break-all",flex:1,minWidth:0}}>{res.primary.value}</code>
+            <button onClick={()=>navigator.clipboard.writeText(res.primary.value).catch(()=>{})} style={{flexShrink:0,padding:"8px 18px",borderRadius:"var(--r-md)",background:"var(--brand)",color:"#fff",fontSize:13,fontWeight:700,border:"none",cursor:"pointer",fontFamily:"var(--font)",minHeight:40}}>Copy</button>
           </div>
 
           <div style={{marginBottom: 16}}>
@@ -573,7 +571,7 @@ export function RandomForm(){
         <Sl label="Count" id="rcount" min={1} max={50} value={count} onChange={setCount} fmt={v=>`${v} numbers`}/>
         <Sel label="Type" id="rtype" value={type} onChange={setType} opts={[{v:"integer",l:"Integers"},{v:"decimal",l:"Decimals"}]}/>
       </Row2>
-      <button onClick={gen} style={{width:"100%",padding:"13px",background:"linear-gradient(135deg,var(--brand),var(--p800))",color:"#fff",borderRadius:"var(--r-xl)",fontWeight:800,fontSize:16,border:"none",cursor:"pointer",fontFamily:"var(--font)",marginBottom:16,boxShadow:"var(--s-brand)"}}>
+      <button onClick={gen} className="calculate-btn" style={{width:"100%",marginBottom:16}}>
         🎲 Generate Random Numbers
       </button>
       {res&&(

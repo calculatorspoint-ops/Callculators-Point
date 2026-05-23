@@ -66,7 +66,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
   const hasLeft = icon || prefix;
 
   return (
-    <div style={{ marginBottom: 14 }}>
+    <div style={{ marginBottom: 12 }}>
       {label && <L t={label} id={id} />}
       <div style={{ position: "relative" }}>
         {hasLeft && (
@@ -83,19 +83,25 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
         <input
           id={id} type={type} value={displayValue} onChange={handleChange}
           placeholder={placeholder} min={min} max={max} step={step}
+          inputMode={type === "number" ? "decimal" : undefined}
           aria-label={label || placeholder}
+          className="N-input"
           style={{
-            width: "100%", height: 46,
-            paddingLeft: hasLeft ? 52 : (unit ? 14 : 14),
+            width: "100%",
+            height: 50,
+            paddingLeft: hasLeft ? 52 : 14,
             paddingRight: unit ? 48 : 14,
             background: focused ? "var(--surface)" : "var(--surface2)",
             border: focused ? "2px solid var(--brand)" : "1.5px solid var(--border)",
-            borderRadius: "var(--r-md)", fontSize: 15, fontWeight: 600,
+            borderRadius: "var(--r-md)",
+            fontSize: 16,
+            fontWeight: 600,
             color: "var(--text)", outline: "none", fontFamily: "var(--font)",
             transition: "all .18s",
-            boxShadow: focused ? "0 0 0 4px rgba(67,97,238,.1)" : "none"
+            boxShadow: focused ? "0 0 0 4px rgba(67,97,238,.1)" : "none",
+            WebkitAppearance: "none",
           }}
-          onFocus={(e) => { setFocused(true); }}
+          onFocus={() => setFocused(true)}
           onBlur={handleBlur}
         />
         {unit && (
@@ -106,7 +112,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
           }}>{unit}</span>
         )}
       </div>
-      {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 5, lineHeight: 1.5 }}>{hint}</p>}
+      {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 4, lineHeight: 1.5 }}>{hint}</p>}
     </div>
   );
 }
@@ -120,13 +126,13 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
     <div style={{ marginBottom: 22 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
         {label && (
-          <label htmlFor={id} style={{ fontSize: 12, fontWeight: 700, color: "var(--text2)", letterSpacing: ".01em" }}>
+          <label htmlFor={id} style={{ fontSize: 14, fontWeight: 700, color: "var(--text2)", letterSpacing: ".01em" }}>
             {label}
           </label>
         )}
         <span style={{
-          fontSize: 13, fontWeight: 800, color: "var(--brand)",
-          background: "var(--brand-l)", padding: "3px 12px",
+          fontSize: 14, fontWeight: 800, color: "var(--brand)",
+          background: "var(--brand-l)", padding: "4px 14px",
           borderRadius: 100, letterSpacing: "-.01em",
           border: "1px solid var(--brand-ll)"
         }}>{display}</span>
@@ -157,12 +163,12 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
 // ── Select ─────────────────────────────────────────────────────────────
 export function Sel({ label, id, value, onChange, opts }) {
   return (
-    <div style={{ marginBottom: 14 }}>
+    <div style={{ marginBottom: 12 }}>
       {label && <L t={label} id={id} />}
       <select
         id={id} value={value} onChange={e => onChange(e.target.value)}
         aria-label={label} className="f-select"
-        style={{ height: 46, fontSize: 15, fontWeight: 600 }}
+        style={{ height: 50, fontSize: 16, fontWeight: 600 }}
       >
         {opts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
       </select>
@@ -173,8 +179,8 @@ export function Sel({ label, id, value, onChange, opts }) {
 // ── Tabs ───────────────────────────────────────────────────────────────
 export function Tabs({ tabs, active, onChange }) {
   return (
-    <div style={{
-      display: "flex", background: "var(--surface2)",
+    <div className={`f-tabs ${tabs.length > 3 ? 'multi-tabs' : ''}`} style={{
+      display: "flex", flexWrap: tabs.length > 3 ? "wrap" : "nowrap", background: "var(--surface2)",
       border: "1.5px solid var(--border)", borderRadius: "var(--r-lg)",
       overflow: "hidden", marginBottom: 20, padding: 4, gap: 4
     }}>
@@ -183,7 +189,7 @@ export function Tabs({ tabs, active, onChange }) {
           key={t} onClick={() => onChange(t)}
           aria-label={"Switch to " + t} aria-pressed={active === t}
           style={{
-            flex: 1, padding: "9px 8px", fontSize: 13, fontWeight: 700,
+            flex: tabs.length > 3 ? "1 1 45%" : 1, padding: "9px 8px", fontSize: 13, fontWeight: 700,
             border: "none", cursor: "pointer", fontFamily: "var(--font)",
             borderRadius: "var(--r-md)",
             transition: "all .18s cubic-bezier(.4,0,.2,1)",
@@ -205,16 +211,14 @@ export function Tabs({ tabs, active, onChange }) {
 // ── Row helpers ────────────────────────────────────────────────────────
 export function Row2({ children }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-      className="sc-row2">
+    <div className="sc-row2" style={{ gap: 12, marginBottom: 0 }}>
       {children}
     </div>
   );
 }
 export function Row3({ children }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}
-      className="sc-row3">
+    <div className="sc-row3" style={{ gap: 10, marginBottom: 0 }}>
       {children}
     </div>
   );
@@ -225,34 +229,33 @@ export function Presets({ items, onApply }) {
   if (!items?.length) return null;
   return (
     <div style={{
-      padding: "12px 14px", background: "var(--surface2)",
+      padding: "10px 12px", background: "var(--surface2)",
       border: "1.5px solid var(--border)", borderRadius: "var(--r-lg)",
-      marginBottom: 20
+      marginBottom: 16
     }}>
-      <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--text3)", marginBottom: 9 }}>
+      <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--text3)", marginBottom: 8 }}>
         Quick Examples
       </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
         {items.map((p, i) => (
           <button key={i} onClick={() => onApply(p)}
             aria-label={"Apply preset " + p.label}
             style={{
-              padding: "7px 14px", borderRadius: "var(--r-md)", fontSize: 12.5,
+              padding: "8px 14px", borderRadius: "var(--r-md)", fontSize: 12.5,
               fontWeight: 700, border: "1.5px solid var(--border)",
               background: "var(--surface)", color: "var(--text2)",
-              cursor: "pointer", transition: "all .18s", lineHeight: 1
+              cursor: "pointer", transition: "all .18s", lineHeight: 1,
+              minHeight: 38, whiteSpace: "nowrap", flexShrink: 0
             }}
             onMouseEnter={e => {
               e.currentTarget.style.borderColor = "var(--brand)";
               e.currentTarget.style.color = "var(--brand)";
               e.currentTarget.style.background = "var(--brand-l)";
-              e.currentTarget.style.transform = "translateY(-1px)";
             }}
             onMouseLeave={e => {
               e.currentTarget.style.borderColor = "var(--border)";
               e.currentTarget.style.color = "var(--text2)";
               e.currentTarget.style.background = "var(--surface)";
-              e.currentTarget.style.transform = "translateY(0)";
             }}>
             {p.label}
           </button>
@@ -389,7 +392,7 @@ export function Panel({ result, loading, label, shareParams }) {
   const currentHistory = savedLocally.filter(s => s.calcId === activeCalc?.id).slice(0, 5);
 
   return (
-    <div id="calc-result-area">
+    <div id="calc-result-area" style={{ minWidth: 0, width: "100%", margin: "0 auto", textAlign: "center" }}>
       <ResultBox label={result.primary.label} value={result.primary.value} sub={result.primary.sub} />
       {result.stats?.length > 0 && <StatsGrid items={result.stats} />}
       {result.chart && (
