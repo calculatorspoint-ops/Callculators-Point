@@ -190,40 +190,23 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
         </div>
       </div>
       
-      {/* COMPLETELY REDESIGNED THICK PILL SLIDER */}
-      <div style={{ position: "relative", height: 48, borderRadius: 24, background: "var(--surface2)", border: "1.5px solid var(--border)", boxShadow: "inset 0 2px 6px rgba(0,0,0,0.03)" }}>
-        
-        {/* Fill Track */}
-        <div style={{
-          position: "absolute", top: 0, left: 0, bottom: 0,
-          width: `calc(${pct}% + ${48 - (pct/100)*48}px)`,
-          background: "linear-gradient(135deg, var(--brand), #3a0ca3)",
-          borderRadius: 24,
-          transition: "width 0.1s ease-out",
-          boxShadow: "inset 0 2px 4px rgba(255,255,255,0.2), 0 2px 8px rgba(37,99,235,0.2)"
-        }}>
-           {/* Dragger Affordance (inner pill inside the fill) */}
-           <div style={{
-             position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)",
-             display: "flex", gap: 3
-           }}>
-             <div style={{ width: 3, height: 16, borderRadius: 2, background: "rgba(255,255,255,0.6)" }} />
-             <div style={{ width: 3, height: 16, borderRadius: 2, background: "rgba(255,255,255,0.6)" }} />
-           </div>
-        </div>
-        
-        {/* Invisible Input */}
-        <input
-          type="range" id={id} min={min} max={max} step={step} value={value === '' ? min : value}
-          onChange={e => {
-            const v = +e.target.value;
-            if (id) localStorage.setItem(`calc_input_${id}`, v);
-            onChange(v);
-          }}
-          aria-label={label}
-          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0, cursor: "pointer", margin: 0, zIndex: 10, WebkitTapHighlightColor: "transparent" }}
-        />
-      </div>
+      {/* PREMIUM SLEEK SLIDER */}
+      <input
+        type="range"
+        id={id}
+        min={min}
+        max={max}
+        step={step}
+        value={value === '' ? min : value}
+        onChange={e => {
+          const v = +e.target.value;
+          if (id) localStorage.setItem(`calc_input_${id}`, v);
+          onChange(v);
+        }}
+        className="premium-slider"
+        style={{ '--slider-val': `${pct}%` }}
+        aria-label={label}
+      />
       
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, padding: "0 8px" }}>
         <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(min) : min}</span>

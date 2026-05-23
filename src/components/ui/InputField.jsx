@@ -37,21 +37,26 @@ export function InputField({ config, value, onChange, error }) {
     </div>
   );
 
-  if (type === "slider") return (
-    <div className="mb-5">
-      <div className="flex justify-between items-center mb-2">
-        <label htmlFor={id} className="text-sm font-semibold" style={{ color: "var(--txt2)" }}>
-          {label} {optional && <span className="text-xs font-normal" style={{ color: "var(--txt3)" }}>(optional)</span>}
-        </label>
-        <span className="text-sm font-bold" style={{ color: "#16a34a" }}>
-          {unit === currencySymbol ? `${currencySymbol}${Number(value).toLocaleString(locale)}` : `${value}${unit}`}
-        </span>
+  if (type === "slider") {
+    const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100)) || 0;
+    return (
+      <div className="mb-5">
+        <div className="flex justify-between items-center mb-2">
+          <label htmlFor={id} className="text-sm font-semibold" style={{ color: "var(--txt2)" }}>
+            {label} {optional && <span className="text-xs font-normal" style={{ color: "var(--txt3)" }}>(optional)</span>}
+          </label>
+          <span className="text-sm font-bold" style={{ color: "#16a34a" }}>
+            {unit === currencySymbol ? `${currencySymbol}${Number(value).toLocaleString(locale)}` : `${value}${unit}`}
+          </span>
+        </div>
+        <input id={id} type="range" min={min} max={max} step={step} value={value}
+          onChange={e => onChange(id, e.target.value)}
+          className="premium-slider"
+          style={{ '--slider-val': `${pct}%` }} />
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>
-      <input id={id} type="range" min={min} max={max} step={step} value={value}
-        onChange={e => onChange(id, e.target.value)} />
-      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
-    </div>
-  );
+    );
+  }
 
   // Default: number or text
   return (
