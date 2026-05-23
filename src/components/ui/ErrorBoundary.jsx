@@ -12,6 +12,16 @@ export class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    // Automatically recover from Vite's stale dynamic import chunks by hard reloading (once per session)
+    if (error?.message && error.message.includes('Failed to fetch dynamically imported module')) {
+      const reloadKey = 'calcpoint_dynamic_import_reload';
+      if (!sessionStorage.getItem(reloadKey)) {
+        sessionStorage.setItem(reloadKey, 'true');
+        window.location.reload();
+        return;
+      }
+    }
+
     this.setState({ errorInfo });
     console.error("[ErrorBoundary] Caught error:", error, errorInfo);
   }
