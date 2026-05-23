@@ -48,16 +48,30 @@ const nextConfig: NextConfig = {
     };
 
     // ── Remove CssMinimizerPlugin ──────────────────────────────────────────
-    // Next.js bundles cssnano-simple which crashes on modern CSS used by
-    // Tailwind (e.g. fractional selectors like .left-1\/2, .w-1\/2).
-    // The plugin lives in config.optimization.minimizer — we remove it here.
-    // CSS is still served correctly; Vercel compresses via Gzip/Brotli.
-    if (!dev && !isServer && config.optimization?.minimizer) {
-      config.optimization.minimizer = (config.optimization.minimizer as any[]).filter(
-        (plugin: any) =>
-          !(plugin?.constructor?.name === 'CssMinimizerPlugin') &&
-          !(plugin?.__proto__?.constructor?.name === 'CssMinimizerPlugin')
-      );
+    // cssnano-simple (bundled in Next.js) crashes on Tailwind's modern CSS:
+    //   - fractional selectors:  .left-1\/2, .top-1\/2
+    //   - opacity modifiers:     .bg-black\/50, .dark\:bg-blue-900\/20
+    //
+    // We use the `afterEnvironment` webpack hook which fires AFTER all
+    // webpack plugins have called their apply() method — this is the only
+    // guaranteed point where optimization.minimizer is fully populated.
+    // Removing it here prevents the build crash on both local and Vercel.
+    if (!dev && !isServer) {
+      config.plugins.push({
+        apply(compiler: any) {
+          compiler.hooks.afterEnvironment.tap('RemoveCssMinimizerPlugin', () => {
+            const minimizers = compiler.options.optimization?.minimizer;
+            if (Array.isArray(minimizers)) {
+              compiler.options.optimization.minimizer = minimizers.filter(
+                (m: any) => m?.constructor?.name !== 'CssMinimizerPlugin'
+              );
+              console.log(
+                '[build] CssMinimizerPlugin removed — Tailwind fractional selectors preserved'
+              );
+            }
+          });
+        },
+      });
     }
 
     return config;
