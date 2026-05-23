@@ -106,11 +106,12 @@ function SearchDropdown({ results, query, activeIdx }) {
     : null;
 
   return (
-    <div className="navbar-search-drop" role="listbox" aria-label="Search results">
+    <div className="navbar-search-drop" role="listbox" aria-label="Search results" id="search-dropdown-list">
       {results.map((r, i) => {
         return (
           <Link
             key={r.id}
+            id={`search-option-${i}`}
             to={`/calculator/${r.slug}`}
             className={`navbar-search-item${i === activeIdx ? " navbar-search-item--active" : ""}`}
             role="option"
@@ -281,6 +282,8 @@ function SearchBox({ isMobile, isOpen, onClose }) {
           aria-expanded={open}
           aria-haspopup="listbox"
           role="combobox"
+          aria-controls="search-dropdown-list"
+          aria-activedescendant={open && activeIdx >= 0 ? `search-option-${activeIdx}` : undefined}
           autoComplete="off"
         />
         {q && (

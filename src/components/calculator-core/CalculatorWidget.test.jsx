@@ -1,17 +1,11 @@
-import { describe, it, expect } from 'vitest';
-import { FORMS } from './CalculatorWidget.jsx';
-import { ALL_CALCULATORS } from '@/data/calculatorConfigs.js';
+import { describe, it, expect } from "vitest";
+import { ALL_CALCULATORS } from "@/data/calculatorConfigs";
+import { FORMS } from "@/components/calculator-core/CalculatorWidget";
 
-describe('CalculatorWidget Registry', () => {
-  it('should have a mapped component for every calculator slug in ALL_CALCULATORS', () => {
-    const missingSlugs = [];
-
-    ALL_CALCULATORS.forEach((calc) => {
-      if (!FORMS[calc.slug]) {
-        missingSlugs.push(calc.slug);
-      }
-    });
-
-    expect(missingSlugs).toEqual([]);
+describe("calculator form registry", () => {
+  it("has a form for every calculator", () => {
+    for (const calc of ALL_CALCULATORS) {
+      expect(FORMS[calc.slug], `${calc.slug} is missing a form`).toBeTruthy();
+    }
   });
 });

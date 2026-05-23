@@ -113,7 +113,7 @@ function FeedbackWidget({ calcName, calcSlug }) {
     setFeedback(type);
     try {
       track('Feedback', { calculator: calcSlug, helpful: type });
-    } catch (e) {
+    } catch {
       // Ignore if analytics is blocked
     }
   };
