@@ -161,7 +161,7 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
           </label>
         )}
         <div className="glass-panel" style={{
-          display: "flex", alignItems: "center", 
+          display: "flex", alignItems: "center", flexShrink: 0,
           borderRadius: "var(--r-md)", border: "1px solid var(--border)", overflow: "hidden",
           padding: "2px 10px 2px 2px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
         }}>
@@ -180,13 +180,13 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
             }}
             aria-label={label + " input"}
             style={{
-              width: 65, background: "transparent", border: "none", outline: "none",
+              width: 90, background: "transparent", border: "none", outline: "none",
               textAlign: "right", fontSize: 16, fontWeight: 800, color: "var(--brand)",
-              padding: "6px 4px 6px 10px", minWidth: 0,
+              padding: "6px 4px 6px 10px", minWidth: 60,
               appearance: "none", MozAppearance: "textfield"
             }}
           />
-          {unitStr && <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text3)", marginLeft: 2, pointerEvents: "none" }}>{unitStr}</span>}
+          {unitStr && <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text3)", marginLeft: 2, pointerEvents: "none", whiteSpace: "nowrap" }}>{unitStr}</span>}
         </div>
       </div>
       
