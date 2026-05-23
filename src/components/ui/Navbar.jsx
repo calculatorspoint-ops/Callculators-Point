@@ -99,19 +99,19 @@ function searchCalculators(query) {
 }
 
 /* ── Search Dropdown ──────────────────────────────────────────── */
-function SearchDropdown({ results, query, activeIdx }) {
+function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdown-list" }) {
   const noResults = query.trim().length > 1 && results.length === 0;
   const suggestions = noResults
     ? POPULAR.slice(0, 4)
     : null;
 
   return (
-    <div className="navbar-search-drop" role="listbox" aria-label="Search results" id="search-dropdown-list">
+    <div className="navbar-search-drop" role="listbox" aria-label="Search results" id={listboxId}>
       {results.map((r, i) => {
         return (
           <Link
             key={r.id}
-            id={`search-option-${i}`}
+            id={`${listboxId}-option-${i}`}
             to={`/calculator/${r.slug}`}
             className={`navbar-search-item${i === activeIdx ? " navbar-search-item--active" : ""}`}
             role="option"
@@ -251,8 +251,8 @@ function SearchBox({ isMobile, isOpen, onClose }) {
             aria-expanded={open}
             aria-haspopup="listbox"
             role="combobox"
-            aria-controls="search-dropdown-list"
-            aria-activedescendant={open && activeIdx >= 0 ? `search-option-${activeIdx}` : undefined}
+            aria-controls="mobile-search-dropdown-list"
+            aria-activedescendant={open && activeIdx >= 0 ? `mobile-search-dropdown-list-option-${activeIdx}` : undefined}
             autoComplete="off"
           />
           {q && (
@@ -265,7 +265,7 @@ function SearchBox({ isMobile, isOpen, onClose }) {
           )}
         </div>
         {open && (
-          <SearchDropdown results={results} query={q} activeIdx={activeIdx} />
+          <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId="mobile-search-dropdown-list" />
         )}
       </div>
     );
@@ -287,8 +287,8 @@ function SearchBox({ isMobile, isOpen, onClose }) {
           aria-expanded={open}
           aria-haspopup="listbox"
           role="combobox"
-          aria-controls="search-dropdown-list"
-          aria-activedescendant={open && activeIdx >= 0 ? `search-option-${activeIdx}` : undefined}
+          aria-controls="desktop-search-dropdown-list"
+          aria-activedescendant={open && activeIdx >= 0 ? `desktop-search-dropdown-list-option-${activeIdx}` : undefined}
           autoComplete="off"
         />
         {q && (
@@ -302,7 +302,7 @@ function SearchBox({ isMobile, isOpen, onClose }) {
         )}
       </div>
       {open && (
-        <SearchDropdown results={results} query={q} activeIdx={activeIdx} />
+        <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId="desktop-search-dropdown-list" />
       )}
     </div>
   );
