@@ -1,4 +1,14 @@
-export function Presets({ presets, onApply }) {
+export interface Preset {
+  label: string;
+  [key: string]: any;
+}
+
+interface PresetsProps {
+  presets?: Preset[];
+  onApply: (preset: Preset) => void;
+}
+
+export function Presets({ presets, onApply }: PresetsProps) {
   if (!presets?.length) return null;
   return (
     <div className="flex flex-wrap gap-1.5 mb-4">
