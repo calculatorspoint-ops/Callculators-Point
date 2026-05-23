@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { parseLocalizedNumber, formatInputNumber } from "@/utils/validation.js";
 import { useCurrencyStore, formatMoney as _fmtMoney } from "@/store/useCurrencyStore.js";
 import { useGeoStore } from "@/core/geo-engine/geoStore.js";
-import { useAppStore } from "@/store/useAppStore.js";
+import { useAppStore } from "@/store/useAppStore";
 import { fmt, CURRENCIES } from "@/core/calculationEngine.js";
 import { copyShareLink } from "@/utils/urlParams.js";
 import { ResultBox } from "@/components/ui/ResultBox.jsx";

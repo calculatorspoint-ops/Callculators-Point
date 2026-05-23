@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { compute, formatOutput } from "../utils/calculationEngine.js";
-import { useAppStore } from "../store/useAppStore.js";
+import { useAppStore } from "../store/useAppStore";
 
 /**
  * The main hook powering every calculator.

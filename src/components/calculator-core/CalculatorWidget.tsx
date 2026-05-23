@@ -2,7 +2,7 @@ import React, { useEffect, lazy, Suspense } from "react";
 import { CalculatorConfig } from "@/data/calculatorConfigs.js";
 
 type FormsRegistry = Record<string, React.LazyExoticComponent<React.ComponentType<any>>>;
-import { useAppStore } from "@/store/useAppStore.js";
+import { useAppStore } from "@/store/useAppStore";
 
 // Lazy-loaded Components
 const Finance = {

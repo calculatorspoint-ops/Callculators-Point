@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore.js";
+import { useAppStore } from "@/store/useAppStore";
 import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig } from "@/data/calculatorConfigs.js";
 import { CurrencySelector } from "./CurrencySelector.jsx";
 import { SettingsModal } from "./SettingsModal.jsx";

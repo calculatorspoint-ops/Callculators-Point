@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useAppStore } from "@/store/useAppStore.js";
+import { useAppStore } from "@/store/useAppStore";
 import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated, CalculatorConfig } from "@/data/calculatorConfigs.js";
 import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
 import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, ThumbsUp, ThumbsDown, Flag } from "lucide-react";

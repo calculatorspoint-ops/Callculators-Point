@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAppStore } from "@/store/useAppStore.js";
+import { useAppStore } from "@/store/useAppStore";
 import { 
   calcBMI, calcCalorie, calcBMR, calcMacro, calcWater, 
   calcHeartRate, calcBodyFat, calcIdealWeight, calcOneRepMax, calcPregnancy,

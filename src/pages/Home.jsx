@@ -5,7 +5,7 @@ import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Cal
 
 import { QuickCalc } from "@/components/ui/QuickCalc.jsx";
 import { CATEGORIES, BY_CATEGORY, POPULAR, NEW_CALCS, ALL_CALCULATORS } from "@/data/calculatorConfigs.js";
-import { useAppStore } from "@/store/useAppStore.js";
+import { useAppStore } from "@/store/useAppStore";
 
 /* ── Calculator row item ─────────────────────────────────────────────── */
 function CalcRow({ calc }) {

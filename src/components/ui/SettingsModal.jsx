@@ -1,4 +1,4 @@
-import { useAppStore } from "@/store/useAppStore.js";
+import { useAppStore } from "@/store/useAppStore";
 import { X } from "lucide-react";
 
 export function SettingsModal({ onClose }) {
