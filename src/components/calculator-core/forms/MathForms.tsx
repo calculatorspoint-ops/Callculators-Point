@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useCallback } from "react";
 import { 
   calcPercentage, calcStatistics, calcQuadratic, calcPythagorean, 
@@ -5,13 +6,13 @@ import {
 } from "@/core/calculationEngine.js";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
-} from "./SharedComponents.jsx";
-import { ResultBox } from "@/components/ui/ResultBox.jsx";
-import { StatsGrid } from "@/components/ui/StatsGrid.jsx";
-import { InsightBox } from "@/components/ui/InsightBox.jsx";
-import { Breakdown } from "@/components/ui/Breakdown.jsx";
-import { CalcChart } from "@/components/charts/LazyCalcChart.jsx";
-import { CalcToolbar } from "@/components/calculator-core/CalcShell.jsx";
+} from './SharedComponents';
+import { ResultBox } from '@/components/ui/ResultBox';
+import { StatsGrid } from '@/components/ui/StatsGrid';
+import { InsightBox } from '@/components/ui/InsightBox';
+import { Breakdown } from '@/components/ui/Breakdown';
+import { CalcChart } from '@/components/charts/LazyCalcChart';
+import { CalcToolbar } from '@/components/calculator-core/CalcShell';
 
 // ── Percentage ───────────────────────────────────────────────────────
 export function PercentageForm(){

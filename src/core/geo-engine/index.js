@@ -10,4 +10,4 @@ export { useGeoStore, initGeoDetection } from './geoStore.js';
 
 export { useRegion, useRegionCurrency, useRegionTax, useRegionMeasure } from './useRegion.js';
 
-export { FloatingRegionSwitcher } from './FloatingRegionSwitcher.jsx';
+export { FloatingRegionSwitcher } from './FloatingRegionSwitcher';

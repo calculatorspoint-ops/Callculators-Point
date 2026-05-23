@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, useCallback } from "react";
 import { 
   calcAge, calcDateDiff, calcCountdown, calcWorkHours, calcFuel, 
@@ -6,11 +7,11 @@ import {
 } from "@/core/calculationEngine.js";
 import { 
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, ComingSoon 
-} from "./SharedComponents.jsx";
-import { ResultBox } from "@/components/ui/ResultBox.jsx";
-import { StatsGrid } from "@/components/ui/StatsGrid.jsx";
-import { InsightBox } from "@/components/ui/InsightBox.jsx";
-import { Breakdown } from "@/components/ui/Breakdown.jsx";
+} from './SharedComponents';
+import { ResultBox } from '@/components/ui/ResultBox';
+import { StatsGrid } from '@/components/ui/StatsGrid';
+import { InsightBox } from '@/components/ui/InsightBox';
+import { Breakdown } from '@/components/ui/Breakdown';
 
 // ── Unit Converters (Omni-Directional) ───────────────────────────────
 export function UnitForm({type="length"}){

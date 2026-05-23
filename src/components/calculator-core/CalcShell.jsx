@@ -5,8 +5,8 @@
  */
 import { useState, useCallback } from "react";
 import { RotateCcw, Copy, Share2, BookOpen, Download, Check, Link, X } from "lucide-react";
-import { InsightBox } from "@/components/ui/InsightBox.jsx";
-import { Breakdown }  from "@/components/ui/Breakdown.jsx";
+import { InsightBox } from '@/components/ui/InsightBox';
+import { Breakdown }  from '@/components/ui/Breakdown';
 
 /* ── URL State sharing ─────────────────────────────────────────── */
 export function buildShareURL(params) {

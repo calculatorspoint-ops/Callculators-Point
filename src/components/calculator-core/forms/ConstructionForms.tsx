@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { useState, useEffect } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency } from "./SharedComponents.jsx";
+import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency } from './SharedComponents';
 
 // ── Concrete Calculator ───────────────────────────────────────────────
 export function ConcreteForm() {

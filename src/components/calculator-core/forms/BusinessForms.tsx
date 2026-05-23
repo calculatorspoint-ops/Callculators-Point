@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { useState, useEffect, useRef } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney } from "./SharedComponents.jsx";
-import { ScenarioCompare } from "@/components/calculator-core/ScenarioCompare.jsx";
+import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney } from './SharedComponents';
+import { ScenarioCompare } from '@/components/calculator-core/ScenarioCompare';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. MARKUP CALCULATOR

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Calculator, Sparkles, BookOpen, Heart } from "lucide-react";
 
-import { QuickCalc } from "@/components/ui/QuickCalc.jsx";
+import { QuickCalc } from '@/components/ui/QuickCalc';
 import { CATEGORIES, BY_CATEGORY, POPULAR, NEW_CALCS, ALL_CALCULATORS } from "@/data/calculatorConfigs.js";
 import { useAppStore } from "@/store/useAppStore";
 

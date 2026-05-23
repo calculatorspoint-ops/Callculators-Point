@@ -7,8 +7,8 @@ import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
 import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
 import { track } from "@vercel/analytics/react";
 
-const CalculatorWidget = lazy(() => import("@/components/calculator-core/CalculatorWidget.jsx").then(m => ({ default: m.CalculatorWidget })));
-const CurrencyBanner = lazy(() => import("@/components/ui/CurrencyBanner.jsx"));
+const CalculatorWidget = lazy(() => import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget })));
+const CurrencyBanner = lazy(() => import('@/components/ui/CurrencyBanner'));
 const ExportToolbar = lazy(() => import("@/core/export-engine/ExportToolbar.tsx").then(m => ({ default: m.ExportToolbar })));
 
 /* ── Smart cross-calculator recommendations ──────────────────── */

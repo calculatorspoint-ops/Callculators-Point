@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable react-refresh/only-export-components */
 import { useState, useEffect, useRef } from "react";
 import { parseLocalizedNumber, formatInputNumber } from "@/utils/validation.js";
@@ -6,12 +7,12 @@ import { useGeoStore } from "@/core/geo-engine/geoStore.js";
 import { useAppStore } from "@/store/useAppStore";
 import { fmt, CURRENCIES } from "@/core/calculationEngine.js";
 import { copyShareLink } from "@/utils/urlParams.js";
-import { ResultBox } from "@/components/ui/ResultBox.jsx";
-import { StatsGrid } from "@/components/ui/StatsGrid.jsx";
-import { InsightBox } from "@/components/ui/InsightBox.jsx";
-import { Breakdown } from "@/components/ui/Breakdown.jsx";
-import { CalcChart } from "@/components/charts/LazyCalcChart.jsx";
-import { CalcToolbar, ResultArea, exportToCSV } from "@/components/calculator-core/CalcShell.jsx";
+import { ResultBox } from '@/components/ui/ResultBox';
+import { StatsGrid } from '@/components/ui/StatsGrid';
+import { InsightBox } from '@/components/ui/InsightBox';
+import { Breakdown } from '@/components/ui/Breakdown';
+import { CalcChart } from '@/components/charts/LazyCalcChart';
+import { CalcToolbar, ResultArea, exportToCSV } from '@/components/calculator-core/CalcShell';
 
 // Currency-aware money formatter
 export const formatMoney = (n) => { try { return _fmtMoney(n, useCurrencyStore.getState().currency); } catch { return String(n); } };

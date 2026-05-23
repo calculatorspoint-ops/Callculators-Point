@@ -1,28 +1,28 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { ErrorBoundary } from './components/ui/ErrorBoundary.jsx';
-import { Navbar } from './components/ui/Navbar.jsx';
-import { Footer } from './components/ui/Footer.jsx';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { Navbar } from './components/ui/Navbar';
+import { Footer } from './components/ui/Footer';
 import { PWAInstallPrompt } from './core/pwa-engine/PWAInstallPrompt';
 import { ScrollToTop } from './components/ui/ScrollToTop';
 import { initGeoDetection } from './core/geo-engine/geoStore.js';
-import { FloatingRegionSwitcher } from './core/geo-engine/FloatingRegionSwitcher.jsx';
+import { FloatingRegionSwitcher } from './core/geo-engine/FloatingRegionSwitcher';
 import { Analytics } from '@vercel/analytics/react';
 
 // ── Lazily-loaded pages (code splitting per route) ────────────────────
-const Home           = lazy(() => import('./pages/Home.jsx'));
-const AllCalculators = lazy(() => import('./pages/AllCalculators.jsx'));
-const Calculator     = lazy(() => import('./pages/Calculator.jsx'));
-const Category       = lazy(() => import('./pages/Category.jsx'));
-const About          = lazy(() => import('./pages/About.jsx'));
-const Contact        = lazy(() => import('./pages/Contact.jsx'));
-const PrivacyPolicy  = lazy(() => import('./pages/PrivacyPolicy.jsx'));
-const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'));
-const Disclaimer     = lazy(() => import('./pages/Disclaimer.jsx'));
-const Sitemap        = lazy(() => import('./pages/Sitemap.jsx'));
-const SEOLandingPage = lazy(() => import('./pages/SEOLandingPage.jsx'));
-const EcosystemHub   = lazy(() => import('./pages/EcosystemHub.jsx'));
+const Home           = lazy(() => import('./pages/Home'));
+const AllCalculators = lazy(() => import('./pages/AllCalculators'));
+const Calculator     = lazy(() => import('./pages/Calculator'));
+const Category       = lazy(() => import('./pages/Category'));
+const About          = lazy(() => import('./pages/About'));
+const Contact        = lazy(() => import('./pages/Contact'));
+const PrivacyPolicy  = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const Disclaimer     = lazy(() => import('./pages/Disclaimer'));
+const Sitemap        = lazy(() => import('./pages/Sitemap'));
+const SEOLandingPage = lazy(() => import('./pages/SEOLandingPage'));
+const EcosystemHub   = lazy(() => import('./pages/EcosystemHub'));
 
 // ── Inline page loader (avoids importing a heavy component) ───────────
 function PageLoader() {

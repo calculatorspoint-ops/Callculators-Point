@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 
 const AsyncCalcChart = lazy(() => 
-  import("./CalcChart.jsx").then((module) => ({ default: module.CalcChart }))
+  import('./CalcChart').then((module) => ({ default: module.CalcChart }))
 );
 
 export function CalcChart(props) {

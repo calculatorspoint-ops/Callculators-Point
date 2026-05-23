@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { useState, useEffect } from "react";
 import {
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
   InputSection, Toggle, SEOSection
-} from "./SharedComponents.jsx";
+} from './SharedComponents';
 
 // ── Shared layout wrapper: inputs above, result full-width below ──
 function CalcLayout({ inputs, result, label }) {

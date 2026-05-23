@@ -6,9 +6,9 @@ import { getCalcBySlug, CATEGORIES } from "@/data/calculatorConfigs.js";
 import { ArrowRight, ChevronRight, CheckCircle2 } from "lucide-react";
 
 const CalculatorWidget = lazy(() =>
-  import("@/components/calculator-core/CalculatorWidget.jsx").then(m => ({ default: m.CalculatorWidget }))
+  import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget }))
 );
-const CurrencyBanner = lazy(() => import("@/components/ui/CurrencyBanner.jsx"));
+const CurrencyBanner = lazy(() => import('@/components/ui/CurrencyBanner'));
 
 function Loader() {
   return (

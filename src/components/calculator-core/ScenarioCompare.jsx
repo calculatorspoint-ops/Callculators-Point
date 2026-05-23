@@ -4,7 +4,7 @@
  * Each scenario card captures a snapshot of calculator results for visual comparison.
  */
 import { useState, useCallback } from "react";
-import { CalcChart } from "@/components/charts/LazyCalcChart.jsx";
+import { CalcChart } from '@/components/charts/LazyCalcChart';
 
 // ── Scenario Card ─────────────────────────────────────────────────────
 function ScenarioCard({ scenario, index, onRemove, isBase, colors }) {

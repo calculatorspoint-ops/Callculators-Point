@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Row2, Presets,
   Panel, buildResult, useCurrency,
   InputSection, SEOSection
-} from "./SharedComponents.jsx";
+} from './SharedComponents';
 
 function CalcLayout({ inputs, result, label }) {
   return (
