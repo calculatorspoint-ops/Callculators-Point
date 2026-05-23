@@ -9,7 +9,32 @@ import { constructionCalculators } from './categories/construction.js';
 import { technologyCalculators } from './categories/technology.js';
 import { businessCalculators } from './categories/business.js';
 
-export const CATEGORIES = [
+export interface CalculatorCategory {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  bg: string;
+  desc: string;
+}
+
+export interface CalculatorConfig {
+  id: string;
+  slug: string;
+  name: string;
+  desc: string;
+  cat: string;
+  icon?: string;
+  popular?: boolean;
+  isNew?: boolean;
+  hasChart?: boolean;
+  hasSteps?: boolean;
+  formula?: string;
+  tips?: string[];
+  tags?: string[];
+}
+
+export const CATEGORIES: CalculatorCategory[] = [
   { id:"finance",      name:"Finance & Money",     icon:"💰", color:"#1d4ed8", bg:"#eff6ff", desc:"Loans, investments, savings, tax & more" },
   { id:"health",       name:"Health & Fitness",     icon:"❤️", color:"#dc2626", bg:"#fef2f2", desc:"BMI, calories, BMR, body fat & nutrition" },
   { id:"math",         name:"Math & Science",       icon:"📐", color:"#7c3aed", bg:"#f5f3ff", desc:"Algebra, geometry, statistics & science" },
@@ -21,7 +46,7 @@ export const CATEGORIES = [
   { id:"business",     name:"Business",             icon:"📊", color:"#065f46", bg:"#d1fae5", desc:"Profit, break-even, ROI, payroll & productivity" },
 ];
 
-export const ALL_CALCULATORS = [
+export const ALL_CALCULATORS: CalculatorConfig[] = [
   ...financeCalculators,
   ...healthCalculators,
   ...mathCalculators,
@@ -34,18 +59,18 @@ export const ALL_CALCULATORS = [
   ...businessCalculators
 ];
 
-export const BY_CATEGORY = ALL_CALCULATORS.reduce((acc, c) => {
+export const BY_CATEGORY: Record<string, CalculatorConfig[]> = ALL_CALCULATORS.reduce((acc: Record<string, CalculatorConfig[]>, c) => {
   if (!acc[c.cat]) acc[c.cat] = [];
   acc[c.cat].push(c);
   return acc;
 }, {});
 
-export const POPULAR   = ALL_CALCULATORS.filter(c => c.popular);
-export const NEW_CALCS = ALL_CALCULATORS.filter(c => c.isNew);
+export const POPULAR: CalculatorConfig[] = ALL_CALCULATORS.filter(c => c.popular);
+export const NEW_CALCS: CalculatorConfig[] = ALL_CALCULATORS.filter(c => c.isNew);
 
-export function getCalcBySlug(slug) {
+export function getCalcBySlug(slug: string): CalculatorConfig | null {
   return ALL_CALCULATORS.find(c => c.slug === slug) || null;
 }
-export function getRelated(calc, limit = 7) {
+export function getRelated(calc: CalculatorConfig, limit = 7): CalculatorConfig[] {
   return ALL_CALCULATORS.filter(c => c.cat === calc.cat && c.id !== calc.id).slice(0, limit);
 }
