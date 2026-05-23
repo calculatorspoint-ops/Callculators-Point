@@ -14,7 +14,7 @@ export function calculateDeterministicSIP(params: SIPParams): SIPResult {
   const sigmaMonthly = sigmaAnnual / Math.sqrt(12);
 
   const iterations = 500;
-  let paths = new Float64Array(iterations);
+  const paths = new Float64Array(iterations);
   
   let totalInvested = 0;
   let currentSIP = monthlyInvestment;

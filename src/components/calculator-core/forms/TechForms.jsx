@@ -12,8 +12,8 @@ function CopyBtn({ text, small }) {
       setTimeout(() => setOk(false), 1800);
     });
   };
-  var pad = small ? "3px 9px" : "5px 14px";
-  var fz  = small ? 10 : 11;
+  const pad = small ? "3px 9px" : "5px 14px";
+  const fz  = small ? 10 : 11;
   return (
     <button onClick={copy}
       style={{ padding: pad, borderRadius: 100, fontSize: fz, fontWeight: 700,
@@ -61,7 +61,7 @@ function QuickPills({ items, active, onSelect }) {
   return (
     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
       {items.map(function(item) {
-        var isActive = active === item.v;
+        const isActive = active === item.v;
         return (
           <button key={item.v} onClick={function() { onSelect(item.v); }}
             style={{ padding: "5px 13px", borderRadius: 100, fontSize: 12,
@@ -143,42 +143,42 @@ export function SubnetForm() {
   ];
 
   useEffect(function() {
-    var parts = ip.split(".").map(Number);
+    const parts = ip.split(".").map(Number);
     if (parts.length !== 4 || parts.some(function(p) { return isNaN(p) || p < 0 || p > 255; })) {
       setRes(null); setInfo(null); return;
     }
-    var maskBits = cidr;
-    var mask     = (cidr === 0 ? 0 : ~((1 << (32 - maskBits)) - 1)) >>> 0;
-    var ipInt    = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
-    var netInt   = (ipInt & mask) >>> 0;
-    var bcInt    = (netInt | ((~mask) >>> 0)) >>> 0;
-    var firstH   = netInt + 1;
-    var lastH    = bcInt - 1;
-    var hosts    = Math.max(0, bcInt - netInt - 1);
+    const maskBits = cidr;
+    const mask     = (cidr === 0 ? 0 : ~((1 << (32 - maskBits)) - 1)) >>> 0;
+    const ipInt    = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+    const netInt   = (ipInt & mask) >>> 0;
+    const bcInt    = (netInt | ((~mask) >>> 0)) >>> 0;
+    const firstH   = netInt + 1;
+    const lastH    = bcInt - 1;
+    const hosts    = Math.max(0, bcInt - netInt - 1);
 
     function toIP(n) {
       return ((n >>> 24) & 0xff) + "." + ((n >>> 16) & 0xff) + "." + ((n >>> 8) & 0xff) + "." + (n & 0xff);
     }
     function toMask(b) {
-      var m = b === 0 ? 0 : (~((1 << (32 - b)) - 1)) >>> 0;
+      const m = b === 0 ? 0 : (~((1 << (32 - b)) - 1)) >>> 0;
       return toIP(m);
     }
 
-    var ipClass = parts[0] < 128 ? "Class A (1–126)" :
+    const ipClass = parts[0] < 128 ? "Class A (1–126)" :
                   parts[0] < 192 ? "Class B (128–191)" :
                   parts[0] < 224 ? "Class C (192–223)" :
                   parts[0] < 240 ? "Class D – Multicast" : "Class E – Reserved";
 
-    var networkAddr    = toIP(netInt);
-    var broadcastAddr  = toIP(bcInt);
-    var subnetMask     = toMask(maskBits);
-    var wildcardMask   = toIP((~mask) >>> 0);
-    var firstUsable    = toIP(firstH);
-    var lastUsable     = toIP(lastH);
-    var totalAddresses = hosts + 2;
+    const networkAddr    = toIP(netInt);
+    const broadcastAddr  = toIP(bcInt);
+    const subnetMask     = toMask(maskBits);
+    const wildcardMask   = toIP((~mask) >>> 0);
+    const firstUsable    = toIP(firstH);
+    const lastUsable     = toIP(lastH);
+    const totalAddresses = hosts + 2;
 
     // Octet colors for CIDR visual
-    var octets = subnetMask.split(".").map(Number);
+    const octets = subnetMask.split(".").map(Number);
 
     setInfo({
       networkAddr, broadcastAddr, subnetMask, wildcardMask,
@@ -187,10 +187,10 @@ export function SubnetForm() {
       ipInt, netInt, bcInt
     });
 
-    var chart = {
+    const chart = {
       type: "bar",
       data: [8, 16, 24, 28, 30].map(function(c) {
-        var h = c >= 31 ? (c === 32 ? 1 : 0) : Math.pow(2, 32 - c) - 2;
+        const h = c >= 31 ? (c === 32 ? 1 : 0) : Math.pow(2, 32 - c) - 2;
         return { name: "/" + c, Hosts: h };
       }),
       keys: ["Hosts"]
@@ -222,9 +222,9 @@ export function SubnetForm() {
     ));
   }, [ip, cidr]);
 
-  var octetColors = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b"];
+  const octetColors = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b"];
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Network Configuration</SectionTitle>
       <L t="IP Address" id="snip" />
@@ -283,7 +283,7 @@ export function SubnetForm() {
               </thead>
               <tbody>
                 {QUICK_REF.map(function(row) {
-                  var isCurrent = ("/" + cidr) === row.cidr;
+                  const isCurrent = ("/" + cidr) === row.cidr;
                   return (
                     <tr key={row.cidr}
                       style={{ background: isCurrent ? "var(--p50)" : "transparent" }}>
@@ -307,7 +307,7 @@ export function SubnetForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="Subnet" /> : (
         <div className="empty-state">
@@ -331,7 +331,7 @@ export function NumberBaseForm() {
   const [copied,   setCopied]   = useState(null);
   const [bases,    setBases]    = useState(null);
 
-  var copyVal = function(key, val) {
+  const copyVal = function(key, val) {
     navigator.clipboard.writeText(val).then(function() {
       setCopied(key);
       setTimeout(function() { setCopied(null); }, 1800);
@@ -339,7 +339,7 @@ export function NumberBaseForm() {
   };
 
   useEffect(function() {
-    var num = parseInt(input, +fromBase);
+    const num = parseInt(input, +fromBase);
     if (isNaN(num) || num < 0) { setBases(null); return; }
     setBases({
       dec: num.toString(10),
@@ -351,13 +351,13 @@ export function NumberBaseForm() {
     });
   }, [input, fromBase]);
 
-  var hexClean = bases ? bases.hex.replace("0x", "") : "";
-  var isColorHex = (hexClean.length === 3 || hexClean.length === 6);
-  var colorHex = hexClean.length === 3
+  const hexClean = bases ? bases.hex.replace("0x", "") : "";
+  const isColorHex = (hexClean.length === 3 || hexClean.length === 6);
+  const colorHex = hexClean.length === 3
     ? "#" + hexClean[0] + hexClean[0] + hexClean[1] + hexClean[1] + hexClean[2] + hexClean[2]
     : "#" + hexClean;
 
-  var BASE_ROWS = bases ? [
+  const BASE_ROWS = bases ? [
     { key: "dec", label: "Decimal",        prefix: "",     value: bases.dec, bit: "Base 10" },
     { key: "bin", label: "Binary",         prefix: "0b",   value: bases.bin, bit: "Base 2"  },
     { key: "oct", label: "Octal",          prefix: "",     value: bases.oct, bit: "Base 8"  },
@@ -366,7 +366,7 @@ export function NumberBaseForm() {
     { key: "b36", label: "Base-36",        prefix: "",     value: bases.b36, bit: "Base 36" },
   ] : [];
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Input Configuration</SectionTitle>
       <Sel label="Input Number Base" id="nbbase" value={fromBase} onChange={setFromBase}
@@ -387,7 +387,7 @@ export function NumberBaseForm() {
         <div>
           <SectionTitle>All Base Representations</SectionTitle>
           {BASE_ROWS.map(function(row) {
-            var isCopied = copied === row.key;
+            const isCopied = copied === row.key;
             return (
               <div key={row.key} style={{ display: "flex", alignItems: "center",
                 gap: 8, marginBottom: 8, padding: "10px 12px",
@@ -442,7 +442,7 @@ export function NumberBaseForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {bases ? (
         <div>
@@ -480,12 +480,12 @@ export function ASCIIForm() {
     if (!text) { setRes(null); setChars([]); return; }
 
     if (mode === "Text → ASCII") {
-      var charArr = Array.from(text).map(function(c) {
-        var cp   = c.codePointAt(0);
-        var hex  = cp.toString(16).toUpperCase().padStart(4, "0");
-        var bin  = cp.toString(2).padStart(8, "0");
+      const charArr = Array.from(text).map(function(c) {
+        const cp   = c.codePointAt(0);
+        const hex  = cp.toString(16).toUpperCase().padStart(4, "0");
+        const bin  = cp.toString(2).padStart(8, "0");
         // UTF-8 byte sequence
-        var bytes;
+        let bytes;
         try {
           bytes = Array.from(new TextEncoder().encode(c))
             .map(function(b) { return b.toString(16).toUpperCase().padStart(2, "0"); })
@@ -517,10 +517,10 @@ export function ASCIIForm() {
         })
       ));
     } else {
-      var nums = text.split(/[\s,]+/)
+      const nums = text.split(/[\s,]+/)
         .map(function(n) { return parseInt(n.trim(), 10); })
         .filter(function(n) { return !isNaN(n) && n >= 0 && n <= 127; });
-      var result = nums.map(function(n) { return String.fromCharCode(n); }).join("");
+      const result = nums.map(function(n) { return String.fromCharCode(n); }).join("");
       setChars([]);
       setRes(buildResult(
         "Text Output", result,
@@ -535,7 +535,7 @@ export function ASCIIForm() {
     }
   }, [text, mode]);
 
-  var left = (
+  const left = (
     <div>
       <Tabs tabs={["Text → ASCII", "ASCII → Text"]} active={mode} onChange={function(m) {
         setMode(m); setText(""); setChars([]); setRes(null);
@@ -592,7 +592,7 @@ export function ASCIIForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="ASCII" /> : (
         <div className="empty-state">
@@ -617,7 +617,7 @@ export function DataTransferForm() {
   const [speedUnit,    setSpeedUnit]    = useState("Mbps");
   const [res,          setRes]          = useState(null);
 
-  var PRESETS = [
+  const PRESETS = [
     { label: "🎬 Movie (4GB)",    v: { fileSize: "4",    fileSizeUnit: "GB", speed: "100", speedUnit: "Mbps" } },
     { label: "🎮 Game (50GB)",    v: { fileSize: "50",   fileSizeUnit: "GB", speed: "100", speedUnit: "Mbps" } },
     { label: "📷 Photo (10MB)",   v: { fileSize: "10",   fileSizeUnit: "MB", speed: "100", speedUnit: "Mbps" } },
@@ -626,33 +626,33 @@ export function DataTransferForm() {
     { label: "☁️ Backup (1TB)",   v: { fileSize: "1",    fileSizeUnit: "TB", speed: "100", speedUnit: "Mbps" } },
   ];
 
-  var SIZE_MULT  = { KB: 1e3, MB: 1e6, GB: 1e9, TB: 1e12 };
-  var SPEED_MULT = { Kbps: 1e3, Mbps: 1e6, Gbps: 1e9 };
+  const SIZE_MULT  = { KB: 1e3, MB: 1e6, GB: 1e9, TB: 1e12 };
+  const SPEED_MULT = { Kbps: 1e3, Mbps: 1e6, Gbps: 1e9 };
 
   function formatTime(secs) {
     if (!isFinite(secs) || secs < 0) return "N/A";
-    var h = Math.floor(secs / 3600);
-    var m = Math.floor((secs % 3600) / 60);
-    var s = Math.ceil(secs % 60);
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = Math.ceil(secs % 60);
     if (h > 0) return h + "h " + m + "m";
     if (m > 0) return m + "m " + s + "s";
     return s + "s";
   }
 
   useEffect(function() {
-    var bytes      = +fileSize * (SIZE_MULT[fileSizeUnit] || 1e9);
-    var bitsPerSec = +speed * (SPEED_MULT[speedUnit] || 1e6);
+    const bytes      = +fileSize * (SIZE_MULT[fileSizeUnit] || 1e9);
+    const bitsPerSec = +speed * (SPEED_MULT[speedUnit] || 1e6);
     if (!bytes || !bitsPerSec) { setRes(null); return; }
 
-    var seconds    = (bytes * 8) / bitsPerSec;
-    var timeStr    = formatTime(seconds);
-    var transferMBs = (bytes / 1e6) / seconds;
+    const seconds    = (bytes * 8) / bitsPerSec;
+    const timeStr    = formatTime(seconds);
+    const transferMBs = (bytes / 1e6) / seconds;
     // Peak vs avg (realistic is ~65% of nominal)
-    var peakSec    = (bytes * 8) / (bitsPerSec * 1.2);
-    var avgSec     = (bytes * 8) / (bitsPerSec * 0.65);
+    const peakSec    = (bytes * 8) / (bitsPerSec * 1.2);
+    const avgSec     = (bytes * 8) / (bitsPerSec * 0.65);
 
-    var SPEEDS_MBPS = [10, 25, 100, 500, 1000];
-    var chart = {
+    const SPEEDS_MBPS = [10, 25, 100, 500, 1000];
+    const chart = {
       type: "bar",
       data: SPEEDS_MBPS.map(function(mbps) {
         return { name: mbps + " Mbps", Seconds: Math.round((bytes * 8) / (mbps * 1e6)) };
@@ -680,7 +680,7 @@ export function DataTransferForm() {
     ));
   }, [fileSize, fileSizeUnit, speed, speedUnit]);
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>File & Speed Settings</SectionTitle>
 
@@ -727,7 +727,7 @@ export function DataTransferForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="Data Transfer" /> : (
         <div className="empty-state">
@@ -751,7 +751,7 @@ export function PasswordStrengthForm() {
   const [res,      setRes]      = useState(null);
   const [analysis, setAnalysis] = useState(null);
 
-  var ATTACK_SPEEDS = [
+  const ATTACK_SPEEDS = [
     { label: "Online (1K/s)",       speed: 1e3    },
     { label: "Slow GPU (1B/s)",     speed: 1e9    },
     { label: "Fast GPU (10B/s)",    speed: 1e10   },
@@ -770,7 +770,7 @@ export function PasswordStrengthForm() {
   }
 
   function detectPatterns(pwd) {
-    var issues = [];
+    const issues = [];
     if (/^[a-zA-Z]+$/.test(pwd))   issues.push("Letters only — add numbers/symbols");
     if (/^[0-9]+$/.test(pwd))       issues.push("Numbers only — add letters/symbols");
     if (/012|123|234|345|456|567|678|789|890|abc|bcd|cde|def|efg|fgh/i.test(pwd))
@@ -785,18 +785,18 @@ export function PasswordStrengthForm() {
 
   useEffect(function() {
     if (!password) { setRes(null); setAnalysis(null); return; }
-    var len      = password.length;
-    var hasLower = /[a-z]/.test(password);
-    var hasUpper = /[A-Z]/.test(password);
-    var hasDigit = /\d/.test(password);
-    var hasSymbol= /[^a-zA-Z0-9]/.test(password);
-    var pool     = (hasLower ? 26 : 0) + (hasUpper ? 26 : 0) + (hasDigit ? 10 : 0) + (hasSymbol ? 32 : 0);
-    var entropy  = len * Math.log2(pool || 1);
-    var score    = entropy < 28 ? "Very Weak" : entropy < 36 ? "Weak" : entropy < 60 ? "Moderate" : entropy < 80 ? "Strong" : "Very Strong";
-    var scoreColor = entropy < 28 ? "#ef4444" : entropy < 36 ? "#f97316" : entropy < 60 ? "#eab308" : entropy < 80 ? "#22c55e" : "#16a34a";
-    var pct      = Math.min(100, (entropy / 100) * 100);
-    var patterns = detectPatterns(password);
-    var improvements = [];
+    const len      = password.length;
+    const hasLower = /[a-z]/.test(password);
+    const hasUpper = /[A-Z]/.test(password);
+    const hasDigit = /\d/.test(password);
+    const hasSymbol= /[^a-zA-Z0-9]/.test(password);
+    const pool     = (hasLower ? 26 : 0) + (hasUpper ? 26 : 0) + (hasDigit ? 10 : 0) + (hasSymbol ? 32 : 0);
+    const entropy  = len * Math.log2(pool || 1);
+    const score    = entropy < 28 ? "Very Weak" : entropy < 36 ? "Weak" : entropy < 60 ? "Moderate" : entropy < 80 ? "Strong" : "Very Strong";
+    const scoreColor = entropy < 28 ? "#ef4444" : entropy < 36 ? "#f97316" : entropy < 60 ? "#eab308" : entropy < 80 ? "#22c55e" : "#16a34a";
+    const pct      = Math.min(100, (entropy / 100) * 100);
+    const patterns = detectPatterns(password);
+    const improvements = [];
     if (!hasLower)  improvements.push("Add lowercase letters (a-z)");
     if (!hasUpper)  improvements.push("Add uppercase letters (A-Z)");
     if (!hasDigit)  improvements.push("Add numbers (0-9)");
@@ -806,7 +806,7 @@ export function PasswordStrengthForm() {
     setAnalysis({ score, scoreColor, pct, entropy, pool, patterns, improvements,
       hasLower, hasUpper, hasDigit, hasSymbol });
 
-    var attacks = ATTACK_SPEEDS.map(function(a) {
+    const attacks = ATTACK_SPEEDS.map(function(a) {
       return { name: a.label, Seconds: Math.min(Math.pow(2, entropy) / a.speed, 1e15) };
     });
 
@@ -836,7 +836,7 @@ export function PasswordStrengthForm() {
     ));
   }, [password]);
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Password Analysis</SectionTitle>
       <L t="Enter Password to Test" id="pwd_input" />
@@ -943,7 +943,7 @@ export function PasswordStrengthForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="Password Strength" /> : (
         <div className="empty-state">
@@ -967,8 +967,8 @@ export function HashGeneratorForm() {
   const [copied, setCopied] = useState(null);
 
   async function computeHash(message, algo) {
-    var buf  = new TextEncoder().encode(message);
-    var hash = await crypto.subtle.digest(algo, buf);
+    const buf  = new TextEncoder().encode(message);
+    const hash = await crypto.subtle.digest(algo, buf);
     return Array.from(new Uint8Array(hash))
       .map(function(b) { return b.toString(16).padStart(2, "0"); })
       .join("");
@@ -977,17 +977,17 @@ export function HashGeneratorForm() {
   // Simple MD5 implementation (for display only, marked insecure)
   function md5(str) {
     // Return a placeholder since SubtleCrypto doesn't support MD5
-    var h = 0;
-    for (var i = 0; i < str.length; i++) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
       h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
     }
-    var hex = Math.abs(h).toString(16).padStart(8, "0");
+    const hex = Math.abs(h).toString(16).padStart(8, "0");
     // Extend to 32 chars for MD5-like display
-    var hex2 = (Math.abs(h * 0x9e3779b9) >>> 0).toString(16).padStart(8, "0");
+    const hex2 = (Math.abs(h * 0x9e3779b9) >>> 0).toString(16).padStart(8, "0");
     return hex + hex2 + hex + hex2;
   }
 
-  var copyHash = function(key, val) {
+  const copyHash = function(key, val) {
     navigator.clipboard.writeText(val).then(function() {
       setCopied(key);
       setTimeout(function() { setCopied(null); }, 1800);
@@ -998,7 +998,7 @@ export function HashGeneratorForm() {
     if (!text) { setHashes(null); return; }
     (async function() {
       try {
-        var results = await Promise.all([
+        const results = await Promise.all([
           computeHash(text, "SHA-1"),
           computeHash(text, "SHA-256"),
           computeHash(text, "SHA-512"),
@@ -1013,14 +1013,14 @@ export function HashGeneratorForm() {
     })();
   }, [text]);
 
-  var HASH_ROWS = hashes ? [
+  const HASH_ROWS = hashes ? [
     { key: "md5",    label: "MD5",     bits: 128, chars: 32,  value: hashes.md5,    insecure: true,  badge: "Insecure" },
     { key: "sha1",   label: "SHA-1",   bits: 160, chars: 40,  value: hashes.sha1,   insecure: true,  badge: "Deprecated" },
     { key: "sha256", label: "SHA-256", bits: 256, chars: 64,  value: hashes.sha256, insecure: false, badge: null },
     { key: "sha512", label: "SHA-512", bits: 512, chars: 128, value: hashes.sha512, insecure: false, badge: null },
   ] : [];
 
-  var res = hashes ? buildResult(
+  const res = hashes ? buildResult(
     "SHA-256 Hash", hashes.sha256.slice(0, 20) + "…",
     [
       { label: "Input Length",    value: text.length + " chars / " + new TextEncoder().encode(text).length + " bytes" },
@@ -1050,7 +1050,7 @@ export function HashGeneratorForm() {
     ]
   ) : null;
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Input Text</SectionTitle>
       <textarea value={text} onChange={function(e) { setText(e.target.value); }} rows={5}
@@ -1064,7 +1064,7 @@ export function HashGeneratorForm() {
         <div>
           <SectionTitle>Generated Hashes</SectionTitle>
           {HASH_ROWS.map(function(row) {
-            var isCopied = copied === row.key;
+            const isCopied = copied === row.key;
             return (
               <div key={row.key} style={{ marginBottom: 10, padding: "12px 14px",
                 background: "var(--surface2)",
@@ -1107,7 +1107,7 @@ export function HashGeneratorForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="Hash Generator" /> : (
         <div className="empty-state">
@@ -1136,7 +1136,7 @@ export function RandomStringForm() {
   const [copiedIdx,       setCopiedIdx]        = useState(null);
   const [copiedAll,       setCopiedAll]        = useState(false);
 
-  var PRESETS = [
+  const PRESETS = [
     { label: "🔑 API Key",       v: { length: 32, lower: true,  upper: true,  digits: true,  symbols: false } },
     { label: "🆔 UUID-like",     v: { length: 36, lower: true,  upper: false, digits: true,  symbols: false, uuid: true } },
     { label: "🔢 PIN (6 digit)", v: { length: 6,  lower: false, upper: false, digits: true,  symbols: false } },
@@ -1146,13 +1146,13 @@ export function RandomStringForm() {
 
   function generateUUID() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-      var r = (Math.random() * 16) | 0;
+      const r = (Math.random() * 16) | 0;
       return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
     });
   }
 
   function generateStr(len, lower, upper, digits, symbols) {
-    var chars = "";
+    let chars = "";
     if (lower)   chars += "abcdefghijklmnopqrstuvwxyz";
     if (upper)   chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     if (digits)  chars += "0123456789";
@@ -1163,14 +1163,14 @@ export function RandomStringForm() {
     }).join("");
   }
 
-  var generate = function() {
-    var generated = Array.from({ length: count }, function() {
+  const generate = function() {
+    const generated = Array.from({ length: count }, function() {
       return generateStr(length, includeLower, includeUpper, includeDigits, includeSymbols);
     });
     setResults(generated);
   };
 
-  var applyPreset = function(p) {
+  const applyPreset = function(p) {
     setLength(p.v.length);
     setIncludeLower(p.v.lower);
     setIncludeUpper(p.v.upper);
@@ -1181,32 +1181,32 @@ export function RandomStringForm() {
     }
   };
 
-  var copyOne = function(s, i) {
+  const copyOne = function(s, i) {
     navigator.clipboard.writeText(s).then(function() {
       setCopiedIdx(i);
       setTimeout(function() { setCopiedIdx(null); }, 1800);
     });
   };
 
-  var copyAll = function() {
+  const copyAll = function() {
     navigator.clipboard.writeText(results.join("\n")).then(function() {
       setCopiedAll(true);
       setTimeout(function() { setCopiedAll(false); }, 1800);
     });
   };
 
-  var CHAR_TYPES = [
+  const CHAR_TYPES = [
     ["Lowercase (a-z)", includeLower,   setIncludeLower],
     ["Uppercase (A-Z)", includeUpper,   setIncludeUpper],
     ["Digits (0-9)",    includeDigits,  setIncludeDigits],
     ["Symbols (!@#)",   includeSymbols, setIncludeSymbols],
   ];
 
-  var pool = (includeLower ? 26 : 0) + (includeUpper ? 26 : 0) +
+  const pool = (includeLower ? 26 : 0) + (includeUpper ? 26 : 0) +
              (includeDigits ? 10 : 0) + (includeSymbols ? 32 : 0);
-  var entropy = pool > 0 ? length * Math.log2(pool) : 0;
+  const entropy = pool > 0 ? length * Math.log2(pool) : 0;
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Generator Presets</SectionTitle>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
@@ -1267,7 +1267,7 @@ export function RandomStringForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {results.length > 0 && (
         <div>
@@ -1286,7 +1286,7 @@ export function RandomStringForm() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {results.map(function(s, i) {
-              var isCopied = copiedIdx === i;
+              const isCopied = copiedIdx === i;
               return (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 8,
                   padding: "10px 14px", background: "var(--surface2)",
@@ -1333,7 +1333,7 @@ export function BandwidthForm() {
   const [overheadPct,  setOverheadPct]  = useState("20");
   const [res,          setRes]          = useState(null);
 
-  var PRESETS = [
+  const PRESETS = [
     { label: "🏠 Home (5 users)",     v: { users: "5",    avgUsage: "10",  concurrency: "80", overheadPct: "15" } },
     { label: "🏢 Small Office",       v: { users: "25",   avgUsage: "5",   concurrency: "50", overheadPct: "20" } },
     { label: "🏗️ Medium Biz",         v: { users: "100",  avgUsage: "5",   concurrency: "30", overheadPct: "20" } },
@@ -1342,23 +1342,23 @@ export function BandwidthForm() {
   ];
 
   useEffect(function() {
-    var u = +users || 0;
-    var a = +avgUsage || 0;
-    var c = (+concurrency || 0) / 100;
-    var o = 1 + (+overheadPct || 0) / 100;
+    const u = +users || 0;
+    const a = +avgUsage || 0;
+    const c = (+concurrency || 0) / 100;
+    const o = 1 + (+overheadPct || 0) / 100;
     if (!u || !a) { setRes(null); return; }
 
-    var concurrentUsers   = Math.ceil(u * c);
-    var rawBandwidth      = concurrentUsers * a;
-    var totalBandwidth    = rawBandwidth * o;
-    var recommended       = totalBandwidth * 1.25;
-    var peakBandwidth     = rawBandwidth * o * 1.5;
+    const concurrentUsers   = Math.ceil(u * c);
+    const rawBandwidth      = concurrentUsers * a;
+    const totalBandwidth    = rawBandwidth * o;
+    const recommended       = totalBandwidth * 1.25;
+    const peakBandwidth     = rawBandwidth * o * 1.5;
 
-    var USER_LEVELS = [10, 25, 50, 100, 250, 500];
-    var chart = {
+    const USER_LEVELS = [10, 25, 50, 100, 250, 500];
+    const chart = {
       type: "line",
       data: USER_LEVELS.map(function(uu) {
-        var cc = Math.ceil(uu * c);
+        const cc = Math.ceil(uu * c);
         return { name: uu + " users", Bandwidth: parseFloat((cc * a * o).toFixed(1)) };
       }),
       keys: ["Bandwidth"]
@@ -1390,12 +1390,12 @@ export function BandwidthForm() {
     ));
   }, [users, avgUsage, concurrency, overheadPct]);
 
-  var applyPreset = function(p) {
+  const applyPreset = function(p) {
     setUsers(p.v.users); setAvgUsage(p.v.avgUsage);
     setConcurrency(p.v.concurrency); setOverheadPct(p.v.overheadPct);
   };
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Scenario Presets</SectionTitle>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
@@ -1424,7 +1424,7 @@ export function BandwidthForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="Bandwidth" /> : (
         <div className="empty-state">
@@ -1448,7 +1448,7 @@ export function IPRangeForm() {
   const [res,     setRes]     = useState(null);
   const [info,    setInfo]    = useState(null);
 
-  var MASK_PRESETS = [
+  const MASK_PRESETS = [
     { v: "255.0.0.0",       l: "/8"  },
     { v: "255.255.0.0",     l: "/16" },
     { v: "255.255.255.0",   l: "/24" },
@@ -1461,8 +1461,8 @@ export function IPRangeForm() {
 
   function maskToCidr(maskStr) {
     try {
-      var parts  = maskStr.split(".").map(Number);
-      var binary = parts.map(function(p) { return p.toString(2).padStart(8, "0"); }).join("");
+      const parts  = maskStr.split(".").map(Number);
+      const binary = parts.map(function(p) { return p.toString(2).padStart(8, "0"); }).join("");
       return binary.split("").filter(function(b) { return b === "1"; }).length;
     } catch(e) { return null; }
   }
@@ -1477,22 +1477,22 @@ export function IPRangeForm() {
       return ((n >>> 24) & 0xff) + "." + ((n >>> 16) & 0xff) + "." + ((n >>> 8) & 0xff) + "." + (n & 0xff);
     }
 
-    var parts = network.split(".").map(Number);
-    var mparts = mask.split(".").map(Number);
+    const parts = network.split(".").map(Number);
+    const mparts = mask.split(".").map(Number);
     if (parts.length !== 4 || mparts.length !== 4 ||
         parts.some(function(p) { return isNaN(p) || p < 0 || p > 255; }) ||
         mparts.some(function(p) { return isNaN(p) || p < 0 || p > 255; })) {
       setRes(null); setInfo(null); return;
     }
 
-    var netInt   = toInt(network);
-    var maskInt  = toInt(mask);
-    var bcInt    = (netInt | ((~maskInt) >>> 0)) >>> 0;
-    var firstH   = netInt + 1;
-    var lastH    = bcInt - 1;
-    var hosts    = Math.max(0, bcInt - netInt - 1);
-    var cidr     = maskToCidr(mask);
-    var wildcard = toIP((~maskInt) >>> 0);
+    const netInt   = toInt(network);
+    const maskInt  = toInt(mask);
+    const bcInt    = (netInt | ((~maskInt) >>> 0)) >>> 0;
+    const firstH   = netInt + 1;
+    const lastH    = bcInt - 1;
+    const hosts    = Math.max(0, bcInt - netInt - 1);
+    const cidr     = maskToCidr(mask);
+    const wildcard = toIP((~maskInt) >>> 0);
 
     setInfo({
       networkAddr:   toIP(netInt),
@@ -1528,7 +1528,7 @@ export function IPRangeForm() {
     ));
   }, [network, mask]);
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Network Range Configuration</SectionTitle>
       <L t="Network Address" id="ipr_net" />
@@ -1544,7 +1544,7 @@ export function IPRangeForm() {
       <SectionTitle>Common Masks</SectionTitle>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
         {MASK_PRESETS.map(function(p) {
-          var isActive = mask === p.v;
+          const isActive = mask === p.v;
           return (
             <button key={p.v} onClick={function() { setMask(p.v); }}
               style={{ padding: "5px 13px", borderRadius: 100, fontSize: 12,
@@ -1600,7 +1600,7 @@ export function IPRangeForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="IP Range" /> : (
         <div className="empty-state">
@@ -1626,25 +1626,25 @@ export function HexForm() {
   const [bases,  setBases]  = useState(null);
   const [arith,  setArith]  = useState(null);
 
-  var cleaned = hex.replace(/^0x/i, "").replace(/[^0-9a-fA-F]/g, "").toUpperCase();
+  const cleaned = hex.replace(/^0x/i, "").replace(/[^0-9a-fA-F]/g, "").toUpperCase();
 
   useEffect(function() {
     if (!cleaned) { setRes(null); setBases(null); return; }
-    var decimal = parseInt(cleaned, 16);
+    const decimal = parseInt(cleaned, 16);
     if (isNaN(decimal)) { setRes(null); setBases(null); return; }
 
-    var binStr = decimal.toString(2);
-    var octStr = "0o" + decimal.toString(8);
-    var b32    = decimal.toString(32).toUpperCase();
-    var b36    = decimal.toString(36).toUpperCase();
+    const binStr = decimal.toString(2);
+    const octStr = "0o" + decimal.toString(8);
+    const b32    = decimal.toString(32).toUpperCase();
+    const b36    = decimal.toString(36).toUpperCase();
 
     setBases({ dec: decimal.toString(), bin: binStr, oct: octStr, b32, b36 });
 
     // Arithmetic
-    var bDec = parseInt(hexB.replace(/^0x/i, ""), 16);
-    var arithResult = null;
+    const bDec = parseInt(hexB.replace(/^0x/i, ""), 16);
+    let arithResult = null;
     if (!isNaN(bDec) && hexB.trim() !== "") {
-      var r = op === "+" ? decimal + bDec : decimal - bDec;
+      const r = op === "+" ? decimal + bDec : decimal - bDec;
       arithResult = {
         a: decimal, b: bDec, op, result: r,
         resultHex: r >= 0 ? r.toString(16).toUpperCase() : "-" + Math.abs(r).toString(16).toUpperCase()
@@ -1655,18 +1655,18 @@ export function HexForm() {
     }
 
     // RGB color preview
-    var isColor3 = cleaned.length === 3;
-    var isColor6 = cleaned.length === 6;
-    var colorHex = null;
+    const isColor3 = cleaned.length === 3;
+    const isColor6 = cleaned.length === 6;
+    let colorHex = null;
     if (isColor3) {
       colorHex = "#" + cleaned[0] + cleaned[0] + cleaned[1] + cleaned[1] + cleaned[2] + cleaned[2];
     } else if (isColor6) {
       colorHex = "#" + cleaned;
     }
 
-    var r6 = isColor6 ? parseInt(cleaned.slice(0, 2), 16) : null;
-    var g6 = isColor6 ? parseInt(cleaned.slice(2, 4), 16) : null;
-    var b6val = isColor6 ? parseInt(cleaned.slice(4, 6), 16) : null;
+    const r6 = isColor6 ? parseInt(cleaned.slice(0, 2), 16) : null;
+    const g6 = isColor6 ? parseInt(cleaned.slice(2, 4), 16) : null;
+    const b6val = isColor6 ? parseInt(cleaned.slice(4, 6), 16) : null;
 
     setRes(buildResult(
       "Decimal", decimal.toString(),
@@ -1701,13 +1701,13 @@ export function HexForm() {
     ));
   }, [hex, hexB, op]);
 
-  var isColor3 = cleaned.length === 3;
-  var isColor6 = cleaned.length === 6;
-  var colorHex = isColor3
+  const isColor3 = cleaned.length === 3;
+  const isColor6 = cleaned.length === 6;
+  const colorHex = isColor3
     ? "#" + cleaned[0] + cleaned[0] + cleaned[1] + cleaned[1] + cleaned[2] + cleaned[2]
     : isColor6 ? "#" + cleaned : null;
 
-  var left = (
+  const left = (
     <div>
       <SectionTitle>Hex Input</SectionTitle>
       <L t="Hexadecimal Value" id="hex_input" />
@@ -1844,7 +1844,7 @@ export function HexForm() {
     </div>
   );
 
-  var right = (
+  const right = (
     <div>
       {res ? <Panel result={res} loading={null} label="Hex Converter" /> : (
         <div className="empty-state">

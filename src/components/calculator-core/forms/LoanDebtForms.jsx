@@ -297,14 +297,14 @@ export function DebtPayoffForm() {
   const [res, setRes] = useState(null);
 
   function simulatePayoff(debtList, strategy, extraBudget) {
-    let dList = debtList.map(d => ({ ...d, balance: d.balance }));
+    const dList = debtList.map(d => ({ ...d, balance: d.balance }));
     const sorted = strategy === "Avalanche"
       ? [...dList].sort((a, b) => b.rate - a.rate)
       : [...dList].sort((a, b) => a.balance - b.balance);
 
     let months = 0, totalInterest = 0;
     while (dList.some(d => d.balance > 0) && months < 600) {
-      let extra = extraBudget;
+      const extra = extraBudget;
       // Pay minimums on all
       for (const d of dList) {
         if (d.balance <= 0) continue;

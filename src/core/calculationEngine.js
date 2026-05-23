@@ -699,7 +699,7 @@ export function calcDateDiff({ date1, date2, excludeWeekends=false, holidays=[] 
   let businessDays=0;
   let holidaysHit = 0;
   if(excludeWeekends){
-    let cur=new Date(Math.min(d1,d2));
+    const cur=new Date(Math.min(d1,d2));
     const end=new Date(Math.max(d1,d2));
     const holidayStrs = holidays.filter(Boolean).map(h => {
       try { return new Date(h).toISOString().split('T')[0]; } catch(e) { return null; }
@@ -1225,7 +1225,7 @@ export function calcFraction({ n1, d1, n2, d2, op }) {
   const g=gcd(Math.abs(rn),Math.abs(rd));
   const srn=rn/g, srd=rd/g;
 
-  let steps = [];
+  const steps = [];
   if (op === "+" || op === "-") {
     steps.push({ title: "1. Find Common Denominator", desc: `${d1v} × ${d2v} = ${d1v*d2v}` });
     steps.push({ title: "2. Adjust Numerators", desc: `${n1v}×${d2v} ${op} ${n2v}×${d1v} = ${n1v*d2v} ${op} ${n2v*d1v}` });
@@ -1452,7 +1452,7 @@ export function calcPythagorean({ a, b, c, solve="c" }) {
   const sides=solve==="c"?{a:av,b:bv,c:result}:solve==="a"?{a:result,b:bv,c:cv}:{a:av,b:result,c:cv};
   const area=round(0.5*sides.a*sides.b,4);
   const perimeter=round(sides.a+sides.b+sides.c,4);
-  let steps = [];
+  const steps = [];
   if (solve === "c") {
     steps.push({ title: "1. Pythagorean Theorem", desc: "c² = a² + b²" });
     steps.push({ title: "2. Substitute Values", desc: `c² = ${av}² + ${bv}²` });
