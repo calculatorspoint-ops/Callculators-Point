@@ -30,6 +30,20 @@ export const L = ({ t, id }) => (
 export function N({ label, id, value, onChange, unit, placeholder = "0", min, max, step, hint, type = "text", icon, prefix }) {
   const [displayValue, setDisplayValue] = useState("");
   const [focused, setFocused] = useState(false);
+  const isRestored = useRef(false);
+
+  useEffect(() => {
+    if (!id || isRestored.current) return;
+    const saved = localStorage.getItem(`calc_input_${id}`);
+    if (saved !== null) {
+      isRestored.current = true;
+      const parsed = type === "number" ? saved : parseLocalizedNumber(saved);
+      if (String(parsed) !== String(value) && String(parsed) !== "NaN") {
+        onChange(parsed);
+      }
+    }
+  }, [id, type, value, onChange]);
+
   useEffect(() => {
     if (document.activeElement?.id !== id) {
       if (value === "" || value === null || value === undefined) {
@@ -46,6 +60,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
   const handleChange = (e) => {
     const val = e.target.value;
     setDisplayValue(val);
+    if (id) localStorage.setItem(`calc_input_${id}`, val);
     if (type === "number") {
       onChange(val);
     } else {
@@ -58,8 +73,11 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
     setFocused(false);
     if (type !== "number" && displayValue !== "") {
       const parsed = parseLocalizedNumber(displayValue);
-      setDisplayValue(formatInputNumber(parsed));
-      onChange(parsed);
+      if (!isNaN(parsed)) {
+        setDisplayValue(formatInputNumber(parsed));
+        if (id) localStorage.setItem(`calc_input_${id}`, parsed);
+        onChange(parsed);
+      }
     }
   };
 
@@ -119,6 +137,18 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
 
 // ── Slider ─────────────────────────────────────────────────────────────
 export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn }) {
+  const isRestored = useRef(false);
+  useEffect(() => {
+    if (!id || isRestored.current) return;
+    const saved = localStorage.getItem(`calc_input_${id}`);
+    if (saved !== null && !isNaN(Number(saved))) {
+      isRestored.current = true;
+      if (Number(saved) !== value) {
+        onChange(Number(saved));
+      }
+    }
+  }, [id, value, onChange]);
+
   const pct = Math.round(((Math.min(Math.max(value, min), max) - min) / (max - min)) * 100);
   // Extract unit from formatter if possible
   const unitStr = fmtFn ? fmtFn(1).toString().replace(/[0-9.]/g, '').trim() : "";
@@ -141,6 +171,7 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
             value={value}
             onChange={e => {
               const v = e.target.value === '' ? '' : Number(e.target.value);
+              if (id) localStorage.setItem(`calc_input_${id}`, v);
               onChange(v);
             }}
             onBlur={() => {
@@ -169,7 +200,11 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
         }} />
         <input
           type="range" id={id} min={min} max={max} step={step} value={value === '' ? min : value}
-          onChange={e => onChange(+e.target.value)}
+          onChange={e => {
+            const v = +e.target.value;
+            if (id) localStorage.setItem(`calc_input_${id}`, v);
+            onChange(v);
+          }}
           aria-label={label}
           style={{ position: "relative", zIndex: 1, background: "transparent", width: "100%" }}
         />
@@ -184,11 +219,28 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
 
 // ── Select ─────────────────────────────────────────────────────────────
 export function Sel({ label, id, value, onChange, opts }) {
+  const isRestored = useRef(false);
+  useEffect(() => {
+    if (!id || isRestored.current) return;
+    const saved = localStorage.getItem(`calc_input_${id}`);
+    if (saved !== null && saved !== value) {
+      isRestored.current = true;
+      // Ensure the saved value actually exists in the options
+      if (opts.some(o => String(o.v) === saved)) {
+        onChange(saved);
+      }
+    }
+  }, [id, value, onChange, opts]);
+
   return (
     <div style={{ marginBottom: 12 }}>
       {label && <L t={label} id={id} />}
       <select
-        id={id} value={value} onChange={e => onChange(e.target.value)}
+        id={id} value={value} onChange={e => {
+          const val = e.target.value;
+          if (id) localStorage.setItem(`calc_input_${id}`, val);
+          onChange(val);
+        }}
         aria-label={label} className="f-select"
         style={{ height: 50, fontSize: 16, fontWeight: 600 }}
       >
@@ -314,10 +366,28 @@ export function InputSection({ title, icon, gradient, children }) {
 
 // ── Toggle Switch ──────────────────────────────────────────────────────
 export function Toggle({ label, id, checked, onChange, hint }) {
+  const isRestored = useRef(false);
+  useEffect(() => {
+    if (!id || isRestored.current) return;
+    const saved = localStorage.getItem(`calc_input_${id}`);
+    if (saved !== null) {
+      isRestored.current = true;
+      const parsed = saved === "true";
+      if (parsed !== checked) {
+        onChange(parsed);
+      }
+    }
+  }, [id, checked, onChange]);
+
+  const handleChange = (newVal) => {
+    if (id) localStorage.setItem(`calc_input_${id}`, newVal);
+    onChange(newVal);
+  };
+
   return (
     <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
       <div
-        onClick={() => onChange(!checked)}
+        onClick={() => handleChange(!checked)}
         style={{
           width: 44, height: 24, borderRadius: 12, flexShrink: 0,
           background: checked ? "var(--brand)" : "var(--border)",
@@ -334,7 +404,7 @@ export function Toggle({ label, id, checked, onChange, hint }) {
       </div>
       <div>
         <label htmlFor={id} style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", cursor: "pointer" }}
-          onClick={() => onChange(!checked)}>
+          onClick={() => handleChange(!checked)}>
           {label}
         </label>
         {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2, lineHeight: 1.4 }}>{hint}</p>}

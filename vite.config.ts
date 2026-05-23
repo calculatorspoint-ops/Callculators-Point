@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
+import viteCompression from 'vite-plugin-compression';
 
 const isAnalyze = process.env.ANALYZE === 'true';
 
@@ -18,6 +19,9 @@ export default defineConfig({
       brotliSize: true,
       filename: 'dist/bundle-report.html',
     }),
+
+    viteCompression({ algorithm: 'gzip', ext: '.gz' }),
+    viteCompression({ algorithm: 'brotliCompress', ext: '.br' }),
 
     VitePWA({
       registerType: 'autoUpdate',

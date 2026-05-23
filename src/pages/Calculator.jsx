@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useAppStore } from "@/store/useAppStore.js";
 import { ALL_CALCULATORS, CATEGORIES, getCalcBySlug, getRelated } from "@/data/calculatorConfigs.js";
 import { BASE_FAQS, CALC_FAQS } from "@/data/faqData.js";
-import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, BarChart2, FileText, HelpCircle } from "lucide-react";
+import { Share2, Bookmark, BookmarkCheck, ArrowRight, Lightbulb, BarChart2, FileText, HelpCircle, ThumbsUp, ThumbsDown, Flag } from "lucide-react";
 
 const CalculatorWidget = lazy(() => import("@/components/calculator-core/CalculatorWidget.jsx").then(m => ({ default: m.CalculatorWidget })));
 const CurrencyBanner = lazy(() => import("@/components/ui/CurrencyBanner.jsx"));
@@ -101,6 +101,31 @@ function FAQSection({ faqs, calcName }) {
         "@context":"https://schema.org","@type":"FAQPage",
         mainEntity: faqs.map(f=>({ "@type":"Question", name:f.q, acceptedAnswer:{"@type":"Answer",text:f.a} }))
       })}} />
+    </div>
+  );
+}
+
+function FeedbackWidget({ calcName, calcSlug }) {
+  const [feedback, setFeedback] = useState(null);
+
+  return (
+    <div style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--border)", display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text2)" }}>Was this calculator helpful?</span>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => setFeedback("up")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "up" ? "var(--brand)" : "var(--border)", background: feedback === "up" ? "var(--brand-l)" : "var(--surface)", color: feedback === "up" ? "var(--brand)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
+            <ThumbsUp size={14} /> Yes
+          </button>
+          <button onClick={() => setFeedback("down")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 100, border: "1px solid", borderColor: feedback === "down" ? "var(--red)" : "var(--border)", background: feedback === "down" ? "rgba(220,53,69,.08)" : "var(--surface)", color: feedback === "down" ? "var(--red)" : "var(--text2)", fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "all .15s" }}>
+            <ThumbsDown size={14} /> No
+          </button>
+        </div>
+        {feedback && <span style={{ fontSize: 12, color: "var(--text3)", animation: "fade-in .3s" }}>Thanks for your feedback!</span>}
+      </div>
+      
+      <Link to={`/contact?type=accuracy&subject=Issue with ${calcName}`} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: "var(--text3)", textDecoration: "none", padding: "6px 12px", borderRadius: 100, background: "var(--surf2)" }}>
+        <Flag size={12} /> Report an Issue
+      </Link>
     </div>
   );
 }
@@ -254,6 +279,7 @@ export default function Calculator() {
             <div className="calc-card-body calculator-export-root">
               <CalculatorWidget calc={calc} />
               <ExportToolbar targetSelector=".calculator-export-root" filenamePrefix={calc.name.replace(/\s+/g, '_')} />
+              <FeedbackWidget calcName={calc.name} calcSlug={calc.slug} />
             </div>
           </div>
 
