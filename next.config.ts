@@ -12,6 +12,9 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
+  experimental: {
+    optimizeCss: true, // Inlines critical CSS to fix render-blocking warnings
+  },
 
   // ── Images ────────────────────────────────────────────────────────────────
   images: {
