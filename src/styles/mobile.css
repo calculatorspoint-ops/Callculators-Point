@@ -1,4 +1,4 @@
-﻿/* ══════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════
    MOBILE COMPLETE FIX v3 — All pages, all breakpoints
    Covers: Home, AllCalculators, Category, Calculator, Footer,
            Navbar, Hero, Stat strip, Forms, Results
@@ -239,7 +239,7 @@ html.mob-menu-open body { overflow: hidden; }
 
   /* ══ CALCULATOR PAGE ══════════════════════════ */
   .calc-page-head,
-  .calc-page-header    { padding: 16px 14px 0 !important; }
+  .calc-page-header    { padding: 16px 14px 20px !important; }
 
   .cph-breadcrumb      { font-size: 11px; gap: 3px; flex-wrap: wrap; }
   .cph-title           { font-size: clamp(1rem, 5vw, 1.25rem) !important; line-height: 1.2; }

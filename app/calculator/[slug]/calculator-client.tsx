@@ -68,19 +68,22 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
             <span style={{ color: 'rgba(255,255,255,.72)' }}>{calc.name}</span>
           </nav>
 
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flexWrap: 'wrap' }}>
-            <div style={{ fontSize: 34, lineHeight: 1 }}>{calc.icon}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <h1 className="cph-title">{calc.name}</h1>
-              {calc.desc && (
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', lineHeight: 1.6, marginBottom: 8 }}>
-                  {calc.desc}
-                </p>
-              )}
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {calc.popular && <span className="badge badge-amber">🔥 Popular</span>}
-                {calc.isNew && <span className="badge badge-green">✨ New</span>}
-                {calc.hasChart && <span className="badge badge-blue">📊 Chart</span>}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            {/* Left side: Icon + Texts */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: '1 1 300px', minWidth: 0 }}>
+              <div style={{ fontSize: 34, lineHeight: 1, flexShrink: 0 }}>{calc.icon}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h1 className="cph-title">{calc.name}</h1>
+                {calc.desc && (
+                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', lineHeight: 1.6, marginBottom: 12 }}>
+                    {calc.desc}
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {calc.popular && <span className="badge badge-amber">🔥 Popular</span>}
+                  {calc.isNew && <span className="badge badge-green">✨ New</span>}
+                  {calc.hasChart && <span className="badge badge-blue">📊 Chart</span>}
+                </div>
               </div>
             </div>
 

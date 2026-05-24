@@ -535,7 +535,7 @@ input[type="range"]::-moz-range-track{height:5px;background:var(--border);border
 ══════════════════════════════════════════════════════════════ */
 .calc-page-head,.calc-page-header{
   background:linear-gradient(150deg,#0F1B3D 0%,#153273 35%,#1D4ED8 70%,#2563EB 100%);
-  padding:clamp(18px,3vw,28px) clamp(14px,3vw,20px) 0;
+  padding:clamp(18px,3vw,28px) clamp(14px,3vw,20px) clamp(20px,3vw,28px);
   border-bottom:1px solid var(--border);position:relative;overflow:hidden;
 }
 .calc-page-head::before,.calc-page-header::before{
@@ -1380,7 +1380,7 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   .hero-actions a,.hero-actions button{width:100%;text-align:center;justify-content:center;min-height:48px;padding:13px 20px;}
   .stat-strip{flex-wrap:wrap;}
   .stat-strip-item{flex:0 0 50%;border-bottom:1px solid var(--bord2);}
-  .calc-page-head,.calc-page-header{padding:16px 14px 0!important;}
+  .calc-page-head,.calc-page-header{padding:16px 14px 20px!important;}
   .cph-title{font-size:clamp(1rem,5vw,1.25rem)!important;line-height:1.2;}
   .cph-icon{width:40px;height:40px;font-size:20px;}
   .cph-meta{gap:5px;margin-top:5px;}
