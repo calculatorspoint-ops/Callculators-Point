@@ -2626,3 +2626,571 @@ img { content-visibility: auto; }
 .result-live-region {
   /* Visually no change — just marks the region for screen readers */
 }
+
+/* ════════════════════════════════════════════════════════════════
+   SEO CONTENT SECTION (Phase B)
+   Server-rendered HTML block below calculator — fully indexed by Google
+════════════════════════════════════════════════════════════════ */
+.seo-content-wrapper {
+  max-width: var(--calc-max);
+  margin: 0 auto;
+  padding: 0 var(--page-px) 48px;
+}
+
+.seo-content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.seo-block {
+  padding: 32px 0;
+  border-bottom: 1px solid var(--border);
+}
+.seo-block:last-child { border-bottom: none; }
+
+.seo-h2 {
+  font-family: var(--font-hd);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 16px;
+  letter-spacing: -.02em;
+}
+
+.seo-para {
+  font-size: 0.9375rem;
+  color: var(--text2);
+  line-height: 1.8;
+  margin: 0 0 14px;
+}
+.seo-para:last-child { margin-bottom: 0; }
+
+/* Formula box */
+.seo-formula-box {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--brand);
+  border-radius: var(--r-md);
+  padding: 18px 20px;
+}
+.seo-formula-main {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brand);
+  margin: 0 0 8px;
+  word-break: break-all;
+}
+.seo-formula-desc {
+  font-size: 0.875rem;
+  color: var(--text3);
+  margin: 4px 0 0;
+  line-height: 1.6;
+}
+
+/* How to use steps */
+.seo-steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.seo-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surf2);
+  border-radius: var(--r);
+  border: 1px solid var(--border2);
+  transition: border-color .15s;
+}
+.seo-step-item:hover { border-color: var(--brand-ll); }
+.seo-step-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.seo-step-text {
+  font-size: 0.9rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* Examples grid */
+.seo-examples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.seo-example-card {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.seo-example-scenario {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+}
+.seo-example-result {
+  font-size: 0.85rem;
+  color: var(--text3);
+  line-height: 1.5;
+}
+
+/* Tips list */
+.seo-tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.seo-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.seo-tip-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  background: var(--green-l);
+  color: var(--green-text);
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+/* FAQ accordion */
+.seo-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.seo-faq-item {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--surface);
+  transition: border-color .15s;
+}
+.seo-faq-item[open] { border-color: var(--brand); }
+.seo-faq-question {
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: background .15s;
+}
+.seo-faq-question:hover { background: var(--surf2); }
+.seo-faq-question::-webkit-details-marker { display: none; }
+.seo-faq-question::after {
+  content: '▾';
+  font-size: 0.8rem;
+  color: var(--text3);
+  transition: transform .2s;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+details[open] .seo-faq-question::after { transform: rotate(180deg); }
+.seo-faq-answer {
+  padding: 0 16px 14px;
+  font-size: 0.875rem;
+  color: var(--text2);
+  line-height: 1.7;
+  border-top: 1px solid var(--border2);
+  padding-top: 12px;
+}
+
+/* Related calculators grid */
+.seo-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.seo-related-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.seo-related-card:hover {
+  border-color: var(--brand);
+  box-shadow: var(--sh2);
+  transform: translateY(-1px);
+}
+.seo-related-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--brand-l);
+  border-radius: var(--r);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.seo-related-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.seo-related-desc {
+  font-size: 0.78rem;
+  color: var(--text3);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.seo-category-link {
+  font-size: 0.875rem;
+  color: var(--text3);
+  margin: 0;
+}
+.seo-category-link a {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity .15s;
+}
+.seo-category-link a:hover { opacity: 0.75; }
+
+/* ════════════════════════════════════════════════════════════════
+   STEP-BY-STEP PANEL (Phase C)
+════════════════════════════════════════════════════════════════ */
+.steps-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-top: 16px;
+  box-shadow: var(--sh1);
+}
+
+.steps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--brand-l), var(--surf2));
+  border-bottom: 1px solid var(--border);
+}
+.steps-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.steps-icon { font-size: 1.1rem; }
+.steps-copy-btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--brand);
+  background: var(--surface);
+  border: 1px solid var(--brand-ll);
+  border-radius: var(--r);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.steps-copy-btn:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+.steps-list {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.steps-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.steps-num-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.steps-num {
+  width: 28px;
+  height: 28px;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.steps-line {
+  width: 2px;
+  flex: 1;
+  min-height: 20px;
+  background: var(--border);
+  margin: 4px 0;
+}
+.steps-content {
+  padding-bottom: 20px;
+  flex: 1;
+  min-width: 0;
+}
+.steps-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.steps-formula {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--brand);
+  background: var(--brand-l);
+  border-radius: var(--r);
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  word-break: break-all;
+}
+.steps-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--green-text);
+  background: var(--green-l);
+  border-radius: var(--r);
+  padding: 5px 10px;
+  display: inline-block;
+}
+.steps-note {
+  font-size: 0.8rem;
+  color: var(--text3);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.steps-final {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, var(--green-l), var(--brand-l));
+  border-top: 1px solid var(--border);
+}
+.steps-final-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text3);
+}
+.steps-final-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--green-text);
+  font-family: var(--font-mono);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RESULT CARD — OmniCalculator-inspired (Phase E)
+════════════════════════════════════════════════════════════════ */
+.result-card-omni {
+  background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+  border: 1.5px solid var(--green-ll);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.dark .result-card-omni {
+  background: linear-gradient(135deg, rgba(16,185,129,.08) 0%, rgba(37,99,235,.06) 100%);
+  border-color: rgba(16,185,129,.2);
+}
+.result-card-omni::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(37,99,235,.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.result-card-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 6px;
+}
+.result-card-primary {
+  font-family: var(--font-hd);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: var(--green-text);
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+.dark .result-card-primary { color: #34d399; }
+.result-card-unit {
+  font-size: 0.9rem;
+  color: var(--text3);
+  margin-bottom: 16px;
+}
+.result-card-secondaries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.result-card-secondary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 100px;
+}
+.result-card-secondary-label {
+  font-size: 0.72rem;
+  color: var(--text3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.result-card-secondary-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+/* Trust badge strip */
+.calc-trust-badges {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+.calc-trust-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text3);
+}
+.calc-trust-badge svg { color: var(--green); }
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE POLISH (Phase F)
+════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* Prevent iOS auto-zoom on inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Larger tap targets */
+  .calc-card button,
+  .seo-faq-question,
+  .seo-step-item {
+    min-height: 44px;
+  }
+
+  /* SEO content responsive */
+  .seo-examples-grid {
+    grid-template-columns: 1fr;
+  }
+  .seo-related-grid {
+    grid-template-columns: 1fr;
+  }
+  .seo-h2 {
+    font-size: 1.1rem;
+  }
+  .seo-block {
+    padding: 24px 0;
+  }
+  .seo-content-wrapper {
+    padding-bottom: 32px;
+  }
+
+  /* Steps panel mobile */
+  .steps-formula {
+    font-size: 0.78rem;
+  }
+  .steps-final-value {
+    font-size: 0.95rem;
+  }
+
+  /* Result card mobile */
+  .result-card-omni {
+    padding: 18px;
+  }
+  .result-card-secondaries {
+    gap: 8px;
+  }
+  .result-card-secondary {
+    padding: 7px 12px;
+    min-width: 90px;
+  }
+}
+
+/* Safe area for iPhone notch/home bar */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .seo-content-wrapper {
+    padding-bottom: calc(48px + env(safe-area-inset-bottom));
+  }
+}
+
