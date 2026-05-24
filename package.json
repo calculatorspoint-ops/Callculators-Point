@@ -19,7 +19,8 @@
     "validate:unit": "vitest run src/tests/calculators.test.ts",
     "validate:calculators": "node scripts/validate-calculators.mjs",
     "lint": "eslint .",
-    "lint:ci": "eslint . --max-warnings 0"
+    "lint:ci": "eslint . --max-warnings 0",
+    "postinstall": "node scripts/patch-css-minimizer.cjs"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
