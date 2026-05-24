@@ -47,28 +47,38 @@ const nextConfig: NextConfig = {
       '@': path.resolve(__dirname, 'src'),
     };
 
-    // ── Remove CssMinimizerPlugin ──────────────────────────────────────────
-    // cssnano-simple (bundled in Next.js) crashes on Tailwind's modern CSS:
-    //   - fractional selectors:  .left-1\/2, .top-1\/2
-    //   - opacity modifiers:     .bg-black\/50, .dark\:bg-blue-900\/20
+    // ── Kill CssMinimizerPlugin before it can process CSS ─────────────────
+    // ROOT CAUSE: cssnano-simple (bundled in Next.js) crashes on Tailwind's
+    // modern CSS selectors: .left-1\/2, .bg-black\/50, .dark:hover:...
     //
-    // We use the `afterEnvironment` webpack hook which fires AFTER all
-    // webpack plugins have called their apply() method — this is the only
-    // guaranteed point where optimization.minimizer is fully populated.
-    // Removing it here prevents the build crash on both local and Vercel.
+    // PREVIOUS APPROACH (failed): removing from config.optimization.minimizer
+    // — too early. The plugin's apply() had already registered a tap on
+    // compilation.hooks.processAssets by the time we removed it from the array.
+    //
+    // THIS APPROACH: hook into compiler.hooks.compilation, then use
+    // compilation.hooks.processAssets.intercept({ call }) to strip the
+    // CssMinimizerPlugin tap RIGHT BEFORE processAssets fires — after all
+    // plugins have registered their taps but before any tap runs.
+    // This is guaranteed to work regardless of plugin registration order.
     if (!dev && !isServer) {
       config.plugins.push({
         apply(compiler: any) {
-          compiler.hooks.afterEnvironment.tap('RemoveCssMinimizerPlugin', () => {
-            const minimizers = compiler.options.optimization?.minimizer;
-            if (Array.isArray(minimizers)) {
-              compiler.options.optimization.minimizer = minimizers.filter(
-                (m: any) => m?.constructor?.name !== 'CssMinimizerPlugin'
-              );
-              console.log(
-                '[build] CssMinimizerPlugin removed — Tailwind fractional selectors preserved'
-              );
-            }
+          compiler.hooks.compilation.tap('NoCssMinimizerPlugin', (compilation: any) => {
+            compilation.hooks.processAssets.intercept({
+              call() {
+                // Fires synchronously when processAssets is about to run.
+                // Filter out CssMinimizerPlugin's tap before it executes.
+                const hook = compilation.hooks.processAssets as any;
+                const taps: any[] = hook._taps ?? hook.taps ?? [];
+                const before = taps.length;
+                const filtered = taps.filter((t: any) => t.name !== 'CssMinimizerPlugin');
+                taps.length = 0;
+                filtered.forEach((t: any) => taps.push(t));
+                if (filtered.length < before) {
+                  console.log('[build] CssMinimizerPlugin tap removed — Tailwind CSS selectors preserved');
+                }
+              },
+            });
           });
         },
       });
