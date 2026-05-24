@@ -223,7 +223,7 @@ export function RentVsBuyForm() {
     const breakEvenYr = Math.round((down / (monthlyRent * 12 - emi * 12)) * 10) / 10;
 
     const yearlyData = [];
-    let cumRent = 0, cumBuy = down, rb = loan;
+    let cumRent = 0, cumBuy = down;
     for (let y = 1; y <= years; y++) {
       cumRent += monthlyRent * 12 * Math.pow(1 + rentIncrease / 100, y - 1);
       cumBuy += monthlyTotal * 12;

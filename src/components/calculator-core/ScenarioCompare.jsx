@@ -76,7 +76,7 @@ function DeltaBar({ scenarios, statIndex, colors }) {
   // Extract numeric value from stat
   const extractNum = (val) => {
     if (typeof val === "number") return val;
-    const s = String(val).replace(/[^0-9.\-]/g, "");
+    const s = String(val).replace(/[^0-9.-]/g, "");
     return parseFloat(s) || 0;
   };
 

@@ -32,7 +32,9 @@ export function StepByStepPanel({ steps, title = 'How this was calculated' }: St
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {}
+    } catch (e) {
+      console.warn("Failed to copy", e);
+    }
   };
 
   return (
