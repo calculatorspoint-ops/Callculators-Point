@@ -30,7 +30,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       <ThemeSync />
       <ScrollToTop />
       <Navbar />
-      <main>
+      <main style={{ minHeight: '100vh' }}>
         <Suspense>
           {children}
         </Suspense>

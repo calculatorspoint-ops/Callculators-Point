@@ -8,10 +8,6 @@
  */
 import type { Viewport, Metadata } from 'next';
 import './globals.css';
-import '../src/styles/index.css';
-import '../src/styles/mobile.css';
-import '../src/styles/mobile-overflow-killer.css';
-import '../src/styles/all-calculators.css';
 import { ClientProviders } from './client-providers';
 
 export const viewport: Viewport = {
