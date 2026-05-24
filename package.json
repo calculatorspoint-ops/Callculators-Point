@@ -7,16 +7,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "vite:dev": "vite",
-    "vite:build": "tsc && vite build",
-    "vite:preview": "vite preview",
     "build:check": "tsc --noEmit",
-    "test": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:mobile": "playwright test --project='iPhone 14' --project='Pixel 7' --project='iPad Mini'",
     "test:e2e:report": "playwright show-report",
     "test:e2e:ui": "playwright test --ui",
-    "validate:unit": "vitest run src/tests/calculators.test.ts",
     "validate:calculators": "node scripts/validate-calculators.mjs",
     "lint": "eslint .",
     "lint:ci": "eslint . --max-warnings 0"
@@ -42,7 +37,6 @@
     "react-hot-toast": "^2.5.1",
     "react-i18next": "^17.0.8",
     "react-is": "^18.3.1",
-    "react-router-dom": "^6.30.0",
     "recharts": "^2.15.3",
     "zod": "^4.4.3",
     "zustand": "^5.0.4"
@@ -50,12 +44,9 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@playwright/test": "^1.60.0",
-    "@prerenderer/renderer-puppeteer": "^1.2.4",
-    "@prerenderer/rollup-plugin": "^0.3.12",
     "@types/node": "20.17.6",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
     "ajv": "^8.20.0",
     "autoprefixer": "^10.4.21",
     "critters": "^0.0.23",
@@ -68,14 +59,9 @@
     "lightningcss": "^1.32.0",
     "postcss": "^8.5.3",
     "puppeteer": "^25.0.4",
-    "rollup-plugin-visualizer": "^7.0.1",
     "tailwindcss": "^3.4.17",
     "typescript": "5.8.2",
-    "typescript-eslint": "^8.59.4",
-    "vite": "^6.2.0",
-    "vite-plugin-compression": "^0.5.1",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.8"
+    "typescript-eslint": "^8.59.4"
   },
   "overrides": {
     "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.4.15",

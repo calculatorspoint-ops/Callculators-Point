@@ -1,49 +1,40 @@
-# CalcPoint – React + Firebase Calculator Platform
+# CalcPoint – Next.js Calculator Platform
 
 ## Tech Stack
-- **React 18** + **Vite** (SPA with lazy loading)
+- **Next.js 15** (App Router, SSR/SSG, Server Components)
+- **React 18**
 - **Tailwind CSS** (design system)
-- **React Router v6** (client-side routing)
 - **Recharts** (interactive charts)
 - **Zustand** (state management and local storage)
-- **Firebase Analytics** (usage tracking)
+- **Vercel** (deployment and edge caching)
 
 ## Quick Start
 ```bash
 npm install
-cp .env.example .env.local
-# Fill in your Firebase credentials in .env.local
 npm run dev
 ```
 
-## Build & Deploy
+## Build & Deploy (Vercel)
+The project is optimized for deployment on Vercel. Pushing to the `main` branch will automatically trigger a deployment. To deploy manually:
 ```bash
-npm run build
-npm install -g firebase-tools
-firebase login
-firebase init hosting
-firebase deploy
+npx vercel --prod
 ```
 
 ## Project Structure
 ```
 src/
+  app/               → Next.js App Router pages and layouts
   components/
     ui/              → Reusable UI atoms (ResultBox, InputField, etc.)
     charts/          → Chart components using Recharts
     calculator-core/ → CalculatorWidget (the engine renderer)
-  calculators/       → Calculator-specific overrides (if needed)
   data/
     calculatorConfigs.js → Master config for ALL calculators
-  firebase/
-    config.js        → Firebase init
   hooks/
     useCalculator.js → Core hook: inputs → calculation → outputs
-  pages/
-    Home.jsx, Calculator.jsx, Category.jsx, AllCalculators.jsx
   store/
     useAppStore.js   → Zustand: theme, currency, favorites, recent
-  utils/
+  core/
     calculationEngine.js → Pure formula functions
   styles/
     index.css        → Tailwind + CSS variables
@@ -51,22 +42,14 @@ src/
 
 ## Adding a New Calculator
 1. Add entry to `src/data/calculatorConfigs.js`
-2. Add formula to `src/utils/calculationEngine.js`
+2. Add formula to `src/core/calculationEngine.js`
 3. That's it — the engine renders it automatically
 
-## SEO Strategy (React SPA)
-- `react-helmet-async` injects per-page meta tags
-- JSON-LD structured data on every calculator page
-- FAQ schema for rich snippets
-- Canonical URLs for all pages
-- Firebase Hosting CDN caches assets with aggressive headers
-- Pre-rendering via `vite-plugin-prerender` for static HTML generation
-## Firebase Setup
-1. Create project at console.firebase.google.com
-2. Enable Analytics
-3. Enable Hosting
-4. Copy credentials to .env.local
-5. `firebase deploy`
+## SEO Strategy (Next.js)
+- Server-Side Rendering (SSR) and Static Site Generation (SSG) for all calculator pages.
+- Native Next.js Metadata API for SEO tags and dynamic Open Graph images.
+- JSON-LD structured data and FAQ schema injected natively into server components.
+- Vercel Edge caching for immediate global delivery.
 
 ## Validation & Testing
 We have added scripts to validate the calculator configs and ensure no duplicate slugs exist.
