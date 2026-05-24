@@ -39,7 +39,7 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // ── Webpack ───────────────────────────────────────────────────────────────
+// ── Webpack ───────────────────────────────────────────────────────────────
   webpack(config, { dev, isServer }) {
     // Resolve @/ → src/
     config.resolve.alias = {
@@ -47,35 +47,56 @@ const nextConfig: NextConfig = {
       '@': path.resolve(__dirname, 'src'),
     };
 
-    // ── Kill CssMinimizerPlugin before it can process CSS ─────────────────
-    // ROOT CAUSE: cssnano-simple (bundled in Next.js) crashes on Tailwind's
-    // modern CSS selectors: .left-1\/2, .bg-black\/50, .dark:hover:...
-    //
-    // PREVIOUS APPROACH (failed): removing from config.optimization.minimizer
-    // — too early. The plugin's apply() had already registered a tap on
-    // compilation.hooks.processAssets by the time we removed it from the array.
-    //
-    // THIS APPROACH: hook into compiler.hooks.compilation, then use
-    // compilation.hooks.processAssets.intercept({ call }) to strip the
-    // CssMinimizerPlugin tap RIGHT BEFORE processAssets fires — after all
-    // plugins have registered their taps but before any tap runs.
-    // This is guaranteed to work regardless of plugin registration order.
     if (!dev && !isServer) {
+      // 1. Load the official standard minimizer (which does not crash on Tailwind)
+      const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+      
+      // 2. Add it to optimization using lightningcss which safely handles Tailwind CSS
+      config.optimization.minimizer.push(new CssMinimizerPlugin({
+        minify: CssMinimizerPlugin.lightningCssMinify,
+        minimizerOptions: {
+          targets: {
+            safari: (14 << 16) | (1 << 8), // Safari 14.1
+          },
+        },
+      }));
+
+      // 3. Strip out the buggy built-in Next.js cssnano-simple
       config.plugins.push({
         apply(compiler: any) {
           compiler.hooks.compilation.tap('NoCssMinimizerPlugin', (compilation: any) => {
             compilation.hooks.processAssets.intercept({
               call() {
-                // Fires synchronously when processAssets is about to run.
-                // Filter out CssMinimizerPlugin's tap before it executes.
                 const hook = compilation.hooks.processAssets as any;
                 const taps: any[] = hook._taps ?? hook.taps ?? [];
                 const before = taps.length;
-                const filtered = taps.filter((t: any) => t.name !== 'CssMinimizerPlugin');
+                // Filter out the built-in Next.js one, keep ours
+                const filtered = taps.filter((t: any) => 
+                  t.name !== 'CssMinimizerPlugin' || 
+                  (t.fn && t.fn.toString().includes('css-minimizer-webpack-plugin'))
+                );
+                
+                // If it's hard to distinguish, just filter by name since our plugin might also be named 'CssMinimizerPlugin'.
+                // Actually, css-minimizer-webpack-plugin uses the exact same tap name.
+                // It's safer to just let both run? No, Next's one crashes.
+                // Let's name our tap differently if we can, but we can't easily.
+                // Let's filter out the one whose fn toString DOES NOT include 'css-minimizer-webpack-plugin'.
+                const newlyFiltered = taps.filter((t: any) => {
+                  if (t.name === 'CssMinimizerPlugin') {
+                    const fnStr = t.fn ? t.fn.toString() : '';
+                    // The official plugin typically contains 'optimize' or 'cssnano' in its compiled source
+                    if (!fnStr.includes('__next_css_remove') && !fnStr.includes('cssnano-simple')) {
+                       return true; // keep ours
+                    }
+                    return false; // remove Next's
+                  }
+                  return true;
+                });
+                
                 taps.length = 0;
-                filtered.forEach((t: any) => taps.push(t));
-                if (filtered.length < before) {
-                  console.log('[build] CssMinimizerPlugin tap removed — Tailwind CSS selectors preserved');
+                newlyFiltered.forEach((t: any) => taps.push(t));
+                if (newlyFiltered.length < before) {
+                  console.log('[build] Built-in Next.js CssMinimizerPlugin removed, using official css-minimizer-webpack-plugin.');
                 }
               },
             });

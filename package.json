@@ -19,8 +19,7 @@
     "validate:unit": "vitest run src/tests/calculators.test.ts",
     "validate:calculators": "node scripts/validate-calculators.mjs",
     "lint": "eslint .",
-    "lint:ci": "eslint . --max-warnings 0",
-    "postinstall": "node scripts/patch-css-minimizer.cjs"
+    "lint:ci": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -59,11 +58,13 @@
     "@vitejs/plugin-react": "^4.3.4",
     "ajv": "^8.20.0",
     "autoprefixer": "^10.4.21",
+    "css-minimizer-webpack-plugin": "^8.0.0",
     "cssnano": "^8.0.1",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^15.15.0",
+    "lightningcss": "^1.32.0",
     "postcss": "^8.5.3",
     "puppeteer": "^25.0.4",
     "rollup-plugin-visualizer": "^7.0.1",
