@@ -28,6 +28,7 @@ const nextConfig: NextConfig = {
   // ── Headers ───────────────────────────────────────────────────────────────
   async headers() {
     return [
+      // Security headers for all pages
       {
         source: '/(.*)',
         headers: [
@@ -36,8 +37,31 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
       },
+      // Long-lived cache for content-hashed static assets (CSS, JS, fonts, images)
+      // These files have unique hashes in their names, so it's safe to cache forever.
+      // On repeat visits this eliminates ALL render-blocking CSS/JS (served from cache).
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Cache fonts for 1 year (they rarely change)
+      {
+        source: '/fonts/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
     ];
   },
+
 
 // ── Webpack ───────────────────────────────────────────────────────────────
   webpack(config, { dev, isServer }) {

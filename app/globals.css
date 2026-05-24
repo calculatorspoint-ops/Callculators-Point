@@ -2,14 +2,11 @@
  * app/globals.css
  * Next.js App Router global CSS entry point.
  *
- * The src/styles/*.css files are imported directly in app/layout.tsx
- * using TypeScript import statements, which Next.js handles correctly.
+ * NOTE: CSS files are imported directly in app/layout.tsx instead of using
+ * @import here. CSS @import creates a waterfall: globals.css loads first,
+ * then the browser discovers and serially fetches each @import.
+ * Direct imports in layout.tsx allow Next.js to bundle/chunk them in parallel.
  *
- * This file is kept for any app/-level CSS overrides or additions.
+ * @tailwind directives are in src/styles/index.css which is imported in layout.tsx
  */
 
-/* Any app-specific overrides can go here */
-@import '../src/styles/index.css';
-@import '../src/styles/mobile.css';
-@import '../src/styles/mobile-overflow-killer.css';
-@import '../src/styles/all-calculators.css';
