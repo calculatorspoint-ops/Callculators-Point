@@ -3,7 +3,7 @@ import fs from 'fs';
 function fix(filePath, replacer) {
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    let oldContent = content;
+    const oldContent = content;
     content = replacer(content);
     if (content !== oldContent) {
       fs.writeFileSync(filePath, content, 'utf8');

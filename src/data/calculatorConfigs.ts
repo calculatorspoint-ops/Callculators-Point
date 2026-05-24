@@ -39,8 +39,8 @@ export interface CalculatorConfig {
 
 export const CATEGORIES: CalculatorCategory[] = [
   { id:"finance",      name:"Finance & Money",     icon:"💰", color:"#1d4ed8", bg:"#eff6ff", desc:"Loans, investments, savings, tax & more" },
-  { id:"health",       name:"Health & Fitness",     icon:"❤️", color:"#dc2626", bg:"#fef2f2", desc:"BMI, calories, BMR, body fat & nutrition" },
-  { id:"math",         name:"Math & Science",       icon:"📐", color:"#7c3aed", bg:"#f5f3ff", desc:"Algebra, geometry, statistics & science" },
+  { id:"health",       name:"Health & Fitness",     icon:"❤️", color:"#b91c1c", bg:"#fef2f2", desc:"BMI, calories, BMR, body fat & nutrition" },
+  { id:"math",         name:"Math & Science",       icon:"📐", color:"#6d28d9", bg:"#f5f3ff", desc:"Algebra, geometry, statistics & science" },
   { id:"education",    name:"Education & GPA",      icon:"🎓", color:"#c2410c", bg:"#fff7ed", desc:"GPA, grades, marks & academic planning" },
   { id:"converters",   name:"Unit Converters",      icon:"🔄", color:"#065f46", bg:"#f0fdf4", desc:"Length, weight, temp, speed, data & more" },
   { id:"everyday",     name:"Everyday Tools",       icon:"🏠", color:"#b45309", bg:"#fffbeb", desc:"Age, dates, fuel, passwords & daily tools" },

@@ -241,7 +241,7 @@ export default function Home() {
                     onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = `${cat?.color}20`; }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span style={{ fontSize: 22 }}>{c.icon}</span>
-                      <div style={{ fontSize: 10, fontWeight: 800, color: "#d97706", background: "#fef3c7", padding: "1px 6px", borderRadius: 100 }}>#{i + 1}</div>
+                      <div style={{ fontSize: 10, fontWeight: 800, color: "#92400e", background: "#fef3c7", padding: "1px 6px", borderRadius: 100 }}>#{i + 1}</div>
                     </div>
                     <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", lineHeight: 1.4 }}>{c.name}</div>
                   </Link>
@@ -393,7 +393,7 @@ export default function Home() {
           <div className="home-features-grid">
             {[
               { icon: "📊", color: "#2563EB", title: "Interactive Charts",    desc: "Visual charts that update as you type — growth curves, amortization schedules, scenario comparisons." },
-              { icon: "💡", color: "#d97706", title: "Smart Insights",        desc: "Automatic tips like 'Pay ₹500 extra/month to save ₹40K in interest'. Actionable, not just numbers." },
+              { icon: "💡", color: "#b45309", title: "Smart Insights",        desc: "Automatic tips like 'Pay ₹500 extra/month to save ₹40K in interest'. Actionable, not just numbers." },
               { icon: "📋", color: "#10B981", title: "Step-by-Step Breakdowns", desc: "Every formula explained clearly. Understand the math behind every result." },
               { icon: "🔒", color: "#7c3aed", title: "100% Private",          desc: "All calculations run locally in your browser. Nothing is ever sent to any server." },
               { icon: "🌍", color: "#1D4ED8", title: "Multi-Currency",        desc: "Auto-detects your region. Switch currency and everything updates instantly." },

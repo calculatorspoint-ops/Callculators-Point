@@ -53,7 +53,7 @@ if (fs.existsSync('src/main')) {
 }
 
 // 4. Fix src/components/calculator-core/CalculatorWidget.tsx import.meta.env
-let widgetPath = 'src/components/calculator-core/CalculatorWidget';
+const widgetPath = 'src/components/calculator-core/CalculatorWidget';
 if (fs.existsSync(widgetPath)) {
   let content = fs.readFileSync(widgetPath, 'utf8');
   content = content.replace(/import\.meta\.env\.VITE_APP_ENV/g, 'process.env.NODE_ENV');
@@ -62,7 +62,7 @@ if (fs.existsSync(widgetPath)) {
 }
 
 // 5. Fix src/views/Calculator.tsx Link to -> href and slug as string
-let calcViewPath = 'src/views/Calculator';
+const calcViewPath = 'src/views/Calculator';
 if (fs.existsSync(calcViewPath)) {
   let content = fs.readFileSync(calcViewPath, 'utf8');
   content = content.replace(/<Link (.*?)to=/g, '<Link $1href=');
@@ -74,7 +74,7 @@ if (fs.existsSync(calcViewPath)) {
 }
 
 // 6. Fix app/tools/[slug]/page.tsx ALL_LANDINGS
-let seoLandingPath = 'app/tools/[slug]/page';
+const seoLandingPath = 'app/tools/[slug]/page';
 if (fs.existsSync(seoLandingPath)) {
   let content = fs.readFileSync(seoLandingPath, 'utf8');
   content = content.replace(/ALL_LANDINGS/g, 'SEO_LANDINGS');

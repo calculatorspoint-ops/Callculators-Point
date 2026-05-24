@@ -1,4 +1,4 @@
-/* eslint-disable no-useless-assignment */
+ 
 import Decimal from "decimal.js";
 import { SalaryForm } from '../schemas/salarySchema';
 

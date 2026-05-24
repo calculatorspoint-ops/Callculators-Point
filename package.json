@@ -83,8 +83,10 @@
     "inflight": "npm:lru-cache@^10.0.0"
   },
   "browserslist": [
-    "defaults",
-    "not IE 11",
-    "not op_mini all"
+    "chrome >= 100",
+    "firefox >= 100",
+    "safari >= 15",
+    "edge >= 100",
+    "not dead"
   ]
 }
