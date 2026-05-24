@@ -1,16 +1,16 @@
-﻿/**
+/**
  * app/home-client.tsx
  *
- * Wraps the existing Home.jsx as a client component.
- * All hooks (useState, useEffect, etc.) live in Home.jsx, so we
- * need 'use client' here.
+ * SSR-enabled home page shell.
+ *
+ * WHY: Previously used `dynamic(..., { ssr: false })` which made the entire
+ * page blank until JavaScript hydrated (causing 2,380ms LCP element delay).
+ * Now we import Home directly so Next.js can server-render the full HTML,
+ * including the hero with <p class="hero-sub"> which is the LCP element.
  */
 'use client';
 
-import dynamic from 'next/dynamic';
-
-// Lazy-load the existing Home page (heavy component)
-const Home = dynamic(() => import('@/views/Home'), { ssr: false });
+import Home from '@/views/Home';
 
 export default function HomePageClient() {
   return <Home />;

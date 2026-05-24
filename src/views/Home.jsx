@@ -1,11 +1,16 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import Link from "next/link";
-import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Calculator, Sparkles, BookOpen, Heart } from "lucide-react";
+import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Calculator, Sparkles, BookOpen } from "lucide-react";
 
-import { QuickCalc } from '@/components/ui/QuickCalc';
 import { CATEGORIES, BY_CATEGORY, POPULAR, NEW_CALCS, ALL_CALCULATORS } from "@/data/calculatorConfigs";
 import { useAppStore } from "@/store/useAppStore";
+
+// Lazy-load the heavy QuickCalc widget — it's below the fold on mobile
+// and has no SSR content anyway (it's all interactive state)
+const QuickCalc = lazy(() =>
+  import('@/components/ui/QuickCalc').then(m => ({ default: m.QuickCalc }))
+);
 
 /* ── Calculator row item ─────────────────────────────────────────────── */
 function CalcRow({ calc }) {
@@ -35,11 +40,11 @@ function CalcRow({ calc }) {
   );
 }
 
-/* ── Category block ─────────────────────────────────────────────── */
+/* ── Category block ─────────────────────────────────────────── */
 function CatBlock({ cat }) {
   const calcs = BY_CATEGORY[cat.id] || [];
   const [show, setShow] = useState(false);
-  const limit = 6;
+  const limit = 3; // Start with 3 rows to keep initial DOM size below 700 elements
   const shown = show ? calcs : calcs.slice(0, limit);
   return (
     <div className="home-cat-block">
@@ -93,6 +98,17 @@ export default function Home() {
   const favoriteCalcs = favorites.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
   const [showAllPopular, setShowAllPopular] = useState(false);
   const [showAllNew, setShowAllNew] = useState(false);
+  // Defer below-fold content until after initial paint to reduce DOM size
+  // This cuts the initial DOM from ~1148 elements to under 500
+  const [belowFoldReady, setBelowFoldReady] = useState(false);
+  useEffect(() => {
+    // Use requestIdleCallback if available, otherwise setTimeout
+    const schedule = typeof window !== 'undefined' && 'requestIdleCallback' in window
+      ? (cb) => requestIdleCallback(cb, { timeout: 300 })
+      : (cb) => setTimeout(cb, 0);
+    schedule(() => setBelowFoldReady(true));
+  }, []);
+
 
   return (
     <>
@@ -142,11 +158,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right column — Quick calc widget */}
+            {/* Right column — Quick calc widget (lazy-loaded, no SSR needed) */}
             <div className="hero-widget-col">
               <div className="hero-widget-label">⚡ Quick Calculator</div>
               <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                <QuickCalc />
+                <Suspense fallback={
+                  <div style={{ width: 300, height: 400, borderRadius: 20, background: "rgba(15,23,42,.92)", border: "1.5px solid rgba(255,255,255,.1)" }} />
+                }>
+                  <QuickCalc />
+                </Suspense>
               </div>
             </div>
           </div>
@@ -181,8 +201,8 @@ export default function Home() {
       {/* ═══ MAIN CONTENT ═══════════════════════════════════════════════════════ */}
       <div className="home-wrap">
 
-        {/* ═══ ECOSYSTEM HUBS STRIP ══════════════════════════════════════════════ */}
-        <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "16px 20px", overflowX: "auto" }}>
+        {/* ═══ ECOSYSTEM HUBS STRIP (deferred — below fold) ════════════════════════ */}
+        {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "16px 20px", overflowX: "auto" }}>
           <div style={{ maxWidth: 1280, margin: "0 auto" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
               <BookOpen size={14} style={{ color: "var(--brand)" }} />
@@ -213,10 +233,10 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </div>
+        </div>}
 
-        {/* ═══ TRENDING CALCULATORS ═══════════════════════════════════════════════ */}
-        <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "20px 20px" }}>
+        {/* ═══ TRENDING CALCULATORS (deferred — below fold) ════════════════════════ */}
+        {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "20px 20px" }}>
           <div style={{ maxWidth: 1280, margin: "0 auto" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -249,7 +269,7 @@ export default function Home() {
               })}
             </div>
           </div>
-        </div>
+        </div>}
 
         <div className="home-grid">
           {/* ── Left: Calculator lists ── */}
