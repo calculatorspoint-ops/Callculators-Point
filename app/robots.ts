@@ -2,7 +2,7 @@
  * app/robots.ts — Next.js Auto-Generated robots.txt
  *
  * Generates /robots.txt at build time.
- * Allows all crawlers, points to sitemap.
+ * Allows all major crawlers, blocks bad bots, points to sitemap.
  */
 import type { MetadataRoute } from 'next';
 
@@ -13,6 +13,10 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: ['/api/', '/_next/'],
+      },
+      {
+        userAgent: ['AhrefsBot', 'MJ12bot'],
+        disallow: ['/'],
       },
     ],
     sitemap: 'https://calculatorspoint.com/sitemap.xml',
