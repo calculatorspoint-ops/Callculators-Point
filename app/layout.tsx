@@ -11,6 +11,7 @@
  * - Inline <script> in <head> sets dark/light theme before first paint (no FOUC).
  */
 import type { Viewport, Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import '../src/styles/index.css';
 import '../src/styles/mobile.css';
@@ -101,6 +102,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClientProviders>
           {children}
         </ClientProviders>
+
+        {/* ── Google Analytics — loaded after page is interactive (doesn't block render) ── */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-RZ1T9JVXMV"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-RZ1T9JVXMV');
+          `}
+        </Script>
       </body>
     </html>
   );
