@@ -7,27 +7,21 @@
  */
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { Suspense, lazy } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
 import { ScrollToTop } from '@/components/ui/ScrollToTop';
-import { useAppStore } from '@/store/useAppStore';
-import '@/i18n'; // Initialise i18next
-import { Analytics } from '@vercel/analytics/react';
 
-function ThemeSync() {
-  const { theme } = useAppStore();
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
-  return null;
-}
+// Defer Analytics — loads after page is interactive, doesn't affect LCP/FCP
+const Analytics = lazy(() =>
+  import('@vercel/analytics/react').then(m => ({ default: m.Analytics }))
+);
+
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <ThemeSync />
       <ScrollToTop />
       <Navbar />
       <main style={{ minHeight: '100vh' }}>
@@ -49,7 +43,10 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
           },
         }}
       />
-      <Analytics />
+      {/* Analytics deferred — doesn't affect performance scores */}
+      <Suspense fallback={null}>
+        <Analytics />
+      </Suspense>
     </>
   );
 }

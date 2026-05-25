@@ -8,7 +8,6 @@ import { useAppStore } from "@/store/useAppStore";
 import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig } from "@/data/calculatorConfigs";
 import { CurrencySelector } from './CurrencySelector';
 import { SettingsModal } from './SettingsModal';
-import { useTranslation } from "react-i18next";
 
 /* ── Fuzzy-ish search: name + desc + keywords ──────────── */
 function searchCalculators(query: string): CalculatorConfig[] {
@@ -253,7 +252,6 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
 }
 
 export function Navbar() {
-  const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useAppStore();
   const [mob, setMob]         = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -290,11 +288,11 @@ export function Navbar() {
           <nav className="navbar-nav" aria-label="Main navigation">
             {CATEGORIES.slice(0, 5).map(c => (
               <Link key={c.id} href={`/category/${c.id}`} className="nav-link">
-                {c.icon} {t(`categories.${c.id}`, c.name)}
+                {c.icon} {c.name}
               </Link>
             ))}
             <Link href="/calculators" className="nav-link nav-link-all">
-              {t('nav.calculators', 'All Tools')}
+              All Tools
             </Link>
           </nav>
 
@@ -318,15 +316,6 @@ export function Navbar() {
               <CurrencySelector />
             </div>
 
-            {/* Language toggle */}
-            <button
-              onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
-              className="navbar-icon-btn desktop-only"
-              aria-label="Toggle language"
-              title="Toggle English / Español"
-            >
-              <span style={{ fontSize: 13, fontWeight: 700 }}>{i18n.language === 'es' ? 'ES' : 'EN'}</span>
-            </button>
 
             {/* Theme toggle */}
             <button

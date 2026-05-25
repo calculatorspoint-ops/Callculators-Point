@@ -13,6 +13,15 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
 
+  // ── Experimental ──────────────────────────────────────────────────────────
+  experimental: {
+    // Tree-shake these packages at the import level so only used exports are bundled
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
+  },
+
+  // ── Server externals — keep heavy server-only libs out of client bundle ──
+  serverExternalPackages: ['firebase'],
+
   // ── Images ────────────────────────────────────────────────────────────────
   images: {
     remotePatterns: [],

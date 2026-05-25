@@ -1,8 +1,4 @@
-/* Fonts are loaded non-blocking via <link media="print"> in index.html — do NOT add @import here */
-/* Fallback font-display ensures text remains visible during webfont load */
-@font-face { font-family: 'Inter'; font-display: swap; src: local('Inter'); }
-@font-face { font-family: 'Plus Jakarta Sans'; font-display: swap; src: local('Plus Jakarta Sans'); }
-@font-face { font-family: 'JetBrains Mono'; font-display: swap; src: local('JetBrains Mono'); }
+/* Fonts loaded by next/font/google in app/layout.tsx — do NOT add @font-face or @import here */
 
 /* ══════════════════════════════════════════════════════════════
    TAILWIND CSS v3
