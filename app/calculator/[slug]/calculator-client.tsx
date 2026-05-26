@@ -35,9 +35,15 @@ function FormFallback() {
   );
 }
 
+import { useEffect } from 'react';
+
 export function CalculatorPageClient({ slug }: { slug: string }) {
   const calc = getCalcBySlug(slug);
-  const { toggleFavorite, favorites } = useAppStore();
+  const { toggleFavorite, favorites, addRecent } = useAppStore();
+
+  useEffect(() => {
+    if (calc?.id) addRecent(calc.id);
+  }, [calc?.id, addRecent]);
 
   if (!calc) return null;
 
