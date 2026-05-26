@@ -15,16 +15,12 @@ describe("Calculation Engine Core Functions", () => {
 
   it("calculates EMI correctly with extra payments", () => {
     const regular = calcEMI({ principal: 500000, interestRate: 10, tenure: 5 });
-    // In calcEMI, tenure is YEARS, so n_val is tenure * 12 = 60 months. 
-    // Wait, the calcEMI uses extraPayment to reduce principal, but maybe it only affects schedule and actualMonths, and the total interest is calculated statically?
-    // Let's check calcEMI source code.
     const withExtra = calcEMI({ principal: 500000, interestRate: 10, tenure: 5, extraPayment: 5000 });
-    
-    // In current calcEMI, interest is calculated statically: interestDec = totalDec.minus(P). It doesn't update based on amortization schedule!
-    // So the total interest returned is the same. The saved interest is calculated as a rough 15% in insights: `savedInterest: ex_val > 0 ? round(interest * 0.15) : 0`
-    // Therefore, we just test if actualMonths is less.
+
     expect(withExtra.actualMonths).toBeLessThan(regular.actualMonths);
     expect(withExtra.savedMonths).toBeGreaterThan(0);
+    expect(withExtra.interest).toBeLessThan(regular.interest);
+    expect(withExtra.savedInterest).toBeCloseTo(regular.interest - withExtra.interest, 1);
   });
 
   it("calculates BMI correctly", () => {
@@ -41,5 +37,20 @@ describe("Calculation Engine Core Functions", () => {
     
     expect(result.final).toBeCloseTo(16288.95, 1);
     expect(result.gains).toBeCloseTo(6288.95, 1);
+  });
+
+  it("treats recurring compound-interest contributions as monthly under annual compounding", () => {
+    const result = calcCompound({
+      principal: 10000,
+      rate: 12,
+      years: 1,
+      frequency: "1",
+      contribution: 100,
+    });
+    const monthlyRate = Math.pow(1.12, 1 / 12) - 1;
+    const expectedContributions = 100 * (Math.pow(1 + monthlyRate, 12) - 1) / monthlyRate;
+
+    expect(result.final).toBeCloseTo(10000 * 1.12 + expectedContributions, 1);
+    expect(result.invested).toBe(11200);
   });
 });

@@ -4,7 +4,7 @@ export interface BabyName {
   origin: 'Arabic' | 'English' | 'Urdu' | 'Turkish' | 'Persian' | 'Indian' | 'Modern' | 'Classic';
   meaning: string;
   pronunciation: string;
-  style: 'Modern' | 'Traditional' | 'Unique' | 'Cute' | 'Royal';
+  style: 'Modern' | 'Traditional' | 'Unique' | 'Cute' | 'Royal' | 'Classic';
   startLetter: string;
   length: 'Short' | 'Medium' | 'Long';
   similarNames?: string[];
