@@ -30,8 +30,18 @@ const nextConfig: NextConfig = {
   },
 
   // ── Redirects ─────────────────────────────────────────────────────────────
+  // Force www → non-www at the app level so Vercel doesn't add a round-trip.
+  // The canonical URL throughout the codebase is https://calculatorspoint.com (no www).
+  // This redirect runs on the CDN edge — zero extra server latency.
   async redirects() {
-    return [];
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.calculatorspoint.com' }],
+        destination: 'https://calculatorspoint.com/:path*',
+        permanent: true, // 308 Permanent Redirect — browsers and crawlers cache it permanently
+      },
+    ];
   },
 
   // ── Headers ───────────────────────────────────────────────────────────────
