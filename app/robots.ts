@@ -12,20 +12,11 @@ import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      {
-        // All crawlers: allow everything except internal Next.js routes
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/api/'],
-      },
-      {
-        // Block high-volume scraper bots that waste crawl budget
-        userAgent: 'MJ12bot',
-        disallow: ['/'],
-      },
-    ],
-    sitemap: 'https://calculatorspoint.com/sitemap.xml',
-    // No "host:" — it is not a Google standard and causes Search Console warnings
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: '/api/',
+    },
+    sitemap: 'https://www.calculatorspoint.com/sitemap.xml',
   };
 }
