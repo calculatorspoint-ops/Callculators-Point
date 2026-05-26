@@ -11,9 +11,11 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { CATEGORIES } from '@/data/calculatorConfigs';
 import HomePageClient from './home-client';
 import { SITE_URL } from '@/config/site';
+import { QuickCalc } from '@/components/ui/QuickCalc';
 
 export const metadata: Metadata = {
   title: 'Free Online Calculators — Finance, Health, Math & More',
@@ -108,22 +110,26 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right column — placeholder for QuickCalc (hydrated by client component) */}
+          {/* Right column — QuickCalc client component, hydrated on the client */}
           <div className="hero-widget-col">
             <div className="hero-widget-label">⚡ Quick Calculator</div>
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              {/* Skeleton placeholder — exact same size as QuickCalc widget.
-                  Rendered server-side so it's visible immediately, preventing CLS. */}
-              <div
-                style={{
-                  width: 300,
-                  height: 400,
-                  borderRadius: 20,
-                  background: 'rgba(15,23,42,.92)',
-                  border: '1.5px solid rgba(255,255,255,.1)',
-                }}
-                aria-hidden="true"
-              />
+              {/* Suspense fallback = skeleton (same size, prevents CLS).
+                  After hydration the real interactive QuickCalc replaces it. */}
+              <Suspense fallback={
+                <div
+                  style={{
+                    width: 300,
+                    height: 400,
+                    borderRadius: 20,
+                    background: 'rgba(15,23,42,.92)',
+                    border: '1.5px solid rgba(255,255,255,.1)',
+                  }}
+                  aria-hidden="true"
+                />
+              }>
+                <QuickCalc />
+              </Suspense>
             </div>
           </div>
         </div>
