@@ -17,6 +17,14 @@ const nextConfig: NextConfig = {
   experimental: {
     // Tree-shake these packages at the import level so only used exports are bundled
     optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
+
+    // Inline critical CSS into HTML <head> and defer the rest.
+    // This eliminates render-blocking CSS from the critical path.
+    optimizeCss: true,
+
+    // Split CSS per-page so each page loads only styles it uses,
+    // instead of one 35KB monolithic bundle blocking all pages.
+    cssChunking: 'strict',
   },
 
   // ── Server externals — keep heavy server-only libs out of client bundle ──
@@ -92,6 +100,7 @@ const nextConfig: NextConfig = {
 
     if (!dev && !isServer) {
       const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+      const webpack = require('webpack');
       
       config.optimization.minimizer.push(new CssMinimizerPlugin({
         minify: CssMinimizerPlugin.lightningCssMinify,
@@ -99,6 +108,18 @@ const nextConfig: NextConfig = {
           targets: { safari: (14 << 16) | (1 << 8) },
         },
       }));
+
+      // ── Eliminate core-js polyfills (12KB savings) ──────────────────────
+      // jspdf → canvg → core-js pulls in polyfills for Array.at, Object.fromEntries,
+      // Object.hasOwn, String.trimStart, etc. — all natively supported in our
+      // browserslist targets (Chrome/Firefox/Edge 100+, Safari 15+).
+      // Replace all core-js imports with empty modules so they tree-shake to zero.
+      config.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(
+          /core-js/,
+          require.resolve('./src/utils/noop.js')
+        )
+      );
     }
 
     return config;
