@@ -240,6 +240,46 @@ export default function Home({ skipHero } = {}) {
           </div>
         </div>}
 
+        {/* ═══ NAME GENERATORS STRIP (deferred — below fold) ════════════════════════ */}
+        {belowFoldReady && <div style={{ background: "linear-gradient(135deg, #6366f115 0%, #8b5cf610 50%, #ec489910 100%)", borderBottom: "1px solid var(--border)", padding: "20px 20px" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 18 }}>✨</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: "var(--text)" }}>Name Generator Tools</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#6366f1", background: "#6366f115", padding: "2px 8px", borderRadius: 100 }}>NEW</span>
+              </div>
+              <Link href="/name-generators" style={{ fontSize: 12, fontWeight: 700, color: "#6366f1", display: "flex", alignItems: "center", gap: 4 }}>
+                View All 8 Tools <ArrowRight size={12} />
+              </Link>
+            </div>
+            <div style={{ display: "flex", gap: 10, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+              {[
+                { slug: "baby-name-generator",             icon: "👶", label: "Baby Names",      color: "#ec4899", bg: "#fdf2f8" },
+                { slug: "islamic-baby-names",              icon: "🌙", label: "Islamic Names",   color: "#10b981", bg: "#f0fdf4" },
+                { slug: "business-name-generator",         icon: "💼", label: "Business Names", color: "#3b82f6", bg: "#eff6ff" },
+                { slug: "brand-name-generator",            icon: "✨", label: "Brand Names",    color: "#8b5cf6", bg: "#f5f3ff" },
+                { slug: "youtube-channel-name-generator",  icon: "🎬", label: "YouTube Names",  color: "#ef4444", bg: "#fef2f2" },
+                { slug: "instagram-username-generator",    icon: "📸", label: "Instagram",      color: "#d946ef", bg: "#fdf4ff" },
+                { slug: "domain-name-generator",           icon: "🌐", label: "Domain Names",   color: "#0891b2", bg: "#ecfeff" },
+                { slug: "app-name-generator",              icon: "📱", label: "App Names",      color: "#f59e0b", bg: "#fffbeb" },
+              ].map(tool => (
+                <Link key={tool.slug} href={`/name-generators/${tool.slug}`} style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                  padding: "12px 16px", background: tool.bg,
+                  border: `1.5px solid ${tool.color}25`, borderRadius: "var(--r-xl)",
+                  textDecoration: "none", minWidth: 110, flexShrink: 0, transition: "all .15s",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = tool.color; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = `${tool.color}25`; }}>
+                  <span style={{ fontSize: 24 }}>{tool.icon}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: tool.color, textAlign: "center", lineHeight: 1.3 }}>{tool.label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>}
+
         {/* ═══ TRENDING CALCULATORS (deferred — below fold) ════════════════════════ */}
         {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "20px 20px" }}>
           <div style={{ maxWidth: 1280, margin: "0 auto" }}>
@@ -383,6 +423,27 @@ export default function Home({ skipHero } = {}) {
                 )}
               </div>
             )}
+
+            {/* Name Generators CTA */}
+            <div style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", borderRadius: "var(--r-xl)", padding: "18px", marginBottom: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: 22 }}>✨</span>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>Name Generator Tools</div>
+              </div>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,.75)", marginBottom: 14, lineHeight: 1.5 }}>
+                Baby names, business names, brand names, YouTube, Instagram, domain & app names — all free.
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6, marginBottom: 14 }}>
+                {["👶", "🌙", "💼", "✨", "🎬", "📸", "🌐", "📱"].map((icon, i) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,.15)", borderRadius: 8, padding: "8px 4px", textAlign: "center", fontSize: 18 }}>{icon}</div>
+                ))}
+              </div>
+              <Link href="/name-generators" style={{ display: "block", textAlign: "center", padding: "9px 0", background: "rgba(255,255,255,.2)", borderRadius: 10, color: "#fff", fontWeight: 700, fontSize: 13, textDecoration: "none", border: "1px solid rgba(255,255,255,.3)", transition: "all .15s" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.3)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.2)"}>
+                Explore 8 Name Generators →
+              </Link>
+            </div>
 
             {/* Browse All CTA */}
             <div className="sidebar-cta">
