@@ -17,14 +17,10 @@ export default function robots(): MetadataRoute.Robots {
         // All crawlers: allow everything except internal Next.js routes
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/_next/'],
+        disallow: ['/api/'],
       },
       {
         // Block high-volume scraper bots that waste crawl budget
-        userAgent: 'AhrefsBot',
-        disallow: ['/'],
-      },
-      {
         userAgent: 'MJ12bot',
         disallow: ['/'],
       },

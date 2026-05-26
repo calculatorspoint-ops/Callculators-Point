@@ -151,9 +151,9 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
       {showFAQ && faqItems?.length > 0 && (
         <div style={{ marginBottom:16 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10, paddingBottom:8, borderBottom:"1px solid var(--border)" }}>
-            <p style={{ fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".06em", color:"var(--text3)", display:"flex", alignItems:"center", gap:6 }}>
+            <h2 style={{ margin:0, fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".06em", color:"var(--text3)", display:"flex", alignItems:"center", gap:6 }}>
               ❓ Frequently Asked
-            </p>
+            </h2>
             <button onClick={() => setShowFAQ(false)}
               style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center" }}>
               <X size={14}/>
@@ -162,7 +162,7 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
           {faqItems.map((faq, i) => (
             <details key={i} style={{ marginBottom:6 }}>
               <summary style={{ cursor:"pointer", fontWeight:600, fontSize:13, padding:"10px 14px", background:"var(--surf2)", borderRadius:"var(--r-md)", color:"var(--text)", listStyle:"none", display:"flex", justifyContent:"space-between", userSelect:"none" }}>
-                {faq.q} <span style={{ color:"var(--brand)", fontSize:18 }}>+</span>
+                <h3 style={{ margin:0, fontSize:"inherit", fontWeight:"inherit", display:"inline" }}>{faq.q}</h3> <span aria-hidden="true" style={{ color:"var(--brand)", fontSize:18 }}>+</span>
               </summary>
               <div style={{ padding:"10px 14px", fontSize:13, lineHeight:1.75, color:"var(--text2)", background:"var(--surface)", border:"1px solid var(--bord2)", borderTop:"none", borderRadius:"0 0 var(--r-md) var(--r-md)" }}>
                 {faq.a}

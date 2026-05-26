@@ -13,31 +13,18 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CATEGORIES } from '@/data/calculatorConfigs';
 import HomePageClient from './home-client';
-
-const BASE_URL = 'https://calculatorspoint.com';
+import { SITE_URL } from '@/config/site';
 
 export const metadata: Metadata = {
   title: 'Free Online Calculators — Finance, Health, Math & More',
   description:
     '180+ free online calculators for finance, health, math, education & everyday life. EMI, BMI, SIP, GPA, tax, mortgage calculators — all fast, accurate, and free.',
-  alternates: { canonical: BASE_URL },
-  keywords: [
-    'free online calculators',
-    'finance calculator',
-    'health calculator',
-    'math calculator',
-    'EMI calculator',
-    'BMI calculator',
-    'SIP calculator',
-    'loan calculator',
-    'tax calculator',
-    'GPA calculator',
-    'Calculators Point',
-  ],
+  alternates: { canonical: SITE_URL },
+
   openGraph: {
     title: 'Calculators Point — 180+ Free Online Calculators',
     description: 'Free EMI, BMI, SIP, mortgage, tax, and 180+ more calculators. All fast, accurate, and always free.',
-    url: BASE_URL,
+    url: SITE_URL,
     type: 'website',
     siteName: 'Calculators Point',
   },
@@ -48,39 +35,27 @@ export const metadata: Metadata = {
   },
 };
 
-// WebSite schema — enables Google Sitelinks Searchbox
-const websiteSchema = {
+// Organization & WebSite schema — brand clarity, site identity, structured entity recognition
+const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Calculators Point',
-  alternateName: 'CalculatorsPoint',
-  url: BASE_URL,
-  description: '180+ free online calculators for finance, health, math, education and everyday life.',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${BASE_URL}/calculators?q={search_term_string}`,
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'Calculators Point',
+      url: SITE_URL,
+      logo: `${SITE_URL}/logo.png`,
     },
-    'query-input': 'required name=search_term_string',
-  },
-};
-
-// Organization schema — helps Google understand the brand
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Calculators Point',
-  alternateName: 'CalculatorsPoint',
-  url: BASE_URL,
-  logo: `${BASE_URL}/icon-192.png`,
-  description: 'Free online calculators for finance, health, math, education and everyday life.',
-  sameAs: [],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer support',
-    url: `${BASE_URL}/contact`,
-  },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: 'Calculators Point',
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+    },
+  ],
 };
 
 /**
@@ -100,13 +75,13 @@ function HeroSection() {
             </div>
 
             <h1 className="hero-title">
-              Your All-in-One<br />
-              <span className="hero-accent">Calculator Suite</span>
+              Free Online<br />
+              <span className="hero-accent">Calculators</span>
             </h1>
 
             {/* THIS IS THE LCP ELEMENT — now server-rendered, zero JS delay */}
             <p className="hero-sub">
-              Finance, health, math and everyday tools — with live charts, step-by-step breakdowns, and smart insights. 100% free, works offline, completely private.
+              Access 180+ free online calculators for finance, health, math, and everyday life. Calculate BMI, EMI, mortgages, percentages, and GPA instantly with live charts and step-by-step formulas. 100% free and completely private.
             </p>
 
             <div className="hero-actions">
@@ -172,11 +147,7 @@ export default function HomePage() {
       {/* WebSite + Organization JSON-LD — server-rendered, zero JS cost */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* ── SERVER-RENDERED HERO (LCP element) ──

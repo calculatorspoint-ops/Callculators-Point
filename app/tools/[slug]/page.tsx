@@ -35,7 +35,7 @@ export async function generateMetadata({
   return {
     title: `${landing.title} | CalculatorsPoint`,
     description: landing.description,
-    keywords: landing.keywords,
+
     alternates: { canonical: `https://calculatorspoint.com/tools/${slug}` },
     openGraph: {
       title: landing.title,

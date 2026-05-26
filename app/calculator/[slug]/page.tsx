@@ -14,6 +14,7 @@ import { CalculatorPageClient } from './calculator-client';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { SEOContentSection } from '@/components/calculator-core/SEOContentSection';
 import { CALC_FAQS, BASE_FAQS } from '@/data/faqData';
+import { SITE_URL } from '@/config/site';
 
 /** SSG: pre-render all calculator slugs at build time */
 export function generateStaticParams() {
@@ -31,54 +32,61 @@ export async function generateMetadata(
   const cat = CATEGORIES.find(c => c.id === calc.cat);
   const catName = cat?.name ?? 'Online';
 
-  // SEO title format per guide: "[Name] - Free Online Calculator | Calculators Point"
-  // Root layout template appends " | CalculatorsPoint" automatically
-  const title = `${calc.name} - Free Online Calculator`;
+  const cleanName = calc.name.trim();
+  const titleName = /calculator/i.test(cleanName)
+    ? cleanName
+    : `${cleanName} Calculator`;
 
-  // Action-driven description, ~140-160 chars
-  // Pattern: "Use our free [Name] to [action]. Formula, examples & step-by-step results. 100% free."
-  const calcNameLower = calc.name.toLowerCase().replace(/ calculator$/i, '');
-  const action = `${calc.desc.charAt(0).toLowerCase()}${calc.desc.slice(1)}`;
-  const descBase = `Use our free ${calc.name} to ${action}`;
-  const descTrimmed = descBase.length > 110
-    ? descBase.slice(0, 107).replace(/[,.]?\s+\S+$/, '') + '…'
-    : descBase;
-  const description = `${descTrimmed} Formula, examples and step-by-step results. 100% free.`;
+  const title = `Free ${titleName} Online`;
 
-  const keywords = [
-    `${calc.name} calculator`,
-    `free ${calcNameLower} calculator`,
-    `online ${calcNameLower} calculator`,
-    `how to calculate ${calcNameLower}`,
-    `${calcNameLower} formula`,
-    catName,
-    calc.name,
-    'free calculator',
-    'CalculatorsPoint',
-    ...(calc.keywords ?? []),
-    ...(calc.tags ?? []),
+  const calcNameLower = cleanName.toLowerCase().replace(/ calculator$/i, '');
+
+  // Safer description generation to avoid awkward grammar from string concatenation
+  const descTrimmed = calc.desc.length > 80
+    ? calc.desc.slice(0, 77).replace(/[,.]?\s+\S+$/, '') + '…'
+    : calc.desc;
+  const descTemplates = [
+    `Free ${cleanName}: ${descTrimmed} Get step-by-step results and formulas instantly. 100% free and accurate.`,
+    `Calculate ${cleanName} online for free. ${descTrimmed} Instant, accurate results and step-by-step formulas.`,
+    `Use our free ${cleanName}. ${descTrimmed} Explore formulas and get instant, accurate results every time.`,
+    `Need a ${cleanName}? ${descTrimmed} 100% free online calculator with step-by-step guides.`,
+    `Estimate your ${cleanName} quickly and accurately. ${descTrimmed} Free online tool with complete formulas.`
   ];
+  const templateIndex = slug.length % descTemplates.length;
+  const description = descTemplates[templateIndex];
 
-  const fullTitle = `${calc.name} - Free Online Calculator | Calculators Point`;
+
+  const fullTitle = `${title} | Calculators Point`;
+
+  const ogImageUrl = `${SITE_URL}/api/og?title=${encodeURIComponent(title)}&icon=${encodeURIComponent(calc.icon || '🧮')}&cat=${encodeURIComponent(catName)}`;
 
   return {
     title,
     description,
-    keywords,
+
     alternates: {
-      canonical: `https://calculatorspoint.com/calculator/${slug}`,
+      canonical: `${SITE_URL}/calculator/${slug}`,
     },
     openGraph: {
       title: fullTitle,
       description,
-      url: `https://calculatorspoint.com/calculator/${slug}`,
+      url: `${SITE_URL}/calculator/${slug}`,
       type: 'website',
       siteName: 'Calculators Point',
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: fullTitle,
       description,
+      images: [ogImageUrl],
     },
     other: {
       'application-name': 'Calculators Point',

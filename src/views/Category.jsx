@@ -151,7 +151,7 @@ export default function Category() {
                 fontFamily: "var(--font-hd)", fontSize: "clamp(1.6rem,4vw,2.4rem)",
                 fontWeight: 900, color: "#fff", letterSpacing: "-.03em", marginBottom: 10,
               }}>
-                {cat.name} Calculators
+                Free Online {cat.name} Calculators
               </h1>
               <p style={{ fontSize: 15, color: "rgba(255,255,255,.65)", lineHeight: 1.7, maxWidth: 580, marginBottom: 20 }}>
                 {content.intro || cat.desc}

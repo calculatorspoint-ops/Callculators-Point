@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState } from "react";
 import Link from "next/link";
 
@@ -217,7 +217,7 @@ export default function Contact() {
                 ["Disclaimer", "/disclaimer", "About result accuracy"],
                 ["All Calculators", "/calculators", "Browse all 200+ tools"],
               ].map(([l, h, d]) => (
-                <Link key={h} to={h}
+                <Link key={h} href={h}
                   style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:"1px solid var(--bord2)", textDecoration:"none", fontSize:13, color:"var(--text2)", transition:"color .15s" }}
                   onMouseEnter={e=>e.currentTarget.style.color="var(--brand)"}
                   onMouseLeave={e=>e.currentTarget.style.color="var(--text2)"}>

@@ -55,6 +55,11 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
     }
   };
 
+  const calculatorName = calc.name.trim();
+  const pageH1 = /calculator/i.test(calculatorName)
+    ? `Free ${calculatorName}`
+    : `Free ${calculatorName} Calculator`;
+
   return (
     <>
       {/* ── Page Header ── */}
@@ -73,7 +78,7 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: '1 1 300px', minWidth: 0 }}>
               <div style={{ fontSize: 34, lineHeight: 1, flexShrink: 0 }}>{calc.icon}</div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h1 className="cph-title">{calc.name}</h1>
+                <h1 className="cph-title">{pageH1}</h1>
                 {calc.desc && (
                   <p style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', lineHeight: 1.6, marginBottom: 12 }}>
                     {calc.desc}

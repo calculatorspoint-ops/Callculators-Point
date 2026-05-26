@@ -157,7 +157,7 @@ export function ScenarioCompare({ currentResult, currentParams, calcLabel, onRes
         border: "1.5px solid var(--border)", marginBottom: isOpen ? 14 : 0,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 16 }}>⚖️</span>
+          <span aria-hidden="true" style={{ fontSize: 16 }}>⚖️</span>
           <div>
             <p style={{ fontSize: 12, fontWeight: 800, color: "var(--text)", margin: 0 }}>Scenario Comparison</p>
             <p style={{ fontSize: 10, color: "var(--text3)", margin: 0 }}>

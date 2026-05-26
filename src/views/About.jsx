@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { ALL_CALCULATORS, CATEGORIES } from "@/data/calculatorConfigs";
 import { Shield, Zap, BarChart2, Globe, Lock, Heart, Star, Award, Users, Code } from "lucide-react";
@@ -165,7 +165,7 @@ export default function About() {
           </p>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(140px,1fr))", gap:10, marginTop:16 }}>
             {CATEGORIES.map(cat => (
-              <Link key={cat.id} to={`/category/${cat.id}`}
+              <Link key={cat.id} href={`/category/${cat.id}`}
                 style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8, padding:"16px 10px", background:cat.bg, border:`1px solid ${cat.color}30`, borderRadius:"var(--r-lg)", textDecoration:"none", transition:"all .15s" }}
                 onMouseEnter={e => { e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="var(--sh3)"; }}
                 onMouseLeave={e => { e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="none"; }}>

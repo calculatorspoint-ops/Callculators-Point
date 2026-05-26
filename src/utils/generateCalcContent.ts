@@ -83,18 +83,15 @@ const GENERIC_FAQ = (calc: CalculatorConfig): { q: string; a: string }[] => {
 function generateAbout(calc: CalculatorConfig): string {
   const catCtx = CATEGORY_CONTEXT[calc.cat] ?? 'complex calculations';
   const audience = CATEGORY_AUDIENCE[calc.cat] ?? 'users';
-  const catName = CATEGORIES.find(c => c.id === calc.cat)?.name ?? calc.cat;
 
-  const hasFormula = calc.formula && calc.formula.length > 10;
+  // Use the unique calculator description to ensure the first paragraph is distinct for every page
+  const uniqueDesc = calc.desc.charAt(0).toUpperCase() + calc.desc.slice(1);
+  const intro = uniqueDesc.endsWith('.') ? uniqueDesc : `${uniqueDesc}.`;
 
-  return `The ${calc.name} is a free, online tool designed to help you with ${catCtx}. ` +
-    `Whether you are a student, professional, or just looking for a quick answer, this calculator gives you instant, accurate results without the need for complex manual computation.\n\n` +
-    `This tool is part of CalculatorsPoint's comprehensive ${catName} suite, trusted by thousands of users for reliable ${calc.cat} calculations. ` +
-    `Simply enter your values, click Calculate, and get your result in seconds — complete with a step-by-step explanation so you understand exactly how the answer was reached.\n\n` +
-    (hasFormula
-      ? `The ${calc.name} uses a mathematically verified formula${calc.tips?.[0] ? ` — and here's a pro tip: ${calc.tips[0]}` : ''}. `
-      : '') +
-    `Designed for ${audience}, this tool is completely free, requires no sign-up, and works on any device including mobile phones and tablets.`;
+  return `${intro} The ${calc.name} is designed to help ${audience} with ${catCtx}.\n\n` +
+    `Instead of complex manual computation, you can use this tool to get instant, accurate results. ` +
+    `Simply enter your values to see a step-by-step breakdown of how the answer was reached.\n\n` +
+    `This utility works directly in your browser without any sign-ups or downloads.`;
 }
 
 function generateFormulaExplained(calc: CalculatorConfig): string | null {

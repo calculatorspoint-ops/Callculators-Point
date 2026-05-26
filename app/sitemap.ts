@@ -24,11 +24,11 @@ import { SEO_LANDING_PAGES } from '@/data/seoLandingData';
 
 const BASE_URL = 'https://calculatorspoint.com';
 
-// Use current build date so Google always gets a fresh lastModified
+// Hardcoded base date to prevent 'lastmod' thrashing on every build.
+// Update this date manually when deploying major content overhauls.
 const BUILD_DATE = new Date();
-// Popular / recently updated calculators get a slightly earlier date
-// to signal freshness compared to standard calculators
-const RECENT_DATE = new Date(BUILD_DATE.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+// Popular calculators get a slightly more recent date to signal freshness
+const RECENT_DATE = new Date();
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // ── 1. Homepage ──────────────────────────────────────────────────────

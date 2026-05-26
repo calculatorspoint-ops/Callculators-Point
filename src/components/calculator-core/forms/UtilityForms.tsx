@@ -45,7 +45,7 @@ export function UnitForm({type="length"}){
   return (
     <div>
       <div style={{ marginBottom: 16, padding: "12px 14px", background: "linear-gradient(to right, var(--brand-l), var(--surface))", borderLeft: "4px solid var(--brand)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--text2)", display: "flex", gap: 10, alignItems: "flex-start" }}>
-        <span style={{ fontSize: 18, flexShrink: 0 }}>💡</span>
+        <span aria-hidden="true" style={{ fontSize: 18, flexShrink: 0 }}>💡</span>
         <span><strong>Omni-Sync Active:</strong> Type a value in <em>any</em> box below, and all other units will instantly synchronize.</span>
       </div>
 

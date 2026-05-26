@@ -96,7 +96,7 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
           <ul className="seo-tips-list">
             {content.tips.map((tip, i) => (
               <li key={i} className="seo-tip-item">
-                <span className="seo-tip-icon">✓</span>
+                <span aria-hidden="true" className="seo-tip-icon">✓</span>
                 <span>{tip}</span>
               </li>
             ))}
@@ -111,7 +111,7 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
           <div className="seo-faq-list">
             {content.faq.map((item, i) => (
               <details key={i} className="seo-faq-item">
-                <summary className="seo-faq-question">{item.q}</summary>
+                <summary className="seo-faq-question"><h3 style={{ display: "inline", fontSize: "inherit", fontWeight: "inherit", margin: 0 }}>{item.q}</h3></summary>
                 <div className="seo-faq-answer">{item.a}</div>
               </details>
             ))}

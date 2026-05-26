@@ -169,7 +169,7 @@ export function PeriodForm() {
     <div>
       {/* Privacy Notice */}
       <div style={{ ...S.card("#f0fdf4", "#bbf7d0"), display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-        <span style={{ fontSize: 18 }}>🔒</span>
+        <span aria-hidden="true" style={{ fontSize: 18 }}>🔒</span>
         <span style={{ fontSize: 12, color: "#166534", fontWeight: 600 }}>100% Private — all data stays in your browser. Nothing is sent to any server.</span>
       </div>
 
@@ -451,7 +451,7 @@ export function PeriodForm() {
                 "Heavy bleeding (soaking a pad/tampon every hour)",
               ].map((s, i) => (
                 <div key={i} style={{ display: "flex", gap: 8, marginBottom: 6, fontSize: 12, color: "var(--text2)" }}>
-                  <span style={{ color: "#ef4444", fontWeight: 700, flexShrink: 0 }}>→</span>
+                  <span aria-hidden="true" style={{ color: "#ef4444", fontWeight: 700, flexShrink: 0 }}>→</span>
                   <span>{s}</span>
                 </div>
               ))}

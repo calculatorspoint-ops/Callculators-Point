@@ -42,7 +42,7 @@ export function StepByStepPanel({ steps, title = 'How this was calculated' }: St
       {/* Header */}
       <div className="steps-header">
         <div className="steps-title">
-          <span className="steps-icon">🧮</span>
+          <span aria-hidden="true" className="steps-icon">🧮</span>
           <span>{title}</span>
         </div>
         <button

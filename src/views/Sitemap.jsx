@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 import { ALL_CALCULATORS, CATEGORIES } from "@/data/calculatorConfigs";
 import { SEO_LANDING_PAGES } from "@/data/seoLandingData";
@@ -12,7 +12,7 @@ const GROUP = ({ title, icon, color, bg, links }) => (
     </div>
     <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(200px,1fr))" }}>
       {links.map(({ to, label, badge }) => (
-        <Link key={to} to={to}
+        <Link key={to} href={to}
           style={{ display:"flex", alignItems:"center", gap:8, padding:"9px 16px", fontSize:13, color:"var(--text2)", textDecoration:"none", borderBottom:"1px solid var(--bord2)", transition:"all .1s" }}
           onMouseEnter={e=>{ e.currentTarget.style.background="var(--brand-l)"; e.currentTarget.style.color="var(--brand)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.background="transparent"; e.currentTarget.style.color="var(--text2)"; }}>

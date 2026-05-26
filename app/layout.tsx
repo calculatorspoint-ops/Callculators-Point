@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   },
   description:
     '180+ free online calculators for finance, health, math, education, and everyday life. Fast, accurate, and always free.',
-  keywords: ['calculator', 'free calculator', 'online calculator', 'finance calculator', 'health calculator'],
+
   authors: [{ name: 'CalculatorsPoint' }],
   creator: 'CalculatorsPoint',
   openGraph: {
@@ -100,10 +100,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* ── Resource hints: resolve connections before browser discovers resources ── */}
         {/* preconnect: establishes TCP+TLS to our CDN before CSS/JS requests start */}
         <link rel="preconnect" href="https://calculatorspoint.com" />
-        {/* dns-prefetch: async DNS lookup for Google Fonts CDN */}
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-        {/* preconnect: establishes connection to Google Fonts for font delivery */}
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`}>
         <ClientProviders>

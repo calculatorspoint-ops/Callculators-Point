@@ -11,8 +11,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { CATEGORIES, ALL_CALCULATORS, BY_CATEGORY } from '@/data/calculatorConfigs';
 import { CategoryPageClient } from './category-client';
-
-const BASE_URL = 'https://calculatorspoint.com';
+import { SITE_URL } from '@/config/site';
 
 export function generateStaticParams() {
   return CATEGORIES.map((cat) => ({ catId: cat.id }));
@@ -27,38 +26,40 @@ export async function generateMetadata(
 
   const count = ALL_CALCULATORS.filter(c => c.cat === catId && c.status !== 'coming-soon').length;
 
-  // Title: "[Category] Calculators - Free Online Tools | Calculators Point"
-  const title = `${cat.name} Calculators - ${count} Free Online Tools`;
+  // Title: "Free Online [Category] Calculators | Calculators Point"
+  const title = `Free Online ${cat.name} Calculators`;
 
   // Description: 140-160 chars, action-driven with keywords
-  const description = `Explore ${count} free ${cat.name.toLowerCase()} calculators. ${cat.desc} All tools are 100% free, mobile-friendly, with formulas and step-by-step results.`;
+  const description = `Use our free online ${cat.name.toLowerCase()} calculators for instant, accurate results. Explore ${count} tools with interactive charts and step-by-step formulas.`;
 
-  const keywords = [
-    `${cat.name.toLowerCase()} calculator`,
-    `free ${cat.name.toLowerCase()} calculators`,
-    `online ${cat.name.toLowerCase()} tools`,
-    cat.name,
-    'free calculators',
-    'online calculator',
-    'Calculators Point',
-  ];
+
+  const ogImageUrl = `${SITE_URL}/api/og?title=${encodeURIComponent(title)}&icon=${encodeURIComponent(cat.icon)}&cat=Category`;
 
   return {
     title,
     description,
-    keywords,
-    alternates: { canonical: `${BASE_URL}/category/${catId}` },
+
+    alternates: { canonical: `${SITE_URL}/category/${catId}` },
     openGraph: {
       title: `${cat.name} Calculators | Calculators Point`,
       description,
-      url: `${BASE_URL}/category/${catId}`,
+      url: `${SITE_URL}/category/${catId}`,
       type: 'website',
       siteName: 'Calculators Point',
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${cat.name} Calculators | Calculators Point`,
       description,
+      images: [ogImageUrl],
     },
   };
 }
@@ -73,15 +74,15 @@ export default async function CategoryPage({
   if (!cat) notFound();
 
   const calcs = (BY_CATEGORY[catId] ?? []).filter(c => c.status !== 'coming-soon');
-  const pageUrl = `${BASE_URL}/category/${catId}`;
+  const pageUrl = `${SITE_URL}/category/${catId}`;
 
   // BreadcrumbList schema
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Calculators', item: `${BASE_URL}/calculators` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Calculators', item: `${SITE_URL}/calculators` },
       { '@type': 'ListItem', position: 3, name: `${cat.name} Calculators`, item: pageUrl },
     ],
   };
@@ -99,7 +100,7 @@ export default async function CategoryPage({
       position: i + 1,
       name: c.name,
       description: c.desc,
-      url: `${BASE_URL}/calculator/${c.slug}`,
+      url: `${SITE_URL}/calculator/${c.slug}`,
     })),
   };
 
