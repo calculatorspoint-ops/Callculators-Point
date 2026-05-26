@@ -7,6 +7,7 @@
  *  - 9  category pages  (/category/[id])
  *  - 180+ calculator pages  (/calculator/[slug])
  *  - 12  SEO landing pages  (/tools/[slug])
+ *  - 3  ecosystem hub pages  (/ecosystem/[id])
  *  - 6  static pages  (about, contact, privacy, terms, disclaimer, sitemap)
  *
  * Priorities follow Google's guidance:
@@ -14,7 +15,7 @@
  *  0.9  /calculators index + popular calculators
  *  0.8  category pages
  *  0.75 regular calculators
- *  0.7  SEO landing pages
+ *  0.7  SEO landing pages + ecosystem hubs
  *  0.4–0.5 legal / static pages
  */
 import type { MetadataRoute } from 'next';
@@ -23,11 +24,11 @@ import { SEO_LANDING_PAGES } from '@/data/seoLandingData';
 
 const BASE_URL = 'https://calculatorspoint.com';
 
-// Use a fixed date for static content so the sitemap is deterministic at build time.
-// Google caches sitemaps heavily — using `new Date()` every build causes unnecessary churn.
-const BUILD_DATE = new Date('2025-05-25T00:00:00.000Z');
-// Popular calculators get a more recent date to signal freshness to crawlers
-const RECENT_DATE = new Date('2025-05-20T00:00:00.000Z');
+// Use current build date so Google always gets a fresh lastModified
+const BUILD_DATE = new Date();
+// Popular / recently updated calculators get a slightly earlier date
+// to signal freshness compared to standard calculators
+const RECENT_DATE = new Date(BUILD_DATE.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // ── 1. Homepage ──────────────────────────────────────────────────────
@@ -59,8 +60,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // ── 4. All calculator pages (highest-value content) ──────────────────
-  //    Popular calculators: 0.9 priority, updated more recently
-  //    New calculators:     0.85 priority, marked as recently changed
+  //    Popular calculators: 0.9 priority
+  //    New calculators:     0.85 priority
   //    Standard:            0.75 priority
   const calculatorPages: MetadataRoute.Sitemap = ALL_CALCULATORS
     .filter((calc) => calc.status !== 'coming-soon' && calc.status !== 'draft')
@@ -79,44 +80,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  // ── 6. Static / legal pages ──────────────────────────────────────────
+  // ── 6. Ecosystem hub pages (/ecosystem/[id]) ─────────────────────────
+  const ecosystemPages: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/ecosystem/finance`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/ecosystem/fitness`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/ecosystem/education`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.7 },
+  ] as MetadataRoute.Sitemap;
+
+  // ── 7. Static / legal pages ──────────────────────────────────────────
   const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${BASE_URL}/about`,
-      lastModified: BUILD_DATE,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/contact`,
-      lastModified: BUILD_DATE,
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/sitemap`,
-      lastModified: BUILD_DATE,
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
-    {
-      url: `${BASE_URL}/privacy-policy`,
-      lastModified: BUILD_DATE,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${BASE_URL}/terms-of-service`,
-      lastModified: BUILD_DATE,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${BASE_URL}/disclaimer`,
-      lastModified: BUILD_DATE,
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
+    { url: `${BASE_URL}/about`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE_URL}/contact`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${BASE_URL}/sitemap`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.3 },
+    { url: `${BASE_URL}/privacy-policy`, lastModified: BUILD_DATE, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE_URL}/terms-of-service`, lastModified: BUILD_DATE, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE_URL}/disclaimer`, lastModified: BUILD_DATE, changeFrequency: 'yearly', priority: 0.3 },
   ];
 
   return [
@@ -125,6 +103,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...categoryPages,
     ...calculatorPages,
     ...toolPages,
+    ...ecosystemPages,
     ...staticPages,
   ];
 }

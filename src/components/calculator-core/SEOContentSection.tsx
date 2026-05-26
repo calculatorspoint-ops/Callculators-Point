@@ -14,12 +14,29 @@ interface SEOContentSectionProps {
   calc: CalculatorConfig;
 }
 
+// Disclaimer text per category
+const DISCLAIMERS: Record<string, string> = {
+  health: 'Health Disclaimer: Results provided by this calculator are for informational and educational purposes only. They do not constitute medical advice. Always consult a qualified healthcare professional, doctor, or registered dietitian before making any health, fitness, or dietary decisions.',
+  finance: 'Financial Disclaimer: Results are estimates based on the inputs you provide and standard mathematical formulas. They do not constitute financial advice. Please consult a certified financial advisor, accountant, or tax professional before making any investment, loan, or financial decisions.',
+  education: 'Academic Disclaimer: GPA, grade, and exam results shown are estimates. Requirements vary by institution. Always verify with your school, university, or examination board for official calculations and eligibility criteria.',
+  business: 'Business Disclaimer: Results are projections based on your inputs and may not reflect actual business outcomes. Consult a business advisor or accountant before making financial or operational decisions.',
+};
+
+// Categories where a disclaimer is always shown regardless of privacy flag
+const DISCLAIMER_CATS = new Set(['health', 'finance', 'education', 'business']);
+
 export function SEOContentSection({ calc }: SEOContentSectionProps) {
   const content = generateCalcContent(calc);
   const cat = CATEGORIES.find(c => c.id === calc.cat);
+  // Increase to 6 related calcs for better internal linking density (was 4)
   const relatedCalcs = ALL_CALCULATORS
     .filter(c => c.cat === calc.cat && c.slug !== calc.slug && c.status !== 'coming-soon')
-    .slice(0, 4);
+    .slice(0, 6);
+
+  // Show disclaimer for sensitive categories or privacy: 'sensitive'
+  const showDisclaimer = DISCLAIMER_CATS.has(calc.cat) || calc.privacy === 'sensitive';
+  const disclaimer = DISCLAIMERS[calc.cat] ??
+    'Disclaimer: Results are for informational purposes only. Please consult a qualified professional before making any important decisions based on this calculator.';
 
   return (
     <section className="seo-content-section" aria-label={`About ${calc.name}`}>
@@ -122,6 +139,15 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
             <Link href={`/category/${calc.cat}`}>
               {cat?.name ?? ''} Calculators →
             </Link>
+          </p>
+        </div>
+      )}
+
+      {/* ── Disclaimer (health, finance, education, business) ── */}
+      {showDisclaimer && (
+        <div className="seo-block seo-disclaimer-block" role="note" aria-label="Disclaimer">
+          <p className="seo-disclaimer-text">
+            <strong>⚠️ {disclaimer.split(':')[0]}:</strong>{disclaimer.slice(disclaimer.indexOf(':') + 1)}
           </p>
         </div>
       )}

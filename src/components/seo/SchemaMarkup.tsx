@@ -29,24 +29,31 @@ export function SchemaMarkup({ calc, cat, faqs }: SchemaMarkupProps) {
     ],
   };
 
-  // 2. WebApplication
+  // 2. WebApplication — no fake aggregateRating (Google guidelines prohibit fabricated ratings)
+  // applicationCategory mapped per category for accuracy
+  const APP_CATEGORY: Record<string, string> = {
+    finance: 'FinanceApplication',
+    health: 'HealthApplication',
+    education: 'EducationApplication',
+    math: 'EducationApplication',
+    business: 'BusinessApplication',
+    technology: 'DeveloperApplication',
+    converters: 'UtilitiesApplication',
+    everyday: 'UtilitiesApplication',
+    construction: 'UtilitiesApplication',
+  };
   const webApp = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: `${calc.name} — Free Online Calculator`,
     url: pageUrl,
     description: calc.desc,
-    applicationCategory: 'UtilitiesApplication',
+    applicationCategory: APP_CATEGORY[calc.cat] ?? 'UtilitiesApplication',
     operatingSystem: 'All',
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '127',
     },
   };
 
