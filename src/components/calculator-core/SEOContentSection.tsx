@@ -61,6 +61,37 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
         </div>
       )}
 
+      {/* ── When to Use ── */}
+      {content.whenToUse && (
+        <div className="seo-block">
+          <h2 className="seo-h2">When Should You Use This?</h2>
+          <p className="seo-para">{content.whenToUse}</p>
+        </div>
+      )}
+
+      {/* ── What the Result Means ── */}
+      {content.resultMeaning && (
+        <div className="seo-block">
+          <h2 className="seo-h2">What Does The Result Mean?</h2>
+          <p className="seo-para">{content.resultMeaning}</p>
+        </div>
+      )}
+
+      {/* ── Limitations ── */}
+      {content.limitations.length > 0 && (
+        <div className="seo-block">
+          <h2 className="seo-h2">Limitations of this Calculator</h2>
+          <ul className="seo-tips-list" style={{ color: 'var(--red)' }}>
+            {content.limitations.map((lim, i) => (
+              <li key={i} className="seo-tip-item">
+                <span aria-hidden="true" className="seo-tip-icon" style={{ color: 'var(--red)' }}>⚠️</span>
+                <span style={{ color: 'var(--text)' }}>{lim}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* ── How to Use ── */}
       <div className="seo-block">
         <h2 className="seo-h2">How to Use the {calc.name}</h2>

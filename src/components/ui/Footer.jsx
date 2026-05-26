@@ -53,7 +53,7 @@ export function Footer() {
           {/* Company */}
           <div>
             <p className="footer-head">Company</p>
-            {[["About Us","/about"],["Contact Us","/contact"],["All Calculators","/calculators"],["Sitemap","/sitemap"]].map(([l,h])=>(
+            {[["About Us","/about"],["Contact Us","/contact"],["Cheat Sheets & PDFs","/cheat-sheets"],["All Calculators","/calculators"],["Sitemap","/sitemap"]].map(([l,h])=>(
               <Link key={h} href={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
             ))}
             <p className="footer-head" style={{ marginTop:20 }}>Legal</p>

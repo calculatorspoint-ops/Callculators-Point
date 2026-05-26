@@ -35,6 +35,11 @@ export interface CalculatorConfig {
   status?: "live" | "draft" | "coming-soon";
   disclaimer?: string;
   privacy?: "normal" | "sensitive";
+  howToUse?: string[];
+  examples?: { scenario: string; result: string }[];
+  limitations?: string[];
+  whenToUse?: string;
+  resultMeaning?: string;
 }
 
 export const CATEGORIES: CalculatorCategory[] = [

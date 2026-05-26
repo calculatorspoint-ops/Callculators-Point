@@ -16,6 +16,22 @@ export const healthCalculators: CalculatorConfig[] = [
     'For imperial: BMI = 703 × weight(lbs) / height(in)²',
   tips: [
     "BMI does not distinguish between muscle and fat. Highly muscular individuals may be classified as 'overweight' despite having low body fat."
+  ],
+  whenToUse: 'Use this calculator as a quick, first-step screening tool to determine if your weight falls into a healthy range for your height according to the World Health Organization.',
+  resultMeaning: 'Your BMI score places you into a category (Underweight, Normal, Overweight, or Obese). The results indicate your statistical risk for weight-related diseases.',
+  limitations: [
+    'BMI cannot distinguish between muscle mass and fat mass. Bodybuilders will often score as "Obese".',
+    'It does not account for age, bone density, or how fat is distributed (visceral vs subcutaneous fat).'
+  ],
+  examples: [
+    { scenario: 'A person who is 1.75m tall and weighs 70kg.', result: 'Their BMI is 22.9, which is squarely in the "Normal Weight" category.' },
+    { scenario: 'The same person gains 15kg of muscle.', result: 'Their BMI jumps to 27.8, classifying them as "Overweight", even though they are healthier.' }
+  ],
+  howToUse: [
+    'Select your preferred measurement system (Metric or Imperial).',
+    'Enter your current weight.',
+    'Enter your height.',
+    'Instantly see your BMI score, WHO category, and ideal weight range.'
   ]
 },
   {

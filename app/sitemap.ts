@@ -97,6 +97,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/disclaimer`, lastModified: BUILD_DATE, changeFrequency: 'yearly', priority: 0.3 },
   ];
 
+  // ── 8. Name Generator pages ──────────────────────────────────────────
+  const nameGeneratorPages: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/name-generators`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${BASE_URL}/name-generators/baby-name-generator`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/name-generators/islamic-baby-names`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/name-generators/business-name-generator`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/name-generators/brand-name-generator`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/name-generators/youtube-channel-name-generator`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/name-generators/instagram-username-generator`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/name-generators/domain-name-generator`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${BASE_URL}/name-generators/app-name-generator`, lastModified: BUILD_DATE, changeFrequency: 'weekly', priority: 0.85 },
+  ];
+
   return [
     ...homepage,
     ...indexPage,
@@ -105,5 +118,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...toolPages,
     ...ecosystemPages,
     ...staticPages,
+    ...nameGeneratorPages,
   ];
 }

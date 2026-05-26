@@ -16,6 +16,22 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'Even a small extra monthly payment goes entirely towards the principal, significantly reducing the loan tenure and total interest paid.',
     'An amortization schedule shows exactly how much of each payment goes to principal vs interest.'
+  ],
+  whenToUse: 'Use this calculator before applying for any home loan, car loan, or personal loan. It helps you understand exactly what your monthly cash outflow will be so you can budget accordingly.',
+  resultMeaning: 'The EMI (Equated Monthly Installment) is the exact amount you must pay the bank every month. The "Total Interest" shows how much extra you are paying the bank over the original borrowed amount.',
+  limitations: [
+    'Does not account for processing fees, insurance premiums, or hidden bank charges.',
+    'Assumes a fixed interest rate for the entire loan tenure. Floating rates will change your actual EMI.'
+  ],
+  examples: [
+    { scenario: 'Taking a ₹50,000,000 home loan at 8.5% for 20 years.', result: 'Your monthly EMI will be ₹433,912. Over 20 years, you will pay ₹54,138,793 in pure interest.' },
+    { scenario: 'Paying an extra ₹50,000 every month towards the same loan.', result: 'You will finish the 20-year loan in just 14 years and save over ₹15,000,000 in interest.' }
+  ],
+  howToUse: [
+    'Enter your total loan amount (principal).',
+    'Enter the annual interest rate offered by the bank.',
+    'Select your loan tenure in years or months.',
+    'Click Calculate to see your exact EMI and full payment schedule.'
   ]
 },
   {
@@ -33,6 +49,22 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'Compound interest is interest calculated on the initial principal AND all accumulated interest.',
     'The more frequently interest is compounded (e.g., daily vs annually), the higher the effective yield.'
+  ],
+  whenToUse: 'Use this when evaluating fixed deposits, savings accounts, or long-term growth investments to understand the snowball effect of compounding over decades.',
+  resultMeaning: 'The final amount is your total wealth at the end of the term. The "Total Interest" is the wealth generated purely by the compounding engine doing the work for you.',
+  limitations: [
+    'Does not guarantee future returns if the interest rate is variable (e.g., stock market returns).',
+    'Real purchasing power will be lower due to inflation unless you use the inflation-adjusted view.'
+  ],
+  examples: [
+    { scenario: 'Investing $10,000 at 8% compounded annually for 30 years.', result: 'Your money grows to $100,626. You made over $90,000 purely from interest without adding another dime.' },
+    { scenario: 'Adding $500 monthly to that same investment.', result: 'Your final amount explodes to $780,000.' }
+  ],
+  howToUse: [
+    'Enter your initial starting balance.',
+    'Set your expected annual interest rate.',
+    'Set the compounding frequency (monthly is standard for most accounts).',
+    'Optionally, add a regular monthly contribution to see accelerated growth.'
   ]
 },
   {
@@ -50,6 +82,22 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'A step-up SIP automatically increases your monthly investment by a certain percentage every year, aligning with your income growth.',
     'Extended Internal Rate of Return (XIRR) is a method used to calculate returns on investments where there are multiple transactions happening at different times.'
+  ],
+  whenToUse: 'Use this to plan for retirement, children\'s education, or wealth building via mutual funds or index funds over a 5 to 30 year horizon.',
+  resultMeaning: 'The results project your estimated future wealth. It separates your "Total Invested" from the "Wealth Gained" to show the power of long-term equity investing.',
+  limitations: [
+    'Market returns are never linear. A 12% expected return means it might drop 20% one year and rise 30% the next.',
+    'Does not account for exit loads or capital gains taxes upon withdrawal.'
+  ],
+  examples: [
+    { scenario: 'Investing ₹10,000 per month at 12% expected return for 20 years.', result: 'Your total investment is ₹24 Lakhs, but your final corpus will be over ₹1 Crore.' },
+    { scenario: 'Applying a 10% annual Step-Up to the same SIP.', result: 'By simply increasing your SIP amount by 10% each year, your final corpus jumps to over ₹2 Crores.' }
+  ],
+  howToUse: [
+    'Enter your monthly SIP investment amount.',
+    'Input the expected annual return rate (10-12% is historically common for equity funds).',
+    'Enter the time horizon in years.',
+    'Toggle the Step-Up option if you plan to increase your SIP amount annually.'
   ]
 },
   {

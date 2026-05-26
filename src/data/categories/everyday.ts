@@ -10,7 +10,21 @@ export const everydayCalculators: CalculatorConfig[] = [
   desc: 'Exact age with zodiac, next birthday countdown, live seconds & time-of-birth precision mode',
   popular: true,
   hasChart: false,
-  isNew: false
+  isNew: false,
+  whenToUse: 'Use this calculator when you need to know exactly how old you are down to the day, hour, or second, or when verifying age eligibility for applications.',
+  resultMeaning: 'The results show your chronological age separated into years, months, and days. It also provides alternative formats (e.g., total days alive, total weeks alive) for fun tracking.',
+  limitations: [
+    'Leap years and different month lengths mean that "months" and "days" are approximated based on the calendar cycle.'
+  ],
+  examples: [
+    { scenario: 'Finding out how old someone is who was born on Jan 1, 2000.', result: 'The calculator instantly gives their exact age today, plus fun facts like their half-birthday and zodiac sign.' }
+  ],
+  howToUse: [
+    'Select your Date of Birth from the calendar.',
+    '(Optional) Select your exact Time of Birth for second-by-second precision.',
+    'The "End Date" defaults to today, but you can change it to calculate age at a specific point in time.',
+    'Click Calculate to see your full age breakdown and next birthday countdown.'
+  ]
 },
   {
   id: 'date-diff',

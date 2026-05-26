@@ -1,0 +1,98 @@
+export interface AppWord {
+  word: string;
+  category: string[];
+  style: string;
+  type: 'prefix' | 'suffix' | 'root';
+}
+
+export const appPrefixes: AppWord[] = [
+  { word: 'Flow', category: ['Productivity', 'Fitness', 'Finance', 'Health'], style: 'Modern', type: 'prefix' },
+  { word: 'Snap', category: ['Social', 'Shopping', 'Utility', 'Productivity'], style: 'Fun', type: 'prefix' },
+  { word: 'Dash', category: ['Productivity', 'Finance', 'Utility', 'Shopping'], style: 'Startup', type: 'prefix' },
+  { word: 'Swift', category: ['Productivity', 'Finance', 'Utility', 'Shopping'], style: 'Modern', type: 'prefix' },
+  { word: 'Spark', category: ['Education', 'Productivity', 'Social', 'AI'], style: 'Startup', type: 'prefix' },
+  { word: 'Pulse', category: ['Health', 'Fitness', 'Productivity', 'Finance'], style: 'Modern', type: 'prefix' },
+  { word: 'Glow', category: ['Health', 'Fitness', 'Social', 'Beauty'], style: 'Fun', type: 'prefix' },
+  { word: 'Nest', category: ['Productivity', 'Health', 'Finance', 'Utility'], style: 'Minimal', type: 'prefix' },
+  { word: 'Core', category: ['Fitness', 'Productivity', 'Finance', 'Education'], style: 'Modern', type: 'prefix' },
+  { word: 'Task', category: ['Productivity', 'Finance', 'Education', 'Utility'], style: 'Modern', type: 'prefix' },
+  { word: 'Note', category: ['Productivity', 'Education', 'Utility', 'AI'], style: 'Minimal', type: 'prefix' },
+  { word: 'Track', category: ['Fitness', 'Finance', 'Health', 'Productivity'], style: 'Modern', type: 'prefix' },
+  { word: 'Mind', category: ['Health', 'Education', 'Productivity', 'Fitness'], style: 'Minimal', type: 'prefix' },
+  { word: 'Fit', category: ['Fitness', 'Health', 'Nutrition', 'Utility'], style: 'Modern', type: 'prefix' },
+  { word: 'Coin', category: ['Finance', 'Shopping', 'Utility', 'Crypto'], style: 'Modern', type: 'prefix' },
+  { word: 'Learn', category: ['Education', 'Productivity', 'AI', 'Utility'], style: 'Modern', type: 'prefix' },
+  { word: 'Quiz', category: ['Education', 'Game', 'Social', 'Utility'], style: 'Fun', type: 'prefix' },
+  { word: 'Play', category: ['Game', 'Social', 'Education', 'Fitness'], style: 'Fun', type: 'prefix' },
+  { word: 'Chat', category: ['Social', 'Productivity', 'AI', 'Utility'], style: 'Modern', type: 'prefix' },
+  { word: 'Link', category: ['Social', 'Productivity', 'Utility', 'Finance'], style: 'Minimal', type: 'prefix' },
+  { word: 'Tap', category: ['Shopping', 'Finance', 'Utility', 'Social'], style: 'Fun', type: 'prefix' },
+  { word: 'Swipe', category: ['Social', 'Shopping', 'Finance', 'Dating'], style: 'Fun', type: 'prefix' },
+  { word: 'Slide', category: ['Education', 'Productivity', 'Social', 'Utility'], style: 'Fun', type: 'prefix' },
+  { word: 'Boost', category: ['Productivity', 'Fitness', 'Finance', 'Health'], style: 'Startup', type: 'prefix' },
+  { word: 'Level', category: ['Game', 'Education', 'Fitness', 'Finance'], style: 'Modern', type: 'prefix' },
+  { word: 'Zone', category: ['Productivity', 'Fitness', 'Game', 'Health'], style: 'Modern', type: 'prefix' },
+  { word: 'Base', category: ['Productivity', 'Finance', 'Education', 'Utility'], style: 'Minimal', type: 'prefix' },
+  { word: 'Cloud', category: ['Productivity', 'Finance', 'Education', 'AI'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Smart', category: ['AI', 'Finance', 'Health', 'Productivity'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Nano', category: ['Health', 'Tech', 'AI', 'Utility'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Zen', category: ['Health', 'Productivity', 'Fitness', 'Utility'], style: 'Minimal', type: 'prefix' },
+  { word: 'Grid', category: ['Productivity', 'Finance', 'AI', 'Education'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Arc', category: ['Productivity', 'Finance', 'Social', 'AI'], style: 'Modern', type: 'prefix' },
+  { word: 'Beam', category: ['Productivity', 'Social', 'Utility', 'AI'], style: 'Startup', type: 'prefix' },
+  { word: 'Byte', category: ['AI', 'Tech', 'Productivity', 'Game'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Dot', category: ['Utility', 'Productivity', 'Finance', 'Social'], style: 'Minimal', type: 'prefix' },
+  { word: 'Echo', category: ['AI', 'Social', 'Productivity', 'Utility'], style: 'Modern', type: 'prefix' },
+  { word: 'Flux', category: ['Finance', 'Productivity', 'AI', 'Utility'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Hive', category: ['Social', 'Productivity', 'Finance', 'Utility'], style: 'Modern', type: 'prefix' },
+  { word: 'Jump', category: ['Fitness', 'Game', 'Education', 'Shopping'], style: 'Fun', type: 'prefix' },
+  { word: 'Kite', category: ['Finance', 'Productivity', 'Social', 'Utility'], style: 'Minimal', type: 'prefix' },
+  { word: 'Loop', category: ['Productivity', 'Social', 'Fitness', 'Utility'], style: 'Modern', type: 'prefix' },
+  { word: 'Mint', category: ['Finance', 'Health', 'Shopping', 'Utility'], style: 'Minimal', type: 'prefix' },
+  { word: 'Nova', category: ['AI', 'Social', 'Fitness', 'Productivity'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Orb', category: ['AI', 'Tech', 'Game', 'Social'], style: 'Futuristic', type: 'prefix' },
+  { word: 'Peak', category: ['Fitness', 'Finance', 'Productivity', 'Health'], style: 'Premium', type: 'prefix' },
+  { word: 'Rake', category: ['Finance', 'Utility', 'Shopping', 'Productivity'], style: 'Startup', type: 'prefix' },
+  { word: 'Skip', category: ['Utility', 'Shopping', 'Finance', 'Social'], style: 'Fun', type: 'prefix' },
+  { word: 'Trim', category: ['Finance', 'Health', 'Utility', 'Productivity'], style: 'Minimal', type: 'prefix' },
+  { word: 'Vibe', category: ['Social', 'Music', 'Fitness', 'Game'], style: 'Fun', type: 'prefix' },
+];
+
+export const appSuffixes: AppWord[] = [
+  { word: 'ly', category: ['Productivity', 'Finance', 'Social', 'Utility'], style: 'Modern', type: 'suffix' },
+  { word: 'ify', category: ['Finance', 'Productivity', 'Shopping', 'Social'], style: 'Startup', type: 'suffix' },
+  { word: 'io', category: ['Tech', 'Finance', 'Productivity', 'AI'], style: 'Futuristic', type: 'suffix' },
+  { word: 'app', category: ['Utility', 'Finance', 'Health', 'Education'], style: 'Modern', type: 'suffix' },
+  { word: 'hub', category: ['Social', 'Productivity', 'Education', 'Finance'], style: 'Modern', type: 'suffix' },
+  { word: 'pro', category: ['Productivity', 'Finance', 'Fitness', 'Tech'], style: 'Premium', type: 'suffix' },
+  { word: 'mate', category: ['Productivity', 'Social', 'Health', 'Finance'], style: 'Fun', type: 'suffix' },
+  { word: 'base', category: ['Productivity', 'Finance', 'Education', 'Utility'], style: 'Minimal', type: 'suffix' },
+  { word: 'kit', category: ['Education', 'Productivity', 'Utility', 'Tech'], style: 'Modern', type: 'suffix' },
+  { word: 'deck', category: ['Productivity', 'Finance', 'Education', 'Social'], style: 'Minimal', type: 'suffix' },
+  { word: 'board', category: ['Productivity', 'Finance', 'Education', 'Social'], style: 'Modern', type: 'suffix' },
+  { word: 'pad', category: ['Productivity', 'Education', 'Utility', 'Finance'], style: 'Minimal', type: 'suffix' },
+  { word: 'box', category: ['Utility', 'Shopping', 'Finance', 'Productivity'], style: 'Modern', type: 'suffix' },
+  { word: 'go', category: ['Utility', 'Fitness', 'Shopping', 'Social'], style: 'Fun', type: 'suffix' },
+  { word: 'up', category: ['Productivity', 'Finance', 'Social', 'Health'], style: 'Startup', type: 'suffix' },
+  { word: 'ai', category: ['AI', 'Finance', 'Health', 'Productivity'], style: 'Futuristic', type: 'suffix' },
+  { word: 'bot', category: ['AI', 'Social', 'Utility', 'Finance'], style: 'Futuristic', type: 'suffix' },
+  { word: 'plus', category: ['Productivity', 'Finance', 'Health', 'Utility'], style: 'Modern', type: 'suffix' },
+  { word: 'wise', category: ['Finance', 'Education', 'Health', 'Productivity'], style: 'Premium', type: 'suffix' },
+  { word: 'flow', category: ['Productivity', 'Finance', 'Health', 'Fitness'], style: 'Modern', type: 'suffix' },
+  { word: 'sync', category: ['Productivity', 'Finance', 'Utility', 'Social'], style: 'Modern', type: 'suffix' },
+  { word: 'lab', category: ['Education', 'Tech', 'AI', 'Health'], style: 'Startup', type: 'suffix' },
+  { word: 'spot', category: ['Social', 'Shopping', 'Food', 'Travel'], style: 'Fun', type: 'suffix' },
+  { word: 'dash', category: ['Finance', 'Productivity', 'Utility', 'Shopping'], style: 'Startup', type: 'suffix' },
+  { word: 'track', category: ['Fitness', 'Finance', 'Health', 'Productivity'], style: 'Modern', type: 'suffix' },
+  { word: 'nest', category: ['Productivity', 'Finance', 'Health', 'Utility'], style: 'Minimal', type: 'suffix' },
+  { word: 'cast', category: ['Social', 'Education', 'Media', 'Productivity'], style: 'Modern', type: 'suffix' },
+  { word: 'link', category: ['Social', 'Productivity', 'Finance', 'Utility'], style: 'Minimal', type: 'suffix' },
+  { word: 'zone', category: ['Fitness', 'Game', 'Productivity', 'Health'], style: 'Modern', type: 'suffix' },
+  { word: 'space', category: ['Productivity', 'Social', 'Finance', 'Education'], style: 'Minimal', type: 'suffix' },
+];
+
+export const appCategories = ['Productivity', 'Fitness', 'Finance', 'Education', 'AI', 'Social', 'Utility', 'Game', 'Shopping', 'Health'] as const;
+export type AppCategory = typeof appCategories[number];
+
+export const appStyles = ['Modern', 'Techy', 'Minimal', 'Fun', 'Premium', 'Startup', 'Futuristic'] as const;
+export type AppStyle = typeof appStyles[number];

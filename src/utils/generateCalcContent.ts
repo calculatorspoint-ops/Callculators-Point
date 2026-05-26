@@ -16,6 +16,9 @@ export interface CalcContent {
   tips: string[];
   faq: { q: string; a: string }[];
   examples: { scenario: string; result: string }[];
+  limitations: string[];
+  whenToUse: string | null;
+  resultMeaning: string | null;
 }
 
 const CATEGORY_CONTEXT: Record<string, string> = {
@@ -99,6 +102,11 @@ function generateFormulaExplained(calc: CalculatorConfig): string | null {
   return calc.formula;
 }
 
+function generateHowTo(calc: CalculatorConfig): string[] {
+  if (calc.howToUse && calc.howToUse.length > 0) return calc.howToUse;
+  return GENERIC_HOW_TO(calc.name);
+}
+
 function generateTips(calc: CalculatorConfig): string[] {
   const baseTips = calc.tips ?? [];
   const genericTips = [
@@ -110,30 +118,16 @@ function generateTips(calc: CalculatorConfig): string[] {
 }
 
 function generateExamples(calc: CalculatorConfig): { scenario: string; result: string }[] {
-  // Generic examples based on category
-  const catExamples: Record<string, { scenario: string; result: string }[]> = {
-    finance: [
-      { scenario: 'Planning a home loan of ₹50 lakhs at 8.5% for 20 years', result: 'Use the calculator to find your exact EMI, total interest, and amortization schedule.' },
-      { scenario: 'Comparing two investment options with different compounding frequencies', result: 'Enter both options to see which gives a higher effective return over 10 years.' },
-    ],
-    health: [
-      { scenario: 'Tracking BMI after a fitness program', result: 'Enter your current height and weight to monitor your progress month by month.' },
-      { scenario: 'Planning daily calorie intake for weight loss', result: 'Use the result to set a realistic calorie deficit target with your doctor or nutritionist.' },
-    ],
-    math: [
-      { scenario: 'Solving a quadratic equation for a physics problem', result: 'Enter the coefficients to get both roots with the full working shown step by step.' },
-      { scenario: 'Calculating percentage change in exam scores', result: 'Compare two scores to instantly see the percentage improvement or decline.' },
-    ],
-    education: [
-      { scenario: 'Calculating semester GPA after final exams', result: 'Enter your grades and credit hours to get your precise GPA instantly.' },
-      { scenario: 'Planning courses needed to achieve a target GPA', result: 'Adjust grade inputs to model different scenarios and plan your study strategy.' },
-    ],
-    everyday: [
-      { scenario: 'Calculating age for a birthday or anniversary', result: 'Enter the date of birth to get the exact age in years, months, and days.' },
-      { scenario: 'Planning fuel cost for a long road trip', result: 'Enter distance, fuel efficiency, and price to estimate total fuel spend.' },
-    ],
-  };
-  return catExamples[calc.cat] ?? [
+  if (calc.examples && calc.examples.length > 0) return calc.examples;
+  
+  if (calc.cat === 'finance') {
+    return [
+      { scenario: 'Comparing multiple scenarios before making a final decision.', result: 'Identify the most cost-effective long-term option.' },
+      { scenario: 'Adjusting parameters to meet a specific budget target.', result: 'Find exactly what rate or term is required to fit your constraints.' }
+    ];
+  }
+  
+  return [
     { scenario: `Using the ${calc.name} for a real-world project`, result: 'Enter your specific values above to see your personalized result instantly.' },
   ];
 }
@@ -142,10 +136,13 @@ export function generateCalcContent(calc: CalculatorConfig): CalcContent {
   return {
     about: generateAbout(calc),
     formulaExplained: generateFormulaExplained(calc),
-    howToUse: GENERIC_HOW_TO(calc.name),
+    howToUse: generateHowTo(calc),
     tips: generateTips(calc),
     faq: GENERIC_FAQ(calc),
     examples: generateExamples(calc),
+    limitations: calc.limitations || [],
+    whenToUse: calc.whenToUse || null,
+    resultMeaning: calc.resultMeaning || null,
   };
 }
 

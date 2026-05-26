@@ -1,0 +1,126 @@
+export interface BrandWord {
+  word: string;
+  style: string[];
+  category: string[];
+  type: 'prefix' | 'suffix' | 'root';
+  feel: 'premium' | 'playful' | 'minimal' | 'bold' | 'futuristic' | 'elegant';
+}
+
+export const brandWords: BrandWord[] = [
+  // Premium
+  { word: 'Luxe', style: ['Premium', 'Elegant'], category: ['Fashion', 'Beauty', 'Real Estate'], type: 'prefix', feel: 'premium' },
+  { word: 'Aurum', style: ['Premium', 'Elegant'], category: ['Finance', 'Jewelry', 'Fashion'], type: 'root', feel: 'premium' },
+  { word: 'Velvet', style: ['Premium', 'Elegant'], category: ['Fashion', 'Beauty', 'Food'], type: 'root', feel: 'premium' },
+  { word: 'Silque', style: ['Premium', 'Elegant'], category: ['Fashion', 'Beauty'], type: 'root', feel: 'premium' },
+  { word: 'Opale', style: ['Premium', 'Elegant'], category: ['Jewelry', 'Beauty', 'Fashion'], type: 'root', feel: 'premium' },
+  { word: 'Prestige', style: ['Premium', 'Corporate'], category: ['Finance', 'Fashion', 'Real Estate'], type: 'root', feel: 'premium' },
+  { word: 'Regal', style: ['Premium', 'Corporate'], category: ['Fashion', 'Finance', 'Real Estate'], type: 'prefix', feel: 'premium' },
+  { word: 'Imperial', style: ['Premium', 'Corporate'], category: ['Fashion', 'Food', 'Finance'], type: 'prefix', feel: 'premium' },
+  { word: 'Elite', style: ['Premium', 'Corporate'], category: ['Finance', 'Fashion', 'Health'], type: 'prefix', feel: 'premium' },
+  { word: 'Maison', style: ['Premium', 'Elegant'], category: ['Fashion', 'Real Estate', 'Food'], type: 'prefix', feel: 'premium' },
+  { word: 'Atelier', style: ['Premium', 'Elegant'], category: ['Fashion', 'Beauty', 'Agency'], type: 'root', feel: 'premium' },
+  { word: 'Bespoke', style: ['Premium', 'Elegant'], category: ['Fashion', 'Real Estate', 'Beauty'], type: 'root', feel: 'premium' },
+  { word: 'Couture', style: ['Premium', 'Elegant'], category: ['Fashion', 'Beauty'], type: 'root', feel: 'premium' },
+  { word: 'Marquis', style: ['Premium', 'Elegant'], category: ['Fashion', 'Finance', 'Real Estate'], type: 'prefix', feel: 'premium' },
+  { word: 'Vivant', style: ['Premium', 'Elegant'], category: ['Food', 'Fashion', 'Beauty'], type: 'root', feel: 'premium' },
+  { word: 'Lumiere', style: ['Premium', 'Elegant'], category: ['Beauty', 'Fashion', 'Agency'], type: 'root', feel: 'premium' },
+  { word: 'Eclat', style: ['Premium', 'Elegant'], category: ['Beauty', 'Fashion', 'Jewelry'], type: 'root', feel: 'premium' },
+  { word: 'Finesse', style: ['Premium', 'Elegant'], category: ['Fashion', 'Finance', 'Agency'], type: 'root', feel: 'premium' },
+  { word: 'Grandeur', style: ['Premium', 'Corporate'], category: ['Real Estate', 'Finance', 'Fashion'], type: 'root', feel: 'premium' },
+  { word: 'Hauteur', style: ['Premium', 'Elegant'], category: ['Fashion', 'Beauty', 'Agency'], type: 'root', feel: 'premium' },
+
+  // Minimal
+  { word: 'Air', style: ['Minimal', 'Futuristic'], category: ['Tech', 'Health', 'Fashion'], type: 'root', feel: 'minimal' },
+  { word: 'Dot', style: ['Minimal'], category: ['Tech', 'Agency', 'Education'], type: 'root', feel: 'minimal' },
+  { word: 'One', style: ['Minimal', 'Corporate'], category: ['Finance', 'Tech', 'Agency'], type: 'root', feel: 'minimal' },
+  { word: 'Set', style: ['Minimal'], category: ['Tech', 'Agency', 'Ecommerce'], type: 'root', feel: 'minimal' },
+  { word: 'Arc', style: ['Minimal', 'Futuristic'], category: ['Tech', 'Agency', 'Finance'], type: 'root', feel: 'minimal' },
+  { word: 'Bit', style: ['Minimal', 'Futuristic'], category: ['Tech', 'Finance'], type: 'root', feel: 'minimal' },
+  { word: 'Fig', style: ['Minimal'], category: ['Food', 'Health', 'Beauty'], type: 'root', feel: 'minimal' },
+  { word: 'Kin', style: ['Minimal', 'Fun'], category: ['Social', 'Health', 'Education'], type: 'root', feel: 'minimal' },
+  { word: 'Nod', style: ['Minimal'], category: ['Tech', 'Agency', 'Social'], type: 'root', feel: 'minimal' },
+  { word: 'Oat', style: ['Minimal'], category: ['Food', 'Health'], type: 'root', feel: 'minimal' },
+  { word: 'Pod', style: ['Minimal', 'Futuristic'], category: ['Tech', 'Media', 'Education'], type: 'root', feel: 'minimal' },
+  { word: 'Ren', style: ['Minimal', 'Elegant'], category: ['Fashion', 'Beauty', 'Agency'], type: 'root', feel: 'minimal' },
+  { word: 'Sol', style: ['Minimal', 'Elegant'], category: ['Health', 'Beauty', 'Agency'], type: 'root', feel: 'minimal' },
+  { word: 'Tru', style: ['Minimal'], category: ['Health', 'Finance', 'Education'], type: 'root', feel: 'minimal' },
+  { word: 'Una', style: ['Minimal', 'Elegant'], category: ['Fashion', 'Beauty', 'Health'], type: 'root', feel: 'minimal' },
+  { word: 'Via', style: ['Minimal'], category: ['Tech', 'Travel', 'Agency'], type: 'root', feel: 'minimal' },
+  { word: 'Yep', style: ['Minimal', 'Fun'], category: ['Social', 'Agency', 'Ecommerce'], type: 'root', feel: 'minimal' },
+
+  // Bold
+  { word: 'Blaze', style: ['Bold', 'Fun'], category: ['Gaming', 'Fashion', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Bolt', style: ['Bold', 'Futuristic'], category: ['Tech', 'Gaming', 'Fitness'], type: 'root', feel: 'bold' },
+  { word: 'Clash', style: ['Bold', 'Fun'], category: ['Gaming', 'Fashion', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Dare', style: ['Bold', 'Fun'], category: ['Gaming', 'Fitness', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Fist', style: ['Bold'], category: ['Fitness', 'Gaming', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Grit', style: ['Bold'], category: ['Fitness', 'Finance', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Howl', style: ['Bold', 'Fun'], category: ['Gaming', 'Music', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Iron', style: ['Bold', 'Corporate'], category: ['Fitness', 'Finance', 'Real Estate'], type: 'prefix', feel: 'bold' },
+  { word: 'Jolt', style: ['Bold', 'Futuristic'], category: ['Tech', 'Fitness', 'Gaming'], type: 'root', feel: 'bold' },
+  { word: 'Kick', style: ['Bold', 'Fun'], category: ['Fitness', 'Gaming', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Loud', style: ['Bold', 'Fun'], category: ['Music', 'Agency', 'Fashion'], type: 'root', feel: 'bold' },
+  { word: 'Mach', style: ['Bold', 'Futuristic'], category: ['Tech', 'Gaming', 'Automotive'], type: 'root', feel: 'bold' },
+  { word: 'Nail', style: ['Bold'], category: ['Fitness', 'Agency', 'Finance'], type: 'root', feel: 'bold' },
+  { word: 'Rave', style: ['Bold', 'Fun'], category: ['Music', 'Fashion', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Riot', style: ['Bold', 'Fun'], category: ['Fashion', 'Gaming', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Roar', style: ['Bold', 'Fun'], category: ['Gaming', 'Fitness', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Slam', style: ['Bold'], category: ['Fitness', 'Gaming', 'Agency'], type: 'root', feel: 'bold' },
+  { word: 'Tank', style: ['Bold', 'Corporate'], category: ['Fitness', 'Gaming', 'Finance'], type: 'root', feel: 'bold' },
+  { word: 'Volt', style: ['Bold', 'Futuristic'], category: ['Tech', 'Automotive', 'Gaming'], type: 'root', feel: 'bold' },
+  { word: 'Wild', style: ['Bold', 'Fun'], category: ['Fashion', 'Gaming', 'Travel'], type: 'root', feel: 'bold' },
+
+  // Futuristic
+  { word: 'Axon', style: ['Futuristic', 'Corporate'], category: ['Tech', 'Health', 'Finance'], type: 'root', feel: 'futuristic' },
+  { word: 'Byte', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Gaming'], type: 'root', feel: 'futuristic' },
+  { word: 'Cyan', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Agency', 'Gaming'], type: 'root', feel: 'futuristic' },
+  { word: 'Digi', style: ['Futuristic'], category: ['Tech', 'Education', 'Agency'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Exo', style: ['Futuristic', 'Bold'], category: ['Tech', 'Fitness', 'Gaming'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Flux', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Finance', 'Agency'], type: 'root', feel: 'futuristic' },
+  { word: 'Grid', style: ['Futuristic', 'Corporate'], category: ['Tech', 'Finance', 'Agency'], type: 'root', feel: 'futuristic' },
+  { word: 'Holo', style: ['Futuristic', 'Fun'], category: ['Tech', 'Gaming', 'Agency'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Ion', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Health', 'Energy'], type: 'root', feel: 'futuristic' },
+  { word: 'Mech', style: ['Futuristic', 'Bold'], category: ['Tech', 'Gaming', 'Automotive'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Nano', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Health', 'Science'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Orb', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Agency', 'Gaming'], type: 'root', feel: 'futuristic' },
+  { word: 'Plex', style: ['Futuristic', 'Corporate'], category: ['Tech', 'Finance', 'Media'], type: 'suffix', feel: 'futuristic' },
+  { word: 'Quanta', style: ['Futuristic', 'Corporate'], category: ['Tech', 'Finance', 'Science'], type: 'root', feel: 'futuristic' },
+  { word: 'Rho', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Science', 'Finance'], type: 'root', feel: 'futuristic' },
+  { word: 'Syn', style: ['Futuristic', 'Minimal'], category: ['Tech', 'Health', 'Agency'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Tera', style: ['Futuristic', 'Corporate'], category: ['Tech', 'Finance', 'Data'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Xeno', style: ['Futuristic', 'Bold'], category: ['Tech', 'Gaming', 'Science'], type: 'prefix', feel: 'futuristic' },
+  { word: 'Zeon', style: ['Futuristic', 'Bold'], category: ['Tech', 'Gaming', 'Agency'], type: 'root', feel: 'futuristic' },
+  { word: 'Neon', style: ['Futuristic', 'Bold'], category: ['Fashion', 'Gaming', 'Agency'], type: 'root', feel: 'futuristic' },
+
+  // Elegant
+  { word: 'Belle', style: ['Elegant', 'Premium'], category: ['Fashion', 'Beauty', 'Food'], type: 'root', feel: 'elegant' },
+  { word: 'Clair', style: ['Elegant', 'Minimal'], category: ['Beauty', 'Fashion', 'Health'], type: 'root', feel: 'elegant' },
+  { word: 'Doux', style: ['Elegant', 'Premium'], category: ['Beauty', 'Food', 'Fashion'], type: 'root', feel: 'elegant' },
+  { word: 'Etre', style: ['Elegant', 'Minimal'], category: ['Fashion', 'Beauty', 'Agency'], type: 'root', feel: 'elegant' },
+  { word: 'Fleur', style: ['Elegant', 'Premium'], category: ['Beauty', 'Fashion', 'Food'], type: 'root', feel: 'elegant' },
+  { word: 'Grace', style: ['Elegant', 'Premium'], category: ['Fashion', 'Beauty', 'Health'], type: 'root', feel: 'elegant' },
+  { word: 'Halo', style: ['Elegant', 'Futuristic'], category: ['Beauty', 'Health', 'Tech'], type: 'root', feel: 'elegant' },
+  { word: 'Iris', style: ['Elegant', 'Minimal'], category: ['Beauty', 'Fashion', 'Health'], type: 'root', feel: 'elegant' },
+  { word: 'Joie', style: ['Elegant', 'Fun'], category: ['Food', 'Fashion', 'Beauty'], type: 'root', feel: 'elegant' },
+  { word: 'Lace', style: ['Elegant', 'Premium'], category: ['Fashion', 'Beauty'], type: 'root', feel: 'elegant' },
+  { word: 'Mere', style: ['Elegant', 'Minimal'], category: ['Fashion', 'Beauty', 'Agency'], type: 'root', feel: 'elegant' },
+  { word: 'Noel', style: ['Elegant', 'Premium'], category: ['Fashion', 'Beauty', 'Food'], type: 'root', feel: 'elegant' },
+  { word: 'Oui', style: ['Elegant', 'Fun'], category: ['Food', 'Fashion', 'Agency'], type: 'root', feel: 'elegant' },
+  { word: 'Reve', style: ['Elegant', 'Premium'], category: ['Fashion', 'Beauty', 'Agency'], type: 'root', feel: 'elegant' },
+  { word: 'Soir', style: ['Elegant', 'Premium'], category: ['Fashion', 'Beauty', 'Food'], type: 'root', feel: 'elegant' },
+
+  // Playful
+  { word: 'Wink', style: ['Fun'], category: ['Social', 'Beauty', 'Fashion'], type: 'root', feel: 'playful' },
+  { word: 'Fizz', style: ['Fun'], category: ['Food', 'Social', 'Agency'], type: 'root', feel: 'playful' },
+  { word: 'Zap', style: ['Fun', 'Bold'], category: ['Tech', 'Gaming', 'Agency'], type: 'root', feel: 'playful' },
+  { word: 'Boop', style: ['Fun'], category: ['Social', 'Gaming', 'Beauty'], type: 'root', feel: 'playful' },
+  { word: 'Jelly', style: ['Fun'], category: ['Food', 'Social', 'Gaming'], type: 'root', feel: 'playful' },
+  { word: 'Ziggy', style: ['Fun'], category: ['Social', 'Gaming', 'Fashion'], type: 'root', feel: 'playful' },
+  { word: 'Buble', style: ['Fun'], category: ['Food', 'Social', 'Beauty'], type: 'root', feel: 'playful' },
+  { word: 'Quirk', style: ['Fun', 'Bold'], category: ['Agency', 'Fashion', 'Social'], type: 'root', feel: 'playful' },
+  { word: 'Zippy', style: ['Fun'], category: ['Tech', 'Ecommerce', 'Social'], type: 'root', feel: 'playful' },
+  { word: 'Woop', style: ['Fun'], category: ['Gaming', 'Social', 'Agency'], type: 'root', feel: 'playful' },
+];
+
+export const brandStyles = ['Premium', 'Minimal', 'Bold', 'Fun', 'Corporate', 'Futuristic', 'Elegant'] as const;
+export type BrandStyle = typeof brandStyles[number];
