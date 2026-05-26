@@ -16,7 +16,8 @@ import './globals.css';
 import '../src/styles/index.css';
 import '../src/styles/mobile.css';
 import '../src/styles/mobile-overflow-killer.css';
-import '../src/styles/all-calculators.css';
+// NOTE: all-calculators.css is imported inside AllCalculators.jsx (page-scoped)
+// Do NOT import it here — that would load 8.9KB on every page globally.
 import { ClientProviders } from './client-providers';
 import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 
@@ -95,8 +96,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Inline theme script: sets dark/light class BEFORE paint — eliminates FOUC */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
-        {/* DNS prefetch for Google Fonts CDN (used by next/font) */}
+
+        {/* ── Resource hints: resolve connections before browser discovers resources ── */}
+        {/* preconnect: establishes TCP+TLS to our CDN before CSS/JS requests start */}
+        <link rel="preconnect" href="https://calculatorspoint.com" />
+        {/* dns-prefetch: async DNS lookup for Google Fonts CDN */}
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        {/* preconnect: establishes connection to Google Fonts for font delivery */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`}>
         <ClientProviders>

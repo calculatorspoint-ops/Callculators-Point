@@ -234,12 +234,40 @@ img,svg{display:block;max-width:100%;}
 ::selection{background:var(--brand-ll);color:var(--brand-d);}
 
 /* ══════════════════════════════════════════════════════════════
-   CLS PREVENTION
+   CLS PREVENTION — explicit dimensions prevent layout shifts
 ══════════════════════════════════════════════════════════════ */
 .navbar{ min-height:var(--nav-h); height:var(--nav-h); }
 .hero{ min-height:380px; }
 @media(max-width:767px){ .hero{ min-height:300px; } }
-.stat-strip{ min-height:78px; }
+/* stat-strip CLS fix: explicit height + contain:layout so browser
+   reserves space before emoji/font assets load */
+.stat-strip{
+  min-height:78px;
+  height:78px;
+  contain:layout;
+  overflow:hidden;
+}
+.stat-strip-item{
+  /* Explicit height prevents CLS when emoji icons finish loading */
+  height:78px;
+  min-height:78px;
+  box-sizing:border-box;
+  contain:layout style;
+}
+/* Freeze icon size so emoji metric changes don't shift layout */
+.stat-strip-icon{
+  width:24px;
+  height:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  line-height:1;
+  flex-shrink:0;
+}
+/* Reserve number text space to prevent shift when JS hydrates */
+.stat-num{ min-width:2ch; text-align:center; }
+.stat-lbl{ min-width:6ch; text-align:center; }
 html.mob-menu-open body{ overflow:hidden; }
 
 /* ══════════════════════════════════════════════════════════════

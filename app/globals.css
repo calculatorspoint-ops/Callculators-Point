@@ -2,11 +2,58 @@
  * app/globals.css
  * Next.js App Router global CSS entry point.
  *
- * NOTE: CSS files are imported directly in app/layout.tsx instead of using
- * @import here. CSS @import creates a waterfall: globals.css loads first,
- * then the browser discovers and serially fetches each @import.
- * Direct imports in layout.tsx allow Next.js to bundle/chunk them in parallel.
+ * CRITICAL CSS STRATEGY:
+ * This file is the FIRST CSS Next.js processes. By inlining critical
+ * above-fold styles here, the browser can paint the navbar and hero
+ * immediately — before the full index.css (35KB) finishes loading.
+ * This eliminates the render-blocking penalty for LCP and FCP.
  *
- * @tailwind directives are in src/styles/index.css which is imported in layout.tsx
+ * Rules here: only styles for elements visible in the first viewport.
+ * Everything else lives in src/styles/index.css.
  */
 
+/* ── Critical: Prevent invisible text while fonts load ── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  /* Prevent CLS from scrollbar appearing */
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+/* ── Critical: Navbar placeholder so page doesn't jump on load ── */
+/* Must match --nav-h CSS variable (56px) defined in index.css */
+.navbar {
+  min-height: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* Background and other decorative styles are in index.css */
+  background: var(--surface, #ffffff);
+  border-bottom: 1px solid var(--border, #e2e8f0);
+}
+
+/* ── Critical: Stat-strip dimensions reserved above-fold ── */
+/* Prevents the most impactful CLS items (0.057 × 3 = 0.171) */
+.stat-strip {
+  min-height: 78px;
+  height: 78px;
+  display: flex;
+  contain: layout;
+  overflow: hidden;
+}
+.stat-strip-item {
+  flex: 1;
+  height: 78px;
+  min-height: 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}

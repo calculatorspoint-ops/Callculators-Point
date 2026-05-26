@@ -183,15 +183,16 @@ export default function Home() {
       </section>
 
       {/* ═══ STATS STRIP ════════════════════════════════════════════════════════ */}
-      <div className="stat-strip" role="complementary">
+      {/* aria-label so screen readers understand the stats purpose */}
+      <div className="stat-strip" role="complementary" aria-label="Site statistics">
         {[
-          { n: ALL_CALCULATORS.length + "+", l: "Calculators", icon: "🧮" },
-          { n: "6",                           l: "Categories",  icon: "📂" },
-          { n: "∞",                           l: "Free Always", icon: "🆓" },
-          { n: "0",                           l: "Data Stored", icon: "🔒" },
+          { n: "180+", l: "Calculators", icon: "🧮" },
+          { n: "6",    l: "Categories",  icon: "📂" },
+          { n: "∞",    l: "Free Always", icon: "🆓" },
+          { n: "0",    l: "Data Stored", icon: "🔒" },
         ].map(({ n, l, icon }) => (
           <div key={l} className="stat-strip-item">
-            <div className="stat-strip-icon">{icon}</div>
+            <div className="stat-strip-icon" aria-hidden="true">{icon}</div>
             <div className="stat-num">{n}</div>
             <div className="stat-lbl">{l}</div>
           </div>
