@@ -95,6 +95,27 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
 
   const total = cumP.plus(cumI).toNumber();
   const interest = cumI.toNumber();
+  let savedInterest = 0;
+
+  if (ex_val > 0) {
+    let baselineBalance = P;
+    let baselineInterest = new Decimal(0);
+
+    for (let i = 1; i <= n_val; i++) {
+      const interestPayment = baselineBalance.times(r);
+      let principalPayment = interestOnly
+        ? new Decimal(0)
+        : Decimal.max(0, Decimal.min(emiDec.minus(interestPayment), baselineBalance));
+
+      if (i === n_val) principalPayment = baselineBalance;
+
+      baselineBalance = Decimal.max(0, baselineBalance.minus(principalPayment));
+      baselineInterest = baselineInterest.plus(interestPayment);
+      if (baselineBalance.isZero()) break;
+    }
+
+    savedInterest = Decimal.max(0, baselineInterest.minus(cumI)).toNumber();
+  }
 
   let compareResult = null;
   if (compareRate && +compareRate !== +interestRate) {
@@ -122,7 +143,7 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
     interestRatio: round(interest/total*100, 1),
     principalRatio: round(P_val/total*100, 1),
     actualMonths, savedMonths: n_val - actualMonths,
-    savedInterest: ex_val > 0 ? round(interest * 0.15) : 0,
+    savedInterest: round(savedInterest),
     schedule, fullSchedule, compareResult,
     affordIncome40: affordEMI40, affordIncome50: affordEMI50,
     breakdowns: [
@@ -135,11 +156,11 @@ export function calcEMI({ principal, interestRate, tenure, extraPayment = 0, com
       { label: "Total Payable",         value: fmtC(total), bold: true },
       { label: "Total Interest",        value: fmtC(interest) },
       { label: "Interest % of Total",   value: round(interest/total*100,1) + "%" },
-      ...(ex_val > 0 ? [{ label: "Extra/month savings (est.)", value: "~" + pct(15) + " less interest", bold: true }] : []),
+      ...(ex_val > 0 ? [{ label: "Interest saved with extra payment", value: fmtC(savedInterest), bold: true }] : []),
     ],
     insights: [
       interest/P_val > 0.5 && { type:"warn", msg:`You'll pay ${round(interest/P_val*100,0)}% extra as interest. Consider shorter tenure.` },
-      ex_val > 0 && { type:"good", msg:`Extra ${fmtC(ex_val)}/month could save ~${fmtC(interest*0.15)} in interest!` },
+      ex_val > 0 && { type:"good", msg:`Extra ${fmtC(ex_val)}/month saves ${fmtC(savedInterest)} in interest based on the amortization schedule.` },
       +interestRate > 15 && { type:"bad",  msg:`${interestRate}% is very high. Try to negotiate or refinance.` },
       +interestRate < 9  && { type:"good", msg:`Great rate! This is below market average.` },
       interestOnly && { type:"warn", msg:`Interest-only: Entire principal ${fmtC(P_val)} is due at the end of the term.` },
@@ -161,6 +182,8 @@ export function calcCompound({ principal, rate, years, frequency="12", contribut
 
   const pts = [];
   const onePlusRByN = new Decimal(1).plus(r.dividedBy(n));
+  const monthlyGrowth = onePlusRByN.pow(n.dividedBy(12));
+  const monthlyRate = monthlyGrowth.minus(1);
 
   for (let yr = 0; yr <= y_val; yr++) {
     const ny = n.times(yr);
@@ -171,7 +194,8 @@ export function calcCompound({ principal, rate, years, frequency="12", contribut
       if (r.isZero()) {
         cGrowth = c.times(12).times(yr);
       } else {
-        cGrowth = c.times(onePlusRByN.pow(ny).minus(1)).dividedBy(r.dividedBy(n));
+        const months = new Decimal(yr * 12);
+        cGrowth = c.times(monthlyGrowth.pow(months).minus(1)).dividedBy(monthlyRate);
       }
     }
     
@@ -207,9 +231,10 @@ export function calcCompound({ principal, rate, years, frequency="12", contribut
     const tgt = new Decimal(target);
     const ny = n.times(y_val);
     const pGrowth = P.times(onePlusRByN.pow(ny));
-    
+    const months = new Decimal(y_val * 12);
+
     const neededDec = tgt.minus(pGrowth).dividedBy(
-      r_val > 0 ? onePlusRByN.pow(ny).minus(1).dividedBy(r.dividedBy(n)) : new Decimal(12 * y_val)
+      r_val > 0 ? monthlyGrowth.pow(months).minus(1).dividedBy(monthlyRate) : new Decimal(12 * y_val)
     );
     return Math.max(0, round(neededDec.toNumber()));
   };

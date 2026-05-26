@@ -26,9 +26,9 @@ const BASE_URL = 'https://calculatorspoint.com';
 
 // Hardcoded base date to prevent 'lastmod' thrashing on every build.
 // Update this date manually when deploying major content overhauls.
-const BUILD_DATE = new Date();
+const BUILD_DATE = new Date('2026-05-26');
 // Popular calculators get a slightly more recent date to signal freshness
-const RECENT_DATE = new Date();
+const RECENT_DATE = new Date('2026-05-26');
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // ── 1. Homepage ──────────────────────────────────────────────────────

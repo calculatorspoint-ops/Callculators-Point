@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
 import path from 'path';
 import withPWAInit from '@ducanh2912/next-pwa';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import webpack from 'webpack';
 
 const withPWA = withPWAInit({
   dest: 'public',
@@ -99,9 +101,6 @@ const nextConfig: NextConfig = {
     };
 
     if (!dev && !isServer) {
-      const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-      const webpack = require('webpack');
-      
       config.optimization.minimizer.push(new CssMinimizerPlugin({
         minify: CssMinimizerPlugin.lightningCssMinify,
         minimizerOptions: {
