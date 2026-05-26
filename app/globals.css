@@ -57,3 +57,36 @@ body {
   justify-content: center;
   box-sizing: border-box;
 }
+
+/* ── Critical: Hero section (contains LCP element) ── */
+/* Minimum styles so the server-rendered hero paints immediately.
+   Full decorative styles (gradients, shadows) load from index.css. */
+.hero {
+  min-height: 380px;
+  padding: clamp(40px, 6vw, 80px) clamp(16px, 4vw, 24px);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media(max-width:767px) { .hero { min-height: 300px; } }
+.hero-inner { max-width: 1280px; width: 100%; margin: 0 auto; }
+.hero-layout { display: flex; align-items: center; gap: 48px; }
+@media(max-width:767px) { .hero-layout { flex-direction: column; } }
+.hero-content { flex: 1; }
+.hero-title {
+  font-family: var(--font-jakarta, var(--font-inter, system-ui));
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 16px;
+}
+/* LCP ELEMENT — this must render without blocking CSS */
+.hero-sub {
+  font-size: 16px;
+  color: rgba(255,255,255,.58);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 540px;
+}

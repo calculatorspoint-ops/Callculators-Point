@@ -92,7 +92,7 @@ function FeatureCard({ icon, title, desc, color }) {
 }
 
 /* ── Main Home page ─────────────────────────────────────────────── */
-export default function Home() {
+export default function Home({ skipHero } = {}) {
   const { recent, favorites } = useAppStore();
   const recentCalcs   = recent.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
   const favoriteCalcs = favorites.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
@@ -115,6 +115,9 @@ export default function Home() {
       {/* SEO metadata handled by generateMetadata in app/page.tsx */}
 
       {/* ═══ HERO ══════════════════════════════════════════════════════════════ */}
+      {/* When skipHero is true, the hero is server-rendered in app/page.tsx
+          for instant LCP — don't render it again here */}
+      {!skipHero && (
       <section className="hero" aria-label="Hero section">
         <div className="hero-inner">
           <div className="hero-layout">
@@ -181,6 +184,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ═══ STATS STRIP ════════════════════════════════════════════════════════ */}
       {/* aria-label so screen readers understand the stats purpose */}
