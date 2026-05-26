@@ -1,3 +1,11 @@
+/**
+ * FAQSection.tsx
+ *
+ * Renders the FAQ accordion UI only.
+ * JSON-LD FAQPage schema is handled server-side in SchemaMarkup.tsx —
+ * do NOT add a second FAQPage script here or Google will report
+ * "Duplicate field FAQPage" and invalidate rich results.
+ */
 export function FAQSection({ faqs }: { faqs?: { q: string; a: string }[] }) {
   if (!faqs?.length) return null;
   return (
@@ -11,10 +19,9 @@ export function FAQSection({ faqs }: { faqs?: { q: string; a: string }[] }) {
           <div className="faq-body">{f.a}</div>
         </details>
       ))}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context":"https://schema.org","@type":"FAQPage",
-        mainEntity: faqs.map(f=>({ "@type":"Question", name:f.q, acceptedAnswer:{"@type":"Answer",text:f.a} }))
-      })}} />
+      {/* ⚠️ NO FAQPage JSON-LD here — it lives in SchemaMarkup.tsx (server-rendered).
+          A second FAQPage script causes Google's "Duplicate field" error and
+          disqualifies the page from FAQ rich results entirely. */}
     </div>
   );
 }
