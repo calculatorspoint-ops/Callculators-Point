@@ -81,7 +81,7 @@ function HeroSection() {
 
             {/* THIS IS THE LCP ELEMENT — now server-rendered, zero JS delay */}
             <p className="hero-sub">
-              Access 180+ free online calculators for finance, health, math, and everyday life. Calculate BMI, EMI, mortgages, percentages, and GPA instantly with live charts and step-by-step formulas. 100% free and completely private.
+              Access 180+ free online calculators for finance, health, math, and everyday life. Calculate BMI, EMI, mortgages, percentages, and GPA instantly with live charts and step-by-step formulas. 100% free, with calculations processed locally in your browser.
             </p>
 
             <div className="hero-actions">
@@ -98,7 +98,7 @@ function HeroSection() {
               {[
                 { icon: '⚡', label: 'Instant Results' },
                 { icon: '📊', label: 'Live Charts' },
-                { icon: '🛡️', label: '100% Private' },
+                { icon: '🛡️', label: 'Local Calculations' },
                 { icon: '📈', label: 'Smart Insights' },
               ].map(({ icon, label }) => (
                 <div key={label} className="hero-feature-pill">

@@ -134,7 +134,7 @@ export default function Home({ skipHero } = {}) {
               </h1>
 
               <p className="hero-sub">
-                Finance, health, math and everyday tools — with live charts, step-by-step breakdowns, and smart insights. 100% free, works offline, completely private.
+                Finance, health, math and everyday tools — with live charts, step-by-step breakdowns, and smart insights. 100% free, works offline, with calculations processed locally.
               </p>
 
               <div className="hero-actions">
@@ -151,7 +151,7 @@ export default function Home({ skipHero } = {}) {
                 {[
                   { icon: <Zap size={13} />,       label: "Instant Results" },
                   { icon: <BarChart2 size={13} />, label: "Live Charts" },
-                  { icon: <Shield size={13} />,    label: "100% Private" },
+                  { icon: <Shield size={13} />,    label: "Local Calculations" },
                   { icon: <TrendingUp size={13} />,label: "Smart Insights" },
                 ].map(({ icon, label }) => (
                   <div key={label} className="hero-feature-pill">

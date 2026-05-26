@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/api/',
     },
-    sitemap: 'https://www.calculatorspoint.com/sitemap.xml',
+    sitemap: 'https://calculatorspoint.com/sitemap.xml',
   };
 }

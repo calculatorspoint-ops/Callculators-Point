@@ -22,28 +22,31 @@ npx vercel --prod
 
 ## Project Structure
 ```
+app/
+  page.tsx          → Server-rendered home page and SEO metadata
+  calculator/       → Statically generated calculator routes
+  sitemap.ts        → Search-engine sitemap generation
 src/
-  app/               → Next.js App Router pages and layouts
   components/
     ui/              → Reusable UI atoms (ResultBox, InputField, etc.)
     charts/          → Chart components using Recharts
-    calculator-core/ → CalculatorWidget (the engine renderer)
+    calculator-core/ → CalculatorWidget and lazy form registries
   data/
-    calculatorConfigs.js → Master config for ALL calculators
-  hooks/
-    useCalculator.js → Core hook: inputs → calculation → outputs
+    calculatorConfigs.ts → Master catalog combining all categories
+    categories/      → Per-category calculator metadata
   store/
-    useAppStore.js   → Zustand: theme, currency, favorites, recent
+    useAppStore.ts   → Zustand: theme, currency, favorites, recent
   core/
-    calculationEngine.js → Pure formula functions
+    calculationEngine.js → Shared pure formula functions
   styles/
     index.css        → Tailwind + CSS variables
 ```
 
 ## Adding a New Calculator
-1. Add entry to `src/data/calculatorConfigs.js`
-2. Add formula to `src/core/calculationEngine.js`
-3. That's it — the engine renders it automatically
+1. Add metadata to the relevant file in `src/data/categories/`.
+2. Add or reuse formula logic in `src/core/calculationEngine.js`.
+3. Add the calculator form to the matching registry under `src/components/calculator-core/registries/`.
+4. Run validation and tests before publishing.
 
 ## SEO Strategy (Next.js)
 - Server-Side Rendering (SSR) and Static Site Generation (SSG) for all calculator pages.
@@ -52,7 +55,8 @@ src/
 - Vercel Edge caching for immediate global delivery.
 
 ## Validation & Testing
-We have added scripts to validate the calculator configs and ensure no duplicate slugs exist.
+Run catalog validation and core formula regression tests before publishing:
 ```bash
 npm run validate:calculators
+npm run test:unit
 ```
