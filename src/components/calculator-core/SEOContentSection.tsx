@@ -135,20 +135,12 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
         </div>
       )}
 
-      {/* ── FAQ ── */}
-      {content.faq.length > 0 && (
-        <div className="seo-block">
-          <h2 className="seo-h2">Frequently Asked Questions</h2>
-          <div className="seo-faq-list">
-            {content.faq.map((item, i) => (
-              <details key={i} className="seo-faq-item">
-                <summary className="seo-faq-question"><h3 style={{ display: "inline", fontSize: "inherit", fontWeight: "inherit", margin: 0 }}>{item.q}</h3></summary>
-                <div className="seo-faq-answer">{item.a}</div>
-              </details>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* ── FAQ removed from here ──
+           FAQ is rendered by FAQSection in calculator-client.tsx (client UI)
+           and covered by SchemaMarkup FAQPage JSON-LD in page.tsx.
+           A third FAQ block with different questions (GENERIC_FAQ) caused
+           Google's "Duplicate field FAQPage" rich results error.
+      */}
 
       {/* ── Related Calculators ── */}
       {relatedCalcs.length > 0 && (
