@@ -33,8 +33,9 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://calculatorspoint.com'),
   title: {
-    default: 'CalculatorsPoint — Free Online Calculators',
-    template: '%s | CalculatorsPoint',
+    // Issue 1 fix: root default title matches the brand-consistent format
+    default: 'Calculators Point — 180+ Free Online Calculators',
+    template: '%s | Calculators Point',
   },
   description:
     '180+ free online calculators for finance, health, math, education, and everyday life. Fast, accurate, and always free.',
@@ -45,13 +46,13 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://calculatorspoint.com',
-    siteName: 'CalculatorsPoint',
-    title: 'CalculatorsPoint — Free Online Calculators',
+    siteName: 'Calculators Point',
+    title: 'Calculators Point — 180+ Free Online Calculators',
     description: '180+ free online calculators for finance, health, math, and everyday life.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CalculatorsPoint — Free Online Calculators',
+    title: 'Calculators Point — 180+ Free Online Calculators',
     description: '180+ free online calculators for finance, health, math, and everyday life.',
   },
   robots: {

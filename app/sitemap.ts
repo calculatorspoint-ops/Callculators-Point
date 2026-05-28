@@ -8,7 +8,7 @@
  *  - 180+ calculator pages  (/calculator/[slug])
  *  - 12  SEO landing pages  (/tools/[slug])
  *  - 3  ecosystem hub pages  (/ecosystem/[id])
- *  - 6  static pages  (about, contact, privacy, terms, disclaimer, sitemap)
+ *  - 7  static pages  (about, contact, privacy, terms, disclaimer, sitemap, cheat-sheets)
  *
  * Priorities follow Google's guidance:
  *  1.0  homepage
@@ -92,6 +92,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/about`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/contact`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE_URL}/sitemap`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.3 },
+    // Issue 5 fix: cheat-sheets was missing from the XML sitemap
+    { url: `${BASE_URL}/cheat-sheets`, lastModified: BUILD_DATE, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE_URL}/privacy-policy`, lastModified: BUILD_DATE, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/terms-of-service`, lastModified: BUILD_DATE, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/disclaimer`, lastModified: BUILD_DATE, changeFrequency: 'yearly', priority: 0.3 },

@@ -6,16 +6,16 @@
  */
 'use client';
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { getCalcBySlug, getRelated, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
 import { BASE_FAQS, CALC_FAQS } from '@/data/faqData';
+import { getLandingsByCalc } from '@/data/seoLandingData';
 import { Share2, Bookmark, BookmarkCheck } from 'lucide-react';
 import Link from 'next/link';
 import { CrossCalcRecommendations } from '@/components/calculator-core/CrossRecommendations';
 import { FAQSection } from '@/components/calculator-core/FAQSection';
 import { FeedbackWidget } from '@/components/calculator-core/FeedbackWidget';
-import { InfoAlert } from '@/components/ui/InfoAlert';
 
 const CalculatorWidget = lazy(() =>
   import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget }))
@@ -35,8 +35,6 @@ function FormFallback() {
   );
 }
 
-import { useEffect } from 'react';
-
 export function CalculatorPageClient({ slug }: { slug: string }) {
   const calc = getCalcBySlug(slug);
   const { toggleFavorite, favorites, addRecent } = useAppStore();
@@ -52,6 +50,8 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
   const cat     = CATEGORIES.find(c => c.id === calc.cat);
   const faqs    = [...((CALC_FAQS as Record<string, { q: string; a: string }[]>)[slug] ?? []), ...BASE_FAQS];
   const popular = ALL_CALCULATORS.filter(c => c.cat === calc.cat && c.id !== calc.id && c.popular).slice(0, 6);
+  // Issue 7: get /tools/ deep-dive landing pages linked to this calculator
+  const toolGuides = getLandingsByCalc(calc.slug);
 
   const share = () => {
     if (navigator.share) {
@@ -62,9 +62,11 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
   };
 
   const calculatorName = calc.name.trim();
+  // W5 fix: append 'Online' to H1 — searchers phrase queries as "EMI Calculator Online",
+  // "BMI Calculator Online" etc. This directly aligns our H1 with primary search intent.
   const pageH1 = /calculator/i.test(calculatorName)
-    ? `Free ${calculatorName}`
-    : `Free ${calculatorName} Calculator`;
+    ? `Free ${calculatorName} Online`
+    : `Free ${calculatorName} Calculator Online`;
 
   return (
     <>
@@ -132,8 +134,6 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
             </Suspense>
           )}
 
-
-
           {/* Calculator form */}
           <div className="calc-card" style={{ marginBottom: 16 }}>
             <Suspense fallback={<FormFallback />}>
@@ -174,6 +174,30 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
                   <span className="calc-row-icon">{c.icon}</span>
                   <span style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {c.name}
+                  </span>
+                  <span className="calc-row-arrow">›</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Issue 7: Deep Dive Guides — contextual internal links to /tools/ landing pages.
+              These pass PageRank from the high-traffic calculator page to the long-tail /tools/ pages. */}
+          {toolGuides.length > 0 && (
+            <div className="side-card" style={{ marginTop: 16 }}>
+              <div className="sec-head" style={{ background: 'var(--surf2)' }}>
+                <span>📖</span>
+                <span>In-Depth Guides</span>
+              </div>
+              {toolGuides.map(guide => (
+                <Link
+                  key={guide.slug}
+                  href={`/tools/${guide.slug}`}
+                  className="calc-row"
+                >
+                  <span className="calc-row-icon">📌</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {guide.h1}
                   </span>
                   <span className="calc-row-arrow">›</span>
                 </Link>

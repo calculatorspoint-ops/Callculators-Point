@@ -41,6 +41,14 @@ export async function generateMetadata(
 
   const calcNameLower = cleanName.toLowerCase().replace(/ calculator$/i, '');
 
+  // Per-slug meta description overrides — for cases where the template produces awkward grammar.
+  // Issue 6 fix: EMI calculator had self-referential auto-description.
+  const DESC_OVERRIDES: Record<string, string> = {
+    'loan-emi-calculator': 'Calculate your monthly loan EMI instantly. See full amortization schedule, prepayment savings, and rate comparison for home, car, and personal loans. 100% free.',
+    'bmi-calculator': 'Calculate your BMI instantly with WHO health risk classification, ideal weight range, and personalized insights. Free online Body Mass Index calculator.',
+    'sip-calculator': 'Calculate SIP returns with step-up, XIRR, and wealth projections. See how monthly investments grow over 5, 10, 20, or 30 years. Free mutual fund SIP calculator.',
+  };
+
   // Safer description generation to avoid awkward grammar from string concatenation
   const descTrimmed = calc.desc.length > 80
     ? calc.desc.slice(0, 77).replace(/[,.]?\s+\S+$/, '') + '…'
@@ -53,7 +61,7 @@ export async function generateMetadata(
     `Estimate your ${cleanName} quickly and accurately. ${descTrimmed} Free online tool with complete formulas.`
   ];
   const templateIndex = slug.length % descTemplates.length;
-  const description = descTemplates[templateIndex];
+  const description = DESC_OVERRIDES[slug] ?? descTemplates[templateIndex];
 
 
   const fullTitle = `${title} | Calculators Point`;

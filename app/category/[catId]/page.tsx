@@ -26,11 +26,12 @@ export async function generateMetadata(
 
   const count = ALL_CALCULATORS.filter(c => c.cat === catId && c.status !== 'coming-soon').length;
 
-  // Title: "Free Online [Category] Calculators | Calculators Point"
-  const title = `Free Online ${cat.name} Calculators`;
+  // W3 fix: Stronger title with count signal — "20+ Free Finance Calculators Online"
+  // The count adds specificity and intent signals Google rewards over generic titles.
+  const title = `${count}+ Free ${cat.name} Calculators Online`;
 
   // Description: 140-160 chars, action-driven with keywords
-  const description = `Use our free online ${cat.name.toLowerCase()} calculators for instant, accurate results. Explore ${count} tools with interactive charts and step-by-step formulas.`;
+  const description = `Use our ${count}+ free online ${cat.name.toLowerCase()} calculators for instant, accurate results. Interactive charts and step-by-step formulas. 100% free, no signup.`;
 
 
   const ogImageUrl = `${SITE_URL}/api/og?title=${encodeURIComponent(title)}&icon=${encodeURIComponent(cat.icon)}&cat=Category`;

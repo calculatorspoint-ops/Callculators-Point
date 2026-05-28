@@ -286,11 +286,15 @@ export function Navbar() {
 
           {/* ── Desktop Nav ── */}
           <nav className="navbar-nav" aria-label="Main navigation">
-            {CATEGORIES.slice(0, 5).map(c => (
+            {CATEGORIES.slice(0, 4).map(c => (
               <Link key={c.id} href={`/category/${c.id}`} className="nav-link">
-                {c.icon} {c.name}
+                <span aria-hidden="true">{c.icon}</span>{' '}{c.name}
               </Link>
             ))}
+            {/* W6 fix: Name Generators in primary nav for crawl depth + PageRank */}
+            <Link href="/name-generators" className="nav-link">
+              <span aria-hidden="true">✨</span>{' '}Name Generators
+            </Link>
             <Link href="/calculators" className="nav-link nav-link-all">
               All Tools
             </Link>
@@ -363,7 +367,7 @@ export function Navbar() {
           <p className="mob-menu-section-title">Categories</p>
           {CATEGORIES.map(c => (
             <Link key={c.id} href={`/category/${c.id}`} className="mob-menu-link">
-              <span className="mob-menu-link-icon">{c.icon}</span>
+              <span className="mob-menu-link-icon" aria-hidden="true">{c.icon}</span>
               <span>{c.name}</span>
               <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
             </Link>
@@ -376,22 +380,27 @@ export function Navbar() {
         <div className="mob-menu-section">
           <p className="mob-menu-section-title">Quick Links</p>
           <Link href="/calculators" className="mob-menu-link mob-menu-link--featured">
-            <span>📊</span>
+            <span aria-hidden="true">📊</span>
             <span>All {ALL_CALCULATORS.length}+ Tools</span>
             <ChevronRight size={14} style={{ marginLeft: "auto" }} />
           </Link>
+          <Link href="/name-generators" className="mob-menu-link mob-menu-link--featured">
+            <span aria-hidden="true">✨</span>
+            <span>Name Generators</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto" }} />
+          </Link>
           <Link href="/about" className="mob-menu-link">
-            <span>ℹ️</span>
+            <span aria-hidden="true">ℹ️</span>
             <span>About</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </Link>
           <Link href="/contact" className="mob-menu-link">
-            <span>✉️</span>
+            <span aria-hidden="true">✉️</span>
             <span>Contact</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </Link>
           <button onClick={() => { setSettingsOpen(true); setMob(false); }} className="mob-menu-link" style={{ background: "none", border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}>
-            <span>⚙️</span>
+            <span aria-hidden="true">⚙️</span>
             <span>Settings</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </button>

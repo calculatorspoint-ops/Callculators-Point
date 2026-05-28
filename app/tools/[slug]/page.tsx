@@ -33,7 +33,8 @@ export async function generateMetadata({
   if (!landing) return { title: 'Page Not Found' };
 
   return {
-    title: `${landing.title} | CalculatorsPoint`,
+    // Issue 9 fix: 'Calculators Point' (two words) — canonical brand form matching the domain
+    title: `${landing.title} | Calculators Point`,
     description: landing.description,
 
     alternates: { canonical: `https://calculatorspoint.com/tools/${slug}` },
@@ -42,6 +43,12 @@ export async function generateMetadata({
       description: landing.description,
       url: `https://calculatorspoint.com/tools/${slug}`,
       type: 'website',
+      siteName: 'Calculators Point',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: landing.title,
+      description: landing.description,
     },
   };
 }

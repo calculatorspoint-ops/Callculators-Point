@@ -45,6 +45,7 @@ export default function Sitemap() {
           links={[
             { to:"/",               label:"Homepage" },
             { to:"/calculators",    label:"All Calculators" },
+            { to:"/cheat-sheets",   label:"Cheat Sheets" },
             { to:"/about",          label:"About Us" },
             { to:"/contact",        label:"Contact Us" },
             { to:"/privacy-policy", label:"Privacy Policy" },
@@ -97,7 +98,8 @@ export default function Sitemap() {
             calculatorspoint.com/sitemap.xml
           </a>
           <p style={{ fontSize:12, color:"var(--text3)", marginTop:8 }}>
-            65 URLs · Updated {new Date().toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })}
+            {/* Dynamic total: 1 homepage + 1 /calculators + 1 /cheat-sheets + 9 core static + categories + calculators + SEO pages */}
+            {(9 + CATEGORIES.length + ALL_CALCULATORS.filter(c => c.status !== 'coming-soon' && c.status !== 'draft').length + SEO_LANDING_PAGES.length).toLocaleString()} URLs · Updated {new Date().toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })}
           </p>
         </div>
       </div>

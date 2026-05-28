@@ -13,7 +13,7 @@ export function Footer() {
               <div style={{ width:32, height:32, borderRadius:8, background:"linear-gradient(135deg,#4361ee,#3451c7)", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 8px rgba(67,97,238,0.35)" }}>
                 <Calculator size={18} color="#ffffff" strokeWidth={2.5} />
               </div>
-              <div>Calculators<span style={{ color:"#34d399" }}>Point</span></div>
+              <div>Calculators <span style={{ color:"#34d399" }}>Point</span></div>
             </div>
             <p style={{ fontSize:13, lineHeight:1.7, color:"var(--footer-text)", marginBottom:16 }}>
               {ALL_CALCULATORS.length}+ free online calculators for finance, health, math, education and daily life.
@@ -50,6 +50,23 @@ export function Footer() {
             ))}
           </div>
 
+          {/* Guides & Tools — Issue 7: internal links to /tools/ SEO landing pages */}
+          <div>
+            <p className="footer-head">Guides &amp; Tools</p>
+            {[
+              ["Home Loan EMI Guide", "/tools/home-loan-emi-calculator"],
+              ["Car Loan EMI Guide", "/tools/car-loan-emi-calculator"],
+              ["SIP Returns Guide", "/tools/sip-returns-calculator"],
+              ["BMI for Adults", "/tools/bmi-calculator-adults"],
+              ["TDEE & Calories", "/tools/tdee-calorie-calculator"],
+              ["Investment ROI", "/tools/investment-roi-calculator"],
+              ["Mortgage Comparison", "/tools/mortgage-comparison-calculator"],
+              ["College GPA Guide", "/tools/college-gpa-calculator"],
+            ].map(([l,h])=>(
+              <Link key={h} href={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
+            ))}
+          </div>
+
           {/* Company */}
           <div>
             <p className="footer-head">Company</p>
@@ -74,8 +91,9 @@ export function Footer() {
         </div>
 
         <div className="footer-bottom">
+          {/* W7 fix: rel="nofollow" prevents PageRank leaking to external attribution site on every page */}
           <span>© {new Date().getFullYear()} Calculators Point. All rights reserved. Results are for informational purposes only.</span>
-          <span>Made with ❤️ · <a href="https://mkinnovexa.vercel.app/" target="_blank" rel="noopener noreferrer" style={{color:"var(--brand)",fontWeight:700,textDecoration:"none"}}>MK INNOVEXA</a></span>
+          <span>Made with ❤️ · <a href="https://mkinnovexa.vercel.app/" target="_blank" rel="nofollow noopener noreferrer" style={{color:"var(--brand)",fontWeight:700,textDecoration:"none"}}>MK INNOVEXA</a></span>
         </div>
       </div>
     </footer>

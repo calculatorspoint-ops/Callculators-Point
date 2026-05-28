@@ -1,5 +1,6 @@
 'use client';
 import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, ArrowRight } from "lucide-react";
 
@@ -7,7 +8,11 @@ import { CATEGORIES, ALL_CALCULATORS } from "@/data/calculatorConfigs";
 import "@/styles/all-calculators.css";
 
 export default function AllCalculators() {
-  const [q, setQ] = useState("");
+  // Seed initial query from ?q= URL param — required for SiteLinksSearchBox schema.
+  // When Google routes users from the SERP sitelinks search to /calculators?q=bmi,
+  // this ensures the search box is pre-populated and results are already filtered.
+  const searchParams = useSearchParams();
+  const [q, setQ] = useState(() => searchParams.get("q") ?? "");
   const [cat, setCat] = useState("all");
 
   const filtered = useMemo(() => ALL_CALCULATORS.filter(c => {

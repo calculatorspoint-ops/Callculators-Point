@@ -18,9 +18,13 @@ import { SITE_URL } from '@/config/site';
 import { QuickCalc } from '@/components/ui/QuickCalc';
 
 export const metadata: Metadata = {
-  title: 'Free Online Calculators — Finance, Health, Math & More',
+  // Issue 1 fix: <title> and og:title are now identical — prevents Google from
+  // rewriting the SERP title by pulling from og:title or H1.
+  title: 'Calculators Point — 180+ Free Online Calculators',
   description:
     '180+ free online calculators for finance, health, math, education & everyday life. EMI, BMI, SIP, GPA, tax, mortgage calculators — all fast, accurate, and free.',
+  // Issue 2 fix: canonical uses SITE_URL (https://calculatorspoint.com — non-www),
+  // consistent with the 301 redirect from www and metadataBase in layout.tsx.
   alternates: { canonical: SITE_URL },
 
   openGraph: {
@@ -29,15 +33,26 @@ export const metadata: Metadata = {
     url: SITE_URL,
     type: 'website',
     siteName: 'Calculators Point',
+    // Issue 8 fix: static og:image for homepage shares on social media
+    images: [{
+      url: `${SITE_URL}/api/og?title=${encodeURIComponent('Calculators Point')}&icon=${encodeURIComponent('🧮')}&cat=${encodeURIComponent('180%2B Free Calculators')}`,
+      width: 1200,
+      height: 630,
+      alt: 'Calculators Point — 180+ Free Online Calculators',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Calculators Point — 180+ Free Online Calculators',
     description: 'Free EMI, BMI, SIP, mortgage, tax, and 180+ more calculators.',
+    // Issue 8 fix: twitter image
+    images: [`${SITE_URL}/api/og?title=${encodeURIComponent('Calculators Point')}&icon=${encodeURIComponent('🧮')}&cat=${encodeURIComponent('180%2B Free Calculators')}`],
   },
 };
 
-// Organization & WebSite schema — brand clarity, site identity, structured entity recognition
+// Issue 3 fix: Organization + WebSite + SiteLinksSearchBox schema.
+// SiteLinksSearchBox tells Google to show a search box in the SERP sitelinks.
+// The search-terms-url must match the URL format used by our /calculators search route.
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -55,6 +70,15 @@ const jsonLd = {
       name: 'Calculators Point',
       publisher: {
         '@id': `${SITE_URL}/#organization`,
+      },
+      // SiteLinksSearchBox — renders a search field inside Google's sitelinks panel
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${SITE_URL}/calculators?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
       },
     },
   ],
