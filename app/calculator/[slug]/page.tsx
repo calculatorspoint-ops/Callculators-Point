@@ -44,7 +44,8 @@ export async function generateMetadata(
   // Per-slug meta description overrides — for cases where the template produces awkward grammar.
   // Issue 6 fix: EMI calculator had self-referential auto-description.
   const DESC_OVERRIDES: Record<string, string> = {
-    'loan-emi-calculator': 'Calculate your monthly loan EMI instantly. See full amortization schedule, prepayment savings, and rate comparison for home, car, and personal loans. 100% free.',
+    'loan-emi-calculator': 'Calculate your monthly loan EMI instantly. Get full amortization schedule, prepayment savings, and compare rates for home, car, and personal loans. Free.',
+    'mortgage-calculator': 'Calculate your monthly mortgage payment, total interest, and amortization schedule. Compare fixed vs floating rates. Free online home loan calculator.',
     'bmi-calculator': 'Calculate your BMI instantly with WHO health risk classification, ideal weight range, and personalized insights. Free online Body Mass Index calculator.',
     'sip-calculator': 'Calculate SIP returns with step-up, XIRR, and wealth projections. See how monthly investments grow over 5, 10, 20, or 30 years. Free mutual fund SIP calculator.',
   };
@@ -53,12 +54,13 @@ export async function generateMetadata(
   const descTrimmed = calc.desc.length > 80
     ? calc.desc.slice(0, 77).replace(/[,.]?\s+\S+$/, '') + '…'
     : calc.desc;
+    
   const descTemplates = [
     `Free ${cleanName}: ${descTrimmed} Get step-by-step results and formulas instantly. 100% free and accurate.`,
-    `Calculate ${cleanName} online for free. ${descTrimmed} Instant, accurate results and step-by-step formulas.`,
+    `Calculate ${calcNameLower} online for free. ${descTrimmed} Instant, accurate results and step-by-step formulas.`,
     `Use our free ${cleanName}. ${descTrimmed} Explore formulas and get instant, accurate results every time.`,
     `Need a ${cleanName}? ${descTrimmed} 100% free online calculator with step-by-step guides.`,
-    `Estimate your ${cleanName} quickly and accurately. ${descTrimmed} Free online tool with complete formulas.`
+    `Quickly calculate ${calcNameLower} online. ${descTrimmed} Free tool with complete formulas and accurate results.`
   ];
   const templateIndex = slug.length % descTemplates.length;
   const description = DESC_OVERRIDES[slug] ?? descTemplates[templateIndex];
