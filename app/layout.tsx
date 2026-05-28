@@ -49,11 +49,18 @@ export const metadata: Metadata = {
     siteName: 'Calculators Point',
     title: 'Calculators Point — 180+ Free Online Calculators',
     description: '180+ free online calculators for finance, health, math, and everyday life.',
+    images: [{
+      url: 'https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=180%2B+Free+Calculators',
+      width: 1200,
+      height: 630,
+      alt: 'Calculators Point — 180+ Free Online Calculators',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Calculators Point — 180+ Free Online Calculators',
     description: '180+ free online calculators for finance, health, math, and everyday life.',
+    images: ['https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=180%2B+Free+Calculators'],
   },
   robots: {
     index: true,
