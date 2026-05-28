@@ -88,6 +88,32 @@ export default function Sitemap() {
           />
         )}
 
+        {/* Name Generators */}
+        <GROUP
+          title="Name Generators" icon="✨" color="#b45309" bg="#fffbeb"
+          links={[
+            { to: "/name-generators", label: "✨ All Name Generators" },
+            { to: "/name-generators/baby-name-generator", label: "👶 Baby Name Generator" },
+            { to: "/name-generators/islamic-baby-names", label: "🌙 Islamic Baby Names" },
+            { to: "/name-generators/business-name-generator", label: "🏢 Business Name Generator" },
+            { to: "/name-generators/brand-name-generator", label: "🏷️ Brand Name Generator" },
+            { to: "/name-generators/youtube-channel-name-generator", label: "▶️ YouTube Channel Name Generator" },
+            { to: "/name-generators/instagram-username-generator", label: "📸 Instagram Username Generator" },
+            { to: "/name-generators/domain-name-generator", label: "🌐 Domain Name Generator" },
+            { to: "/name-generators/app-name-generator", label: "📱 App Name Generator" },
+          ]}
+        />
+
+        {/* Ecosystem Hubs */}
+        <GROUP
+          title="Ecosystem Hubs" icon="🌐" color="#1e40af" bg="#dbeafe"
+          links={[
+            { to: "/ecosystem/finance", label: "💰 Finance Ecosystem" },
+            { to: "/ecosystem/fitness", label: "💪 Fitness Ecosystem" },
+            { to: "/ecosystem/education", label: "🎓 Education Ecosystem" },
+          ]}
+        />
+
         {/* XML sitemap link */}
         <div style={{ textAlign:"center", padding:"24px", background:"var(--surf2)", border:"1px solid var(--border)", borderRadius:"var(--r-xl)", marginTop:8 }}>
           <p style={{ fontSize:14, color:"var(--text2)", marginBottom:12 }}>
@@ -98,8 +124,8 @@ export default function Sitemap() {
             calculatorspoint.com/sitemap.xml
           </a>
           <p style={{ fontSize:12, color:"var(--text3)", marginTop:8 }}>
-            {/* Dynamic total: 1 homepage + 1 /calculators + 1 /cheat-sheets + 9 core static + categories + calculators + SEO pages */}
-            {(9 + CATEGORIES.length + ALL_CALCULATORS.filter(c => c.status !== 'coming-soon' && c.status !== 'draft').length + SEO_LANDING_PAGES.length).toLocaleString()} URLs · Updated {new Date().toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })}
+            {/* Dynamic total: 9 core + categories + calculators + SEO pages + 9 name generators + 3 ecosystem */}
+            {(9 + CATEGORIES.length + ALL_CALCULATORS.filter(c => c.status !== 'coming-soon' && c.status !== 'draft').length + SEO_LANDING_PAGES.length + 9 + 3).toLocaleString()} URLs · Updated {new Date().toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" })}
           </p>
         </div>
       </div>

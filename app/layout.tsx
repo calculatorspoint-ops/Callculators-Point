@@ -40,8 +40,8 @@ export const metadata: Metadata = {
   description:
     '180+ free online calculators for finance, health, math, education, and everyday life. Fast, accurate, and always free.',
 
-  authors: [{ name: 'CalculatorsPoint' }],
-  creator: 'CalculatorsPoint',
+  authors: [{ name: 'Calculators Point' }],
+  creator: 'Calculators Point',
   openGraph: {
     type: 'website',
     locale: 'en_US',

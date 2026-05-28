@@ -18,9 +18,13 @@ import { SITE_URL } from '@/config/site';
 import { QuickCalc } from '@/components/ui/QuickCalc';
 
 export const metadata: Metadata = {
-  // Issue 1 fix: <title> and og:title are now identical — prevents Google from
-  // rewriting the SERP title by pulling from og:title or H1.
-  title: 'Calculators Point — 180+ Free Online Calculators',
+  // Title: use `absolute` to bypass the root layout template ('%s | Calculators Point').
+  // Without `absolute`, Next.js would render "Calculators Point — 180+ Free Online Calculators | Calculators Point"
+  // while og:title stays clean — creating the exact mismatch the audit flagged.
+  // `absolute` guarantees <title> === og:title === "Calculators Point — 180+ Free Online Calculators".
+  title: {
+    absolute: 'Calculators Point — 180+ Free Online Calculators',
+  },
   description:
     '180+ free online calculators for finance, health, math, education & everyday life. EMI, BMI, SIP, GPA, tax, mortgage calculators — all fast, accurate, and free.',
   // Issue 2 fix: canonical uses SITE_URL (https://calculatorspoint.com — non-www),
