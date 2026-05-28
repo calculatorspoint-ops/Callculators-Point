@@ -15,6 +15,12 @@ export const metadata: Metadata = {
     url: 'https://calculatorspoint.com/name-generators',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Name Generator Tools — Baby, Business, Brand & More',
+    description: '8 free name generators: baby names, Islamic names, business, brand, YouTube, Instagram, domain & app names. Instant results.',
+    images: ['https://calculatorspoint.com/api/og?title=Name+Generator+Tools&icon=✨&cat=8+Free+Generators'],
+  },
   alternates: { canonical: 'https://calculatorspoint.com/name-generators' },
 };
 
