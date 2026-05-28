@@ -58,7 +58,7 @@ const GENERIC_FAQ = (calc: CalculatorConfig): { q: string; a: string }[] => {
   return [
     {
       q: `Is the ${calc.name} free to use?`,
-      a: `Yes, the ${calc.name} on CalculatorsPoint is completely free with no signup, no ads blocking usage, and no limits on how many times you can calculate.`,
+      a: `Yes, the ${calc.name} on Calculators Point is completely free with no signup, no ads blocking usage, and no limits on how many times you can calculate.`,
     },
     {
       q: `How accurate is this ${calc.name}?`,
@@ -74,11 +74,11 @@ const GENERIC_FAQ = (calc: CalculatorConfig): { q: string; a: string }[] => {
     },
     {
       q: `Does this calculator work offline?`,
-      a: `CalculatorsPoint is a Progressive Web App (PWA). Once visited, many calculators continue to work even without an internet connection. You can also add CalculatorsPoint to your home screen for quick access.`,
+      a: `Calculators Point is a Progressive Web App (PWA). Once visited, many calculators continue to work even without an internet connection. You can also add Calculators Point to your home screen for quick access.`,
     },
     {
       q: `Are there other ${catLabel} calculators available?`,
-      a: `Yes! CalculatorsPoint has a full suite of ${catLabel} calculators. Visit our ${catLabel} category page to explore all available tools.`,
+      a: `Yes! Calculators Point has a full suite of ${catLabel} calculators. Visit our ${catLabel} category page to explore all available tools.`,
     },
   ];
 };

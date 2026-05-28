@@ -48,7 +48,7 @@ export function PWAInstallPrompt() {
                 📱
             </div>
             <div className="flex flex-col">
-            <h4 className="font-bold text-sm">Install CalculatorsPoint Pro</h4>
+            <h4 className="font-bold text-sm">Install Calculators Point Pro</h4>
             <p className="text-xs text-[var(--text2)] font-medium">Access calculators offline anywhere.</p>
             </div>
         </div>

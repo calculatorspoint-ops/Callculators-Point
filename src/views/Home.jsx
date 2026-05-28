@@ -466,7 +466,7 @@ export default function Home({ skipHero } = {}) {
         </div>
 
         {/* ═══ WHY SECTION ════════════════════════════════════════════════════════ */}
-        <section className="home-why" aria-label="Why choose CalculatorsPoint">
+        <section className="home-why" aria-label="Why choose Calculators Point">
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 16px", background: "var(--brand-l)", borderRadius: 100, fontSize: 12, fontWeight: 700, color: "var(--brand)", marginBottom: 14 }}>
               <Calculator size={13} /> Why Calculators Point?

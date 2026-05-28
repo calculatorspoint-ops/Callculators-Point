@@ -17,7 +17,7 @@ interface ExportToolbarProps {
 
 export function ExportToolbar({
   targetSelector = '.calculator-result-zone',
-  filenamePrefix = 'CalculatorsPoint',
+  filenamePrefix = 'Calculators-Point',
 }: ExportToolbarProps) {
   const [isExporting, setIsExporting] = useState(false);
 

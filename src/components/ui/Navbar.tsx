@@ -275,7 +275,7 @@ export function Navbar() {
         <div className="navbar-inner">
 
           {/* ── Logo ── */}
-          <Link href="/" className="navbar-logo" aria-label="CalculatorsPoint home">
+          <Link href="/" className="navbar-logo" aria-label="Calculators Point home">
             <div className="navbar-logo-icon">
               <Calculator size={19} color="#fff" strokeWidth={2.5} />
             </div>

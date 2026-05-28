@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '404 — Page Not Found | CalculatorsPoint',
+  title: '404 — Page Not Found | Calculators Point',
   description: "Sorry, this page doesn't exist. Browse our 180+ free calculators.",
 };
 
