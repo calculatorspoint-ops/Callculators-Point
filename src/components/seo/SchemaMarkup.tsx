@@ -50,7 +50,7 @@ export function SchemaMarkup({ calc, cat, faqs }: SchemaMarkupProps) {
       {
         '@type': 'ListItem',
         position: 2,
-        name: cat ? `${cat.name} Calculators` : 'Calculators',
+        name: cat ? cat.name : 'Calculators',
         item: categoryUrl,
       },
       { '@type': 'ListItem', position: 3, name: calcDisplayName, item: pageUrl },

@@ -84,7 +84,7 @@ export default async function CategoryPage({
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
       { '@type': 'ListItem', position: 2, name: 'Calculators', item: `${SITE_URL}/calculators` },
-      { '@type': 'ListItem', position: 3, name: `${cat.name} Calculators`, item: pageUrl },
+      { '@type': 'ListItem', position: 3, name: cat.name, item: pageUrl },
     ],
   };
 
