@@ -66,6 +66,11 @@ const jsonLd = {
       name: 'Calculators Point',
       url: SITE_URL,
       logo: `${SITE_URL}/logo.png`,
+      sameAs: [
+        'https://twitter.com/CalculatorsPt',
+        'https://www.facebook.com/calculatorspoint',
+        'https://www.linkedin.com/company/calculatorspoint'
+      ]
     },
     {
       '@type': 'WebSite',
