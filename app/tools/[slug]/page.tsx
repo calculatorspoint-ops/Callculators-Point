@@ -6,7 +6,7 @@
  */
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import SEOLandingClient from './seo-landing-client';
+import SEOLandingPage from '@/views/SEOLandingPage';
 
 // Lazy-load landing data to avoid bundle bloat
 async function getLandingData(slug: string) {
@@ -53,7 +53,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function SEOLandingPage({
+export default async function ToolsLandingPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -61,5 +61,5 @@ export default async function SEOLandingPage({
   const { slug } = await params;
   const { landing } = await getLandingData(slug);
   if (!landing) notFound();
-  return <SEOLandingClient slug={slug} />;
+  return <SEOLandingPage slug={slug} />;
 }

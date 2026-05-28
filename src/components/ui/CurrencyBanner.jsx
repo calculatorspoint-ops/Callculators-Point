@@ -3,6 +3,7 @@
  * @description Finance-calculator banner that shows auto-detected country
  *   currency + tax rules. Fully powered by the geo-engine store.
  */
+'use client';
 import { useState } from 'react';
 import { ChevronDown, Check, Globe, Info, X } from 'lucide-react';
 import { useGeoStore } from '@/core/geo-engine/geoStore';

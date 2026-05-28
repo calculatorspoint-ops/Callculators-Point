@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, Suspense } from "react";
 import { CalculatorConfig } from "@/data/calculatorConfigs";
 import { useAppStore } from "@/store/useAppStore";

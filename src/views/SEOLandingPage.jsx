@@ -1,16 +1,12 @@
-'use client';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { getLandingBySlug } from "@/data/seoLandingData";
 import { getCalcBySlug, CATEGORIES } from "@/data/calculatorConfigs";
 import { ArrowRight, ChevronRight, CheckCircle2 } from "lucide-react";
 
-const CalculatorWidget = lazy(() =>
-  import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget }))
-);
-const CurrencyBanner = lazy(() => import('@/components/ui/CurrencyBanner'));
+import { CalculatorWidget } from '@/components/calculator-core/CalculatorWidget';
+import CurrencyBanner from '@/components/ui/CurrencyBanner';
 
 function Loader() {
   return (
