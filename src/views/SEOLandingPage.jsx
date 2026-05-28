@@ -22,8 +22,7 @@ function Loader() {
   );
 }
 
-export default function SEOLandingPage() {
-  const { slug } = useParams();
+export default function SEOLandingPage({ slug }) {
   const landing = getLandingBySlug(slug);
 
   if (!landing) redirect('/calculators'); return null;
