@@ -4,6 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Free Calculator Cheat Sheets & PDF Formulas | Calculators Point',
   description: 'Download free printable cheat sheets for finance formulas, student grading metrics, and everyday math. Perfect for students, teachers, and professionals.',
+  robots: 'noindex, nofollow',
 };
 
 export default function CheatSheetsPage() {
