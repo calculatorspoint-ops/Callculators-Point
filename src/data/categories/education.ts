@@ -16,7 +16,8 @@ export const educationCalculators: CalculatorConfig[] = [
     'Raising a single 3-credit course from C (2.0) to A (4.0) improves your semester GPA by roughly 0.5 points.',
     "Dean's List typically requires a 3.5+ GPA — focus on your highest-credit courses first for maximum impact.",
     'Graduate programs often require a minimum 3.0 GPA; many top programs look for 3.5+.'
-  ]
+  ],
+      about: `The GPA Calculator is an essential resource for anyone needing to weighted GPA with Deans List detection, semester tracking & what-if simulator. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'marks-percentage',
@@ -33,7 +34,8 @@ export const educationCalculators: CalculatorConfig[] = [
     '90%+ is generally considered Distinction, 75-89% Merit, 60-74% Credit, 40-59% Pass.',
     'Use Reverse Mode to find how many marks you need to achieve a specific percentage target.',
     'Per-subject analysis helps identify which subjects need the most improvement.'
-  ]
+  ],
+      about: `If you want to multi-subject percentage with grade estimation, visual charts & reverse mode, the Marks Percentage Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'attendance',
@@ -51,7 +53,8 @@ export const educationCalculators: CalculatorConfig[] = [
     'Most universities require 75% minimum attendance to sit for exams.',
     'Safe Bunks = how many classes you can skip without falling below minimum.',
     'Switch to Bunk Planner mode to see subject-wise safe bunk counts.'
-  ]
+  ],
+      about: `The Attendance Calculator offers a hassle-free way to bunk planner, safe leave estimator & attendance warning system with subject tracker. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'final-grade',
@@ -68,7 +71,8 @@ export const educationCalculators: CalculatorConfig[] = [
     'Leave the score blank for pending assignments to calculate what you need on them.',
     'Best Case / Worst Case scenarios show your realistic grade range.',
     "Switch grading scale (US/UK/German) to match your institution's system."
-  ]
+  ],
+      about: `If you want to weighted final grade with scenario analysis, pass/fail prediction & multiple grading scales, the Final Grade Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'cgpa-to-percent',
@@ -87,7 +91,8 @@ export const educationCalculators: CalculatorConfig[] = [
     'Different universities use different CGPA-to-percentage formulas — always verify with your institution.',
     'HEC Pakistan uses CGPA × 10 as the standard formula.',
     'VTU Bangalore uses (SGPA - 0.5) × 10 for their unique formula.'
-  ]
+  ],
+      about: `The CGPA to Percentage offers a hassle-free way to cGPA conversion with 5 university formulas incl. HEC Pakistan, VTU & Anna University. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'ielts',
@@ -105,7 +110,8 @@ export const educationCalculators: CalculatorConfig[] = [
     'IELTS overall band is rounded to the nearest 0.5 or whole number using official rounding rules.',
     'Band 7.0 is the standard requirement for most UK and Australian universities.',
     'Listening and Reading are marked from raw scores out of 40 — use raw score mode for accuracy.'
-  ]
+  ],
+      about: `Stop guessing and start using the IELTS Band Calculator to get immediate, accurate data. Specifically engineered to official IELTS band scoring with L/R/W/S section analysis & university eligibility check, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'sat',
@@ -123,7 +129,8 @@ export const educationCalculators: CalculatorConfig[] = [
     'A 1400+ SAT score puts you in the top 6% of test takers globally.',
     'The Digital SAT (2024+) has two modules per section — difficulty adapts based on your Module 1 performance.',
     'Score improvements of 100+ points are common with 6–8 weeks of structured preparation.'
-  ]
+  ],
+      about: `Stop guessing and start using the SAT Score Calculator to get immediate, accurate data. Specifically engineered to digital SAT section scoring with percentile rank & university admission comparison, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'study-timer',
@@ -139,7 +146,8 @@ export const educationCalculators: CalculatorConfig[] = [
     'The Pomodoro Technique (25-min focus + 5-min break) is backed by research to improve sustained attention.',
     'After 4 Pomodoros, take a longer 15-30 minute break to restore mental energy.',
     'Tracking study sessions builds accountability — consistent 2-hour daily sessions outperform irregular 6-hour marathons.'
-  ]
+  ],
+      about: `The Study Timer offers a hassle-free way to pomodoro timer with focus analytics, streak tracking & productivity insights. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'target-gpa',
@@ -156,7 +164,8 @@ export const educationCalculators: CalculatorConfig[] = [
     "The more credits you've already earned, the harder it is to significantly change your GPA.",
     'Plan multiple semesters to see a realistic GPA trajectory toward your graduation goal.',
     'If required GPA exceeds 4.0, you need to either take more credits or lower your target.'
-  ]
+  ],
+      about: `The Target GPA Calculator offers a hassle-free way to gPA goal planner with future semester simulation & feasibility analysis. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'required-grade',
@@ -173,6 +182,7 @@ export const educationCalculators: CalculatorConfig[] = [
     'Leave any assignment score blank to calculate what you need on it.',
     'Weights must sum to 100% for accurate results.',
     'Best Case shows your maximum possible grade; Worst Case shows your guaranteed minimum.'
-  ]
+  ],
+      about: `Stop guessing and start using the Required Grade Calculator to get immediate, accurate data. Specifically engineered to score needed on pending work with weighted assignments & what-if grade scenarios, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
 ];

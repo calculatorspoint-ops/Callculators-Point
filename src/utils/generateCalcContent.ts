@@ -84,6 +84,10 @@ const GENERIC_FAQ = (calc: CalculatorConfig): { q: string; a: string }[] => {
 };
 
 function generateAbout(calc: CalculatorConfig): string {
+  if (calc.about) {
+    return calc.about;
+  }
+
   const catCtx = CATEGORY_CONTEXT[calc.cat] ?? 'complex calculations';
   const audience = CATEGORY_AUDIENCE[calc.cat] ?? 'users';
 

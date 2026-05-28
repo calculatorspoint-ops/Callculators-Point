@@ -40,6 +40,7 @@ export interface CalculatorConfig {
   limitations?: string[];
   whenToUse?: string;
   resultMeaning?: string;
+  about?: string;
 }
 
 export const CATEGORIES: CalculatorCategory[] = [

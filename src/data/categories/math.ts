@@ -10,7 +10,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: '6 simultaneous modes: X% of Y, what %, change, increase & decrease',
   popular: true,
   hasChart: false,
-  isNew: false
+  isNew: false,
+      about: `We built the Percentage Calculator specifically to 6 simultaneous modes: X% of Y, what %, change, increase & decrease. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'scientific',
@@ -21,7 +22,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Expression parser with trig, log, exp, history & DEG/RAD toggle',
   popular: true,
   hasChart: false,
-  isNew: false
+  isNew: false,
+      about: `The Scientific Calculator is an essential resource for anyone needing to expression parser with trig, log, exp, history & DEG/RAD toggle. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'statistics',
@@ -32,7 +34,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Mean, median, mode, std dev, IQR, quartiles & histogram',
   popular: false,
   hasChart: true,
-  isNew: false
+  isNew: false,
+      about: `Stop guessing and start using the Statistics Calculator to get immediate, accurate data. Specifically engineered to mean, median, mode, std dev, IQR, quartiles & histogram, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'quadratic',
@@ -43,7 +46,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Solve ax²+bx+c=0 with roots, vertex & parabola chart',
   popular: false,
   hasChart: true,
-  isNew: false
+  isNew: false,
+      about: `Stop guessing and start using the Quadratic Formula to get immediate, accurate data. Specifically engineered to solve ax²+bx+c=0 with roots, vertex & parabola chart, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'pythagoras',
@@ -54,7 +58,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Find any triangle side with area and perimeter',
   popular: false,
   hasChart: false,
-  isNew: false
+  isNew: false,
+      about: `We built the Pythagorean Theorem specifically to find any triangle side with area and perimeter. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'fractions',
@@ -65,7 +70,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Add/subtract/multiply/divide with simplified result & mixed number',
   popular: false,
   hasChart: false,
-  isNew: false
+  isNew: false,
+      about: `Stop guessing and start using the Fraction Calculator to get immediate, accurate data. Specifically engineered to add/subtract/multiply/divide with simplified result & mixed number, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'area',
@@ -76,7 +82,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Area & perimeter of 5 shapes: rectangle, circle, triangle, square, trapezoid',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Area Calculator is an essential resource for anyone needing to area & perimeter of 5 shapes: rectangle, circle, triangle, square, trapezoid. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'prime-checker',
@@ -87,7 +94,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Instant prime check with factors and first 25 primes reference',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `Whether you're a professional or just looking for quick answers, the Prime Number Checker provides an instant solution for your needs. It helps you instant prime check with factors and first 25 primes reference. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
 },
   {
   id: 'log',
@@ -98,7 +106,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Calculate log base 2, 10, e, and any custom base with step-by-step solution',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Logarithm Calculator is an essential resource for anyone needing to calculate log base 2, 10, e, and any custom base with step-by-step solution. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'ratio',
@@ -109,7 +118,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Simplify ratios, find missing values, and scale recipes or mixtures',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `If you want to simplify ratios, find missing values, and scale recipes or mixtures, the Ratio Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'lcm-gcf',
@@ -122,7 +132,8 @@ export const mathCalculators: CalculatorConfig[] = [
   hasChart: false,
   isNew: true,
   formula: 'GCF via Euclidean Algorithm: GCF(a,b) = GCF(b, a mod b)\n' +
-    'LCM(a,b) = |a × b| / GCF(a,b)'
+    'LCM(a,b) = |a × b| / GCF(a,b)',
+      about: `We built the LCM & GCF Calculator specifically to least Common Multiple and Greatest Common Factor with step-by-step solution. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'factor',
@@ -133,7 +144,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'All factors and prime factorization of any integer with visual breakdown',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Factor Calculator offers a hassle-free way to all factors and prime factorization of any integer with visual breakdown. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'volume',
@@ -144,7 +156,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Volume of cube, sphere, cylinder, cone and other 3D shapes',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `We built the Volume Calculator specifically to volume of cube, sphere, cylinder, cone and other 3D shapes. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'triangle',
@@ -155,7 +168,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Solve any triangle — sides, angles, area, perimeter (SSS, SAS, ASA, AAS)',
   popular: true,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `If you want to solve any triangle — sides, angles, area, perimeter (SSS, SAS, ASA, AAS), the Triangle Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'circle',
@@ -166,7 +180,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Circumference, area, diameter and arc length from radius or diameter',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `We built the Circle Calculator specifically to circumference, area, diameter and arc length from radius or diameter. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'z-score',
@@ -178,7 +193,8 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-  formula: 'Z = (X - μ) / σ'
+  formula: 'Z = (X - μ) / σ',
+      about: `If you want to standardize data points with Z-score, percentile rank and normal distribution, the Z-Score Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'permutation',
@@ -190,7 +206,8 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-  formula: 'P(n,r) = n! / (n-r)!\nC(n,r) = n! / (r! × (n-r)!)'
+  formula: 'P(n,r) = n! / (n-r)!\nC(n,r) = n! / (r! × (n-r)!)',
+      about: `If you want to nPr and nCr calculations with factorial steps and formula explanation, the Permutation & Combination is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'average',
@@ -201,7 +218,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Mean, weighted mean, and running average for any dataset',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Average Calculator is an essential resource for anyone needing to mean, weighted mean, and running average for any dataset. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'matrix',
@@ -212,7 +230,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Matrix addition, subtraction, multiplication, determinant and inverse operations',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Matrix Calculator is an essential resource for anyone needing to matrix addition, subtraction, multiplication, determinant and inverse operations. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'linear-equation',
@@ -223,7 +242,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Solve single and system of linear equations with step-by-step solution',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `We built the Linear Equation Solver specifically to solve single and system of linear equations with step-by-step solution. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'random-number',
@@ -234,7 +254,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Generate random integers or decimals with custom range and count',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `Whether you're a professional or just looking for quick answers, the Random Number Generator provides an instant solution for your needs. It helps you generate random integers or decimals with custom range and count. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
 },
   {
   id: 'percent-error',
@@ -249,7 +270,8 @@ export const mathCalculators: CalculatorConfig[] = [
   formula: '% Error = |Experimental - Theoretical| / |Theoretical| × 100',
   tips: [
     'A percent error under 5% is generally considered acceptable in most scientific experiments.'
-  ]
+  ],
+      about: `The Percent Error Calculator offers a hassle-free way to calculate percent error between experimental and theoretical values. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'surface-area',
@@ -260,7 +282,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Surface area of 6 3D shapes: cube, sphere, cylinder, cone, pyramid and rectangular prism',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Surface Area Calculator is an essential resource for anyone needing to surface area of 6 3D shapes: cube, sphere, cylinder, cone, pyramid and rectangular prism. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'exponent',
@@ -271,7 +294,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Calculate base raised to any power with scientific notation output and step-by-step display',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Exponent Calculator is an essential resource for anyone needing to calculate base raised to any power with scientific notation output and step-by-step display. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'root',
@@ -282,7 +306,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: "Calculate nth root of any number with Newton's method steps and verification",
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `Stop guessing and start using the Root Calculator to get immediate, accurate data. Specifically engineered to calculate nth root of any number with Newtons method steps and verification, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'binary-calc',
@@ -293,7 +318,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Binary arithmetic (add, subtract, multiply) with step-by-step conversion and multi-base output',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Binary Calculator offers a hassle-free way to binary arithmetic (add, subtract, multiply) with step-by-step conversion and multi-base output. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'number-seq',
@@ -304,7 +330,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Arithmetic, geometric and Fibonacci sequences with nth term formula, sum formula and first 10 terms',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `If you want to arithmetic, geometric and Fibonacci sequences with nth term formula, sum formula and first 10 terms, the Number Sequence is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'probability',
@@ -315,7 +342,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Single and compound event probability (AND/OR) with odds, complement and expected value',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `The Probability Calculator offers a hassle-free way to single and compound event probability (AND/OR) with odds, complement and expected value. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'confidence-interval',
@@ -326,7 +354,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Confidence interval for sample data with margin of error and statistical interpretation',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `If you want to confidence interval for sample data with margin of error and statistical interpretation, the Confidence Interval is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'sample-size',
@@ -337,7 +366,8 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: 'Required sample size for surveys and A/B tests by confidence level and margin of error',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `Whether you're a professional or just looking for quick answers, the Sample Size Calculator provides an instant solution for your needs. It helps you required sample size for surveys and A/B tests by confidence level and margin of error. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
 },
   {
   id: 'distance',
@@ -348,6 +378,7 @@ export const mathCalculators: CalculatorConfig[] = [
   desc: '2D distance between two coordinates with midpoint, slope and line equation',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `We built the Distance Calculator specifically to 2D distance between two coordinates with midpoint, slope and line equation. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
 ];

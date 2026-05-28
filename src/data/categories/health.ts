@@ -32,7 +32,8 @@ export const healthCalculators: CalculatorConfig[] = [
     'Enter your current weight.',
     'Enter your height.',
     'Instantly see your BMI score, WHO category, and ideal weight range.'
-  ]
+  ],
+      about: `Our BMI Calculator offers a straightforward way to check your Body Mass Index against official WHO health risk classifications and ideal weight ranges. Whether you are tracking your fitness journey or working with a healthcare professional, this utility takes the complexity out of finding your healthy range. You can easily plug in your height and weight to instantly see your personalized insights.`
 },
   {
   id: 'calorie',
@@ -46,7 +47,8 @@ export const healthCalculators: CalculatorConfig[] = [
   isNew: false,
   tips: [
     'Total Daily Energy Expenditure (TDEE) is the total number of calories you burn per day, including basal metabolic rate and physical activity.'
-  ]
+  ],
+      about: `We built the Calorie Calculator specifically to tDEE with 5 goals, 2 formulas, macros & weekly weight projection. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'bmr',
@@ -64,7 +66,8 @@ export const healthCalculators: CalculatorConfig[] = [
   tips: [
     'Mifflin-St Jeor is considered the most clinically accurate BMR formula for most adults.',
     'BMR accounts for 60-75% of total daily calories — your body burns most energy just staying alive.'
-  ]
+  ],
+      about: `We built the BMR Calculator specifically to mifflin vs Harris-Benedict with TDEE at all 5 activity levels. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'body-fat',
@@ -80,7 +83,8 @@ export const healthCalculators: CalculatorConfig[] = [
   formula: 'Men: BF% = 495/(1.0324 - 0.19077×log₁₀(waist-neck) + 0.15456×log₁₀(height)) - 450',
   tips: [
     'The Navy method is surprisingly accurate (within 3-4% of DEXA scans) and requires only a tape measure.'
-  ]
+  ],
+      about: `If you want to body fat % using US Navy method with category classification, the Body Fat Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'ideal-weight',
@@ -94,7 +98,8 @@ export const healthCalculators: CalculatorConfig[] = [
   isNew: false,
   tips: [
     "No single formula is 'correct' — we show all four plus the BMI range so you can see the consensus."
-  ]
+  ],
+      about: `Whether you're a professional or just looking for quick answers, the Ideal Weight provides an instant solution for your needs. It helps you 4-formula comparison: Devine, Miller, Robinson & Hamwi with BMI range. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
 },
   {
   id: 'macro',
@@ -109,7 +114,8 @@ export const healthCalculators: CalculatorConfig[] = [
   tips: [
     'Protein: 4 cal/g · Carbs: 4 cal/g · Fat: 9 cal/g. Fat has more than double the calories per gram.',
     'Most adults need 1.6-2.2g protein per kg bodyweight for optimal muscle maintenance.'
-  ]
+  ],
+      about: `We built the Macro Calculator specifically to protein/carbs/fat targets by goal with donut chart. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'water-intake',
@@ -125,7 +131,8 @@ export const healthCalculators: CalculatorConfig[] = [
     'Adjusted for activity (+300-1000ml) and climate (+300-500ml)',
   tips: [
     'Thirst is a late indicator of dehydration — drink water on schedule, not just when thirsty.'
-  ]
+  ],
+      about: `We built the Water Intake specifically to daily water needs by weight, activity & climate. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'heart-rate',
@@ -141,7 +148,8 @@ export const healthCalculators: CalculatorConfig[] = [
   tips: [
     'Zone 2 training (60-70% HRR) builds aerobic base and maximizes fat oxidation.',
     'The 220-age formula has ~10 bpm error margin — a lab VO2 max test gives your true max HR.'
-  ]
+  ],
+      about: `Stop guessing and start using the Heart Rate Zones to get immediate, accurate data. Specifically engineered to 5 training zones using Karvonen formula, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'pregnancy',
@@ -157,7 +165,8 @@ export const healthCalculators: CalculatorConfig[] = [
     "Naegele's Rule: LMP + 1 year - 3 months + 7 days",
   tips: [
     "Only ~5% of babies arrive on their exact due date. A 'normal' full-term delivery is 37-42 weeks."
-  ]
+  ],
+      about: `The Pregnancy Due Date is an essential resource for anyone needing to due date via Naegeles Rule with milestone tracker. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'one-rep-max',
@@ -172,7 +181,8 @@ export const healthCalculators: CalculatorConfig[] = [
   formula: 'Epley: 1RM = Weight × (1 + Reps/30)\nBrzycki: 1RM = Weight × 36/(37 - Reps)',
   tips: [
     'Train at 70-85% of 1RM for hypertrophy (muscle growth) and 85-95% for maximum strength development.'
-  ]
+  ],
+      about: `We built the One Rep Max specifically to 1RM via 3 formulas + full training percentage table. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'period',
@@ -188,7 +198,8 @@ export const healthCalculators: CalculatorConfig[] = [
     'Cycle length varies naturally 21–35 days. 28 days is the statistical average, not the rule.',
     'Tracking 3+ past cycles lets the engine personalize your fertile window prediction.',
     'Ovulation usually occurs 14 days BEFORE your next period — not 14 days after your last one.'
-  ]
+  ],
+      about: `The Period & Cycle Calculator offers a hassle-free way to adaptive cycle prediction with ovulation window, fertile days, phase visualization, irregular cycle detection & health insights. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'ovulation',
@@ -205,7 +216,8 @@ export const healthCalculators: CalculatorConfig[] = [
   tips: [
     'Sperm can survive up to 5 days, but eggs only 12–24 hours — the fertile window is wider than ovulation itself.',
     'Ovulation timing varies even in regular cycles — track 3+ months for best accuracy.'
-  ]
+  ],
+      about: `Stop guessing and start using the Ovulation Calculator to get immediate, accurate data. Specifically engineered to predict your ovulation date and fertile window based on your cycle length, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'fertility',
@@ -220,7 +232,8 @@ export const healthCalculators: CalculatorConfig[] = [
   tips: [
     'Peak fertility is the 2 days around ovulation. The full fertile window spans up to 6 days.',
     'Use alongside ovulation predictor kits for highest accuracy.'
-  ]
+  ],
+      about: `The Fertile Window Calculator offers a hassle-free way to calculate your exact fertile days for natural conception planning. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'implantation',
@@ -235,7 +248,8 @@ export const healthCalculators: CalculatorConfig[] = [
   formula: 'Implantation Window = Ovulation Day + 6 to 12 days',
   tips: [
     'Implantation typically occurs 6–12 days after ovulation. Light spotting during this window is normal.'
-  ]
+  ],
+      about: `Stop guessing and start using the Implantation Calculator to get immediate, accurate data. Specifically engineered to estimate your implantation window — when a fertilized egg attaches to the uterus, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'sleep',
@@ -252,7 +266,8 @@ export const healthCalculators: CalculatorConfig[] = [
   tips: [
     'Each sleep cycle is ~90 minutes. Waking mid-cycle causes grogginess.',
     'Adults need 7–9 hours (5–6 cycles). Teens need 8–10 hours.'
-  ]
+  ],
+      about: `The Sleep Calculator offers a hassle-free way to calculate ideal bedtimes and wake times based on 90-min REM sleep cycles. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'calories-burned',
@@ -267,7 +282,8 @@ export const healthCalculators: CalculatorConfig[] = [
   formula: 'Calories = MET × Weight(kg) × Duration(hours)',
   tips: [
     'MET (Metabolic Equivalent of Task) measures exercise intensity. Running at 8km/h = MET 8, walking = MET 3.5.'
-  ]
+  ],
+      about: `We built the Calories Burned specifically to calories burned by 30+ exercises using MET values and body weight. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'body-type',
@@ -278,7 +294,8 @@ export const healthCalculators: CalculatorConfig[] = [
   desc: 'Determine your somatotype (ectomorph, mesomorph, endomorph) with training advice',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `Stop guessing and start using the Body Type Calculator to get immediate, accurate data. Specifically engineered to determine your somatotype (ectomorph, mesomorph, endomorph) with training advice, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
 },
   {
   id: 'gfr',
@@ -289,7 +306,8 @@ export const healthCalculators: CalculatorConfig[] = [
   desc: 'Glomerular filtration rate (kidney function) using CKD-EPI formula',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `Whether you're a professional or just looking for quick answers, the GFR Calculator provides an instant solution for your needs. It helps you glomerular filtration rate (kidney function) using CKD-EPI formula. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
 },
   {
   id: 'bsa',
@@ -301,7 +319,8 @@ export const healthCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: true,
-  formula: 'Mosteller: BSA = √(Height(cm) × Weight(kg) / 3600)'
+  formula: 'Mosteller: BSA = √(Height(cm) × Weight(kg) / 3600)',
+      about: `Whether you're a professional or just looking for quick answers, the BSA Calculator provides an instant solution for your needs. It helps you body Surface Area using Mosteller, DuBois and Haycock formulas with drug dosage reference. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
 },
   {
   id: 'bac',
@@ -316,7 +335,8 @@ export const healthCalculators: CalculatorConfig[] = [
   formula: 'BAC = (Alcohol grams / (Body weight × r)) - (0.015 × Hours)\nr = 0.68 for men, 0.55 for women',
   tips: [
     'Your liver clears ~0.015% BAC per hour. A BAC of 0.08% takes 5-6 hours to clear.'
-  ]
+  ],
+      about: `The BAC Calculator is an essential resource for anyone needing to blood Alcohol Content by drink type with legal limits, time-to-sober chart and safety tips. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
 },
   {
   id: 'lean-body-mass',
@@ -328,7 +348,8 @@ export const healthCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: true,
-  formula: 'LBM = Weight × (1 - Body Fat%)'
+  formula: 'LBM = Weight × (1 - Body Fat%)',
+      about: `The Lean Body Mass offers a hassle-free way to lean muscle mass using Boer, James and Hume formulas with fat vs lean body composition chart. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'protein',
@@ -343,7 +364,8 @@ export const healthCalculators: CalculatorConfig[] = [
   formula: 'Protein = Weight(kg) × 1.6-2.2g (active adults)',
   tips: [
     'Athletes need 1.6-2.2g/kg. Aim for 30-40g protein per meal for optimal muscle synthesis.'
-  ]
+  ],
+      about: `We built the Protein Calculator specifically to daily protein needs by body weight, activity level and goal with food source breakdown. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
 },
   {
   id: 'healthy-weight',
@@ -354,7 +376,8 @@ export const healthCalculators: CalculatorConfig[] = [
   desc: 'Healthy weight range using BMI, Hamwi, Devine and Miller formulas with BMI zone chart',
   popular: false,
   hasChart: true,
-  isNew: true
+  isNew: true,
+      about: `The Healthy Weight Calculator offers a hassle-free way to healthy weight range using BMI, Hamwi, Devine and Miller formulas with BMI zone chart. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'fat-intake',
@@ -368,7 +391,8 @@ export const healthCalculators: CalculatorConfig[] = [
   isNew: true,
   tips: [
     '20-35% of total calories from fat is healthy. Keep saturated fat below 10% of calories.'
-  ]
+  ],
+      about: `The Fat Intake Calculator offers a hassle-free way to daily fat targets with saturated/unsaturated breakdown and full macro distribution chart. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
 },
   {
   id: 'army-body-fat',
@@ -379,7 +403,8 @@ export const healthCalculators: CalculatorConfig[] = [
   desc: 'US Army body fat using circumference measurements with pass/fail against age-based regulation limits',
   popular: false,
   hasChart: true,
-  isNew: true
+  isNew: true,
+      about: `If you want to uS Army body fat using circumference measurements with pass/fail against age-based regulation limits, the Army Body Fat Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
   {
   id: 'conception',
@@ -390,6 +415,7 @@ export const healthCalculators: CalculatorConfig[] = [
   desc: 'Estimated conception date from due date or LMP with implantation window and pregnancy milestones',
   popular: false,
   hasChart: false,
-  isNew: true
+  isNew: true,
+      about: `If you want to estimated conception date from due date or LMP with implantation window and pregnancy milestones, the Conception Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
 },
 ];
