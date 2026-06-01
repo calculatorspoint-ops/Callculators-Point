@@ -97,6 +97,9 @@ export default function Contact() {
       <div className="page-wrap" style={{ maxWidth:960 }}>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 340px", gap:28 }} id="contact-grid">
           <style>{`@media(max-width:768px){#contact-grid{grid-template-columns:1fr!important}}`}</style>
+          <div style={{ background: "red", color: "white", padding: 10, gridColumn: "1 / -1" }}>
+            DEBUG: API KEY START: {process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.substring(0, 5) || "MISSING"} | PROJECT: {process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "MISSING"}
+          </div>
 
           {/* ═══ FORM ═══════════════════════════════════════════════ */}
           <div>
