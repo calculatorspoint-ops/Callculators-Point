@@ -1,13 +1,18 @@
 /**
- * POST /api/contact
+ * POST /api/contact — v3 (REST API + AbortController timeout)
  *
  * Server-side API route for contact form submissions.
  * Uses the Firestore REST API directly (no Firebase SDK).
- * This works perfectly in serverless environments like Vercel.
  */
 import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
+export const maxDuration = 10; // Vercel function timeout
+
+// GET endpoint to verify which version is deployed
+export async function GET() {
+  return NextResponse.json({ version: 'v3-rest-api', status: 'ok' });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,10 +45,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use Firestore REST API — no SDK, no persistent connections
+    // Firestore REST API URL
     const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/contact_messages?key=${apiKey}`;
-
-    const now = new Date().toISOString();
 
     const firestoreDoc = {
       fields: {
@@ -52,16 +55,23 @@ export async function POST(request: NextRequest) {
         type:        { stringValue: type },
         subject:     { stringValue: subject?.trim() || '' },
         message:     { stringValue: message.trim() },
-        submittedAt: { timestampValue: now },
+        submittedAt: { timestampValue: new Date().toISOString() },
         status:      { stringValue: 'unread' },
       },
     };
+
+    // Abort after 8 seconds to avoid Vercel function hanging
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
     const res = await fetch(firestoreUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(firestoreDoc),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!res.ok) {
       const errBody = await res.text();
@@ -73,7 +83,6 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await res.json();
-    // Extract doc ID from the name field (e.g., "projects/.../documents/contact_messages/ABC123")
     const docId = result.name?.split('/').pop() || 'unknown';
 
     return NextResponse.json({ success: true, id: docId });
@@ -81,7 +90,7 @@ export async function POST(request: NextRequest) {
     const errMsg = error instanceof Error ? error.message : String(error);
     console.error('Contact form error:', errMsg);
     return NextResponse.json(
-      { error: 'Failed to submit. Please try again.' },
+      { error: errMsg.includes('abort') ? 'Request timed out' : 'Failed to submit. Please try again.' },
       { status: 500 }
     );
   }
