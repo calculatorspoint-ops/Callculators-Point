@@ -12,6 +12,7 @@
  */
 import type { Viewport, Metadata } from 'next';
 import Script from 'next/script';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import '../src/styles/index.css';
 import '../src/styles/mobile.css';
@@ -127,6 +128,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', 'G-RZ1T9JVXMV');
           `}
         </Script>
+
+        {/* ── Vercel Speed Insights — monitors real-user performance metrics ── */}
+        <SpeedInsights />
       </body>
     </html>
   );
