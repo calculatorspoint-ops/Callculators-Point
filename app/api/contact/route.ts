@@ -2,8 +2,8 @@
  * POST /api/contact
  *
  * Server-side API route for contact form submissions.
- * The browser sends a normal fetch() to this endpoint,
- * and the SERVER writes to Firestore — no client-side Firebase needed.
+ * Uses the Firestore REST API directly (no Firebase SDK).
+ * This works perfectly in serverless environments like Vercel.
  */
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -29,44 +29,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Dynamically import Firebase to avoid module-level initialization issues
-    const { initializeApp, getApps, getApp } = await import('firebase/app');
-    const { getFirestore, collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
-    const firebaseConfig = {
-      apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-      authDomain:        process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-      projectId:         process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      storageBucket:     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-      appId:             process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-      measurementId:     process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-    };
-
-    // Check if config is present
-    if (!firebaseConfig.projectId) {
-      console.error('Firebase config missing — projectId is undefined');
+    if (!projectId || !apiKey) {
+      console.error('Firebase config missing');
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
       );
     }
 
-    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-    const db = getFirestore(app);
+    // Use Firestore REST API — no SDK, no persistent connections
+    const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/contact_messages?key=${apiKey}`;
 
-    // Write to Firestore
-    const docRef = await addDoc(collection(db, 'contact_messages'), {
-      name:        name.trim(),
-      email:       email.trim(),
-      type,
-      subject:     subject?.trim() || '',
-      message:     message.trim(),
-      submittedAt: serverTimestamp(),
-      status:      'unread',
+    const now = new Date().toISOString();
+
+    const firestoreDoc = {
+      fields: {
+        name:        { stringValue: name.trim() },
+        email:       { stringValue: email.trim() },
+        type:        { stringValue: type },
+        subject:     { stringValue: subject?.trim() || '' },
+        message:     { stringValue: message.trim() },
+        submittedAt: { timestampValue: now },
+        status:      { stringValue: 'unread' },
+      },
+    };
+
+    const res = await fetch(firestoreUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(firestoreDoc),
     });
 
-    return NextResponse.json({ success: true, id: docRef.id });
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error('Firestore REST error:', res.status, errBody);
+      return NextResponse.json(
+        { error: 'Failed to save message' },
+        { status: 500 }
+      );
+    }
+
+    const result = await res.json();
+    // Extract doc ID from the name field (e.g., "projects/.../documents/contact_messages/ABC123")
+    const docId = result.name?.split('/').pop() || 'unknown';
+
+    return NextResponse.json({ success: true, id: docId });
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : String(error);
     console.error('Contact form error:', errMsg);
