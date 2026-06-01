@@ -50,17 +50,27 @@ export default function Contact() {
     setLoading(true);
     setSubmitError("");
     try {
-      // ✅ Saves directly to Firestore — visible in Firebase Console instantly
-      await submitContactForm({
-        name:    form.name.trim(),
-        email:   form.email.trim(),
-        type:    form.type,
-        subject: form.subject.trim(),
-        message: form.message.trim(),
-      });
+      // Timeout after 10s — prevents infinite loading if Firebase is unreachable
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), 10000)
+      );
+      await Promise.race([
+        submitContactForm({
+          name:    form.name.trim(),
+          email:   form.email.trim(),
+          type:    form.type,
+          subject: form.subject.trim(),
+          message: form.message.trim(),
+        }),
+        timeout,
+      ]);
       setSubmitted(true);
-    } catch {
-      setSubmitError("Something went wrong. Please try again in a moment.");
+    } catch (err) {
+      setSubmitError(
+        err?.message === "timeout"
+          ? "Request timed out. Please check your connection and try again."
+          : "Something went wrong. Please try again in a moment."
+      );
     } finally {
       setLoading(false);
     }
