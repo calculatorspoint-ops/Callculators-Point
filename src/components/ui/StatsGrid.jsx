@@ -2,12 +2,10 @@ export function StatsGrid({ items }) {
   if (!items?.length) return null;
   const valid = items.filter(Boolean);
   if (!valid.length) return null;
-  const cols = valid.length <= 2 ? 2 : valid.length === 3 ? 3 : valid.length <= 4 ? 2 : 3;
 
   return (
     <div style={{
       display: "grid",
-      gridTemplateColumns: "repeat(" + cols + ", 1fr)",
       gap: 10, marginTop: 14
     }}
       className="sc-stats-grid"
@@ -32,7 +30,7 @@ export function StatsGrid({ items }) {
                 : "var(--sh1)"
           }}>
             <div style={{
-              fontSize: 10, fontWeight: 800, textTransform: "uppercase",
+              fontSize: 11, fontWeight: 800, textTransform: "uppercase",
               letterSpacing: ".06em",
               color: isHi ? "#065f46" : isWarn ? "#dc2626" : "var(--text3)",
               marginBottom: 6,
@@ -41,8 +39,8 @@ export function StatsGrid({ items }) {
               {item.label}
             </div>
             <div style={{
-              fontFamily: "var(--font-hd)", fontSize: "clamp(14px,3vw,18px)",
-              fontWeight: 800, letterSpacing: "-.03em", lineHeight: 1.1,
+              fontFamily: "var(--font-hd)", fontSize: "clamp(15px,2.5vw,18px)",
+              fontWeight: 800, letterSpacing: "-.02em", lineHeight: 1.15,
               color: isHi ? "#065f46" : isWarn ? "#dc2626" : "var(--text)"
             }}>
               {item.value}
