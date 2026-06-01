@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type Theme = "light" | "dark";
 export type UnitSystem = "metric" | "imperial";
@@ -103,6 +103,12 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "CalculatorsPoint-v3",
+      storage: createJSONStorage(() => localStorage),
+      // CRITICAL: skipHydration prevents Zustand from reading localStorage during
+      // SSR/initial render. Without this, server renders theme:"light" but client
+      // immediately reads "dark" from localStorage → React hydration mismatch.
+      // We manually call rehydrate() in ClientProviders after the component mounts.
+      skipHydration: true,
       partialize: s => ({
         theme:         s.theme,
         currency:      s.currency,

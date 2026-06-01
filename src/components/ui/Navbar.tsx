@@ -256,7 +256,10 @@ export function Navbar() {
   const [mob, setMob]         = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -277,7 +280,7 @@ export function Navbar() {
           {/* ── Logo ── */}
           <Link href="/" className="navbar-logo" aria-label="Calculators Point home">
             <div className="navbar-logo-icon">
-              <Calculator size={19} color="#fff" strokeWidth={2.5} />
+              <Calculator size={21} color="#fff" strokeWidth={2.5} />
             </div>
             <span className="navbar-logo-text">
               Calculators<span style={{ color: "#2563EB" }}>Point</span>
@@ -321,13 +324,14 @@ export function Navbar() {
             </div>
 
 
-            {/* Theme toggle */}
+            {/* Theme toggle — render placeholder until mounted to avoid hydration mismatch */}
             <button
               onClick={toggleTheme}
               className="navbar-icon-btn"
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+              {/* Render nothing until mounted so SSR and client initial render match */}
+              {mounted ? (theme === "dark" ? <Sun size={16} /> : <Moon size={16} />) : <Moon size={16} />}
             </button>
 
             {/* Settings toggle */}

@@ -86,48 +86,67 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
       {/* Toolbar */}
       <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:16, paddingBottom:14, borderBottom:"1px solid var(--bord2)" }}>
         {/* Reset */}
-        <button onClick={onReset} className="calc-tool-btn danger" title="Reset all inputs">
+        <button onClick={onReset} className="calc-tool-btn danger" title="Reset all inputs" aria-label="Reset all calculator inputs">
           <RotateCcw size={12}/> Reset
         </button>
 
         {/* Copy result */}
         {result?.primary?.value && (
-          <button onClick={copyResult} className={`calc-tool-btn ${copied ? "active success" : ""}`}>
+          <button
+            onClick={copyResult}
+            className={`calc-tool-btn ${copied ? "active success" : ""}`}
+            aria-label={copied ? "Result copied to clipboard" : "Copy result to clipboard"}
+          >
             {copied ? <Check size={12}/> : <Copy size={12}/>}
             {copied ? "Copied!" : "Copy Result"}
           </button>
         )}
 
         {/* Share URL */}
-        <button onClick={copyShare} className={`calc-tool-btn ${shareCopied ? "active" : ""}`}>
+        <button
+          onClick={copyShare}
+          className={`calc-tool-btn ${shareCopied ? "active" : ""}`}
+          aria-label={shareCopied ? "Shareable link copied to clipboard" : "Copy shareable link"}
+        >
           {shareCopied ? <Check size={12}/> : <Link size={12}/>}
           {shareCopied ? "Link Copied!" : "Share"}
         </button>
 
         {/* Formula */}
         {formulaContent && (
-          <button onClick={() => setShowFrm(!showFrm)} className={`calc-tool-btn ${showFrm ? "active" : ""}`}>
+          <button
+            onClick={() => setShowFrm(!showFrm)}
+            className={`calc-tool-btn ${showFrm ? "active" : ""}`}
+            aria-label={showFrm ? "Hide formula panel" : "Show formula and method"}
+            aria-expanded={showFrm}
+            aria-controls="formula-panel"
+          >
             <BookOpen size={12}/> {showFrm ? "Hide" : "Formula"}
           </button>
         )}
 
         {/* Export PDF */}
-        <button onClick={doExportPDF} className="calc-tool-btn">
+        <button onClick={doExportPDF} className="calc-tool-btn" aria-label="Export results as PDF">
           <Download size={12}/> PDF
         </button>
 
         {/* Export CSV */}
         {result?.breakdowns?.length > 0 && (
-          <button onClick={doExportCSV} className="calc-tool-btn success">
+          <button onClick={doExportCSV} className="calc-tool-btn success" aria-label="Export breakdown data as CSV">
             <Download size={12}/> CSV
           </button>
         )}
 
         {/* FAQ */}
         {faqItems?.length > 0 && (
-          <button onClick={() => setShowFAQ(!showFAQ)}
+          <button
+            onClick={() => setShowFAQ(!showFAQ)}
             className={`calc-tool-btn ${showFAQ ? "active" : ""}`}
-            style={{ marginLeft:"auto" }}>
+            style={{ marginLeft:"auto" }}
+            aria-label={showFAQ ? "Hide frequently asked questions" : "Show frequently asked questions"}
+            aria-expanded={showFAQ}
+            aria-controls="faq-panel-inline"
+          >
             ❓ {showFAQ ? "Hide FAQ" : "FAQ"}
           </button>
         )}
@@ -135,11 +154,14 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
 
       {/* Formula panel */}
       {showFrm && formulaContent && (
-        <div className="formula-box" style={{ marginBottom: 16 }}>
+        <div id="formula-panel" className="formula-box" style={{ marginBottom: 16 }}>
           <div className="formula-box-head">
             <span className="formula-box-label">📘 Formula &amp; Method</span>
-            <button onClick={() => setShowFrm(false)}
-              style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center" }}>
+            <button
+              onClick={() => setShowFrm(false)}
+              aria-label="Close formula panel"
+              style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center" }}
+            >
               <X size={14}/>
             </button>
           </div>
@@ -149,13 +171,16 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
 
       {/* FAQ panel */}
       {showFAQ && faqItems?.length > 0 && (
-        <div style={{ marginBottom:16 }}>
+        <section id="faq-panel-inline" role="region" aria-labelledby="faq-panel-heading" style={{ marginBottom:16 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10, paddingBottom:8, borderBottom:"1px solid var(--border)" }}>
-            <h2 style={{ margin:0, fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".06em", color:"var(--text3)", display:"flex", alignItems:"center", gap:6 }}>
+            <h2 id="faq-panel-heading" style={{ margin:0, fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:".06em", color:"var(--text3)", display:"flex", alignItems:"center", gap:6 }}>
               ❓ Frequently Asked
             </h2>
-            <button onClick={() => setShowFAQ(false)}
-              style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center" }}>
+            <button
+              onClick={() => setShowFAQ(false)}
+              aria-label="Close FAQ panel"
+              style={{ color:"var(--text3)", background:"none", border:"none", cursor:"pointer", display:"flex", alignItems:"center" }}
+            >
               <X size={14}/>
             </button>
           </div>
@@ -169,7 +194,7 @@ export function CalcToolbar({ title, onReset, result, shareParams, formulaConten
               </div>
             </details>
           ))}
-        </div>
+        </section>
       )}
     </div>
   );

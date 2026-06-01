@@ -16,11 +16,22 @@ import { Breakdown } from '@/components/ui/Breakdown';
 import { CalcChart } from '@/components/charts/LazyCalcChart';
 import { readCalcParams } from "@/utils/urlParams";
 
+// ── Safe unit system reader ───────────────────────────────────────────
+// Always returns "metric" during SSR/initial render so server and client
+// first-pass HTML match. The real stored value syncs via useEffect after mount.
+function safeUnitSystem(): "metric" | "imperial" {
+  if (typeof window === "undefined") return "metric";
+  try { return useAppStore.getState().unitSystem || "metric"; } catch { return "metric"; }
+}
+
 // ── BMI ──────────────────────────────────────────────────────────────
 export function BMIForm(){
   const init = readCalcParams({ w: 70, h: 170, age: 30 });
-  const [sex,setSex]=useState("male"),[w,setW]=useState(init.w),[h,setH]=useState(init.h),[age,setAge]=useState(init.age),[unit,setUnit]=useState(useAppStore.getState().unitSystem || "metric");
+  const [sex,setSex]=useState("male"),[w,setW]=useState(init.w),[h,setH]=useState(init.h),[age,setAge]=useState(init.age),[unit,setUnit]=useState<"metric"|"imperial">("metric");
   const [res,setRes]=useState(null),[load,setLoad]=useState(false);
+  // Sync unit system after mount (avoids SSR mismatch)
+  useEffect(() => { setUnit(safeUnitSystem()); }, []);
+
   useEffect(()=>{
     setLoad(true);
     const t=setTimeout(()=>{
@@ -485,7 +496,8 @@ export function SleepForm(){
 export function BSAForm() {
   const [weight, setWeight] = useState("70");
   const [height, setHeight] = useState("175");
-  const [unit, setUnit] = useState(useAppStore.getState().unitSystem || "metric");
+  const [unit, setUnit] = useState("metric");
+  useEffect(() => { setUnit(safeUnitSystem()); }, []);
   const [auc, setAuc] = useState("5");
   const [res, setRes] = useState(null);
 
@@ -583,7 +595,7 @@ export function BSAForm() {
 export function BACForm() {
   const [gender, setGender] = useState("male");
   const [weight, setWeight] = useState("70");
-  const [unit, setUnit] = useState(useAppStore.getState().unitSystem || "metric");
+  const [unit, setUnit] = useState("metric");
   const [drinkType, setDrinkType] = useState("beer");
   const [drinks, setDrinks] = useState("3");
   const [hours, setHours] = useState("2");
@@ -711,7 +723,7 @@ export function LeanBodyMassForm() {
   const [bodyFat, setBodyFat] = useState(20);
   const [goalLBM, setGoalLBM] = useState("55");
   const [gender, setGender] = useState("male");
-  const [unit, setUnit] = useState(useAppStore.getState().unitSystem || "metric");
+  const [unit, setUnit] = useState("metric");
   const [res, setRes] = useState(null);
 
   useEffect(() => {
@@ -820,7 +832,7 @@ export function LeanBodyMassForm() {
 // ─────────────────────────────────────────────────────────────────────────────
 export function ProteinForm() {
   const [weight, setWeight] = useState("70");
-  const [unit, setUnit] = useState(useAppStore.getState().unitSystem || "metric");
+  const [unit, setUnit] = useState("metric");
   const [activity, setActivity] = useState("moderate");
   const [goal, setGoal] = useState("maintain");
   const [res, setRes] = useState(null);
@@ -939,7 +951,7 @@ export function HealthyWeightForm() {
   const [currentWeight, setCurrentWeight] = useState("80");
   const [gender, setGender] = useState("male");
   const [frameSize, setFrameSize] = useState("medium");
-  const [unit, setUnit] = useState(useAppStore.getState().unitSystem || "metric");
+  const [unit, setUnit] = useState("metric");
   const [res, setRes] = useState(null);
 
   useEffect(() => {

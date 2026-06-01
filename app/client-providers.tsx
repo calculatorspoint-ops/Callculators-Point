@@ -4,30 +4,56 @@
  * Bundles all client-side providers and the app shell (Navbar, Footer, ScrollToTop)
  * into a single 'use client' component. This keeps the root layout a Server Component
  * while delegating all interactive global logic here.
+ *
+ * HYDRATION FIX: useAppStore uses skipHydration:true so Zustand does NOT read
+ * localStorage during SSR. We call rehydrate() here after mount so both the
+ * initial server HTML and client first render use the same default values.
  */
 'use client';
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/ui/Navbar';
 import { Footer } from '@/components/ui/Footer';
 import { ScrollToTop } from '@/components/ui/ScrollToTop';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { useAppStore } from '@/store/useAppStore';
 
 // Defer Analytics — loads after page is interactive, doesn't affect LCP/FCP
 const Analytics = lazy(() =>
   import('@vercel/analytics/react').then(m => ({ default: m.Analytics }))
 );
 
-
 export function ClientProviders({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    // Rehydrate Zustand from localStorage AFTER mount.
+    // Since skipHydration:true, the store starts with defaults on both server
+    // and client — no mismatch. This call reads localStorage and triggers a
+    // re-render with the persisted values (theme, currency, favorites, etc.)
+    useAppStore.persist.rehydrate();
+
+    // Subscribe to sync dark class after rehydration
+    const unsub = useAppStore.subscribe(state => {
+      document.documentElement.classList.toggle('dark', state.theme === 'dark');
+    });
+
+    // Apply immediately after rehydrate
+    const theme = useAppStore.getState().theme;
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+
+    return unsub;
+  }, []);
+
   return (
     <>
       <ScrollToTop />
       <Navbar />
       <main style={{ minHeight: '100vh' }}>
-        <Suspense>
-          {children}
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense>
+            {children}
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
       <Toaster

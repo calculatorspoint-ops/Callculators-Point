@@ -117,6 +117,69 @@ export default function Category() {
   const newCalcs = calcs.filter(c => c.isNew);
   const rest = calcs.filter(c => !c.popular && !c.isNew);
 
+  const CalcCard = ({ c, badge }) => (
+    <Link
+      href={`/calculator/${c.slug}`}
+      className="cat-calc-card"
+      style={{
+        borderColor: 'var(--border)',
+        borderRadius: 16,
+        padding: '14px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        background: 'var(--surface)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+        transition: 'all 0.18s cubic-bezier(0.4,0,0.2,1)',
+        textDecoration: 'none',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.borderColor = cat.color;
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = `0 8px 24px ${cat.color}25`;
+        e.currentTarget.style.background = cat.bg;
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = 'var(--border)';
+        e.currentTarget.style.transform = 'none';
+        e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)';
+        e.currentTarget.style.background = 'var(--surface)';
+      }}
+    >
+      {/* Icon bubble */}
+      <div style={{
+        width: 48, height: 48, borderRadius: 14, flexShrink: 0,
+        background: `linear-gradient(135deg, ${cat.color}18, ${cat.color}30)`,
+        border: `1.5px solid ${cat.color}30`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 22,
+      }}>
+        {c.icon || '🧮'}
+      </div>
+      {/* Text content */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, flexWrap: 'nowrap', overflow: 'hidden' }}>
+          <span style={{
+            fontSize: 13, fontWeight: 700, color: 'var(--text)',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1,
+          }}>{c.name}</span>
+          {badge === 'popular' && <span className="badge badge-green" style={{ flexShrink: 0, fontSize: 10 }}>Popular</span>}
+          {badge === 'new' && <span className="badge badge-red" style={{ flexShrink: 0, fontSize: 10 }}>New</span>}
+          {c.hasChart && <span className="badge badge-blue" style={{ flexShrink: 0, fontSize: 10 }}>📊</span>}
+        </div>
+        <div style={{
+          fontSize: 11.5, color: 'var(--text3)', lineHeight: 1.45,
+          overflow: 'hidden', display: '-webkit-box',
+          WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+        }}>{c.desc}</div>
+      </div>
+      {/* Arrow */}
+      <ArrowRight size={15} style={{ color: cat.color, flexShrink: 0, opacity: 0.6 }} />
+    </Link>
+  );
+
   return (
     <>
       {/* SEO metadata handled by generateMetadata in app/category/[catId]/page.tsx */}
@@ -203,23 +266,7 @@ export default function Category() {
                 </div>
                 <div className="cat-calcs-grid">
                   {popular.map(c => (
-                    <Link href={`/calculator/${c.slug}`} className="cat-calc-card" style={{ borderColor: `${cat.color}30` }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = cat.color; e.currentTarget.style.boxShadow = `0 4px 16px ${cat.color}25`; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = `${cat.color}30`; e.currentTarget.style.boxShadow = "var(--sh1)"; e.currentTarget.style.transform = "none"; }}>
-                      <div style={{
-                        width: 42, height: 42, borderRadius: "var(--r-md)", background: cat.bg,
-                        display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0,
-                      }}>{c.icon}</div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</div>
-                        <div style={{ fontSize: 11, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
-                        <div style={{ display: "flex", gap: 4, marginTop: 4, flexWrap: "wrap" }}>
-                          <span className="badge badge-green">Popular</span>
-                          {c.hasChart && <span className="badge badge-blue">Charts</span>}
-                        </div>
-                      </div>
-                      <ArrowRight size={13} style={{ color: "var(--text3)", flexShrink: 0 }} />
-                    </Link>
+                    <CalcCard key={c.slug} c={c} badge="popular" />
                   ))}
                 </div>
               </div>
@@ -234,19 +281,7 @@ export default function Category() {
                 </div>
                 <div className="cat-calcs-grid">
                   {newCalcs.map(c => (
-                    <Link href={`/calculator/${c.slug}`} className="cat-calc-card"
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = cat.color; e.currentTarget.style.transform = "translateY(-1px)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; }}>
-                      <span style={{ fontSize: 22, width: 36, textAlign: "center", flexShrink: 0 }}>{c.icon}</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", gap: 5, alignItems: "center", overflow: "hidden" }}>
-                          <span style={{ fontSize: 13, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</span>
-                          <span className="badge badge-red" style={{ flexShrink: 0 }}>New</span>
-                        </div>
-                        <div style={{ fontSize: 11, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
-                      </div>
-                      <ArrowRight size={13} style={{ color: "var(--text3)", flexShrink: 0 }} />
-                    </Link>
+                    <CalcCard key={c.slug} c={c} badge="new" />
                   ))}
                 </div>
               </div>
@@ -258,16 +293,7 @@ export default function Category() {
                 <h2 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text)", marginBottom: 14 }}>All {cat.name} Tools</h2>
                 <div className="cat-calcs-grid">
                   {rest.map(c => (
-                    <Link href={`/calculator/${c.slug}`} className="cat-calc-card"
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = cat.color; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}>
-                      <span style={{ fontSize: 22, width: 36, textAlign: "center", flexShrink: 0 }}>{c.icon}</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</div>
-                        <div style={{ fontSize: 11, color: "var(--text3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.desc}</div>
-                      </div>
-                      <ArrowRight size={13} style={{ color: "var(--text3)", flexShrink: 0 }} />
-                    </Link>
+                    <CalcCard key={c.slug} c={c} />
                   ))}
                 </div>
               </div>

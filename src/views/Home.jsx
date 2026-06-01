@@ -15,27 +15,39 @@ const QuickCalc = lazy(() =>
 /* ── Calculator row item ─────────────────────────────────────────────── */
 function CalcRow({ calc }) {
   const cat = CATEGORIES.find(c => c.id === calc.cat);
+  const color = cat?.color || "var(--brand)";
+  const bg = cat?.bg || "var(--surf2)";
   return (
     <Link
       href={`/calculator/${calc.slug}`}
       className="calc-row"
       aria-label={`Open ${calc.name} calculator`}
-      style={{ overflow: "hidden", minWidth: 0 }}
+      style={{ overflow: "hidden", minWidth: 0, gap: 12, alignItems: "center", padding: "10px 14px", borderRadius: 14, border: "1.5px solid var(--border)", background: "var(--surface)", textDecoration: "none", display: "flex", transition: "all 0.18s" }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.background = bg; e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = `0 6px 20px ${color}20`; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface)"; e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
     >
-      <div className="calc-row-icon" style={{ background: cat?.bg || "var(--surf2)", fontSize: 18, flexShrink: 0 }}>
-        {calc.icon}
+      {/* Icon bubble */}
+      <div style={{
+        width: 42, height: 42, borderRadius: 12, flexShrink: 0,
+        background: `linear-gradient(135deg, ${color}18, ${color}35)`,
+        border: `1.5px solid ${color}30`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        fontSize: 20,
+      }}>
+        {calc.icon || "🧮"}
       </div>
+      {/* Text */}
       <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap", minWidth: 0 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{calc.name}</span>
-          {calc.popular && <span className="badge badge-green" style={{ flexShrink: 0 }}>Popular</span>}
-          {calc.isNew   && <span className="badge badge-red"   style={{ flexShrink: 0 }}>New</span>}
+        <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "nowrap", overflow: "hidden", marginBottom: 2 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{calc.name}</span>
+          {calc.popular && <span className="badge badge-green" style={{ flexShrink: 0, fontSize: 10 }}>Popular</span>}
+          {calc.isNew   && <span className="badge badge-red"   style={{ flexShrink: 0, fontSize: 10 }}>New</span>}
         </div>
-        <p style={{ fontSize: 12, color: "var(--text3)", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+        <p style={{ fontSize: 11.5, color: "var(--text3)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%", lineHeight: 1.4 }}>
           {calc.desc}
         </p>
       </div>
-      <ChevronRight size={14} style={{ color: "var(--text3)", flexShrink: 0, marginLeft: 4 }} />
+      <ChevronRight size={13} style={{ color, flexShrink: 0, marginLeft: 2, opacity: 0.6 }} />
     </Link>
   );
 }
@@ -94,14 +106,15 @@ function FeatureCard({ icon, title, desc, color }) {
 /* ── Main Home page ─────────────────────────────────────────────── */
 export default function Home({ skipHero } = {}) {
   const { recent, favorites } = useAppStore();
-  const recentCalcs   = recent.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
-  const favoriteCalcs = favorites.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean);
+  const [mounted, setMounted] = useState(false);
   const [showAllPopular, setShowAllPopular] = useState(false);
   const [showAllNew, setShowAllNew] = useState(false);
   // Defer below-fold content until after initial paint to reduce DOM size
   // This cuts the initial DOM from ~1148 elements to under 500
   const [belowFoldReady, setBelowFoldReady] = useState(false);
+
   useEffect(() => {
+    setMounted(true);
     // Use requestIdleCallback if available, otherwise setTimeout
     const schedule = typeof window !== 'undefined' && 'requestIdleCallback' in window
       ? (cb) => requestIdleCallback(cb, { timeout: 300 })
@@ -109,6 +122,10 @@ export default function Home({ skipHero } = {}) {
     schedule(() => setBelowFoldReady(true));
   }, []);
 
+  // Only show personalized sections after mount (when Zustand has rehydrated from localStorage)
+  // This prevents SSR/client mismatch since server always has empty recent/favorites
+  const recentCalcs   = mounted ? recent.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean) : [];
+  const favoriteCalcs = mounted ? favorites.map(id => ALL_CALCULATORS.find(c => c.id === id)).filter(Boolean) : [];
 
   return (
     <>
@@ -207,13 +224,13 @@ export default function Home({ skipHero } = {}) {
       <div className="home-wrap">
 
         {/* ═══ ECOSYSTEM HUBS STRIP (deferred — below fold) ════════════════════════ */}
-        {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "16px 20px", overflowX: "auto" }}>
-          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+        {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", overflowX: "hidden" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto", padding: "16px clamp(12px,4vw,20px)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
               <BookOpen size={14} style={{ color: "var(--brand)" }} />
               <span style={{ fontSize: 12, fontWeight: 800, color: "var(--text2)", textTransform: "uppercase", letterSpacing: ".06em" }}>Calculator Suites</span>
             </div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "nowrap", overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
+            <div className="trending-scroll" style={{ display: "flex", gap: 10, flexWrap: "nowrap", paddingBottom: 4 }}>
               {[
                 { id: "education", icon: "🎓", label: "Education Suite", sub: "GPA, IELTS, Attendance", color: "#c2410c", bg: "#fff7ed" },
                 { id: "finance", icon: "💰", label: "Finance Suite", sub: "EMI, SIP, Tax, Salary", color: "#3451c7", bg: "#eef0fd" },
@@ -224,16 +241,17 @@ export default function Home({ skipHero } = {}) {
                   display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
                   background: eco.bg, border: `1.5px solid ${eco.color}20`,
                   borderRadius: "var(--r-xl)", textDecoration: "none", flexShrink: 0,
+                  minWidth: "clamp(160px, 40vw, 220px)",
                   transition: "all .15s",
                 }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = eco.color; e.currentTarget.style.transform = "translateY(-1px)"; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = `${eco.color}20`; e.currentTarget.style.transform = "none"; }}>
                   <span style={{ fontSize: 20 }}>{eco.icon}</span>
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 800, color: eco.color }}>{eco.label}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: eco.color, whiteSpace: "nowrap" }}>{eco.label}</div>
                     <div style={{ fontSize: 10, color: "var(--text3)", fontWeight: 600 }}>{eco.sub}</div>
                   </div>
-                  <ArrowRight size={12} style={{ color: eco.color, marginLeft: 4 }} />
+                  <ArrowRight size={12} style={{ color: eco.color, marginLeft: 4, flexShrink: 0 }} />
                 </Link>
               ))}
             </div>
@@ -241,8 +259,8 @@ export default function Home({ skipHero } = {}) {
         </div>}
 
         {/* ═══ NAME GENERATORS STRIP (deferred — below fold) ════════════════════════ */}
-        {belowFoldReady && <div style={{ background: "linear-gradient(135deg, #6366f115 0%, #8b5cf610 50%, #ec489910 100%)", borderBottom: "1px solid var(--border)", padding: "20px 20px" }}>
-          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+        {belowFoldReady && <div style={{ background: "linear-gradient(135deg, #6366f115 0%, #8b5cf610 50%, #ec489910 100%)", borderBottom: "1px solid var(--border)", overflowX: "hidden" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto", padding: "20px clamp(12px,4vw,20px)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ fontSize: 18 }}>✨</span>
@@ -253,7 +271,7 @@ export default function Home({ skipHero } = {}) {
                 View All 8 Tools <ArrowRight size={12} />
               </Link>
             </div>
-            <div style={{ display: "flex", gap: 10, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+            <div className="trending-scroll" style={{ display: "flex", gap: 10, paddingBottom: 4 }}>
               {[
                 { slug: "baby-name-generator",             icon: "👶", label: "Baby Names",      color: "#ec4899", bg: "#fdf2f8" },
                 { slug: "islamic-baby-names",              icon: "🌙", label: "Islamic Names",   color: "#10b981", bg: "#f0fdf4" },
@@ -266,9 +284,9 @@ export default function Home({ skipHero } = {}) {
               ].map(tool => (
                 <Link key={tool.slug} href={`/name-generators/${tool.slug}`} style={{
                   display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
-                  padding: "12px 16px", background: tool.bg,
+                  padding: "12px 14px", background: tool.bg,
                   border: `1.5px solid ${tool.color}25`, borderRadius: "var(--r-xl)",
-                  textDecoration: "none", minWidth: 110, flexShrink: 0, transition: "all .15s",
+                  textDecoration: "none", minWidth: 90, flexShrink: 0, transition: "all .15s",
                 }}
                   onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.borderColor = tool.color; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = `${tool.color}25`; }}>
@@ -281,8 +299,8 @@ export default function Home({ skipHero } = {}) {
         </div>}
 
         {/* ═══ TRENDING CALCULATORS (deferred — below fold) ════════════════════════ */}
-        {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", padding: "20px 20px" }}>
-          <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+        {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", overflowX: "hidden" }}>
+          <div style={{ maxWidth: 1280, margin: "0 auto", padding: "20px clamp(12px,4vw,20px)" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <TrendingUp size={16} style={{ color: "#f59e0b" }} />
@@ -292,7 +310,7 @@ export default function Home({ skipHero } = {}) {
                 View All <ArrowRight size={12} />
               </Link>
             </div>
-            <div style={{ display: "flex", gap: 10, overflowX: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+            <div className="trending-scroll" style={{ display: "flex", gap: 10, paddingBottom: 4 }}>
               {POPULAR.slice(0, 10).map((c, i) => {
                 const cat = CATEGORIES.find(x => x.id === c.cat);
                 return (

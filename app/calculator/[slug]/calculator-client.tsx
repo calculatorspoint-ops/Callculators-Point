@@ -6,7 +6,7 @@
  */
 'use client';
 
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { getCalcBySlug, getRelated, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
 import { BASE_FAQS, CALC_FAQS } from '@/data/faqData';
@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { CrossCalcRecommendations } from '@/components/calculator-core/CrossRecommendations';
 import { FAQSection } from '@/components/calculator-core/FAQSection';
 import { FeedbackWidget } from '@/components/calculator-core/FeedbackWidget';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 const CalculatorWidget = lazy(() =>
   import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget }))
@@ -27,10 +28,44 @@ const ExportToolbar = lazy(() =>
 
 function FormFallback() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 300, flexDirection: 'column', gap: 12 }}>
-      <div style={{ width: 28, height: 28, border: '2.5px solid var(--border)', borderTopColor: 'var(--brand)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-      <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--text3)' }}>Loading Calculator...</p>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    <div
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label="Calculator loading"
+      style={{ minHeight: 360, padding: '22px' }}
+    >
+      {/* Screen-reader announcement */}
+      <span className="sr-only">Loading calculator, please wait…</span>
+
+      {/* Skeleton header row */}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+        <div className="skeleton" style={{ width: 80, height: 32, borderRadius: 8 }} />
+        <div className="skeleton" style={{ width: 120, height: 32, borderRadius: 8 }} />
+        <div className="skeleton" style={{ width: 100, height: 32, borderRadius: 8, marginLeft: 'auto' }} />
+      </div>
+
+      {/* Skeleton input rows × 3 */}
+      {[1, 2, 3].map(i => (
+        <div key={i} style={{ marginBottom: 20 }}>
+          <div className="skeleton" style={{ width: `${55 + i * 8}%`, height: 14, borderRadius: 4, marginBottom: 8 }} />
+          <div className="skeleton" style={{ width: '100%', height: 50, borderRadius: 12 }} />
+        </div>
+      ))}
+
+      {/* Skeleton calculate button */}
+      <div className="skeleton" style={{ width: '100%', height: 48, borderRadius: 12, marginTop: 8 }} />
+
+      {/* Skeleton result area */}
+      <div style={{ marginTop: 24, background: 'var(--surf2)', borderRadius: 16, padding: 20 }}>
+        <div className="skeleton" style={{ width: 110, height: 14, borderRadius: 4, margin: '0 auto 14px' }} />
+        <div className="skeleton" style={{ width: 180, height: 48, borderRadius: 8, margin: '0 auto' }} />
+      </div>
+
+      <style>{`
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+        @keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
+      `}</style>
     </div>
   );
 }
@@ -38,6 +73,9 @@ function FormFallback() {
 export function CalculatorPageClient({ slug }: { slug: string }) {
   const calc = getCalcBySlug(slug);
   const { toggleFavorite, favorites, addRecent } = useAppStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (calc?.id) addRecent(calc.id);
@@ -45,7 +83,8 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
 
   if (!calc) return null;
 
-  const isFav   = favorites.includes(calc.id);
+  // Use false on server/pre-mount so SSR and client initial render match
+  const isFav = mounted && favorites.includes(calc.id);
   const related = getRelated(calc, 7);
   const cat     = CATEGORIES.find(c => c.id === calc.cat);
   const faqs    = [...((CALC_FAQS as Record<string, { q: string; a: string }[]>)[slug] ?? []), ...BASE_FAQS];
@@ -134,11 +173,13 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
             </Suspense>
           )}
 
-          {/* Calculator form */}
-          <div className="calc-card" style={{ marginBottom: 16 }}>
-            <Suspense fallback={<FormFallback />}>
-              <CalculatorWidget calc={calc} />
-            </Suspense>
+          {/* Calculator form — min-height reserves space to prevent CLS while skeleton is shown */}
+          <div className="calc-card" style={{ marginBottom: 16, minHeight: 360 }}>
+            <ErrorBoundary>
+              <Suspense fallback={<FormFallback />}>
+                <CalculatorWidget calc={calc} />
+              </Suspense>
+            </ErrorBoundary>
           </div>
 
           {/* Export toolbar */}

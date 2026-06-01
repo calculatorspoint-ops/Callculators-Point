@@ -109,7 +109,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* preconnect: establishes TCP+TLS to our CDN before CSS/JS requests start */}
         <link rel="preconnect" href="https://calculatorspoint.com" />
       </head>
-      <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`}>
+      <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`} suppressHydrationWarning>
         <ClientProviders>
           {children}
         </ClientProviders>

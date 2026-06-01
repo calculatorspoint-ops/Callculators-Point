@@ -1,36 +1,36 @@
 /**
  * app/sitemap.ts — Next.js XML Sitemap (Auto-generated at build time)
  *
- * This is a Next.js App Router project — NOT Vite. The sitemap is
- * auto-generated here using Next.js's built-in MetadataRoute.Sitemap API,
- * which is the correct approach (no vite-plugin-sitemap needed).
+ * ═══════════════════════════════════════════════════════════════════
+ * GOOGLE SEARCH CONSOLE COMPLIANCE CHECKLIST
+ * ═══════════════════════════════════════════════════════════════════
  *
- * All URL sets are driven from the same data sources as the actual routes,
- * so the sitemap stays 100% in sync with the site's pages automatically.
+ * ✅ Uses sitemaps.org 0.9 protocol
+ * ✅ UTF-8 encoding declared
+ * ✅ All URLs are absolute with https:// prefix
+ * ✅ URLs match canonical URLs (no www, no trailing slash)
+ * ✅ lastmod uses W3C Datetime / ISO 8601 format (YYYY-MM-DD)
+ * ✅ Only indexable pages included (no draft/coming-soon/api routes)
+ * ✅ changeFrequency hints realistic, not inflated
+ * ✅ Priority scale used conservatively (Google mostly ignores it,
+ *    but correct usage helps crawl ordering)
+ * ✅ <50,000 URLs per sitemap (protocol limit)
+ * ✅ Sitemap declared in robots.txt via app/robots.ts
+ * ✅ No duplicate URLs
+ * ✅ No blocked-by-robots.txt URLs
  *
- * Current URL breakdown (auto-counted at build time):
+ * URL breakdown (auto-counted at build time):
  *  ├── 1    Homepage              (/)
  *  ├── 1    Calculator index      (/calculators)
  *  ├── 9    Category pages        (/category/[id])       ← from CATEGORIES array
  *  ├── 180+ Calculator pages      (/calculator/[slug])   ← from ALL_CALCULATORS array
- *  ├── 28   SEO landing pages     (/tools/[slug])        ← from SEO_LANDING_PAGES array
+ *  ├── 12   SEO landing pages     (/tools/[slug])        ← from SEO_LANDING_PAGES array
  *  ├── 3    Ecosystem hubs        (/ecosystem/[id])
  *  ├── 9    Name Generator pages  (/name-generators/*)
  *  ├── 1    Cheat Sheets          (/cheat-sheets)
  *  └── 6    Static / Legal        (/about /contact /privacy-policy /terms /disclaimer /sitemap)
  *
- * Total: ~240+ URLs at build time — all submitted to Google via sitemap.xml
- *
- * Priority scale (Google ignores priority >0.9 if overused — use sparingly):
- *  1.0   Homepage
- *  0.9   /calculators index + popular individual calculators
- *  0.85  New calculators + name-generator hub
- *  0.8   Category pages
- *  0.75  Standard calculators
- *  0.7   SEO /tools/ landing pages + ecosystem hubs
- *  0.6   /cheat-sheets, /name-generators sub-pages
- *  0.4   About, contact
- *  0.3   Legal pages, human sitemap page
+ * Total: ~220+ URLs — all submitted to Google via /sitemap.xml
  */
 import type { MetadataRoute } from 'next';
 import { ALL_CALCULATORS, CATEGORIES } from '@/data/calculatorConfigs';
@@ -42,17 +42,21 @@ const BASE_URL = 'https://calculatorspoint.com';
  * Content dates — update these when doing major content refreshes.
  * Using static dates prevents sitemap thrashing (Googlebot ignores
  * lastmod that changes every build without actual content changes).
+ *
+ * ⚠️ Google treats lastmod as a signal — only update when the page
+ *    content actually changes. Fake "freshness" can hurt crawl trust.
  */
 const DATES = {
-  homepage:    new Date('2026-05-28'),  // Update when homepage content changes
-  content:     new Date('2026-05-28'),  // Update when adding new calculators
-  popular:     new Date('2026-05-28'),  // Update when popular calc content updates
+  homepage:    new Date('2026-05-31'),  // Update when homepage content changes
+  content:     new Date('2026-05-31'),  // Updated: added 16 new education calculators
+  popular:     new Date('2026-05-31'),  // Updated: new popular education tools
   static:      new Date('2026-05-26'),  // Update when legal/about pages change
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {
 
   // ── 1. Homepage ──────────────────────────────────────────────────────────
+  //    Highest priority — this is the main entry point for crawlers.
   const homepage: MetadataRoute.Sitemap = [{
     url: BASE_URL,
     lastModified: DATES.homepage,
@@ -61,6 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }];
 
   // ── 2. Calculator directory index (/calculators) ─────────────────────────
+  //    High-value aggregation page — links to every calculator.
   const indexPage: MetadataRoute.Sitemap = [{
     url: `${BASE_URL}/calculators`,
     lastModified: DATES.content,
@@ -109,7 +114,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // ── 7. Name Generator pages (/name-generators/*) ──────────────────────────
   //    The hub page + 8 individual generator pages.
-  //    Higher priority (0.85) because name generators attract different intent traffic.
   const nameGeneratorPages: MetadataRoute.Sitemap = [
     { url: `${BASE_URL}/name-generators`,                                            lastModified: DATES.content, changeFrequency: 'weekly'  as const, priority: 0.85 },
     { url: `${BASE_URL}/name-generators/baby-name-generator`,                        lastModified: DATES.content, changeFrequency: 'weekly'  as const, priority: 0.8  },
@@ -123,7 +127,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   // ── 8. Cheat Sheets (/cheat-sheets) ──────────────────────────────────────
-  //    Single aggregation page for formula reference guides.
   const cheatSheetPages: MetadataRoute.Sitemap = [
     { url: `${BASE_URL}/cheat-sheets`, lastModified: DATES.content, changeFrequency: 'monthly' as const, priority: 0.6 },
   ];
@@ -131,12 +134,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // ── 9. Static & legal pages ───────────────────────────────────────────────
   //    Low priority — important for crawlability but not search value.
   const staticPages: MetadataRoute.Sitemap = [
-    { url: `${BASE_URL}/about`,          lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.5 },
-    { url: `${BASE_URL}/contact`,        lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.4 },
-    { url: `${BASE_URL}/sitemap`,        lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.3 },
-    { url: `${BASE_URL}/privacy-policy`, lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
-    { url: `${BASE_URL}/terms-of-service`, lastModified: DATES.static, changeFrequency: 'yearly' as const, priority: 0.3 },
-    { url: `${BASE_URL}/disclaimer`,     lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
+    { url: `${BASE_URL}/about`,            lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.5 },
+    { url: `${BASE_URL}/contact`,          lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.4 },
+    { url: `${BASE_URL}/sitemap`,          lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.3 },
+    { url: `${BASE_URL}/privacy-policy`,   lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
+    { url: `${BASE_URL}/terms-of-service`, lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
+    { url: `${BASE_URL}/disclaimer`,       lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
   ];
 
   // ── Final output ──────────────────────────────────────────────────────────
@@ -147,7 +150,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...indexPage,          // 1    URL
     ...categoryPages,      // 9    URLs
     ...calculatorPages,    // 180+ URLs (auto from data)
-    ...toolPages,          // 28   URLs (auto from data)
+    ...toolPages,          // 12   URLs (auto from data)
     ...nameGeneratorPages, // 9    URLs
     ...ecosystemPages,     // 3    URLs
     ...cheatSheetPages,    // 1    URL

@@ -90,3 +90,24 @@ body {
   margin-bottom: 28px;
   max-width: 540px;
 }
+
+/* ── Accessibility: Screen-reader-only utility ── */
+/* Visually hidden but readable by screen readers. */
+/* Used in skeleton loaders to announce loading state. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── CLS guard: calculator card minimum height ── */
+/* Prevents the card from collapsing between skeleton → real form swap. */
+.calc-card-min-h {
+  min-height: 360px;
+}

@@ -45,12 +45,45 @@ const nextConfig: NextConfig = {
   // This redirect runs on the CDN edge — zero extra server latency.
   async redirects() {
     return [
+      // ── www → non-www (canonical domain) ────────────────────────────────
+      // Runs on the CDN edge — zero extra server latency.
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.calculatorspoint.com' }],
         destination: 'https://calculatorspoint.com/:path*',
         permanent: true, // 308 Permanent Redirect — browsers and crawlers cache it permanently
       },
+
+      // ── Legacy / duplicate URL patterns → canonical /calculator/:slug ───
+      // These patterns may exist in Google's index from previous site versions.
+      // 301 redirects consolidate PageRank to the canonical URL and eliminate
+      // duplicate-content dilution.
+
+      // /in/tools/:slug → /calculator/:slug
+      {
+        source: '/in/tools/:slug',
+        destination: '/calculator/:slug',
+        permanent: true,
+      },
+
+      // /in/calculator/:slug → /calculator/:slug
+      {
+        source: '/in/calculator/:slug',
+        destination: '/calculator/:slug',
+        permanent: true,
+      },
+
+      // /convert/:slug → /calculator/:slug
+      // (unit-converter landing pages that may appear as /convert/length-converter etc.)
+      {
+        source: '/convert/:slug',
+        destination: '/calculator/:slug',
+        permanent: true,
+      },
+
+      // /tools/:slug does NOT get a redirect — it's a valid canonical route
+      // serving long-form SEO landing pages. Each /tools/ page has its own
+      // canonical tag pointing to itself.
     ];
   },
 

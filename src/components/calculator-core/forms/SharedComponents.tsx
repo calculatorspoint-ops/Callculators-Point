@@ -363,22 +363,27 @@ export function Toggle({ label, id, checked, onChange, hint }) {
 
   return (
     <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
-      <div
+      {/* Native button with role="switch" — keyboard accessible via Tab + Space/Enter */}
+      <button
+        role="switch"
+        aria-checked={checked}
         onClick={() => handleChange(!checked)}
+        aria-label={label}
         style={{
           width: 44, height: 24, borderRadius: 12, flexShrink: 0,
           background: checked ? "var(--brand)" : "var(--border)",
           position: "relative", cursor: "pointer", transition: "background .2s",
-          boxShadow: checked ? "0 0 0 3px rgba(67,97,238,.2)" : "none"
+          boxShadow: checked ? "0 0 0 3px rgba(67,97,238,.2)" : "none",
+          border: "none", padding: 0,
         }}
       >
-        <div style={{
+        <span style={{
           position: "absolute", top: 3, left: checked ? 23 : 3,
           width: 18, height: 18, borderRadius: "50%",
           background: "#fff", transition: "left .2s",
           boxShadow: "0 1px 3px rgba(0,0,0,.25)"
         }} />
-      </div>
+      </button>
       <div>
         <label htmlFor={id} style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", cursor: "pointer" }}
           onClick={() => handleChange(!checked)}>
@@ -510,18 +515,18 @@ export function Panel({ result, loading, label, shareParams }) {
 
       {/* ── Toolbar ── */}
       <div className="panel-toolbar">
-        <button onClick={handleSaveHistory} className="calc-tool-btn" title="Save this result">
+        <button onClick={handleSaveHistory} className="calc-tool-btn" title="Save this result" aria-label="Save this calculation result">
           💾 Save
         </button>
         {result.breakdowns?.length > 0 && (
           <button onClick={() => exportToCSV(result.breakdowns, (label || "calc").toLowerCase().replace(/\s+/g, "-"))}
-            className="calc-tool-btn success" title="Download as CSV">
+            className="calc-tool-btn success" title="Download as CSV" aria-label="Export breakdown data as CSV">
             📥 Export CSV
           </button>
         )}
         {shareParams && (
           <button onClick={async () => { await copyShareLink(shareParams); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-            className={`calc-tool-btn ${copied ? "active" : ""}`} title="Copy shareable link">
+            className={`calc-tool-btn ${copied ? "active" : ""}`} title="Copy shareable link" aria-label={copied ? "Shareable link copied" : "Copy shareable link"}>
             {copied ? "✅ Copied!" : "🔗 Share"}
           </button>
         )}
