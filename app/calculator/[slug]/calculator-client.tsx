@@ -7,6 +7,7 @@
 'use client';
 
 import { Suspense, lazy, useEffect, useState } from 'react';
+import { incrementCalcViews } from '@/lib/firebase/firestore';
 import { useAppStore } from '@/store/useAppStore';
 import { getCalcBySlug, getRelated, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
 import { BASE_FAQS, CALC_FAQS } from '@/data/faqData';
@@ -79,7 +80,9 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (calc?.id) addRecent(calc.id);
-  }, [calc?.id, addRecent]);
+    // Track calculator page view in Firestore (silently, never blocks UI)
+    if (calc?.slug) incrementCalcViews(calc.slug);
+  }, [calc?.id, calc?.slug, addRecent]);
 
   if (!calc) return null;
 
