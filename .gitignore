@@ -74,3 +74,8 @@ coverage/
 .parcel-cache/
 .eslintcache
 .stylelintcache
+
+# ===========================
+# Vercel (project-specific, never commit)
+# ===========================
+.vercel/
