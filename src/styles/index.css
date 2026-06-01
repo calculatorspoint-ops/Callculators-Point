@@ -610,8 +610,8 @@ input[type="range"]::-moz-range-track{height:5px;background:var(--border);border
   display:flex;align-items:flex-start;justify-content:space-between;
   gap:12px;flex-wrap:wrap;min-width:0;
 }
-.calc-card-body{padding:22px;min-width:0;}
-@media(max-width:640px){.calc-card-body{padding:16px;}}
+.calc-card-body{padding:24px 22px 22px;min-width:0;overflow:hidden;}
+@media(max-width:640px){.calc-card-body{padding:18px 16px 16px;}}
 
 /* ══════════════════════════════════════════════════════════════
    FORM FIELDS
@@ -1654,11 +1654,13 @@ img { content-visibility: auto; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  overflow: visible;
 }
 .sc-row3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
+  overflow: visible;
 }
 @media (max-width: 480px) {
   .sc-row2 { grid-template-columns: 1fr; }
