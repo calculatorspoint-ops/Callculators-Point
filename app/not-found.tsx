@@ -3,10 +3,11 @@
  */
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { CALC_COUNT_LABEL } from '@/data/calculatorConfigs';
 
 export const metadata: Metadata = {
   title: '404 — Page Not Found | Calculators Point',
-  description: "Sorry, this page doesn't exist. Browse our 180+ free calculators.",
+  description: `Sorry, this page doesn't exist. Browse our ${CALC_COUNT_LABEL} free calculators.`,
 };
 
 export default function NotFound() {

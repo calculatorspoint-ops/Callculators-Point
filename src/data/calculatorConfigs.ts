@@ -82,3 +82,19 @@ export function getCalcBySlug(slug: string): CalculatorConfig | null {
 export function getRelated(calc: CalculatorConfig, limit = 7): CalculatorConfig[] {
   return ALL_CALCULATORS.filter(c => c.cat === calc.cat && c.id !== calc.id).slice(0, limit);
 }
+
+/**
+ * SINGLE SOURCE OF TRUTH for calculator count.
+ *
+ * Use CALC_COUNT_LABEL (e.g. "183+") everywhere you need to display
+ * the count in UI copy, metadata titles, and descriptions.
+ *
+ * Do NOT hardcode "180+", "195+", or any other count string anywhere.
+ * Import CALC_COUNT_LABEL and use it instead.
+ */
+export const LIVE_CALC_COUNT: number = ALL_CALCULATORS.filter(
+  (c) => c.status !== 'coming-soon' && c.status !== 'draft'
+).length;
+
+/** User-facing label, e.g. "183+" */
+export const CALC_COUNT_LABEL: string = `${LIVE_CALC_COUNT}+`;

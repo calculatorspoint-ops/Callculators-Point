@@ -12,7 +12,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { CATEGORIES } from '@/data/calculatorConfigs';
+import { CATEGORIES, CALC_COUNT_LABEL } from '@/data/calculatorConfigs';
 import HomePageClient from './home-client';
 import { SITE_URL } from '@/config/site';
 import { QuickCalc } from '@/components/ui/QuickCalc';
@@ -21,40 +21,38 @@ export const metadata: Metadata = {
   // Title: use `absolute` to bypass the root layout template ('%s | Calculators Point').
   // Without `absolute`, Next.js would render "Calculators Point — 180+ Free Online Calculators | Calculators Point"
   // while og:title stays clean — creating the exact mismatch the audit flagged.
-  // `absolute` guarantees <title> === og:title === "Calculators Point — 180+ Free Online Calculators".
+  // `absolute` guarantees <title> === og:title === "Calculators Point — {COUNT}+ Free Online Calculators".
   title: {
-    absolute: 'Calculators Point — 180+ Free Online Calculators',
+    absolute: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
   },
   description:
-    '180+ free online calculators for finance, health, math, education & everyday life. EMI, BMI, SIP, GPA, tax, mortgage calculators — all fast, accurate, and free.',
-  // Issue 2 fix: canonical uses SITE_URL (https://calculatorspoint.com — non-www),
+    `${CALC_COUNT_LABEL} free online calculators for finance, health, math, education & everyday life. EMI, BMI, SIP, GPA, tax, mortgage calculators — all fast, accurate, and free.`,
+  // canonical uses SITE_URL (https://calculatorspoint.com — non-www),
   // consistent with the 301 redirect from www and metadataBase in layout.tsx.
   alternates: { canonical: SITE_URL },
 
   openGraph: {
-    title: 'Calculators Point — 180+ Free Online Calculators',
-    description: 'Free EMI, BMI, SIP, mortgage, tax, and 180+ more calculators. All fast, accurate, and always free.',
+    title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
+    description: `Free EMI, BMI, SIP, mortgage, tax, and ${CALC_COUNT_LABEL} more calculators. All fast, accurate, and always free.`,
     url: SITE_URL,
     type: 'website',
     siteName: 'Calculators Point',
-    // Issue 8 fix: static og:image for homepage shares on social media
     images: [{
       url: `${SITE_URL}/api/og?title=${encodeURIComponent('Calculators Point')}&icon=${encodeURIComponent('🧮')}&cat=${encodeURIComponent('180%2B Free Calculators')}`,
       width: 1200,
       height: 630,
-      alt: 'Calculators Point — 180+ Free Online Calculators',
+      alt: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Calculators Point — 180+ Free Online Calculators',
-    description: 'Free EMI, BMI, SIP, mortgage, tax, and 180+ more calculators.',
-    // Issue 8 fix: twitter image
+    title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
+    description: `Free EMI, BMI, SIP, mortgage, tax, and ${CALC_COUNT_LABEL} more calculators.`,
     images: [`${SITE_URL}/api/og?title=${encodeURIComponent('Calculators Point')}&icon=${encodeURIComponent('🧮')}&cat=${encodeURIComponent('180%2B Free Calculators')}`],
   },
 };
 
-// Issue 3 fix: Organization + WebSite + SiteLinksSearchBox schema.
+// Organization + WebSite + SiteLinksSearchBox schema.
 // SiteLinksSearchBox tells Google to show a search box in the SERP sitelinks.
 // The search-terms-url must match the URL format used by our /calculators search route.
 const jsonLd = {
@@ -106,7 +104,7 @@ function HeroSection() {
           {/* Left column — entirely static, no interactivity needed */}
           <div className="hero-content">
             <div className="hero-badge">
-              ✨ 180+ Free Tools · No Signup · Instant Results
+              ✨ {CALC_COUNT_LABEL} Free Tools · No Signup · Instant Results
             </div>
 
             <h1 className="hero-title">
@@ -116,7 +114,7 @@ function HeroSection() {
 
             {/* THIS IS THE LCP ELEMENT — now server-rendered, zero JS delay */}
             <p className="hero-sub">
-              Access 180+ free online calculators for finance, health, math, and everyday life. Calculate BMI, EMI, mortgages, percentages, and GPA instantly with live charts and step-by-step formulas. 100% free, with calculations processed locally in your browser.
+              Access {CALC_COUNT_LABEL} free online calculators for finance, health, math, and everyday life. Calculate BMI, EMI, mortgages, percentages, and GPA instantly with live charts and step-by-step formulas. 100% free, with calculations processed locally in your browser.
             </p>
 
             <div className="hero-actions">

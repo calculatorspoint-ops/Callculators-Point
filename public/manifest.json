@@ -1,13 +1,15 @@
 {
-  "name": "CalcPoint — Free Online Calculators",
-  "short_name": "CalcPoint",
-  "description": "Professional-grade calculators for finance, health, math, and everyday use.",
+  "name": "Calculators Point — Free Online Calculators",
+  "short_name": "Calculators Point",
+  "description": "180+ free online calculators for finance, health, math, education, and everyday life. Fast, accurate, and always free.",
   "theme_color": "#0f172a",
   "background_color": "#020617",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": "/",
   "scope": "/",
+  "lang": "en",
+  "categories": ["utilities", "finance", "education"],
   "icons": [
     { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable" },
     { "src": "/favicon-32x32.png",    "sizes": "32x32",   "type": "image/png" },

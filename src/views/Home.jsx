@@ -207,7 +207,7 @@ export default function Home({ skipHero } = {}) {
       {/* aria-label so screen readers understand the stats purpose */}
       <div className="stat-strip" role="complementary" aria-label="Site statistics">
         {[
-          { n: "180+", l: "Calculators", icon: "🧮" },
+          { n: `${ALL_CALCULATORS.length}+`, l: "Calculators", icon: "🧮" },
           { n: "6",    l: "Categories",  icon: "📂" },
           { n: "∞",    l: "Free Always", icon: "🆓" },
           { n: "0",    l: "Data Stored", icon: "🔒" },

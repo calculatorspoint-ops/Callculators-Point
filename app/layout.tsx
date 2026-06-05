@@ -9,6 +9,10 @@
  * - Inter + Jakarta preloaded (above-fold text). JetBrains Mono NOT preloaded
  *   (only used in QuickCalc widget, which is lazy-loaded).
  * - Inline <script> in <head> sets dark/light theme before first paint (no FOUC).
+ *
+ * ADSENSE: Loaded via next/script with strategy="lazyOnload" — fires during
+ * browser idle time after the page is fully loaded. This is the least-impactful
+ * loading strategy for Core Web Vitals while still loading the ad script globally.
  */
 import type { Viewport, Metadata } from 'next';
 import Script from 'next/script';
@@ -20,6 +24,7 @@ import '../src/styles/mobile-overflow-killer.css';
 // Do NOT import it here — that would load 8.9KB on every page globally.
 import { ClientProviders } from './client-providers';
 import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import { CALC_COUNT_LABEL } from '@/data/calculatorConfigs';
 
 export const viewport: Viewport = {
   themeColor: [
@@ -33,12 +38,12 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://calculatorspoint.com'),
   title: {
-    // Issue 1 fix: root default title matches the brand-consistent format
-    default: 'Calculators Point — 180+ Free Online Calculators',
+    // Root default title — uses CALC_COUNT_LABEL (single source of truth, no hardcoding)
+    default: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     template: '%s | Calculators Point',
   },
   description:
-    '180+ free online calculators for finance, health, math, education, and everyday life. Fast, accurate, and always free.',
+    `${CALC_COUNT_LABEL} free online calculators for finance, health, math, education, and everyday life. Fast, accurate, and always free.`,
 
   authors: [{ name: 'Calculators Point' }],
   creator: 'Calculators Point',
@@ -47,19 +52,19 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://calculatorspoint.com',
     siteName: 'Calculators Point',
-    title: 'Calculators Point — 180+ Free Online Calculators',
-    description: '180+ free online calculators for finance, health, math, and everyday life.',
+    title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
+    description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, and everyday life.`,
     images: [{
       url: 'https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=180%2B+Free+Calculators',
       width: 1200,
       height: 630,
-      alt: 'Calculators Point — 180+ Free Online Calculators',
+      alt: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Calculators Point — 180+ Free Online Calculators',
-    description: '180+ free online calculators for finance, health, math, and everyday life.',
+    title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
+    description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, and everyday life.`,
     images: ['https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=180%2B+Free+Calculators'],
   },
   robots: {
@@ -96,7 +101,7 @@ const mono = JetBrains_Mono({
 
 // Inline theme script — runs synchronously before first paint to prevent FOUC
 // Must be a plain string to avoid React serialization overhead
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('CalculatorsPoint-v3');var s=t&&JSON.parse(t);var theme=s&&s.state&&s.state.theme;if(theme==='dark'||(!theme&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`;
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('CalculatorsPoint-v3');var s=t&&JSON.parse(t);var theme=s&&s.state&&s.state.theme;if(theme==='dark'||(!theme&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`; 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -108,6 +113,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* ── Resource hints: resolve connections before browser discovers resources ── */}
         {/* preconnect: establishes TCP+TLS to our CDN before CSS/JS requests start */}
         <link rel="preconnect" href="https://calculatorspoint.com" />
+
+        {/* ── AdSense preconnect hints (reduces latency when the script loads) ── */}
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
       </head>
       <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`} suppressHydrationWarning>
         <ClientProviders>
@@ -127,6 +136,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', 'G-RZ1T9JVXMV');
           `}
         </Script>
+
+        {/* ── Google AdSense — sitewide script, loaded once here ──────────────────────
+            strategy="lazyOnload": fires during browser idle time after full page load.
+            This is LESS impactful on INP/LCP than afterInteractive.
+            The script auto-discovers all <ins class="adsbygoogle"> elements on the page.
+            Publisher ID: ca-pub-5164672592255197
+        ─────────────────────────────────────────────────────────────────────────── */}
+        <Script
+          id="adsense-loader"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5164672592255197"
+          strategy="lazyOnload"
+          crossOrigin="anonymous"
+        />
       </body>
     </html>
   );

@@ -89,17 +89,71 @@ const nextConfig: NextConfig = {
 
   // ── Headers ───────────────────────────────────────────────────────────────
   async headers() {
+    // ── Content Security Policy ────────────────────────────────────────────
+    // Designed to be compatible with:
+    //   • Google AdSense (pagead2.googlesyndication.com, doubleclick.net)
+    //   • Google Analytics (googletagmanager.com, google-analytics.com)
+    //   • Google Fonts (fonts.googleapis.com, fonts.gstatic.com)
+    //   • Next.js inline scripts (theme init, JSON-LD)
+    //
+    // TRADEOFF: 'unsafe-inline' for scripts is required by Google AdSense.
+    // All major AdSense publishers use it. The CSP still meaningfully prevents:
+    //   • object injection (object-src 'none')
+    //   • base-tag hijacking (base-uri 'self')
+    //   • unexpected frame embeds (frame-ancestors 'self')
+    //   • unexpected data exfiltration (connect-src allowlist)
+    const ContentSecurityPolicy = [
+      "default-src 'self'",
+      // Scripts: self + Next.js runtime + Google services + AdSense
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com https://www.gstatic.com https://adservice.google.com https://partner.googleadservices.com https://tpc.googlesyndication.com",
+      // Styles: self + Next.js inline styles + Google Fonts
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      // Fonts: self + Google Fonts CDN
+      "font-src 'self' https://fonts.gstatic.com",
+      // Images: self + data URIs (inline SVGs) + all HTTPS (og:image, ads)
+      "img-src 'self' data: https: blob:",
+      // Frames: only Google Ad frames allowed
+      "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
+      // XHR/fetch: self + Google Analytics + AdSense reporting
+      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://firebaseapp.com https://*.firebaseio.com",
+      // No plugins, no applets
+      "object-src 'none'",
+      // Prevent base-tag hijacking
+      "base-uri 'self'",
+      // Prevent clickjacking via iframes
+      "frame-ancestors 'self'",
+      // Only upgrade insecure requests (not block them, avoids breaking mixed content)
+      "upgrade-insecure-requests",
+    ].join('; ');
+
+    // ── Permissions Policy ─────────────────────────────────────────────────
+    // Restricts access to powerful browser APIs not used by this site.
+    // Keeps the policy minimal to avoid breaking future features.
+    const PermissionsPolicy = [
+      'camera=()',           // No camera access
+      'microphone=()',       // No microphone access
+      'geolocation=()',      // No geolocation (calculators use self-entered data)
+      'payment=()',          // No payment API
+      'usb=()',              // No USB access
+      'interest-cohort=()',  // Opt out of Google FLoC (deprecated but safe to keep)
+    ].join(', ');
+
     return [
-      // Security headers for all pages
+      // ── Security headers for all pages ────────────────────────────────────
       {
         source: '/(.*)',
         headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Content-Type-Options',  value: 'nosniff' },
+          // X-Frame-Options is superseded by frame-ancestors in CSP, but kept
+          // for older browsers that don't support CSP frame-ancestors
+          { key: 'X-Frame-Options',         value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy',          value: 'strict-origin-when-cross-origin' },
+          { key: 'X-DNS-Prefetch-Control',   value: 'on' },
+          { key: 'Content-Security-Policy',  value: ContentSecurityPolicy },
+          { key: 'Permissions-Policy',       value: PermissionsPolicy },
         ],
       },
-      // Long-lived cache for content-hashed static assets (CSS, JS, fonts, images)
+      // ── Long-lived cache for content-hashed static assets (CSS, JS, fonts, images)
       // These files have unique hashes in their names, so it's safe to cache forever.
       // On repeat visits this eliminates ALL render-blocking CSS/JS (served from cache).
       {

@@ -35,6 +35,7 @@
 import type { MetadataRoute } from 'next';
 import { ALL_CALCULATORS, CATEGORIES } from '@/data/calculatorConfigs';
 import { SEO_LANDING_PAGES } from '@/data/seoLandingData';
+import { getPublishedPosts } from '@/data/blogPosts';
 
 const BASE_URL = 'https://calculatorspoint.com';
 
@@ -142,6 +143,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/disclaimer`,       lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
   ];
 
+  // ── 10. Blog pages ──────────────────────────────────────────────────
+  //    Only PUBLISHED (non-draft) posts are included.
+  //    Draft posts are intentionally excluded from the sitemap.
+  const publishedPosts = getPublishedPosts();
+  const blogIndexPage: MetadataRoute.Sitemap = publishedPosts.length > 0 ? [{
+    url: `${BASE_URL}/blog`,
+    lastModified: publishedPosts[0] ? new Date(publishedPosts[0].publishedAt) : DATES.content,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }] : [];
+
+  const blogPostPages: MetadataRoute.Sitemap = publishedPosts.map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt ?? post.publishedAt),
+    changeFrequency: 'monthly' as const,
+    priority: 0.65,
+  }));
+
   // ── Final output ──────────────────────────────────────────────────────────
   //    Order matters: higher-priority groups first so crawlers process
   //    the most important pages before hitting any crawl budget limit.
@@ -154,6 +173,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...nameGeneratorPages, // 9    URLs
     ...ecosystemPages,     // 3    URLs
     ...cheatSheetPages,    // 1    URL
+    ...blogIndexPage,      // 0-1  URL (only when published posts exist)
+    ...blogPostPages,      // 0-N  URLs (only published posts, drafts excluded)
     ...staticPages,        // 6    URLs
   ];
 }

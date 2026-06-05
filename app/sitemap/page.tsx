@@ -1,5 +1,5 @@
 /**
- * app/sitemap/page.tsx — Sitemap (SSG)
+ * app/sitemap/page.tsx — HTML Sitemap Page (SSG)
  *
  * Human-readable HTML sitemap for users and search engines.
  * The XML machine-readable sitemap is auto-generated at /sitemap.xml via app/sitemap.ts.
@@ -9,16 +9,17 @@
  */
 import type { Metadata } from 'next';
 import SitemapClient from './sitemap-client';
+import { CALC_COUNT_LABEL } from '@/data/calculatorConfigs';
 
 export const metadata: Metadata = {
   title: 'Sitemap',
   description:
-    'Complete sitemap of Calculators Point — browse all 220+ free online calculators, category pages, name generators, cheat sheets, and SEO tool guides. Easy navigation for users & search engines.',
+    `Complete sitemap of Calculators Point — browse all ${CALC_COUNT_LABEL} free online calculators, category pages, name generators, cheat sheets, and SEO tool guides. Easy navigation for users & search engines.`,
   alternates: { canonical: 'https://calculatorspoint.com/sitemap' },
   openGraph: {
     title: 'Sitemap | Calculators Point',
     description:
-      'Browse the full sitemap of Calculators Point with 220+ calculators across 9 categories. Find every tool, generator, and guide.',
+      `Browse the full sitemap of Calculators Point with ${CALC_COUNT_LABEL} calculators across 9 categories. Find every tool, generator, and guide.`,
     url: 'https://calculatorspoint.com/sitemap',
     type: 'website',
     siteName: 'Calculators Point',
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Sitemap | Calculators Point',
     description:
-      'Browse the full sitemap of Calculators Point with 220+ calculators across 9 categories.',
+      `Browse the full sitemap of Calculators Point with ${CALC_COUNT_LABEL} calculators across 9 categories.`,
     images: [
       'https://calculatorspoint.com/api/og?title=Sitemap%20%E2%80%94%20Calculators%20Point&icon=%F0%9F%97%BA%EF%B8%8F&cat=Navigation',
     ],
