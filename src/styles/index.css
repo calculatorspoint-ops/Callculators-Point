@@ -3257,3 +3257,18 @@ details[open] .seo-faq-question::after { transform: rotate(180deg); }
   }
 }
 
+/* ══════════════════════════════════════════════════════════════
+   INPUTFIELD FOCUS RING — CSS-only (replaces inline JS style mutations)
+   INP FIX: No JS style recalculation on focus — purely CSS paint-only.
+══════════════════════════════════════════════════════════════ */
+/* calc-input-wrap: focus-within shows green border without any JS */
+.calc-input-wrap:focus-within {
+  border-color: #16a34a !important;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+}
+
+/* Radio label: show a visible focus ring when the hidden <input> inside is focused */
+.radio-label-focused {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}

@@ -29,7 +29,7 @@ function ScenarioCard({ scenario, index, onRemove, isBase, colors }) {
           <button
             onClick={() => onRemove(index)}
             style={{ color: "var(--text3)", background: "none", border: "none", fontSize: 14, cursor: "pointer", padding: "2px 6px" }}
-            aria-label="Remove scenario"
+            aria-label={`Remove ${scenario.label || `scenario ${index + 1}`}`}
           >✕</button>
         )}
       </div>
@@ -169,6 +169,7 @@ export function ScenarioCompare({ currentResult, currentParams, calcLabel, onRes
           <button
             onClick={captureScenario}
             disabled={scenarios.length >= 3}
+            aria-label={scenarios.length >= 3 ? "Maximum 3 scenarios captured" : "Capture current scenario for comparison"}
             style={{
               display: "flex", alignItems: "center", gap: 4,
               padding: "6px 14px", borderRadius: 100, fontSize: 11, fontWeight: 700,
@@ -183,6 +184,7 @@ export function ScenarioCompare({ currentResult, currentParams, calcLabel, onRes
           {scenarios.length > 0 && (
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? "Hide scenario comparison panel" : `Show scenario comparison panel (${scenarios.length} captured)`}
               style={{
                 padding: "6px 12px", borderRadius: 100, fontSize: 11, fontWeight: 700,
                 background: "var(--surface)", border: "1px solid var(--border)",
@@ -195,6 +197,7 @@ export function ScenarioCompare({ currentResult, currentParams, calcLabel, onRes
           {scenarios.length > 0 && (
             <button
               onClick={clearAll}
+              aria-label="Clear all captured scenarios"
               style={{
                 padding: "6px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700,
                 background: "var(--surface)", border: "1px solid var(--border)",
@@ -249,6 +252,7 @@ export function ScenarioCompare({ currentResult, currentParams, calcLabel, onRes
                 <button
                   key={sc.timestamp}
                   onClick={() => onRestoreParams(sc.params)}
+                  aria-label={`Restore inputs for ${sc.label || `scenario ${i + 1}`}`}
                   style={{
                     padding: "6px 14px", borderRadius: 100, fontSize: 11, fontWeight: 700,
                     background: `${SCENARIO_COLORS[i]}10`, border: `1px solid ${SCENARIO_COLORS[i]}40`,

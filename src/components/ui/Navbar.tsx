@@ -8,6 +8,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig } from "@/data/calculatorConfigs";
 import { CurrencySelector } from './CurrencySelector';
 import { SettingsModal } from './SettingsModal';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 /* ── Fuzzy-ish search: name + desc + keywords ──────────── */
 function searchCalculators(query: string): CalculatorConfig[] {
@@ -259,6 +260,14 @@ export function Navbar() {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
+  // Refs for focus management
+  const settingsBtnRef  = useRef<HTMLButtonElement>(null);
+  const hamburgerBtnRef = useRef<HTMLButtonElement>(null);
+  const mobMenuPanelRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap for mobile menu
+  useFocusTrap(mobMenuPanelRef, mob, hamburgerBtnRef);
+
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
@@ -336,6 +345,7 @@ export function Navbar() {
 
             {/* Settings toggle */}
             <button
+              ref={settingsBtnRef}
               onClick={() => setSettingsOpen(true)}
               className="navbar-icon-btn desktop-only"
               aria-label="Settings"
@@ -345,10 +355,12 @@ export function Navbar() {
 
             {/* Mobile hamburger */}
             <button
+              ref={hamburgerBtnRef}
               className="navbar-icon-btn navbar-hamburger"
               onClick={() => setMob(!mob)}
               aria-label={mob ? "Close menu" : "Open menu"}
               aria-expanded={mob}
+              aria-controls="mob-menu-panel"
             >
               {mob ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -359,13 +371,23 @@ export function Navbar() {
         <SearchBox isMobile={true} isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       </header>
 
-      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && (
+        <SettingsModal
+          onClose={() => setSettingsOpen(false)}
+          triggerRef={settingsBtnRef}
+        />
+      )}
 
       {/* ── Mobile full-screen menu overlay ── */}
       {mob && (
         <div className="mob-overlay" onClick={() => setMob(false)} />
       )}
-      <div className={`mob-menu-panel${mob ? " mob-menu-panel--open" : ""}`} aria-hidden={!mob}>
+      <div
+        id="mob-menu-panel"
+        ref={mobMenuPanelRef}
+        className={`mob-menu-panel${mob ? " mob-menu-panel--open" : ""}`}
+        aria-hidden={!mob}
+      >
         {/* Category links */}
         <div className="mob-menu-section">
           <p className="mob-menu-section-title">Categories</p>

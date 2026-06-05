@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useTransition } from "react";
 import { compute, formatOutput } from "../utils/calculationEngine";
 import { useAppStore } from "../store/useAppStore";
 
@@ -9,6 +9,8 @@ import { useAppStore } from "../store/useAppStore";
 export function useCalculator(config) {
   const { addRecent } = useAppStore();
   const tracked = useRef(false);
+  // eslint-disable-next-line no-unused-vars
+  const [isPending, startTransition] = useTransition();
 
   // ── Input state (keyed by input.id) ───────────────────
   const buildDefaults = useCallback(() =>
@@ -59,16 +61,23 @@ export function useCalculator(config) {
   }, [buildDefaults]);
 
   // ── Auto-compute on input change ───────────────────────
+  // Debounce: 200ms is optimal — inputs feel instant (state update is immediate)
+  // while the expensive compute() runs only after the user pauses typing.
+  // startTransition() marks the result state update as non-urgent so React
+  // can yield the main thread back to higher-priority events (clicks, keystrokes)
+  // before committing the new result — this directly improves INP.
   useEffect(() => {
     if (Object.keys(errors).length > 0) return;
     setLoading(true);
     const timer = setTimeout(() => {
-      const res = compute(config.formula, inputs);
-      setResult(res.error ? null : res);
-      setLoading(false);
-    }, 60); // debounce
+      startTransition(() => {
+        const res = compute(config.formula, inputs);
+        setResult(res.error ? null : res);
+        setLoading(false);
+      });
+    }, 200); // raised from 60ms → 200ms for better INP
     return () => clearTimeout(timer);
-  }, [inputs, errors, config.formula]);
+  }, [inputs, errors, config.formula, startTransition]);
 
   // Track recent usage is now handled exclusively in Calculator.tsx
 

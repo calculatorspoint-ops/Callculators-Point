@@ -37,24 +37,26 @@ export function CurrencySelector() {
 
   return (
     <div ref={ref} style={{ position: "relative", flexShrink: 0 }}>
-      {/* Sleek Trigger Button */}
+      {/* Trigger Button */}
       <button
         onClick={() => setOpen(!open)}
-        className="group"
+        aria-label="Change region and currency"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        className="group currency-trigger"
+        data-open={open ? "true" : undefined}
         style={{
           display: "flex", alignItems: "center", gap: 6,
           padding: "6px 14px", borderRadius: "100px",
-          background: open ? "var(--brand-l, rgba(99,102,241,0.1))" : "var(--surface2)", 
+          background: open ? "var(--brand-l, rgba(99,102,241,0.1))" : "var(--surface2)",
           border: open ? "1.5px solid var(--brand)" : "1.5px solid var(--border)",
-          cursor: "pointer", transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)", 
+          cursor: "pointer", transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
           fontFamily: "var(--font)",
-          color: open ? "var(--brand)" : "var(--text)", 
+          color: open ? "var(--brand)" : "var(--text)",
           fontSize: 13, fontWeight: 700,
           whiteSpace: "nowrap",
           boxShadow: open ? "0 0 0 3px var(--p50)" : "0 2px 4px rgba(0,0,0,0.02)",
         }}
-        onMouseEnter={e => { if(!open) { e.currentTarget.style.borderColor = "var(--brand)"; e.currentTarget.style.background = "var(--p50)"; e.currentTarget.style.color = "var(--brand)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)"; } }}
-        onMouseLeave={e => { if(!open) { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.background = "var(--surface2)"; e.currentTarget.style.color = "var(--text)"; e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.02)"; } }}
         title="Change Region & Currency"
       >
         <span style={{ fontSize: 16, lineHeight: 1 }}>{flag}</span>
@@ -87,6 +89,7 @@ export function CurrencySelector() {
               <input
                 value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search country or currency..."
+                aria-label="Search countries and currencies"
                 autoFocus
                 style={{
                   width: "100%", padding: "10px 12px 10px 34px", fontSize: 13,
@@ -102,7 +105,12 @@ export function CurrencySelector() {
           </div>
 
           {/* List Area */}
-          <div className="custom-scrollbar" style={{ maxHeight: 340, overflowY: "auto", padding: "0 8px 8px" }}>
+          <div
+            className="custom-scrollbar"
+            role="listbox"
+            aria-label="Select country and currency"
+            style={{ maxHeight: 340, overflowY: "auto", padding: "0 8px 8px" }}
+          >
             {filtered ? (
               filtered.length === 0 ? (
                 <div style={{ padding: "30px 20px", textAlign: "center" }}>
@@ -147,15 +155,16 @@ export function CurrencySelector() {
               {autoDetected && !userSelected ? "Auto-detected location" : "Custom location set"}
             </div>
             {userSelected && (
-              <button 
+              <button
                 onClick={() => { resetToAuto(); setOpen(false); }}
-                style={{ 
-                  background: "none", border: "none", fontSize: 11, color: "var(--brand)", 
+                aria-label="Reset to auto-detected location"
+                style={{
+                  background: "none", border: "none", fontSize: 11, color: "var(--brand)",
                   cursor: "pointer", fontWeight: 700, padding: 0, fontFamily: "var(--font)",
                   transition: "opacity 0.2s"
                 }}
-                onMouseEnter={e => e.currentTarget.style.opacity = 0.8}
-                onMouseLeave={e => e.currentTarget.style.opacity = 1}
+                onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
+                onMouseLeave={e => e.currentTarget.style.opacity = "1"}
               >
                 Reset
               </button>
@@ -171,6 +180,9 @@ function CountryItem({ c, selected, onSelect }) {
   return (
     <button
       onClick={() => onSelect(c.code)}
+      role="option"
+      aria-selected={selected}
+      aria-label={`${c.countryName}, ${c.currency} (${c.currencySymbol})`}
       style={{
         width: "100%", display: "flex", alignItems: "center", gap: 12,
         padding: "10px 12px", background: selected ? "var(--brand-l, rgba(99,102,241,0.08))" : "transparent",

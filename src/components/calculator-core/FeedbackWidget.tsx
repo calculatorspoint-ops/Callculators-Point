@@ -62,7 +62,13 @@ export function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcS
           <button
             onClick={() => handleFeedback("up")}
             disabled={!!feedback || submitting}
-            title={`${counts.up} people found this helpful`}
+            aria-label={
+              loading
+                ? "Rate as helpful"
+                : counts.up > 0
+                ? `Yes, this was helpful (${counts.up} ${counts.up === 1 ? 'vote' : 'votes'})`
+                : "Yes, this was helpful"
+            }
             style={{
               display: "flex", alignItems: "center", gap: 6,
               padding: "6px 12px", borderRadius: 100, border: "1px solid",
@@ -85,7 +91,13 @@ export function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcS
           <button
             onClick={() => handleFeedback("down")}
             disabled={!!feedback || submitting}
-            title={`${counts.down} people found this unhelpful`}
+            aria-label={
+              loading
+                ? "Rate as not helpful"
+                : counts.down > 0
+                ? `No, this was not helpful (${counts.down} ${counts.down === 1 ? 'vote' : 'votes'})`
+                : "No, this was not helpful"
+            }
             style={{
               display: "flex", alignItems: "center", gap: 6,
               padding: "6px 12px", borderRadius: 100, border: "1px solid",
@@ -106,12 +118,14 @@ export function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcS
           </button>
         </div>
 
-        {/* Thank you message + approval % */}
-        {feedback && (
-          <span style={{ fontSize: 12, color: "var(--text3)", animation: "fade-in .3s" }}>
-            Thanks! {pct !== null && `${pct}% of users find this helpful.`}
-          </span>
-        )}
+        {/* Thank you message — aria-live announces to screen readers when feedback is submitted */}
+        <span
+          aria-live="polite"
+          aria-atomic="true"
+          style={{ fontSize: 12, color: "var(--text3)", animation: feedback ? "fade-in .3s" : undefined }}
+        >
+          {feedback && `Thanks! ${pct !== null ? `${pct}% of users find this helpful.` : ""}`}
+        </span>
       </div>
 
       <Link

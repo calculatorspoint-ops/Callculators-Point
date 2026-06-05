@@ -19,7 +19,7 @@ export function ResultBox({ label, value, sub, loading }) {
   };
 
   if (loading) return (
-    <div className="result-card">
+    <div className="result-card" role="status" aria-live="polite" aria-busy="true">
       <div className="result-loading">
         <div className="result-loading-spinner" />
         <span>Calculating…</span>
@@ -51,8 +51,14 @@ export function ResultBox({ label, value, sub, loading }) {
         {/* Label */}
         <p className="result-lbl">{label}</p>
 
-        {/* Main value */}
-        <p className="result-val">{value}</p>
+        {/* Main value — aria-live announces to screen readers when result changes */}
+        <p
+          className="result-val"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {value}
+        </p>
 
         {sub && <p className="result-sub">{sub}</p>}
 
@@ -61,11 +67,19 @@ export function ResultBox({ label, value, sub, loading }) {
 
         {/* Actions */}
         <div className="result-actions">
-          <button className="result-btn" onClick={copy} title="Copy result">
+          <button
+            className="result-btn"
+            onClick={copy}
+            aria-label={copied ? "Result copied to clipboard" : `Copy result: ${value}`}
+          >
             {copied ? <Check size={12} /> : <Copy size={12} />}
             <span>{copied ? "Copied!" : "Copy"}</span>
           </button>
-          <button className="result-btn" onClick={share} title="Share">
+          <button
+            className="result-btn"
+            onClick={share}
+            aria-label={`Share result: ${label} — ${value}`}
+          >
             <Share2 size={12} />
             <span>Share</span>
           </button>

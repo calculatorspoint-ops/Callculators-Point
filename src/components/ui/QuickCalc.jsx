@@ -163,9 +163,23 @@ export function QuickCalc() {
     else { if (display.length < 16) setDisplay(d => d + label); }
   }, [display, expr, fresh, memory, isDeg, justCalc]);
 
-  // ── Keyboard support ──────────────────────────────────────────
+  // ── Keyboard support (scoped by visibility) ────────────────────────────
+  // INP FIX: Only register the global keydown listener when the widget is
+  // actually visible in the viewport. When the user scrolls away, we remove
+  // the listener — avoiding unnecessary JS execution on every keystroke.
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let isVisible = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisible = entry.isIntersecting; },
+      { threshold: 0.1 }
+    );
+    observer.observe(container);
+
     const handler = (e) => {
+      if (!isVisible) return;                          // ← skip when off-screen
       const tag = e.target.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       const map = {
@@ -179,7 +193,10 @@ export function QuickCalc() {
       if (action) { e.preventDefault(); press(action); }
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("keydown", handler);
+      observer.disconnect();
+    };
   }, [press]);
 
   // ── Display formatting ────────────────────────────────────────
@@ -226,7 +243,11 @@ export function QuickCalc() {
         {/* Mode + history toggle */}
         <div style={{ display: "flex", gap: 5, marginBottom: 8 }}>
           {["basic","scientific"].map(m => (
-            <button key={m} onClick={() => setMode(m)}
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              aria-pressed={mode === m}
+              aria-label={`${m === "basic" ? "Basic" : "Scientific"} mode${mode === m ? " (active)" : ""}`}
               style={{
                 flex: 1, padding: "5px 0", borderRadius: 8, border: "none", cursor: "pointer",
                 background: mode === m ? "rgba(37,99,235,.35)" : "rgba(255,255,255,.07)",
@@ -239,7 +260,10 @@ export function QuickCalc() {
           ))}
           {/* Degree / Radian toggle (scientific only) */}
           {mode === "scientific" && (
-            <button onClick={() => setIsDeg(d => !d)}
+            <button
+              onClick={() => setIsDeg(d => !d)}
+              aria-label={isDeg ? "Switch to radians" : "Switch to degrees"}
+              aria-pressed={isDeg}
               style={{
                 padding: "5px 8px", borderRadius: 8, border: "none", cursor: "pointer",
                 background: "rgba(6,182,212,.2)", color: "#67e8f9",
@@ -249,7 +273,10 @@ export function QuickCalc() {
               {isDeg ? "DEG" : "RAD"}
             </button>
           )}
-          <button onClick={() => setShowHist(s => !s)}
+          <button
+            onClick={() => setShowHist(s => !s)}
+            aria-label={showHist ? "Hide calculation history" : "Show calculation history"}
+            aria-expanded={showHist}
             style={{
               padding: "5px 8px", borderRadius: 8, border: "none", cursor: "pointer",
               background: showHist ? "rgba(37,99,235,.3)" : "rgba(255,255,255,.07)",
@@ -301,11 +328,17 @@ export function QuickCalc() {
         )}
 
         {/* Display */}
-        <div style={{
-          background: "rgba(0,0,0,.35)", borderRadius: 12, padding: "12px 14px",
-          marginBottom: 10, border: "1px solid rgba(255,255,255,.06)", minHeight: 78,
-          display: "flex", flexDirection: "column", justifyContent: "flex-end",
-        }}>
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          aria-label={`Calculator display: ${expr ? expr + " " : ""}${display}`}
+          style={{
+            background: "rgba(0,0,0,.35)", borderRadius: 12, padding: "12px 14px",
+            marginBottom: 10, border: "1px solid rgba(255,255,255,.06)", minHeight: 78,
+            display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          }}
+        >
           <div style={{
             fontSize: 10, color: "rgba(255,255,255,.35)", fontFamily: "var(--font-mono)",
             minHeight: 14, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis",

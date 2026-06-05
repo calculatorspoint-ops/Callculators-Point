@@ -62,24 +62,29 @@ function CustomTip({ active, payload, label, fmtV }) {
 
 /* ── Export chart as PNG ─────────────────────────────────────────────── */
 function exportChart(title) {
-  const svgEl = document.querySelector(".recharts-wrapper svg");
-  if (!svgEl) return;
-  const svgData = new XMLSerializer().serializeToString(svgEl);
-  const canvas = document.createElement("canvas");
-  const ctx    = canvas.getContext("2d");
-  const img    = new Image();
-  canvas.width  = svgEl.width?.baseVal?.value || 800;
-  canvas.height = svgEl.height?.baseVal?.value || 300;
-  img.onload = () => {
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-    const a = document.createElement("a");
-    a.download = `${title || "chart"}.png`;
-    a.href = canvas.toDataURL("image/png");
-    a.click();
-  };
-  img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+  // Wrap in rAF so the click response returns immediately to the browser
+  // before the potentially expensive SVG→Canvas ops start.
+  // This keeps the click handler fast (good INP) while the export runs async.
+  requestAnimationFrame(() => {
+    const svgEl = document.querySelector(".recharts-wrapper svg");
+    if (!svgEl) return;
+    const svgData = new XMLSerializer().serializeToString(svgEl);
+    const canvas = document.createElement("canvas");
+    const ctx    = canvas.getContext("2d");
+    const img    = new Image();
+    canvas.width  = svgEl.width?.baseVal?.value || 800;
+    canvas.height = svgEl.height?.baseVal?.value || 300;
+    img.onload = () => {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      const a = document.createElement("a");
+      a.download = `${title || "chart"}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+  });
 }
 
 /* ── Shared axis styles ─────────────────────────────────────────────── */
@@ -101,16 +106,44 @@ function ChartBox({ title, children, data }) {
   const handleReset   = () => { setZoom(1); setSliceStart(0); };
 
   return (
-    <div className="chart-wrap">
+    <div className="chart-wrap" role="region" aria-label={title || "Chart"}>
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
         <p className="chart-title">📊 {title || "Chart"}</p>
         <div style={{ display:"flex", gap:5 }}>
           {data?.length > 6 && <>
-            <button onClick={handleZoomIn}  title="Zoom in"  style={ctrlBtn} disabled={zoom >= MAX_ZOOM}><ZoomIn  size={11}/></button>
-            <button onClick={handleZoomOut} title="Zoom out" style={ctrlBtn} disabled={zoom <= MIN_ZOOM}><ZoomOut size={11}/></button>
-            {zoom > 1 && <button onClick={handleReset} title="Reset" style={ctrlBtn}><RotateCcw size={11}/></button>}
+            <button
+              onClick={handleZoomIn}
+              aria-label="Zoom in"
+              style={ctrlBtn}
+              disabled={zoom >= MAX_ZOOM}
+            >
+              <ZoomIn  size={11}/>
+            </button>
+            <button
+              onClick={handleZoomOut}
+              aria-label="Zoom out"
+              style={ctrlBtn}
+              disabled={zoom <= MIN_ZOOM}
+            >
+              <ZoomOut size={11}/>
+            </button>
+            {zoom > 1 && (
+              <button
+                onClick={handleReset}
+                aria-label="Reset zoom"
+                style={ctrlBtn}
+              >
+                <RotateCcw size={11}/>
+              </button>
+            )}
           </>}
-          <button onClick={() => exportChart(title)} title="Download PNG" style={ctrlBtn}><Download size={11}/></button>
+          <button
+            onClick={() => exportChart(title)}
+            aria-label="Download chart as PNG"
+            style={ctrlBtn}
+          >
+            <Download size={11}/>
+          </button>
         </div>
       </div>
       {/* Pass zoomed data to children via render prop */}
