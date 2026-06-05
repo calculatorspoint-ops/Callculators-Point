@@ -117,6 +117,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* ── AdSense preconnect hints (reduces latency when the script loads) ── */}
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+
+        {/* ── Google AdSense ────────────────────────────────────────────
+            Placed directly in <head> as a raw async script so it is present
+            in the initial server-rendered HTML on every page.
+
+            WHY NOT next/script lazyOnload?
+            next/script injects the tag via JavaScript AFTER the page loads.
+            That means the tag is NOT in the HTML source — Google's AdSense
+            crawler and site-ownership verifier cannot find it.
+
+            A raw <script async> in <head> IS in the HTML source immediately.
+            The `async` attribute prevents render-blocking, so there is zero
+            impact on LCP. The browser will download and execute it in parallel
+            with the rest of the page.
+
+            Publisher ID: ca-pub-5164672592255197
+        ─────────────────────────────────────────────────── */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5164672592255197"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`} suppressHydrationWarning>
         <ClientProviders>
@@ -136,19 +159,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', 'G-RZ1T9JVXMV');
           `}
         </Script>
-
-        {/* ── Google AdSense — sitewide script, loaded once here ──────────────────────
-            strategy="lazyOnload": fires during browser idle time after full page load.
-            This is LESS impactful on INP/LCP than afterInteractive.
-            The script auto-discovers all <ins class="adsbygoogle"> elements on the page.
-            Publisher ID: ca-pub-5164672592255197
-        ─────────────────────────────────────────────────────────────────────────── */}
-        <Script
-          id="adsense-loader"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5164672592255197"
-          strategy="lazyOnload"
-          crossOrigin="anonymous"
-        />
       </body>
     </html>
   );
