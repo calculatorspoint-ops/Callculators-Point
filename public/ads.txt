@@ -1,0 +1,10 @@
+# ads.txt — Authorized Digital Sellers
+# https://calculatorspoint.com/ads.txt
+#
+# This file authorizes Google AdSense to serve ads on this domain.
+# Publisher ID: ca-pub-5164672592255197
+#
+# FORMAT: <ad network domain>, <publisher ID>, <relationship type>, <certification authority ID>
+# DIRECT = this site has a direct business relationship with Google AdSense
+
+google.com, pub-5164672592255197, DIRECT, f08c47fec0942fa0
