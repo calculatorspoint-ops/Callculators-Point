@@ -110,6 +110,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Inline theme script: sets dark/light class BEFORE paint — eliminates FOUC */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 
+        {/* ── AdSense site ownership verification ─────────────────────────────────
+            Required by Google for AdSense review. Confirms this publisher ID
+            owns/controls this domain. Must be in <head> on every page.
+        ─────────────────────────────────────────────────────────────────── */}
+        <meta name="google-adsense-account" content="ca-pub-5164672592255197" />
+
         {/* ── Resource hints: resolve connections before browser discovers resources ── */}
         {/* preconnect: establishes TCP+TLS to our CDN before CSS/JS requests start */}
         <link rel="preconnect" href="https://calculatorspoint.com" />

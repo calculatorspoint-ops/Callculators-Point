@@ -1,7 +1,7 @@
-﻿
+
 import Link from "next/link";
 
-const LAST_UPDATED = "January 1, 2025";
+const LAST_UPDATED = "June 6, 2026";
 
 const Section = ({ id, title, children }) => (
   <div id={id} style={{ marginBottom:32 }}>

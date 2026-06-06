@@ -2,11 +2,11 @@
  * src/components/calculator-core/SEOContentSection.tsx
  *
  * Server component — renders pure static HTML at build time.
- * Contains: About, Formula, How To Use, Examples, Tips, FAQ accordion.
+ * Contains: About, Formula, How To Use, Examples, Worked Example, Tips, Related Calculators.
  * Zero client JS. Fully indexed by Google.
  */
 import Link from 'next/link';
-import { ALL_CALCULATORS, CATEGORIES } from '@/data/calculatorConfigs';
+import { CATEGORIES, getRelatedCalcs } from '@/data/calculatorConfigs';
 import { generateCalcContent } from '@/utils/generateCalcContent';
 import type { CalculatorConfig } from '@/data/calculatorConfigs';
 
@@ -28,10 +28,9 @@ const DISCLAIMER_CATS = new Set(['health', 'finance', 'education', 'business']);
 export function SEOContentSection({ calc }: SEOContentSectionProps) {
   const content = generateCalcContent(calc);
   const cat = CATEGORIES.find(c => c.id === calc.cat);
-  // Increase to 6 related calcs for better internal linking density (was 4)
-  const relatedCalcs = ALL_CALCULATORS
-    .filter(c => c.cat === calc.cat && c.slug !== calc.slug && c.status !== 'coming-soon')
-    .slice(0, 6);
+
+  // Use getRelatedCalcs which supports cross-category links via calc.relatedCalculators
+  const relatedCalcs = getRelatedCalcs(calc, 6);
 
   // Show disclaimer for sensitive categories or privacy: 'sensitive'
   const showDisclaimer = DISCLAIMER_CATS.has(calc.cat) || calc.privacy === 'sensitive';
@@ -77,6 +76,49 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
         </div>
       )}
 
+      {/* ── Worked Example ── */}
+      {content.workedExample && (
+        <div className="seo-block">
+          <h2 className="seo-h2">Example Calculation</h2>
+          <div className="seo-worked-example">
+            <p className="seo-worked-title">{content.workedExample.title}</p>
+
+            {/* Inputs */}
+            {content.workedExample.inputs.length > 0 && (
+              <div className="seo-worked-group">
+                <p className="seo-worked-label">📥 Inputs</p>
+                <ul className="seo-worked-list">
+                  {content.workedExample.inputs.map((inp, i) => (
+                    <li key={i} className="seo-worked-item">{inp}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Steps */}
+            {content.workedExample.steps.length > 0 && (
+              <div className="seo-worked-group">
+                <p className="seo-worked-label">🔢 Calculation Steps</p>
+                <ol className="seo-worked-steps">
+                  {content.workedExample.steps.map((step, i) => (
+                    <li key={i} className="seo-worked-step">
+                      <span className="seo-step-num">{i + 1}</span>
+                      <span className="seo-step-text">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {/* Result */}
+            <div className="seo-worked-result">
+              <span aria-hidden="true">✅</span>
+              <span>{content.workedExample.result}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Limitations ── */}
       {content.limitations.length > 0 && (
         <div className="seo-block">
@@ -106,7 +148,7 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
       </div>
 
       {/* ── Examples ── */}
-      {content.examples.length > 0 && (
+      {content.examples.length > 0 && !content.workedExample && (
         <div className="seo-block">
           <h2 className="seo-h2">Example Use Cases</h2>
           <div className="seo-examples-grid">
@@ -145,7 +187,7 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
       {/* ── Related Calculators ── */}
       {relatedCalcs.length > 0 && (
         <div className="seo-block">
-          <h2 className="seo-h2">More {cat?.name ?? 'Calculators'}</h2>
+          <h2 className="seo-h2">Related Calculators</h2>
           <div className="seo-related-grid">
             {relatedCalcs.map(c => (
               <Link key={c.id} href={`/calculator/${c.slug}`} className="seo-related-card">

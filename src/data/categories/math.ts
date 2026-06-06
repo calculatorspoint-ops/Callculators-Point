@@ -11,7 +11,19 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: true,
   hasChart: false,
   isNew: false,
-      about: `We built the Percentage Calculator specifically to 6 simultaneous modes: X% of Y, what %, change, increase & decrease. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
+  intro: `The Percentage Calculator handles six common percentage problems at once — from finding what percent one number is of another, to calculating percentage increase and decrease. It's used by students checking exam scores, shoppers comparing discounts, and analysts tracking change over time. All six modes run simultaneously so you see every result without switching between tools.`,
+  workedExample: {
+    title: 'Calculating a 15% tip on a $48 restaurant bill',
+    inputs: ['Bill amount: $48.00', 'Tip percentage: 15%'],
+    steps: [
+      'Convert percentage to decimal: 15 ÷ 100 = 0.15',
+      'Multiply bill by decimal: $48.00 × 0.15 = $7.20',
+      'Add tip to bill: $48.00 + $7.20 = $55.20 total',
+    ],
+    result: 'A 15% tip on a $48 bill is $7.20, bringing the total to $55.20.',
+  },
+  relatedCalculators: ['fraction-calculator', 'ratio-calculator', 'percent-error-calculator', 'statistics-calculator', 'average-calculator'],
+  about: `Percentages are one of the most frequently used calculations in everyday life, yet the different problem types — finding a percentage of a number, working backwards from a result, or computing percentage change — each require a different formula. This calculator handles all six variations simultaneously, so you always get every answer without needing to re-enter data.\n\nThe six modes cover: X% of Y (e.g., "what is 30% of 250?"), what percentage X is of Y, percentage increase, percentage decrease, adding a percentage to a value, and subtracting a percentage. Each mode displays its formula alongside the result for full transparency.\n\nPercentage calculations underpin a huge range of real-world tasks: tax computation, discount analysis, exam grading, profit margin tracking, and interest rate comparison. Whether you're a student, a shopper, or a financial analyst, having all six modes in one place saves time and reduces the chance of using the wrong formula.`,
 },
   {
   id: 'scientific',
@@ -23,7 +35,19 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: true,
   hasChart: false,
   isNew: false,
-      about: `The Scientific Calculator is an essential resource for anyone needing to expression parser with trig, log, exp, history & DEG/RAD toggle. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: `This Scientific Calculator evaluates full mathematical expressions including trigonometric functions, logarithms, exponents, and constants like π and e — all from a single input field. It keeps a history of past calculations and lets you toggle between degree and radian mode. Students, engineers, and teachers use it to evaluate complex expressions without a physical calculator.`,
+  workedExample: {
+    title: 'Evaluating sin(30°) + log(100)',
+    inputs: ['Expression: sin(30) + log(100)', 'Mode: DEG (degrees)'],
+    steps: [
+      'Calculate sin(30°) = 0.5 (30 degrees is exactly one-half)',
+      'Calculate log₁₀(100) = 2 (because 10² = 100)',
+      'Add the results: 0.5 + 2 = 2.5',
+    ],
+    result: 'sin(30°) + log(100) = 2.5',
+  },
+  relatedCalculators: ['logarithm-calculator', 'quadratic-calculator', 'statistics-calculator', 'exponent-calculator', 'root-calculator'],
+  about: `A scientific calculator goes beyond the four basic operations to handle the mathematical functions used in algebra, trigonometry, calculus, physics, and engineering. This web-based version parses full expressions — you can type "sin(45) * sqrt(2)" and get an instant result — rather than requiring you to press keys in sequence like a physical calculator.\n\nKey features include support for sin, cos, tan and their inverses, natural and base-10 logarithms, exponential functions, square roots, and the constants π and e. The DEG/RAD toggle ensures trig functions use the correct angle unit for your application. Calculation history lets you review and reuse previous entries.\n\nThis calculator is particularly useful for physics problems requiring radian-mode trig, chemistry stoichiometry involving logarithmic pH calculations, and math coursework where you need to verify hand-computed answers quickly.`,
 },
   {
   id: 'statistics',
@@ -35,7 +59,23 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: false,
-      about: `Stop guessing and start using the Statistics Calculator to get immediate, accurate data. Specifically engineered to mean, median, mode, std dev, IQR, quartiles & histogram, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: `The Statistics Calculator computes descriptive statistics — mean, median, mode, standard deviation, variance, IQR, and quartiles — from any dataset you enter. It generates a histogram to visualize the distribution, making it practical for data analysis courses, research projects, and quality control work. Paste in a list of numbers separated by commas or spaces and all metrics appear instantly.`,
+  workedExample: {
+    title: 'Descriptive statistics for a set of 7 test scores',
+    inputs: ['Dataset: 72, 85, 91, 68, 85, 79, 94'],
+    steps: [
+      'Sort values: 68, 72, 79, 85, 85, 91, 94',
+      'Mean: (68+72+79+85+85+91+94) ÷ 7 = 574 ÷ 7 = 82.0',
+      'Median: middle value (4th of 7) = 85',
+      'Mode: 85 (appears twice)',
+      'Range: 94 − 68 = 26',
+      'Variance: Σ(xᵢ − mean)² ÷ n = [(196+100+9+9+9+81+144)] ÷ 7 = 548 ÷ 7 ≈ 78.3',
+      'Standard deviation: √78.3 ≈ 8.8',
+    ],
+    result: 'Mean = 82.0, Median = 85, Mode = 85, SD ≈ 8.8, Range = 26.',
+  },
+  relatedCalculators: ['z-score-calculator', 'average-calculator', 'confidence-interval-calculator', 'sample-size-calculator', 'probability-calculator'],
+  about: `Descriptive statistics summarize what a dataset looks like — its center, spread, and shape — without making inferences beyond the data itself. This calculator automates all the standard measures: mean (arithmetic average), median (middle value), mode (most frequent), standard deviation, variance, IQR, and quartile boundaries. A histogram updates dynamically as you change data.\n\nThe calculator distinguishes between population and sample standard deviation (dividing by n vs. n−1), which matters for statistical inference. Quartiles are computed using the standard inclusive method, consistent with most textbooks and spreadsheet software.\n\nStatistics calculators are used widely in academic research, quality control (Six Sigma practitioners track standard deviations closely), finance (portfolio volatility is a standard deviation), and any field where you need to understand how data is distributed before drawing conclusions.`,
 },
   {
   id: 'quadratic',
@@ -47,7 +87,23 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: false,
-      about: `Stop guessing and start using the Quadratic Formula to get immediate, accurate data. Specifically engineered to solve ax²+bx+c=0 with roots, vertex & parabola chart, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: `The Quadratic Formula Calculator solves equations of the form ax² + bx + c = 0, giving the roots (x-intercepts), the vertex coordinates, and the discriminant. It renders a parabola chart so you can see where the function crosses the x-axis. Algebra students and engineers use it to quickly verify roots and understand whether solutions are real or complex.`,
+  workedExample: {
+    title: 'Solving 2x² − 7x + 3 = 0',
+    inputs: ['a = 2', 'b = −7', 'c = 3'],
+    steps: [
+      'Discriminant: Δ = b² − 4ac = (−7)² − 4(2)(3) = 49 − 24 = 25',
+      'Since Δ > 0, there are two distinct real roots',
+      'x = (−b ± √Δ) / 2a = (7 ± √25) / 4 = (7 ± 5) / 4',
+      'Root 1: x₁ = (7 + 5) / 4 = 12/4 = 3',
+      'Root 2: x₂ = (7 − 5) / 4 = 2/4 = 0.5',
+      'Vertex x-coordinate: −b/2a = 7/4 = 1.75',
+      'Vertex y-coordinate: f(1.75) = 2(1.75)² − 7(1.75) + 3 = 6.125 − 12.25 + 3 = −3.125',
+    ],
+    result: 'Roots: x = 3 and x = 0.5. Vertex at (1.75, −3.125). Parabola opens upward.',
+  },
+  relatedCalculators: ['linear-equation-solver', 'pythagorean-calculator', 'scientific-calculator'],
+  about: `The quadratic formula is one of the most important results in elementary algebra. For any equation ax² + bx + c = 0 (where a ≠ 0), the formula x = (−b ± √(b²−4ac)) / 2a gives both roots directly. The discriminant (b²−4ac) tells you upfront how many real solutions exist: positive means two real roots, zero means a repeated root, and negative means the roots are complex numbers.\n\nThis calculator also finds the vertex of the parabola, which gives the minimum or maximum value of the quadratic function — crucial in optimization problems. The parabola opens upward when a > 0 (minimum at vertex) and downward when a < 0 (maximum at vertex).\n\nQuadratic equations arise naturally in projectile motion (physics), area problems (geometry), profit maximization (economics), and circuit analysis (electrical engineering). The calculator handles all real coefficients, including decimals and negatives, and displays complex roots when the discriminant is negative.`,
 },
   {
   id: 'pythagoras',
@@ -59,7 +115,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: false,
-      about: `We built the Pythagorean Theorem specifically to find any triangle side with area and perimeter. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
+  intro: `The Pythagorean Theorem Calculator finds any side of a right triangle when two sides are known, using the relationship a² + b² = c². It also computes the triangle's area and perimeter from the same inputs. Carpenters checking square corners, students solving geometry problems, and engineers calculating diagonal distances all rely on this foundational formula.`,
+  workedExample: {
+    title: 'Finding the hypotenuse of a right triangle with legs 6 m and 8 m',
+    inputs: ['Leg a = 6 m', 'Leg b = 8 m'],
+    steps: [
+      'Apply Pythagorean theorem: c² = a² + b²',
+      'c² = 6² + 8² = 36 + 64 = 100',
+      'c = √100 = 10 m',
+      'Area = (a × b) / 2 = (6 × 8) / 2 = 24 m²',
+      'Perimeter = a + b + c = 6 + 8 + 10 = 24 m',
+    ],
+    result: 'Hypotenuse = 10 m. Area = 24 m². Perimeter = 24 m. (This is the classic 6-8-10 Pythagorean triple.)',
+  },
+  relatedCalculators: ['triangle-calculator', 'area-calculator', 'distance-calculator', 'circle-calculator'],
+  about: `The Pythagorean theorem (a² + b² = c²) describes the fundamental relationship between the three sides of any right-angled triangle. It is one of the oldest and most widely applied results in mathematics, used in architecture, construction, navigation, and computer graphics. This calculator solves for whichever side is missing — hypotenuse or either leg — and adds area and perimeter for completeness.\n\nPythagorean triples are integer combinations that satisfy the theorem exactly: (3,4,5), (5,12,13), (8,15,17), and (6,8,10) are common examples. The 3-4-5 triple is especially popular in construction because it gives a perfect right angle using just a tape measure.\n\nBeyond basic geometry, the theorem extends to 3D through the space diagonal formula (d = √(a²+b²+c²)) and forms the foundation of the distance formula in coordinate geometry. Its applications range from checking whether a corner is square to calculating signal paths in telecommunications.`,
 },
   {
   id: 'fractions',
@@ -71,7 +141,22 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: false,
-      about: `Stop guessing and start using the Fraction Calculator to get immediate, accurate data. Specifically engineered to add/subtract/multiply/divide with simplified result & mixed number, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: `The Fraction Calculator performs addition, subtraction, multiplication, and division on fractions and mixed numbers, always presenting the result in simplified form alongside its mixed-number equivalent. It shows each step of the calculation process, making it a practical study tool for students learning fraction arithmetic. Enter any proper fractions, improper fractions, or mixed numbers.`,
+  workedExample: {
+    title: 'Adding 2/3 and 5/8',
+    inputs: ['Fraction 1: 2/3', 'Fraction 2: 5/8', 'Operation: Addition'],
+    steps: [
+      'Find the least common denominator (LCD) of 3 and 8: LCD = 24',
+      'Convert first fraction: 2/3 = 16/24',
+      'Convert second fraction: 5/8 = 15/24',
+      'Add numerators: 16/24 + 15/24 = 31/24',
+      'Check if simplifiable: GCF(31, 24) = 1, already in lowest terms',
+      'Convert to mixed number: 31/24 = 1 and 7/24',
+    ],
+    result: '2/3 + 5/8 = 31/24 = 1 7/24',
+  },
+  relatedCalculators: ['percentage-calculator', 'lcm-gcf-calculator', 'ratio-calculator', 'average-calculator'],
+  about: `Fraction arithmetic requires finding common denominators for addition and subtraction, cross-multiplication for division, and simplification using the greatest common factor for every operation. These steps are straightforward individually but easy to make mistakes on when done manually — especially with larger numerators and denominators.\n\nThis calculator handles all four operations on both simple fractions and mixed numbers. It finds the least common denominator automatically, performs the operation, simplifies the result using the GCF, and converts improper fractions to mixed numbers. Each step is displayed so you can follow the process and check your own work.\n\nFraction calculations appear in cooking and recipe scaling, construction measurements (feet and inches), probability (expressing likelihoods as ratios), and algebra (solving equations with fractional coefficients). For students, seeing the steps is often more valuable than just seeing the answer.`,
 },
   {
   id: 'area',
@@ -83,7 +168,19 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Area Calculator is an essential resource for anyone needing to area & perimeter of 5 shapes: rectangle, circle, triangle, square, trapezoid. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: `The Area Calculator computes area and perimeter for five common geometric shapes — rectangle, circle, triangle, square, and trapezoid — based on the dimensions you provide. It applies the correct formula for each shape, making it useful for students studying geometry and professionals calculating material requirements for flooring, painting, or landscaping projects.`,
+  workedExample: {
+    title: 'Finding the area and perimeter of a trapezoid',
+    inputs: ['Parallel side a = 10 m', 'Parallel side b = 6 m', 'Height = 4 m', 'Leg lengths: 5 m and 5 m'],
+    steps: [
+      'Area formula: A = ((a + b) / 2) × h',
+      'A = ((10 + 6) / 2) × 4 = (16/2) × 4 = 8 × 4 = 32 m²',
+      'Perimeter = a + b + leg₁ + leg₂ = 10 + 6 + 5 + 5 = 26 m',
+    ],
+    result: 'Trapezoid area = 32 m². Perimeter = 26 m.',
+  },
+  relatedCalculators: ['volume-calculator', 'surface-area-calculator', 'pythagorean-calculator', 'circle-calculator', 'triangle-calculator'],
+  about: `Area calculations are needed everywhere from school homework to construction quotes. The five shapes covered — rectangle, circle, triangle, square, and trapezoid — account for the vast majority of real-world surface calculations. Each shape uses a distinct formula, and mixing them up is a common source of error.\n\nFor circles, the calculator uses A = πr² and circumference = 2πr. Triangles use A = ½ × base × height. Rectangles and squares use A = l × w. Trapezoids use A = ½(a + b) × h, where a and b are the parallel sides. Perimeter is calculated for all shapes as well.\n\nPractical applications include determining how much paint or flooring material to buy, calculating land area for real estate, sizing solar panels, and solving geometry problems across middle school, high school, and college coursework.`,
 },
   {
   id: 'prime-checker',
@@ -95,7 +192,23 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `Whether you're a professional or just looking for quick answers, the Prime Number Checker provides an instant solution for your needs. It helps you instant prime check with factors and first 25 primes reference. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
+  intro: `The Prime Number Checker determines instantly whether any integer is prime, composite, or the special case of 1. For composite numbers, it lists all prime factors. A reference panel of the first 25 primes provides useful context. Number theory students, cryptography learners, and competitive programmers use prime checking frequently as a foundational operation.`,
+  workedExample: {
+    title: 'Checking whether 97 is prime',
+    inputs: ['Number: 97'],
+    steps: [
+      'A number is prime if it has no divisors other than 1 and itself',
+      'Check divisibility by primes up to √97 ≈ 9.85, so primes 2, 3, 5, 7',
+      '97 ÷ 2 = 48.5 (not divisible)',
+      '97 ÷ 3 = 32.33 (not divisible)',
+      '97 ÷ 5 = 19.4 (not divisible)',
+      '97 ÷ 7 = 13.86 (not divisible)',
+      'No prime factor found up to √97 → 97 is prime',
+    ],
+    result: '97 is a prime number. It is the 25th prime.',
+  },
+  relatedCalculators: ['factor-calculator', 'lcm-gcf-calculator', 'number-sequence-calculator'],
+  about: `A prime number is divisible only by 1 and itself. Primes are the building blocks of all integers — every positive integer greater than 1 can be expressed as a unique product of primes, which is the Fundamental Theorem of Arithmetic. Checking whether a number is prime is one of the most fundamental tasks in number theory.\n\nThe efficient way to check primality is to test divisibility only by primes up to the square root of the number. This is because if n has a factor larger than √n, the corresponding paired factor must be smaller than √n, so you would have already found it. This tool implements that approach and also displays all divisors for composite numbers.\n\nPrime numbers are central to modern cryptography — RSA encryption relies on the difficulty of factoring the product of two large primes. For students, primes also appear in GCF/LCM problems, modular arithmetic, and number theory proofs.`,
 },
   {
   id: 'log',
@@ -107,7 +220,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Logarithm Calculator is an essential resource for anyone needing to calculate log base 2, 10, e, and any custom base with step-by-step solution. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: `The Logarithm Calculator computes logarithms for any base — including base 2 (binary log), base 10 (common log), base e (natural log), and any custom base you specify. It shows the step-by-step solution using the change-of-base formula where needed. Scientists, engineers, and computer science students use logarithms to work with exponential growth, decibels, pH, and information theory.`,
+  workedExample: {
+    title: 'Calculating log base 5 of 125',
+    inputs: ['Base: 5', 'Number: 125'],
+    steps: [
+      'We want to find x such that 5ˣ = 125',
+      'Recognize 125 = 5³, so x = 3',
+      'Alternatively, using change-of-base formula: log₅(125) = log(125)/log(5)',
+      'log(125) ≈ 2.09691, log(5) ≈ 0.69897',
+      '2.09691 ÷ 0.69897 = 3.0000',
+    ],
+    result: 'log₅(125) = 3. This means 5³ = 125.',
+  },
+  relatedCalculators: ['exponent-calculator', 'scientific-calculator', 'root-calculator'],
+  about: `Logarithms answer the question: "to what power must the base be raised to produce this number?" The three most common logarithms are log₁₀ (used in chemistry, acoustics, and earthquake measurements), ln (natural log, used in calculus and finance), and log₂ (used in computer science and information theory).\n\nThe change-of-base formula, log_b(x) = log(x)/log(b), allows any logarithm to be computed using a calculator that only has log₁₀ or ln. This calculator applies that formula automatically for custom bases, showing the intermediate values.\n\nLogarithms appear in decibel calculations (dB = 10·log₁₀(P₂/P₁)), pH measurements (pH = −log₁₀[H⁺]), the Richter scale, population growth models, mortgage amortization, and Shannon entropy in information theory. Understanding logarithms is essential for any quantitative field.`,
 },
   {
   id: 'ratio',
@@ -119,7 +246,20 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `If you want to simplify ratios, find missing values, and scale recipes or mixtures, the Ratio Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: `The Ratio Calculator simplifies ratios to their lowest terms, solves for missing values in proportional relationships, and scales up or down by any multiplier. It's practical for recipe scaling, mixing solutions to a specific concentration, calculating map scales, and checking proportions in geometry. Enter any two or three values and the missing quantity is computed automatically.`,
+  workedExample: {
+    title: 'Scaling a recipe: ratio of flour to water is 3:2, need 750g flour — how much water?',
+    inputs: ['Ratio: 3 : 2', 'Known value: 750 g flour (first quantity)'],
+    steps: [
+      'Set up proportion: 3/2 = 750/x',
+      'Cross-multiply: 3x = 750 × 2 = 1500',
+      'Solve: x = 1500/3 = 500 g',
+      'Verify simplified ratio: 750:500 → divide both by 250 → 3:2 ✓',
+    ],
+    result: 'You need 500 g of water to maintain the 3:2 flour-to-water ratio.',
+  },
+  relatedCalculators: ['percentage-calculator', 'fraction-calculator', 'statistics-calculator'],
+  about: `A ratio expresses the relative sizes of two or more quantities. Ratios can be written as 3:2, 3/2, or "3 to 2" — all equivalent ways to say the first quantity is 1.5 times the second. Simplifying a ratio means dividing both parts by their GCF, much like simplifying a fraction.\n\nThis calculator handles ratio simplification, proportional scaling (if you know one value and the ratio, find the other), and unit-rate conversion (expressing as 1:n for comparison). The missing-value mode is especially useful for cooking, chemistry, and construction where you need to scale a known proportion to a new quantity.\n\nRatios appear throughout mathematics and science: aspect ratios in screen design, gear ratios in mechanics, concentration ratios in chemistry, odds ratios in statistics, and golden ratio applications in art and architecture.`,
 },
   {
   id: 'lcm-gcf',
@@ -131,9 +271,24 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-  formula: 'GCF via Euclidean Algorithm: GCF(a,b) = GCF(b, a mod b)\n' +
-    'LCM(a,b) = |a × b| / GCF(a,b)',
-      about: `We built the LCM & GCF Calculator specifically to least Common Multiple and Greatest Common Factor with step-by-step solution. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
+  formula: 'GCF via Euclidean Algorithm: GCF(a,b) = GCF(b, a mod b)\nLCM(a,b) = |a × b| / GCF(a,b)',
+  intro: `The LCM & GCF Calculator finds the Least Common Multiple and Greatest Common Factor of up to several integers at once, showing the full Euclidean algorithm steps for GCF and the prime factorization for LCM. These two values are building blocks for fraction arithmetic, simplification, and scheduling problems. Students working with fractions and number theory use this tool constantly.`,
+  workedExample: {
+    title: 'Finding GCF and LCM of 48 and 36',
+    inputs: ['First number: 48', 'Second number: 36'],
+    steps: [
+      'GCF using Euclidean algorithm:',
+      'GCF(48, 36): 48 = 1×36 + 12 → GCF(36, 12)',
+      'GCF(36, 12): 36 = 3×12 + 0 → GCF = 12',
+      'LCM using formula: LCM(a,b) = |a×b| / GCF(a,b)',
+      'LCM(48, 36) = (48 × 36) / 12 = 1728 / 12 = 144',
+      'Verification via prime factors: 48 = 2⁴×3, 36 = 2²×3²',
+      'LCM takes highest powers: 2⁴ × 3² = 16 × 9 = 144 ✓',
+    ],
+    result: 'GCF(48, 36) = 12. LCM(48, 36) = 144.',
+  },
+  relatedCalculators: ['prime-number-checker', 'factor-calculator', 'fraction-calculator'],
+  about: `The Greatest Common Factor (also called GCD — Greatest Common Divisor) is the largest integer that divides both numbers without a remainder. The Least Common Multiple is the smallest integer divisible by both numbers. These two quantities are mathematically linked by the identity LCM(a,b) × GCF(a,b) = a × b.\n\nThe Euclidean algorithm is one of the oldest algorithms in mathematics (described by Euclid around 300 BCE) and computes the GCF efficiently by repeated division. Once the GCF is known, the LCM follows directly. This calculator shows each step of both methods.\n\nIn practice, GCF is used to simplify fractions to lowest terms and reduce ratios. LCM is used to find common denominators when adding fractions, to synchronize periodic events (e.g., two traffic lights with cycle lengths 48s and 36s sync every 144s), and in modular arithmetic problems.`,
 },
   {
   id: 'factor',
@@ -145,7 +300,25 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Factor Calculator offers a hassle-free way to all factors and prime factorization of any integer with visual breakdown. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
+  intro: `The Factor Calculator finds all positive divisors of any integer and presents its complete prime factorization in exponential notation. It shows a factor tree breakdown that makes the factorization process visually clear. Number theory students, teachers explaining divisibility, and anyone working with fractions or GCF/LCM problems will find this tool directly useful.`,
+  workedExample: {
+    title: 'Finding all factors and prime factorization of 360',
+    inputs: ['Number: 360'],
+    steps: [
+      'Divide by smallest prime (2): 360 ÷ 2 = 180',
+      '180 ÷ 2 = 90',
+      '90 ÷ 2 = 45',
+      '45 ÷ 3 = 15',
+      '15 ÷ 3 = 5',
+      '5 is prime → stop',
+      'Prime factorization: 2³ × 3² × 5',
+      'Total factors: (3+1)×(2+1)×(1+1) = 4×3×2 = 24 factors',
+      'All factors: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 18, 20, 24, 30, 36, 40, 45, 60, 72, 90, 120, 180, 360',
+    ],
+    result: '360 = 2³ × 3² × 5. It has 24 factors including 1 and 360 itself.',
+  },
+  relatedCalculators: ['prime-number-checker', 'lcm-gcf-calculator', 'number-sequence-calculator'],
+  about: `Every positive integer greater than 1 can be uniquely expressed as a product of prime numbers — this is the Fundamental Theorem of Arithmetic. Finding a number's prime factorization reveals its full divisibility structure: the total number of factors can be computed directly from the exponents in the prime factorization.\n\nThis calculator finds all factors by trial division up to √n, then lists them in pairs. Simultaneously it builds the prime factorization by extracting the smallest prime factor repeatedly until the quotient is 1. The result shows both the complete factor list and the compact exponential form (e.g., 360 = 2³ × 3² × 5).\n\nFactor analysis is used in simplifying fractions, computing GCF and LCM, solving modular arithmetic problems, and understanding number patterns. In cryptography, the difficulty of factoring large numbers is the foundation of RSA security. For students, it's one of the core number theory skills tested in standardized exams.`,
 },
   {
   id: 'volume',
@@ -157,7 +330,20 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `We built the Volume Calculator specifically to volume of cube, sphere, cylinder, cone and other 3D shapes. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
+  intro: `The Volume Calculator computes the volume of common 3D geometric shapes including cubes, rectangular prisms, spheres, cylinders, cones, and pyramids. It uses the precise formula for each shape and accepts any unit of measurement. Engineers, architects, students, and hobbyists use it to calculate how much material fits inside a container or how much space an object occupies.`,
+  workedExample: {
+    title: 'Volume of a cylinder with radius 4 cm and height 10 cm',
+    inputs: ['Shape: Cylinder', 'Radius: 4 cm', 'Height: 10 cm'],
+    steps: [
+      'Formula: V = π × r² × h',
+      'r² = 4² = 16 cm²',
+      'π × r² = 3.14159 × 16 = 50.265 cm²',
+      'V = 50.265 × 10 = 502.65 cm³',
+    ],
+    result: 'Volume of cylinder = 502.65 cm³ ≈ 0.503 liters.',
+  },
+  relatedCalculators: ['area-calculator', 'surface-area-calculator', 'pythagorean-calculator'],
+  about: `Volume is the three-dimensional measure of how much space an object occupies. Different shapes require completely different formulas: cubes (V = s³), rectangular prisms (V = l×w×h), spheres (V = 4/3·πr³), cylinders (V = πr²h), cones (V = 1/3·πr²h), and pyramids (V = 1/3·base area×h).\n\nThis calculator accepts dimensions in any unit — millimeters, centimeters, meters, inches, or feet — and converts results accordingly. It covers the most common shapes encountered in geometry courses and real-world applications.\n\nPractical uses include calculating concrete volume needed for a foundation, determining tank capacity for liquid storage, figuring out how many cubic meters of soil a garden bed holds, and solving geometry exam problems. Engineers also use volume in buoyancy calculations and material weight estimation (volume × density = mass).`,
 },
   {
   id: 'triangle',
@@ -169,7 +355,25 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: true,
   hasChart: false,
   isNew: true,
-      about: `If you want to solve any triangle — sides, angles, area, perimeter (SSS, SAS, ASA, AAS), the Triangle Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: `The Triangle Calculator solves any triangle given sufficient information — three sides (SSS), two sides and an included angle (SAS), two angles and a side (ASA or AAS). It computes all missing sides and angles using the Law of Sines and Law of Cosines, plus area and perimeter. Surveyors, architects, physics students, and anyone working with oblique triangles use this regularly.`,
+  workedExample: {
+    title: 'Solving a triangle with sides a=7, b=10, and included angle C=42°',
+    inputs: ['Side a = 7', 'Side b = 10', 'Angle C = 42° (SAS case)'],
+    steps: [
+      'Find side c using the Law of Cosines: c² = a² + b² − 2ab·cos(C)',
+      'c² = 49 + 100 − 2(7)(10)·cos(42°)',
+      'c² = 149 − 140 × 0.7431 = 149 − 104.03 = 44.97',
+      'c = √44.97 ≈ 6.71',
+      'Find angle A using Law of Sines: sin(A)/a = sin(C)/c',
+      'sin(A) = 7 × sin(42°) / 6.71 = 7 × 0.6691 / 6.71 ≈ 0.6984',
+      'A = arcsin(0.6984) ≈ 44.3°',
+      'Angle B = 180° − 42° − 44.3° = 93.7°',
+      'Area = ½ × a × b × sin(C) = ½ × 7 × 10 × sin(42°) = 23.4 units²',
+    ],
+    result: 'Side c ≈ 6.71, Angle A ≈ 44.3°, Angle B ≈ 93.7°. Area ≈ 23.4 square units.',
+  },
+  relatedCalculators: ['pythagorean-calculator', 'area-calculator', 'circle-calculator', 'distance-calculator'],
+  about: `Triangles are the simplest polygon and appear throughout mathematics, engineering, and physical science. Unlike right triangles (which can be solved with the Pythagorean theorem), oblique triangles (without a 90° angle) require the Law of Sines or Law of Cosines. This calculator handles all cases: SSS (all three sides known), SAS (two sides and included angle), ASA (two angles and included side), and AAS (two angles and a non-included side).\n\nThe Law of Cosines generalizes the Pythagorean theorem to any triangle: c² = a² + b² − 2ab·cos(C). When C = 90°, cos(90°) = 0 and it reduces exactly to a² + b² = c². The Law of Sines states that the ratio of each side to the sine of its opposite angle is constant for a given triangle.\n\nApplications include surveying land boundaries, calculating roof pitch in construction, navigation and triangulation, physics problems involving force vectors, and computer graphics where triangles are the basic rendering primitive.`,
 },
   {
   id: 'circle',
@@ -181,7 +385,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `We built the Circle Calculator specifically to circumference, area, diameter and arc length from radius or diameter. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
+  intro: `The Circle Calculator computes all circle measurements — area, circumference, diameter, and arc length for any central angle — from a single input of either the radius or diameter. It's useful for geometry students, machinists sizing circular parts, and anyone needing to calculate the properties of a circular region or path. Results update instantly as you change any input.`,
+  workedExample: {
+    title: 'Circle properties from a radius of 7 cm',
+    inputs: ['Radius: 7 cm', 'Central angle for arc: 120°'],
+    steps: [
+      'Diameter: d = 2r = 2 × 7 = 14 cm',
+      'Circumference: C = 2πr = 2 × 3.14159 × 7 = 43.98 cm',
+      'Area: A = πr² = 3.14159 × 49 = 153.94 cm²',
+      'Arc length for 120°: L = (θ/360°) × C = (120/360) × 43.98 = 14.66 cm',
+      'Sector area for 120°: A_sector = (θ/360°) × πr² = (120/360) × 153.94 = 51.31 cm²',
+    ],
+    result: 'Diameter = 14 cm, Circumference ≈ 43.98 cm, Area ≈ 153.94 cm², Arc (120°) ≈ 14.66 cm.',
+  },
+  relatedCalculators: ['area-calculator', 'pythagorean-calculator', 'triangle-calculator', 'surface-area-calculator'],
+  about: `The circle is defined by a single measurement — its radius — from which all other properties follow. Area uses A = πr², circumference uses C = 2πr, and arc length for a central angle θ (in degrees) uses L = (θ/360)×2πr. These formulas appear throughout geometry, physics, and engineering.\n\nThe constant π ≈ 3.14159 is irrational — it cannot be expressed as a fraction — and is fundamental to all circle calculations. This calculator uses the full precision of π available in your browser's math library for accurate results.\n\nPractical applications include calculating the area of circular gardens or pools, the circumference of wheels and gears, the arc length of curved roads and railways, and the cross-sectional area of pipes and cylinders. In physics, circular motion and wave propagation both depend heavily on these formulas.`,
 },
   {
   id: 'z-score',
@@ -194,7 +412,21 @@ export const mathCalculators: CalculatorConfig[] = [
   hasChart: false,
   isNew: true,
   formula: 'Z = (X - μ) / σ',
-      about: `If you want to standardize data points with Z-score, percentile rank and normal distribution, the Z-Score Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: `The Z-Score Calculator converts any raw data value into a standardized score that shows how many standard deviations it lies from the mean. It also returns the corresponding percentile rank under the standard normal distribution. Statisticians, psychologists, educators, and quality control engineers use z-scores to compare values from different datasets on a common scale.`,
+  workedExample: {
+    title: 'Z-score for a student who scored 88 on an exam with class mean 76 and SD 10',
+    inputs: ['Value (X): 88', 'Mean (μ): 76', 'Standard deviation (σ): 10'],
+    steps: [
+      'Formula: Z = (X − μ) / σ',
+      'Z = (88 − 76) / 10 = 12 / 10 = 1.2',
+      'A Z-score of 1.2 means the score is 1.2 standard deviations above the mean',
+      'From the standard normal table: P(Z < 1.2) ≈ 0.8849',
+      'Percentile rank ≈ 88.5th percentile',
+    ],
+    result: 'Z-score = 1.2. The student scored better than approximately 88.5% of the class.',
+  },
+  relatedCalculators: ['statistics-calculator', 'confidence-interval-calculator', 'sample-size-calculator', 'probability-calculator'],
+  about: `A z-score (also called a standard score) measures how many standard deviations a data point is from the mean of its distribution. A z-score of 0 means exactly at the mean, +1 means one standard deviation above, and −1.5 means 1.5 standard deviations below. The formula Z = (X − μ) / σ converts any value from any normal distribution to the standard normal distribution (mean=0, SD=1).\n\nZ-scores are essential for comparing values from different distributions — for instance, comparing a student's performance on two exams with different means and standard deviations. They also enable calculation of percentile ranks by looking up the cumulative probability in the standard normal table.\n\nApplications include standardized testing score reporting, Six Sigma quality control (a ±3σ process has only 0.27% defects), clinical reference ranges in medicine, IQ testing, and finance (z-scores form the basis of the Altman Z-score for predicting corporate bankruptcy).`,
 },
   {
   id: 'permutation',
@@ -207,7 +439,21 @@ export const mathCalculators: CalculatorConfig[] = [
   hasChart: false,
   isNew: true,
   formula: 'P(n,r) = n! / (n-r)!\nC(n,r) = n! / (r! × (n-r)!)',
-      about: `If you want to nPr and nCr calculations with factorial steps and formula explanation, the Permutation & Combination is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: `The Permutation & Combination Calculator computes P(n,r) and C(n,r) simultaneously, showing the factorial expansion at each step. Permutations count ordered arrangements; combinations count unordered selections. Probability students, exam takers, and game designers use this tool to count possibilities without manually computing large factorials.`,
+  workedExample: {
+    title: 'How many ways can you choose 3 items from 8 (ordered vs. unordered)?',
+    inputs: ['n = 8 (total items)', 'r = 3 (items chosen)'],
+    steps: [
+      'Permutation P(8,3) — order matters:',
+      'P(8,3) = 8! / (8−3)! = 8! / 5!',
+      '= (8 × 7 × 6 × 5!) / 5! = 8 × 7 × 6 = 336',
+      'Combination C(8,3) — order does not matter:',
+      'C(8,3) = 8! / (3! × 5!) = 336 / 3! = 336 / 6 = 56',
+    ],
+    result: 'P(8,3) = 336 ordered arrangements. C(8,3) = 56 unordered selections.',
+  },
+  relatedCalculators: ['probability-calculator', 'statistics-calculator', 'factor-calculator'],
+  about: `Counting principles are the foundation of probability theory. Permutations (P(n,r) = n!/(n−r)!) count the number of ways to arrange r items from a set of n where order matters. Combinations (C(n,r) = n!/(r!×(n−r)!)) count the number of ways to choose r items where order does not matter. The distinction is critical: choosing a 3-member team from 8 people gives C(8,3) = 56 ways, but assigning them first, second, and third place gives P(8,3) = 336 ways.\n\nThis calculator shows the full factorial expansion, making it clear how the denominator cancels terms. For large n and small r, computing P or C directly via factorials can overflow — the calculator handles this gracefully.\n\nApplications include probability problems (lottery odds, card game hands), combinatorics in algorithm analysis (Big-O notation), DNA sequence counting in bioinformatics, and scheduling problems in operations research.`,
 },
   {
   id: 'average',
@@ -219,7 +465,24 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Average Calculator is an essential resource for anyone needing to mean, weighted mean, and running average for any dataset. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: `The Average Calculator computes the arithmetic mean, weighted mean, and running average for any list of numbers. The weighted mean mode allows each value to carry a different importance — essential for GPA calculations, weighted test scores, and portfolio returns. Enter a comma-separated list and all three averages compute simultaneously.`,
+  workedExample: {
+    title: 'Weighted average for a student with three assignment scores',
+    inputs: ['Quiz: 80 (weight 20%)', 'Midterm: 72 (weight 35%)', 'Final: 91 (weight 45%)'],
+    steps: [
+      'Weighted mean = Σ(value × weight) / Σ(weights)',
+      'Quiz contribution: 80 × 0.20 = 16.0',
+      'Midterm contribution: 72 × 0.35 = 25.2',
+      'Final contribution: 91 × 0.45 = 40.95',
+      'Sum of weighted values: 16.0 + 25.2 + 40.95 = 82.15',
+      'Sum of weights: 0.20 + 0.35 + 0.45 = 1.00',
+      'Weighted average = 82.15 / 1.00 = 82.15',
+      'Simple (unweighted) mean: (80 + 72 + 91) / 3 = 243/3 = 81.0',
+    ],
+    result: 'Weighted average = 82.15. Simple mean = 81.0. The final exam\'s high weight elevated the overall grade.',
+  },
+  relatedCalculators: ['statistics-calculator', 'percentage-calculator', 'z-score-calculator'],
+  about: `The arithmetic mean (simple average) is the sum of all values divided by the count. It is the most commonly used measure of central tendency but is sensitive to outliers — a single extreme value can significantly shift the mean. For this reason, comparing the mean with the median (from the Statistics Calculator) is often informative.\n\nThe weighted mean assigns a different importance (weight) to each value, so some observations contribute more to the final average than others. GPA calculation is a classic example: a 4-credit course contributes more than a 1-credit course. Investment portfolio returns are weighted by the value allocated to each asset.\n\nThe running average mode shows how the cumulative mean changes as each value is added to the dataset — useful for tracking trends in a time series or monitoring how a few recent data points affect an overall average.`,
 },
   {
   id: 'matrix',
@@ -231,7 +494,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Matrix Calculator is an essential resource for anyone needing to matrix addition, subtraction, multiplication, determinant and inverse operations. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: `The Matrix Calculator performs addition, subtraction, and multiplication on matrices of any compatible dimensions, and computes the determinant and inverse of square matrices. It accepts matrices up to a practical size and shows intermediate steps. Linear algebra students, data science practitioners, and engineers solving systems of equations use matrix operations constantly.`,
+  workedExample: {
+    title: 'Multiplying two 2×2 matrices',
+    inputs: ['Matrix A: [[2, 3], [1, 4]]', 'Matrix B: [[5, 1], [2, 6]]'],
+    steps: [
+      'Matrix multiplication: C[i][j] = Σ A[i][k] × B[k][j]',
+      'C[1][1] = 2×5 + 3×2 = 10 + 6 = 16',
+      'C[1][2] = 2×1 + 3×6 = 2 + 18 = 20',
+      'C[2][1] = 1×5 + 4×2 = 5 + 8 = 13',
+      'C[2][2] = 1×1 + 4×6 = 1 + 24 = 25',
+    ],
+    result: 'A × B = [[16, 20], [13, 25]]',
+  },
+  relatedCalculators: ['linear-equation-solver', 'statistics-calculator'],
+  about: `Matrices are rectangular arrays of numbers that represent linear transformations, systems of equations, and data tables simultaneously. Matrix addition requires identical dimensions; multiplication requires that the number of columns in the first matrix equals the number of rows in the second. These rules make matrices both powerful and precise.\n\nThe determinant of a square matrix indicates whether the matrix is invertible (non-zero determinant) or singular (zero determinant). The inverse of matrix A, written A⁻¹, satisfies A×A⁻¹ = I (identity matrix) and is used to solve the matrix equation Ax = b for x. This is equivalent to solving a system of linear equations.\n\nMatrix operations are fundamental in computer graphics (rotation and scaling transforms), machine learning (weight matrices in neural networks), physics (quantum mechanics and rotation groups), economics (input-output models), and statistics (covariance matrices and multivariate analysis).`,
 },
   {
   id: 'linear-equation',
@@ -243,7 +520,23 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `We built the Linear Equation Solver specifically to solve single and system of linear equations with step-by-step solution. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
+  intro: `The Linear Equation Solver handles both single-variable linear equations and systems of two or three linear equations simultaneously. It shows step-by-step elimination or substitution, making it a practical study companion for algebra students. Engineers and scientists also use it to solve balance equations and constraint systems quickly.`,
+  workedExample: {
+    title: 'Solving a 2×2 system: 3x + 2y = 16 and x − y = 2',
+    inputs: ['Equation 1: 3x + 2y = 16', 'Equation 2: x − y = 2'],
+    steps: [
+      'From Equation 2: x = y + 2',
+      'Substitute into Equation 1: 3(y + 2) + 2y = 16',
+      '3y + 6 + 2y = 16',
+      '5y = 10',
+      'y = 2',
+      'Substitute y = 2 back: x = 2 + 2 = 4',
+      'Verify: 3(4) + 2(2) = 12 + 4 = 16 ✓ and 4 − 2 = 2 ✓',
+    ],
+    result: 'x = 4, y = 2. The two lines intersect at (4, 2).',
+  },
+  relatedCalculators: ['quadratic-calculator', 'matrix-calculator', 'scientific-calculator'],
+  about: `A linear equation is one where every variable appears to the first power, with no products between variables. A single linear equation in one variable (e.g., 3x + 7 = 22) has exactly one solution found by isolation. A system of two linear equations in two variables can be solved by substitution or elimination, producing the coordinates where two lines intersect.\n\nThis solver handles single-variable equations, two-equation/two-variable systems, and three-equation/three-variable systems. For systems, it uses elimination (subtracting multiples of equations to cancel variables) and shows each algebraic step. When a system has no solution (parallel lines) or infinitely many (coincident lines), the calculator detects and reports that.\n\nLinear equations model countless real-world relationships: budgeting constraints (linear programming), mixture problems, rate and distance problems, electrical circuit analysis (Kirchhoff's laws), and supply-demand equilibrium in economics.`,
 },
   {
   id: 'random-number',
@@ -255,7 +548,23 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `Whether you're a professional or just looking for quick answers, the Random Number Generator provides an instant solution for your needs. It helps you generate random integers or decimals with custom range and count. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
+  intro: `The Advanced Random Number Generator produces one or more random integers or decimal numbers within any range you specify. It supports generating multiple numbers at once (with optional uniqueness requirement) and outputs results in a copy-ready format. Teachers creating randomized problems, statisticians sampling data, and game developers seeding procedural content all use this type of tool regularly.`,
+  workedExample: {
+    title: 'Generating 5 unique random integers between 1 and 49 (lottery simulation)',
+    inputs: ['Minimum: 1', 'Maximum: 49', 'Count: 5', 'Type: Unique integers'],
+    steps: [
+      'Pool of possible values: 1 to 49 (49 integers)',
+      'Use Fisher-Yates shuffle (or crypto-random selection without replacement)',
+      'Draw 1st: 23 (removed from pool)',
+      'Draw 2nd: 7 (removed from pool)',
+      'Draw 3rd: 41 (removed from pool)',
+      'Draw 4th: 15 (removed from pool)',
+      'Draw 5th: 38 (removed from pool)',
+    ],
+    result: 'Unique random integers: 7, 15, 23, 38, 41 (results will vary each time).',
+  },
+  relatedCalculators: ['statistics-calculator', 'probability-calculator', 'random-number-generator'],
+  about: `Random number generation serves two broad purposes: simulation and sampling. When running probability experiments or Monte Carlo simulations, you need values that are genuinely unpredictable and uniformly distributed across the range. When sampling from a population for surveys or experiments, unique random selections ensure every element has an equal chance of being chosen.\n\nThis generator uses cryptographically secure randomness (the browser's crypto API) rather than a simple mathematical pseudo-random sequence. This matters when the unpredictability of the output is important, such as in game design, statistical sampling, or teaching probability.\n\nThe unique mode (no repeats) is implemented using sampling without replacement — equivalent to shuffling a deck and drawing from the top. The decimal mode allows specifying precision. Results are displayed in a format that can be copied directly into spreadsheets or code.`,
 },
   {
   id: 'percent-error',
@@ -271,7 +580,20 @@ export const mathCalculators: CalculatorConfig[] = [
   tips: [
     'A percent error under 5% is generally considered acceptable in most scientific experiments.'
   ],
-      about: `The Percent Error Calculator offers a hassle-free way to calculate percent error between experimental and theoretical values. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
+  intro: `The Percent Error Calculator measures how far an experimental measurement deviates from the accepted or theoretical value, expressing the difference as a percentage. It's a standard tool in science labs — physics, chemistry, and biology experiments all require students to report percent error to assess their measurement quality. Enter your measured and theoretical values and the result is immediate.`,
+  workedExample: {
+    title: 'Measuring the density of aluminum in a lab experiment',
+    inputs: ['Experimental (measured) value: 2.65 g/cm³', 'Theoretical (accepted) value: 2.70 g/cm³'],
+    steps: [
+      'Formula: % Error = |Experimental − Theoretical| / |Theoretical| × 100',
+      'Difference: |2.65 − 2.70| = |−0.05| = 0.05',
+      'Divide by theoretical: 0.05 / 2.70 = 0.01852',
+      'Multiply by 100: 0.01852 × 100 = 1.85%',
+    ],
+    result: 'Percent error = 1.85%. This is well within the acceptable <5% threshold, indicating accurate measurement.',
+  },
+  relatedCalculators: ['percentage-calculator', 'statistics-calculator', 'z-score-calculator'],
+  about: `Percent error quantifies the accuracy of a measurement or calculation compared to a known reference. It is always expressed as a positive percentage because the absolute value removes the sign — it tells you how wrong you were, not which direction. A small percent error means your measurement was close to the true value; a large one indicates significant experimental error.\n\nThe formula % Error = |Experimental − Theoretical| / |Theoretical| × 100 is the standard form used in science classes worldwide. Note that this is different from percent difference (used when neither value is the "true" reference) and percent change (used when comparing two sequential measurements of the same quantity).\n\nLab reports in physics, chemistry, and biology routinely require percent error calculations. Acceptable thresholds vary by field and measurement technique: 1-2% is excellent for precise lab work, while 5-10% may be acceptable for field measurements. Understanding your error sources helps improve experimental technique.`,
 },
   {
   id: 'surface-area',
@@ -283,7 +605,20 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Surface Area Calculator is an essential resource for anyone needing to surface area of 6 3D shapes: cube, sphere, cylinder, cone, pyramid and rectangular prism. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: `The Surface Area Calculator finds the total outer surface area of six common 3D shapes: cube, sphere, cylinder, cone, rectangular prism, and pyramid. It applies the precise formula for each shape and works with any measurement unit. This is directly useful for engineering students solving geometry problems, manufacturers calculating material needed to cover a shape, and anyone wrapping, coating, or painting a 3D object.`,
+  workedExample: {
+    title: 'Total surface area of a cylinder with radius 5 cm and height 12 cm',
+    inputs: ['Shape: Cylinder', 'Radius: 5 cm', 'Height: 12 cm'],
+    steps: [
+      'Surface area of cylinder = 2πr² + 2πrh',
+      'Two circular ends: 2 × π × 5² = 2 × 3.14159 × 25 = 157.08 cm²',
+      'Lateral (side) area: 2 × π × 5 × 12 = 2 × 3.14159 × 60 = 376.99 cm²',
+      'Total surface area = 157.08 + 376.99 = 534.07 cm²',
+    ],
+    result: 'Total surface area = 534.07 cm² ≈ 534 cm².',
+  },
+  relatedCalculators: ['volume-calculator', 'area-calculator'],
+  about: `Surface area is the total area of all outer faces of a three-dimensional shape. Unlike volume (which measures interior space), surface area measures the exterior. For manufacturing and engineering, surface area determines how much material is needed to coat, paint, insulate, or wrap an object.\n\nEach shape has its own formula. Cubes: SA = 6s². Rectangular prisms: SA = 2(lw + lh + wh). Spheres: SA = 4πr². Cylinders: SA = 2πr² + 2πrh. Cones: SA = πr² + πrl (where l is the slant height). Pyramids require the base area plus four triangular faces. This calculator applies the correct formula and shows the component areas separately.\n\nApplications include calculating the paint needed to cover a water tank, determining the aluminum required to wrap a package, computing heat loss through building surfaces (insulation problems), and sizing labels or packaging for products.`,
 },
   {
   id: 'exponent',
@@ -295,7 +630,23 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Exponent Calculator is an essential resource for anyone needing to calculate base raised to any power with scientific notation output and step-by-step display. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: `The Exponent Calculator computes any base raised to any real power, including negative exponents, fractional exponents, and very large results displayed in scientific notation. It shows step-by-step working and handles cases like negative bases with fractional exponents. Students learning exponential notation, scientists working with large numbers, and programmers dealing with binary powers use this tool.`,
+  workedExample: {
+    title: 'Calculating 2¹⁰ and its scientific notation equivalent',
+    inputs: ['Base: 2', 'Exponent: 10'],
+    steps: [
+      '2¹⁰ means 2 multiplied by itself 10 times',
+      '2¹ = 2',
+      '2² = 4',
+      '2⁴ = 16',
+      '2⁸ = 256',
+      '2¹⁰ = 2⁸ × 2² = 256 × 4 = 1,024',
+      'Scientific notation: 1.024 × 10³',
+    ],
+    result: '2¹⁰ = 1,024 = 1.024 × 10³. (This is 1 kilobyte in binary computing.)',
+  },
+  relatedCalculators: ['logarithm-calculator', 'root-calculator', 'scientific-calculator'],
+  about: `Exponentiation is the operation of raising a base to a power: bⁿ means b multiplied by itself n times. For positive integer exponents this is straightforward, but the definition extends naturally to zero (b⁰ = 1 for any b≠0), negative exponents (b⁻ⁿ = 1/bⁿ), and fractional exponents (b^(1/n) = the nth root of b, and b^(m/n) = the nth root of bᵐ).\n\nThis calculator handles all these cases, displaying results in both standard and scientific notation. Scientific notation is important when results are extremely large (like astronomical distances) or very small (like atomic-scale measurements). The step-by-step breakdown shows how the calculation is performed using properties of exponents.\n\nExponentiation appears in compound interest (A = P(1+r)ⁿ), population growth, radioactive decay, computing (binary powers), probability (coin flip sequences), and engineering (signal attenuation and gain).`,
 },
   {
   id: 'root',
@@ -307,7 +658,22 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `Stop guessing and start using the Root Calculator to get immediate, accurate data. Specifically engineered to calculate nth root of any number with Newtons method steps and verification, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: `The Root Calculator finds the nth root of any positive number using Newton's method, showing successive approximation steps. It handles square roots, cube roots, and any higher-order root with verification at each iteration. Students checking their algebraic work, engineers computing signal amplitudes, and anyone needing precise root values beyond a simple square root will find it useful.`,
+  workedExample: {
+    title: 'Finding the cube root of 216 using Newton\'s method',
+    inputs: ['Number (x): 216', 'Root degree (n): 3'],
+    steps: [
+      'Find ∛216, i.e., the number y such that y³ = 216',
+      'Newton\'s iteration: y_new = ((n−1)×y_old + x/y_old^(n−1)) / n',
+      'Initial guess: y₀ = 6 (estimate)',
+      'Iteration 1: y₁ = ((2×6) + 216/36) / 3 = (12 + 6) / 3 = 6.0',
+      'Converged immediately: y = 6',
+      'Verification: 6³ = 6 × 6 × 6 = 216 ✓',
+    ],
+    result: '∛216 = 6 exactly. (216 = 6³ is a perfect cube.)',
+  },
+  relatedCalculators: ['exponent-calculator', 'logarithm-calculator', 'quadratic-calculator'],
+  about: `The nth root of a number x is the value y such that yⁿ = x. Square roots (n=2) and cube roots (n=3) are the most common, but higher-order roots appear in geometry, signal processing, and statistics. The nth root of x is equivalent to x^(1/n) in exponential notation, linking roots and exponents as inverse operations.\n\nNewton's method (also called the Newton-Raphson method) provides a fast iterative algorithm for computing roots numerically. Starting from an initial estimate, it refines the guess using the formula y_new = ((n−1)×y + x/y^(n−1)) / n. For most starting values, this converges in fewer than 10 iterations to full precision.\n\nRoot calculations appear in solving quadratic equations (square root in the quadratic formula), geometry (diagonal of a square, side of a cube given volume), statistics (standard deviation involves a square root), and physics (root-mean-square values in AC circuits).`,
 },
   {
   id: 'binary-calc',
@@ -319,7 +685,26 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Binary Calculator offers a hassle-free way to binary arithmetic (add, subtract, multiply) with step-by-step conversion and multi-base output. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
+  intro: `The Binary Calculator performs addition, subtraction, and multiplication directly in binary (base-2), displaying the result alongside its decimal, octal, and hexadecimal equivalents. It shows bit-by-bit working for each operation, making it an ideal learning tool for computer science students studying digital logic, and a practical utility for programmers working with low-level numeric representations.`,
+  workedExample: {
+    title: 'Adding binary numbers 1011 and 0110',
+    inputs: ['First number: 1011 (binary) = 11 (decimal)', 'Second number: 0110 (binary) = 6 (decimal)', 'Operation: Addition'],
+    steps: [
+      'Align by least significant bit:',
+      '  1 0 1 1',
+      '+ 0 1 1 0',
+      '─────────',
+      'Bit 0 (rightmost): 1+0 = 1, write 1, carry 0',
+      'Bit 1: 1+1+carry(0) = 10, write 0, carry 1',
+      'Bit 2: 0+1+carry(1) = 10, write 0, carry 1',
+      'Bit 3: 1+0+carry(1) = 10, write 0, carry 1',
+      'Bit 4 (new): carry 1 → write 1',
+      'Result: 1 0 0 0 1 (binary) = 17 (decimal)',
+    ],
+    result: '1011 + 0110 = 10001 in binary = 17 in decimal. Verification: 11 + 6 = 17 ✓',
+  },
+  relatedCalculators: ['scientific-calculator', 'data-storage-converter'],
+  about: `Binary (base-2) is the native language of digital computers, using only the digits 0 and 1 corresponding to off and on transistor states. Binary arithmetic follows the same rules as decimal but with carries occurring at 2 instead of 10. Addition is the foundational binary operation — subtraction, multiplication, and division are all implemented in terms of addition circuits in real hardware.\n\nThis calculator performs binary addition (with full carry propagation), subtraction (using two's complement internally), and multiplication. It converts the binary inputs and result to decimal, hexadecimal (base-16), and octal (base-8) simultaneously, since all three are commonly encountered in programming and computer architecture.\n\nBinary fluency is essential for understanding CPU registers, bitwise operations in code (AND, OR, XOR, bit shifting), memory addressing, IP subnetting, and color codes in web design (where hex is binary shorthand).`,
 },
   {
   id: 'number-seq',
@@ -331,7 +716,20 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `If you want to arithmetic, geometric and Fibonacci sequences with nth term formula, sum formula and first 10 terms, the Number Sequence is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: `The Number Sequence Calculator analyzes arithmetic, geometric, and Fibonacci sequences. Given any starting conditions, it derives the nth term formula, computes the partial sum formula, and lists the first 10 (or more) terms. Students studying sequences and series, as well as anyone working with recurring patterns in data, use this to understand how a sequence behaves and grows over time.`,
+  workedExample: {
+    title: 'Analyzing the geometric sequence starting at 3 with ratio 4',
+    inputs: ['Sequence type: Geometric', 'First term (a₁): 3', 'Common ratio (r): 4'],
+    steps: [
+      'nth term formula: aₙ = a₁ × r^(n−1) = 3 × 4^(n−1)',
+      'First 6 terms: a₁=3, a₂=12, a₃=48, a₄=192, a₅=768, a₆=3072',
+      'Sum of first n terms: Sₙ = a₁(rⁿ − 1)/(r − 1) = 3(4ⁿ − 1)/3 = 4ⁿ − 1',
+      'Sum of first 5 terms: S₅ = 3(4⁵ − 1)/(4 − 1) = 3(1024 − 1)/3 = 1023',
+    ],
+    result: 'nth term: aₙ = 3 × 4^(n−1). Sum of first 5 terms: S₅ = 1,023.',
+  },
+  relatedCalculators: ['average-calculator', 'statistics-calculator', 'probability-calculator'],
+  about: `Number sequences are ordered lists of numbers following a defined pattern or rule. The three classic types are: arithmetic sequences (constant difference between consecutive terms: 2, 5, 8, 11…), geometric sequences (constant ratio between consecutive terms: 3, 6, 12, 24…), and the Fibonacci sequence (each term is the sum of the two preceding terms: 1, 1, 2, 3, 5, 8…).\n\nFor arithmetic sequences, the nth term is aₙ = a₁ + (n−1)d and the sum of the first n terms is Sₙ = n/2 × (a₁ + aₙ). For geometric sequences, the nth term is aₙ = a₁ × rⁿ⁻¹ and the sum is Sₙ = a₁(rⁿ − 1)/(r − 1). When |r| < 1, the geometric series converges to a finite sum as n → ∞.\n\nSequences appear throughout mathematics (Taylor series), finance (compound interest is a geometric sequence of balances), biology (population growth), computer science (recurrence relations in algorithm analysis), and nature (Fibonacci patterns in plant growth and spiral shells).`,
 },
   {
   id: 'probability',
@@ -343,7 +741,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `The Probability Calculator offers a hassle-free way to single and compound event probability (AND/OR) with odds, complement and expected value. Professionals and students alike rely on this calculator for its accuracy and ease of use. It strips away complicated jargon, letting you find the exact metric you need with just a few simple inputs.`
+  intro: `The Probability Calculator handles single event probability, compound events (AND/OR), conditional probability, and expected value in one interface. It converts between probability and odds formats, and computes the complement automatically. Statistics students, data analysts, and anyone modeling uncertain outcomes use this to reason quantitatively about likelihood and risk.`,
+  workedExample: {
+    title: 'Probability that a fair die shows an even number OR a 5',
+    inputs: ['Event A (even number on a die): P(A) = 3/6 = 0.5', 'Event B (rolling a 5): P(B) = 1/6', 'Are events mutually exclusive? Yes'],
+    steps: [
+      'For mutually exclusive events (no overlap): P(A or B) = P(A) + P(B)',
+      'P(A or B) = 3/6 + 1/6 = 4/6 = 2/3 ≈ 0.667',
+      'Probability as percentage: 66.7%',
+      'Complement: P(neither A nor B) = 1 − 2/3 = 1/3 ≈ 0.333',
+      'Odds in favor: (2/3) / (1/3) = 2 : 1',
+    ],
+    result: 'P(even or 5) = 2/3 ≈ 66.7%. Complement = 1/3. Odds in favor = 2:1.',
+  },
+  relatedCalculators: ['statistics-calculator', 'permutation-combination-calculator', 'z-score-calculator'],
+  about: `Probability quantifies how likely an event is to occur on a scale from 0 (impossible) to 1 (certain). Simple events have probabilities based on the ratio of favorable outcomes to total equally-likely outcomes. Compound event rules follow set theory: P(A or B) = P(A) + P(B) − P(A and B) for general events, simplified to P(A) + P(B) for mutually exclusive events. P(A and B) = P(A) × P(B) for independent events.\n\nThis calculator handles both discrete and continuous probability scenarios, converting between decimal probabilities, percentages, and odds (the ratio of favorable to unfavorable outcomes used in statistics and gambling). Expected value — the probability-weighted average outcome — is also computed.\n\nProbability is foundational to statistics, machine learning (Bayesian inference), finance (option pricing using the Black-Scholes model), game theory, medical testing (sensitivity and specificity of diagnostic tests), and any decision-making under uncertainty.`,
 },
   {
   id: 'confidence-interval',
@@ -355,7 +767,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `If you want to confidence interval for sample data with margin of error and statistical interpretation, the Confidence Interval is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: `The Confidence Interval Calculator constructs confidence intervals for a population mean or proportion from sample data, reporting the interval bounds, margin of error, and a plain-language interpretation. Select the confidence level (90%, 95%, or 99%) and enter your sample statistics. Researchers, data analysts, and statistics students use confidence intervals to communicate how precisely a sample represents a population.`,
+  workedExample: {
+    title: '95% confidence interval for mean exam score from a sample',
+    inputs: ['Sample mean (x̄): 74.2', 'Sample standard deviation (s): 11.8', 'Sample size (n): 40', 'Confidence level: 95%'],
+    steps: [
+      'Standard error (SE) = s / √n = 11.8 / √40 = 11.8 / 6.324 = 1.866',
+      'For 95% CI, use z* = 1.96 (large sample)',
+      'Margin of error = z* × SE = 1.96 × 1.866 = 3.66',
+      'Lower bound = 74.2 − 3.66 = 70.54',
+      'Upper bound = 74.2 + 3.66 = 77.86',
+    ],
+    result: '95% CI: (70.54, 77.86). We are 95% confident the true population mean exam score lies between 70.5 and 77.9.',
+  },
+  relatedCalculators: ['statistics-calculator', 'z-score-calculator', 'sample-size-calculator'],
+  about: `A confidence interval provides a range of plausible values for an unknown population parameter based on sample data. A 95% confidence interval means that if you repeated the sampling procedure many times, approximately 95% of the resulting intervals would contain the true parameter. It does NOT mean there is a 95% probability that this specific interval contains the true value — a subtle but important distinction.\n\nThe interval is computed as: estimate ± (critical value × standard error). The critical value comes from the standard normal distribution (for large samples) or the t-distribution (for small samples). Wider intervals correspond to lower confidence, smaller samples, or higher data variability.\n\nConfidence intervals are preferred over simple point estimates in research papers because they convey both the estimated value and its precision. Medical trials, public opinion polls, A/B testing, and quality control studies all report results using confidence intervals.`,
 },
   {
   id: 'sample-size',
@@ -367,7 +793,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `Whether you're a professional or just looking for quick answers, the Sample Size Calculator provides an instant solution for your needs. It helps you required sample size for surveys and A/B tests by confidence level and margin of error. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
+  intro: `The Sample Size Calculator determines how many observations you need to achieve a desired confidence level and margin of error. It supports both population proportion surveys and mean estimation, with options for finite population correction when the total population is small. Market researchers, academics planning studies, and data scientists designing A/B tests use this before starting data collection.`,
+  workedExample: {
+    title: 'Sample size needed for a survey with ±3% margin of error at 95% confidence',
+    inputs: ['Confidence level: 95% (z* = 1.96)', 'Margin of error (E): 3% = 0.03', 'Expected proportion (p): 0.5 (maximum variance, most conservative)'],
+    steps: [
+      'Formula: n = (z*² × p × (1−p)) / E²',
+      'z*² = 1.96² = 3.8416',
+      'p × (1−p) = 0.5 × 0.5 = 0.25',
+      'E² = 0.03² = 0.0009',
+      'n = (3.8416 × 0.25) / 0.0009 = 0.9604 / 0.0009 = 1,067',
+    ],
+    result: 'You need at least 1,067 respondents for a ±3% margin of error at 95% confidence (with unknown proportion).',
+  },
+  relatedCalculators: ['confidence-interval-calculator', 'statistics-calculator', 'z-score-calculator', 'probability-calculator'],
+  about: `Sample size determination is one of the most important steps in planning any study or survey. Collecting too few samples makes your conclusions unreliable; collecting too many wastes time and resources. The required sample size depends on three factors: the desired confidence level, the acceptable margin of error, and an estimate of the population variance.\n\nFor proportion surveys, p = 0.5 gives the most conservative (largest) sample size because it maximizes the variance p(1−p). If you have prior information suggesting the proportion is closer to 0.1 or 0.9, you can use a smaller sample size. For mean estimation, you need an estimate of the standard deviation, often from a pilot study or previous research.\n\nThe finite population correction factor (√((N−n)/(N−1))) reduces the required sample size when sampling more than 5-10% of the total population N. This is important for surveys of small towns, niche customer segments, or employee populations.`,
 },
   {
   id: 'distance',
@@ -379,6 +819,21 @@ export const mathCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `We built the Distance Calculator specifically to 2D distance between two coordinates with midpoint, slope and line equation. By offering a clean, straightforward interface, it empowers users to generate reliable calculations in seconds. Discover exactly how the numbers align and take advantage of our built-in tips and formulas for complete transparency.`
+  intro: `The Distance Calculator computes the Euclidean distance between two points in 2D coordinate space, along with the midpoint coordinates, the slope of the connecting line, and the equation of that line in both slope-intercept and standard form. Geometry students, computer graphics programmers, and anyone working with Cartesian coordinates use this as a quick analytical geometry tool.`,
+  workedExample: {
+    title: 'Distance, midpoint and line equation between (1, 2) and (7, 10)',
+    inputs: ['Point 1: (1, 2)', 'Point 2: (7, 10)'],
+    steps: [
+      'Distance formula: d = √((x₂−x₁)² + (y₂−y₁)²)',
+      'd = √((7−1)² + (10−2)²) = √(6² + 8²) = √(36 + 64) = √100 = 10',
+      'Midpoint: ((x₁+x₂)/2, (y₁+y₂)/2) = ((1+7)/2, (2+10)/2) = (4, 6)',
+      'Slope: m = (y₂−y₁)/(x₂−x₁) = (10−2)/(7−1) = 8/6 = 4/3',
+      'Line equation (point-slope): y−2 = (4/3)(x−1)',
+      'Slope-intercept form: y = (4/3)x + 2/3',
+    ],
+    result: 'Distance = 10 units. Midpoint = (4, 6). Slope = 4/3. Line: y = (4/3)x + 2/3.',
+  },
+  relatedCalculators: ['pythagorean-calculator', 'triangle-calculator', 'area-calculator'],
+  about: `The distance between two points (x₁, y₁) and (x₂, y₂) in the Cartesian plane is given by the distance formula d = √((x₂−x₁)² + (y₂−y₁)²), which is a direct application of the Pythagorean theorem in two dimensions. The horizontal and vertical separations form the two legs, and the distance is the hypotenuse.\n\nBeyond the distance, this calculator provides the midpoint (the point equidistant from both endpoints), the slope of the connecting line (rise over run), and the line equation in slope-intercept form (y = mx + b). These four quantities are the building blocks of coordinate geometry.\n\nApplications include game development (collision detection, pathfinding), computer graphics (rendering distances), GPS navigation (approximating short-distance paths as flat), robotics (planning arm movements), and geometry coursework at the high school and college level.`,
 },
 ];

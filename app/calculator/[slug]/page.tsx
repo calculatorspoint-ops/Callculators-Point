@@ -9,14 +9,15 @@
  */
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCalcBySlug, ALL_CALCULATORS, CATEGORIES } from '@/data/calculatorConfigs';
+import { getCalcBySlug, ALL_CALCULATORS, CATEGORIES, INDEXABLE_CALCULATORS } from '@/data/calculatorConfigs';
 import { CalculatorPageClient } from './calculator-client';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
 import { SEOContentSection } from '@/components/calculator-core/SEOContentSection';
 import { CALC_FAQS, BASE_FAQS } from '@/data/faqData';
 import { SITE_URL } from '@/config/site';
 
-/** SSG: pre-render all calculator slugs at build time */
+/** SSG: pre-render all calculator slugs at build time.
+ * Includes needsContent calcs too (page still renders) — just noindexed. */
 export function generateStaticParams() {
   return ALL_CALCULATORS.map((calc) => ({ slug: calc.slug }));
 }
@@ -36,8 +37,6 @@ export async function generateMetadata(
   const titleName = /calculator/i.test(cleanName)
     ? cleanName
     : `${cleanName} Calculator`;
-
-  const title = `Free ${titleName} Online`;
 
   const calcNameLower = cleanName.toLowerCase().replace(/ calculator$/i, '');
 
@@ -63,16 +62,25 @@ export async function generateMetadata(
     `Quickly calculate ${calcNameLower} online. ${descTrimmed} Free tool with complete formulas and accurate results.`
   ];
   const templateIndex = slug.length % descTemplates.length;
-  const description = DESC_OVERRIDES[slug] ?? descTemplates[templateIndex];
 
+  // Use calc.metaTitle override if present (full custom page title)
+  const title = calc.metaTitle ?? `Free ${titleName} Online`;
+
+  // Use calc.metaDescription override if present
+  const description = calc.metaDescription ?? (DESC_OVERRIDES[slug] ?? descTemplates[templateIndex]);
 
   const fullTitle = `${title} | Calculators Point`;
 
-  const ogImageUrl = `${SITE_URL}/api/og?title=${encodeURIComponent(title)}&icon=${encodeURIComponent(calc.icon || '🧮')}&cat=${encodeURIComponent(catName)}`;
+  const ogImageUrl = `${SITE_URL}/api/og?title=${encodeURIComponent(title)}&icon=${encodeURIComponent(calc.icon || '🧭')}&cat=${encodeURIComponent(catName)}`;
 
   return {
     title,
     description,
+
+    // noindex for incomplete/draft calculator pages
+    ...(calc.needsContent ? {
+      robots: { index: false, follow: false },
+    } : {}),
 
     alternates: {
       canonical: `${SITE_URL}/calculator/${slug}`,

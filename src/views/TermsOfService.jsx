@@ -1,7 +1,7 @@
-﻿
+
 import Link from "next/link";
 
-const LAST_UPDATED = "January 1, 2025";
+const LAST_UPDATED = "June 6, 2026";
 const S = ({ id, n, title, children }) => (
   <div id={id} style={{ marginBottom:32 }}>
     <h2 style={{ fontFamily:"var(--font-hd)", fontSize:"1.15rem", fontWeight:800, color:"var(--text)", marginBottom:12, letterSpacing:"-.02em" }}>{n}. {title}</h2>

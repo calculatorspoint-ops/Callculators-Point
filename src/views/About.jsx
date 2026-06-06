@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-import { ALL_CALCULATORS, CATEGORIES } from "@/data/calculatorConfigs";
+import { ALL_CALCULATORS, CATEGORIES, LIVE_CALC_COUNT, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { Shield, Zap, BarChart2, Globe, Lock, Heart, Star, Award, Users, Code } from "lucide-react";
 
 const STATS = [
-  { icon:"🧮", num:`${ALL_CALCULATORS.length}+`, label:"Free Calculators" },
+  { icon:"🧮", num:`${CALC_COUNT_LABEL}`, label:"Free Calculators" },
   { icon:"🌍", num:"20+", label:"Currencies Supported" },
   { icon:"📊", num:"12+", label:"Interactive Charts" },
   { icon:"⚡", num:"<1s", label:"Load Time" },
@@ -70,7 +70,7 @@ export default function About() {
           <h1>About Calculators Point</h1>
           <p>
             We believe everyone deserves access to professional-grade calculation tools — 
-            for free, without ads, without signing up.
+            for free, no subscriptions, no paywalls, no sign-up required.
           </p>
           <div style={{ display:"flex", justifyContent:"center", gap:12, flexWrap:"wrap", marginTop:24 }}>
             <Link href="/calculators" className="btn-primary" style={{ fontSize:13 }}>
@@ -161,7 +161,7 @@ export default function About() {
         <div className="content-card">
           <h2>Calculators We Offer</h2>
           <p>
-            {ALL_CALCULATORS.length}+ calculators across {CATEGORIES.length} categories — all free, all with real-time updates, charts, and smart insights.
+            {CALC_COUNT_LABEL} calculators across {CATEGORIES.length} categories — all free, all with real-time updates, charts, and smart insights.
           </p>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(140px,1fr))", gap:10, marginTop:16 }}>
             {CATEGORIES.map(cat => (
@@ -228,7 +228,7 @@ export default function About() {
           <div style={{ fontSize:36, marginBottom:12 }}>🚀</div>
           <h3 style={{ fontFamily:"var(--font-hd)", fontSize:"1.4rem", fontWeight:900, color:"#fff", marginBottom:8, letterSpacing:"-.03em" }}>Ready to Calculate?</h3>
           <p style={{ fontSize:14, color:"rgba(255,255,255,.65)", marginBottom:20 }}>
-            {ALL_CALCULATORS.length}+ free tools waiting for you. No signup, no credit card.
+            {CALC_COUNT_LABEL} free tools waiting for you. No signup, no credit card.
           </p>
           <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
             <Link href="/calculators" className="btn-ghost">Browse All Calculators</Link>

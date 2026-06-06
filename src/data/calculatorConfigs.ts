@@ -41,6 +41,37 @@ export interface CalculatorConfig {
   whenToUse?: string;
   resultMeaning?: string;
   about?: string;
+
+  // ── SEO Content Fields (Phase 2) ────────────────────────────────────────
+  /** Short 2–3 sentence unique intro shown above the calculator UI */
+  intro?: string;
+
+  /** Structured worked example with inputs, calculation steps, and final result */
+  workedExample?: {
+    title: string;
+    inputs: string[];
+    steps: string[];
+    result: string;
+  };
+
+  /**
+   * Manually curated related calculator slugs (cross-category OK).
+   * Falls back to same-category calcs if omitted.
+   */
+  relatedCalculators?: string[];
+
+  /** Custom <title> tag override (replaces auto-generated title) */
+  metaTitle?: string;
+
+  /** Custom meta description override (replaces template-generated description) */
+  metaDescription?: string;
+
+  /**
+   * Mark as needing content work.
+   * true  → noindex in metadata + excluded from sitemap.
+   * false / undefined → treated as normal live page.
+   */
+  needsContent?: boolean;
 }
 
 export const CATEGORIES: CalculatorCategory[] = [
@@ -84,6 +115,27 @@ export function getRelated(calc: CalculatorConfig, limit = 7): CalculatorConfig[
 }
 
 /**
+ * Resolve related calculators for a given calc.
+ * Priority: calc.relatedCalculators (manual, cross-category OK) → same-category fallback.
+ * Excludes the current calc itself and any needsContent / coming-soon calcs.
+ */
+export function getRelatedCalcs(calc: CalculatorConfig, limit = 6): CalculatorConfig[] {
+  if (calc.relatedCalculators && calc.relatedCalculators.length > 0) {
+    const resolved = calc.relatedCalculators
+      .map(slug => ALL_CALCULATORS.find(c => c.slug === slug))
+      .filter((c): c is CalculatorConfig =>
+        !!c && c.slug !== calc.slug && !c.needsContent && c.status !== 'coming-soon'
+      )
+      .slice(0, limit);
+    if (resolved.length > 0) return resolved;
+  }
+  // Fallback: same-category calcs (excluding self and needsContent)
+  return ALL_CALCULATORS
+    .filter(c => c.cat === calc.cat && c.slug !== calc.slug && !c.needsContent && c.status !== 'coming-soon')
+    .slice(0, limit);
+}
+
+/**
  * SINGLE SOURCE OF TRUTH for calculator count.
  *
  * Use CALC_COUNT_LABEL (e.g. "183+") everywhere you need to display
@@ -98,3 +150,11 @@ export const LIVE_CALC_COUNT: number = ALL_CALCULATORS.filter(
 
 /** User-facing label, e.g. "183+" */
 export const CALC_COUNT_LABEL: string = `${LIVE_CALC_COUNT}+`;
+
+/**
+ * Calculators that are indexable by search engines.
+ * Excludes needsContent: true, draft, and coming-soon calculators.
+ */
+export const INDEXABLE_CALCULATORS: CalculatorConfig[] = ALL_CALCULATORS.filter(
+  (c) => !c.needsContent && c.status !== 'coming-soon' && c.status !== 'draft'
+);

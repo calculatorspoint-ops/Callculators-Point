@@ -31,12 +31,12 @@ const ECOSYSTEM_LINKS = [
 const CORE_LINKS = [
   { to: '/', label: 'Homepage', icon: '🏠' },
   { to: '/calculators', label: 'All Calculators', icon: '📊' },
-  { to: '/cheat-sheets', label: 'Cheat Sheets', icon: '📝' },
   { to: '/about', label: 'About Us', icon: '👋' },
   { to: '/contact', label: 'Contact Us', icon: '✉️' },
   { to: '/privacy-policy', label: 'Privacy Policy', icon: '🔒' },
   { to: '/terms-of-service', label: 'Terms of Service', icon: '📜' },
   { to: '/disclaimer', label: 'Disclaimer', icon: '⚠️' },
+  { to: '/cookie-policy', label: 'Cookie Policy', icon: '🍪' },
   { to: '/sitemap', label: 'Sitemap (this page)', icon: '🗺️' },
 ];
 

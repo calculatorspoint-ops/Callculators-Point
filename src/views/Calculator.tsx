@@ -45,9 +45,9 @@ export default function Calculator() {
 
       {/* ══════════ PAGE HEADER ══════════ */}
       <div className="calc-page-header premium-card-bg relative overflow-hidden rounded-b-[2.5rem] shadow-sm mb-6 border-b border-[var(--border)]">
-        {/* Subtle decorative glowing orbs */}
-        <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-[var(--brand)] rounded-full mix-blend-multiply filter blur-[80px] opacity-10 pointer-events-none"></div>
-        <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-purple-500 rounded-full mix-blend-multiply filter blur-[80px] opacity-10 pointer-events-none"></div>
+        {/* Subtle decorative glowing orbs — pointer-events:none is critical so they never block clicks */}
+        <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-[var(--brand)] rounded-full mix-blend-multiply filter blur-[80px] opacity-10 pointer-events-none" style={{ position:'absolute', top:'-20%', right:'-10%', width:500, height:500, pointerEvents:'none', zIndex:0 }}></div>
+        <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] bg-purple-500 rounded-full mix-blend-multiply filter blur-[80px] opacity-10 pointer-events-none" style={{ position:'absolute', bottom:'-20%', left:'-10%', width:400, height:400, pointerEvents:'none', zIndex:0 }}></div>
         
         <div className="cph-inner relative z-10">
           {/* Breadcrumb */}
@@ -76,8 +76,6 @@ export default function Calculator() {
                   {calc.popular  && <span className="badge badge-green glass-panel !bg-green-500/10 !border-green-500/20 !text-green-700 dark:!text-green-400">⭐ Popular</span>}
                   {calc.isNew    && <span className="badge badge-red glass-panel !bg-red-500/10 !border-red-500/20 !text-red-700 dark:!text-red-400">🆕 New</span>}
                   {calc.hasChart && <span className="badge badge-blue glass-panel !bg-blue-500/10 !border-blue-500/20 !text-blue-700 dark:!text-blue-400">📊 Charts</span>}
-                  {/* false && */ <span className="badge badge-amber glass-panel !bg-amber-500/10 !border-amber-500/20 !text-amber-700 dark:!text-amber-400">🚧 Beta</span>}
-                  {/* false && */ <span className="badge badge-gray glass-panel !bg-gray-500/10 !border-gray-500/20 !text-gray-700 dark:!text-gray-400">⚠️ Legacy</span>}
                 </div>
                 <div className="cph-actions flex gap-2">
                   <button onClick={() => toggleFavorite(calc.id)} className="glass-panel hover:bg-white/40 dark:hover:bg-black/40 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all shadow-sm">
@@ -196,7 +194,7 @@ export default function Calculator() {
           {/* Pro Tips / Intelligence */}
           {(calc.tips || calc.formula) && (
             <div className="side-card glass-panel relative overflow-hidden" style={{ borderRadius:"var(--r-xl)", borderColor:"var(--border)", boxShadow:"0 4px 30px -5px rgba(67, 97, 238, 0.15)" }}>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--brand)] rounded-full mix-blend-multiply filter blur-[40px] opacity-20 pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--brand)] rounded-full mix-blend-multiply filter blur-[40px] opacity-20 pointer-events-none" style={{ position:'absolute', top:0, right:0, width:128, height:128, pointerEvents:'none', zIndex:0 }}></div>
               <div className="sec-head" style={{ background:"transparent", borderBottom:"1px solid var(--border)" }}>
                 <div className="sec-head-icon" style={{ background:"var(--surface)", boxShadow:"0 2px 8px rgba(0,0,0,0.05)" }}>💡</div>
                 <span style={{ fontWeight:800, fontSize:13, color:"var(--brand)", textTransform:"uppercase", letterSpacing:".05em" }}>Pro Tips & Intel</span>

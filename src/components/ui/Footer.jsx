@@ -20,7 +20,7 @@ export function Footer() {
               Fast, accurate, and 100% free — always.
             </p>
             <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-              {[["Privacy","/privacy-policy"],["Terms","/terms-of-service"],["Disclaimer","/disclaimer"]].map(([l,h])=>(
+              {[["Privacy","/privacy-policy"],["Terms","/terms-of-service"],["Disclaimer","/disclaimer"],["Cookies","/cookie-policy"]].map(([l,h])=>(
                 <Link key={h} href={h} style={{ padding:"4px 10px", borderRadius:6, fontSize:11, fontWeight:600, background:"var(--footer-bg-surface)", border:"1px solid var(--footer-bg-border)", color:"var(--footer-text)", transition:"color .15s" }}
                   onMouseEnter={e=>e.currentTarget.style.color="var(--footer-link-hover)"}
                   onMouseLeave={e=>e.currentTarget.style.color="var(--footer-text)"}>
@@ -70,11 +70,11 @@ export function Footer() {
           {/* Company — nav landmark */}
           <nav aria-label="Company links">
             <p className="footer-head">Company</p>
-            {[["About Us","/about"],["Contact Us","/contact"],["Cheat Sheets & PDFs","/cheat-sheets"],["All Calculators","/calculators"],["Sitemap","/sitemap"]].map(([l,h])=>(
+            {[["About Us","/about"],["Contact Us","/contact"],["All Calculators","/calculators"],["Sitemap","/sitemap"]].map(([l,h])=>(
               <Link key={h} href={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
             ))}
             <p className="footer-head" style={{ marginTop:20 }}>Legal</p>
-            {[["Privacy Policy","/privacy-policy"],["Terms of Service","/terms-of-service"],["Disclaimer","/disclaimer"]].map(([l,h])=>(
+            {[["Privacy Policy","/privacy-policy"],["Terms of Service","/terms-of-service"],["Disclaimer","/disclaimer"],["Cookie Policy","/cookie-policy"]].map(([l,h])=>(
               <Link key={h} href={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
             ))}
           </nav>

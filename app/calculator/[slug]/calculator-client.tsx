@@ -9,7 +9,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { incrementCalcViews } from '@/lib/firebase/firestore';
 import { useAppStore } from '@/store/useAppStore';
-import { getCalcBySlug, getRelated, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
+import { getCalcBySlug, getRelated, getRelatedCalcs, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
 import { BASE_FAQS, CALC_FAQS } from '@/data/faqData';
 import { getLandingsByCalc } from '@/data/seoLandingData';
 import { Share2, Bookmark, BookmarkCheck } from 'lucide-react';
@@ -176,6 +176,11 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
             </Suspense>
           )}
 
+          {/* Intro paragraph — unique 2–3 sentence context shown above the calculator */}
+          {calc.intro && (
+            <p className="calc-intro-para">{calc.intro}</p>
+          )}
+
           {/* Calculator form — min-height reserves space to prevent CLS while skeleton is shown */}
           <div className="calc-card" style={{ marginBottom: 16, minHeight: 360 }}>
             <ErrorBoundary>
@@ -249,28 +254,31 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
             </div>
           )}
 
-          {/* Related calculators */}
-          {related.length > 0 && (
-            <div className="side-card" style={{ marginTop: 16 }}>
-              <div className="sec-head" style={{ background: 'var(--surf2)' }}>
-                <span>🔗</span>
-                <span>Related Tools</span>
+          {/* Related calculators — uses cross-category links if calc.relatedCalculators is set */}
+          {(() => {
+            const sidebarRelated = getRelatedCalcs(calc, 7);
+            return sidebarRelated.length > 0 ? (
+              <div className="side-card" style={{ marginTop: 16 }}>
+                <div className="sec-head" style={{ background: 'var(--surf2)' }}>
+                  <span>🔗</span>
+                  <span>Related Tools</span>
+                </div>
+                {sidebarRelated.map(c => (
+                  <Link
+                    key={c.id}
+                    href={`/calculator/${c.slug}`}
+                    className="calc-row"
+                  >
+                    <span className="calc-row-icon">{c.icon}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {c.name}
+                    </span>
+                    <span className="calc-row-arrow">›</span>
+                  </Link>
+                ))}
               </div>
-              {related.map(c => (
-                <Link
-                  key={c.id}
-                  href={`/calculator/${c.slug}`}
-                  className="calc-row"
-                >
-                  <span className="calc-row-icon">{c.icon}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {c.name}
-                  </span>
-                  <span className="calc-row-arrow">›</span>
-                </Link>
-              ))}
-            </div>
-          )}
+            ) : null;
+          })()}
         </aside>
       </div>
     </>

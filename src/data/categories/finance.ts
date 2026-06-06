@@ -33,7 +33,10 @@ export const financeCalculators: CalculatorConfig[] = [
     'Select your loan tenure in years or months.',
     'Click Calculate to see your exact EMI and full payment schedule.'
   ],
-      about: `The EMI Calculator is specifically engineered to help you analyze your loan installments with a comprehensive amortization chart, prepayment engine, and rate comparison. Stop guessing your future cash flow and use this tool to discover exactly how much interest you will pay over the life of your mortgage or personal loan. It's built for anyone looking to make informed borrowing decisions without relying on bank spreadsheets.`
+  intro: 'The EMI Calculator computes your exact monthly loan installment using the standard reducing-balance formula used by Indian and international banks. Enter your principal, rate, and tenure to get your EMI, total interest payable, and a full month-by-month amortization schedule. It\'s useful before applying for home loans, car loans, or personal loans to budget your cash flow accurately.',
+  metaTitle: 'Free EMI Calculator Online — Loan Installment & Amortization',
+  metaDescription: 'Calculate your exact EMI for home, car, and personal loans. Full amortization schedule, prepayment savings, and multi-loan comparison. 100% free.',
+  about: `An EMI (Equated Monthly Installment) is the fixed monthly payment you make to a lender until the loan is fully repaid. It is calculated using the reducing-balance method, meaning each payment chips away at the principal, which in turn reduces the interest you owe next month. The standard formula — EMI = [P × R × (1+R)^N] / [(1+R)^N − 1] — is used by virtually all scheduled banks and housing finance companies.\n\nThe amortization schedule is arguably the most valuable output this calculator provides. It shows you, month by month, exactly how much of your payment goes to principal versus interest. In the early months of a long home loan, over 80% of your EMI may go to interest — understanding this helps you see why prepayments are so impactful at the beginning of a loan.\n\nThis calculator also includes a prepayment engine. Enter any lump-sum payment to instantly see how many months it shaves off your tenure and how much total interest you save. Even one prepayment of ₹1–2 lakhs in the first two years of a ₹50L home loan can save ₹4–6 lakhs in interest over the life of the loan.`,
 },
   {
   id: 'compound',
@@ -67,7 +70,10 @@ export const financeCalculators: CalculatorConfig[] = [
     'Set the compounding frequency (monthly is standard for most accounts).',
     'Optionally, add a regular monthly contribution to see accelerated growth.'
   ],
-      about: `The Compound Interest is an essential resource for anyone needing to investment growth with inflation adj., tax layer, goal-seeking & real vs nominal. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: 'The Compound Interest Calculator shows exactly how money grows when interest is earned on both the original principal and the accumulated interest. Set the compounding frequency — daily, monthly, quarterly, or annually — to see how much the schedule alone affects your final balance. It\'s used by investors to evaluate fixed deposits, savings accounts, and long-term wealth-building plans.',
+  metaTitle: 'Free Compound Interest Calculator Online',
+  metaDescription: 'Calculate compound interest with daily, monthly, or annual compounding. See how ₹1 lakh grows over 10, 20, or 30 years. Inflation-adjusted view included.',
+  about: `Compound interest is the process of earning interest on your interest — each period\'s interest is added to the principal and then itself earns interest in the next period. This compounding effect is what Einstein reputedly called the \'eighth wonder of the world,\' and it\'s why the difference between starting to invest at 25 versus 35 can be worth millions of rupees or dollars at retirement.\n\nThe compounding frequency matters significantly. A fixed deposit compounding quarterly at 7% annually produces more interest than one compounding annually at the same rate. This calculator lets you compare any compounding schedule and includes an inflation-adjusted \'real return\' toggle, so you can see what your money will actually be worth in today\'s purchasing power.\n\nThe goal-seeking mode works in reverse: enter your target corpus and it calculates the principal you need to invest today, or the number of years required to reach that goal at a given rate. This makes it practical for retirement planning, college fund projections, and any long-term saving objective.`,
 },
   {
   id: 'sip',
@@ -101,7 +107,10 @@ export const financeCalculators: CalculatorConfig[] = [
     'Enter the time horizon in years.',
     'Toggle the Step-Up option if you plan to increase your SIP amount annually.'
   ],
-      about: `The SIP Calculator is an essential resource for anyone needing to sIP corpus with step-up mode, XIRR & 3-scenario simulation. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: 'The SIP Calculator shows how a fixed monthly investment in a mutual fund grows over time using compound growth. Enter your SIP amount, expected annual return, and investment horizon to see your estimated corpus — plus a step-up option to model annual increases in your SIP amount aligned to income growth.',
+  metaTitle: 'Free SIP Calculator Online — Mutual Fund Corpus Planner',
+  metaDescription: 'Calculate SIP returns with step-up, XIRR, and 3-scenario simulation. See how ₹5,000/month grows over 10, 20, or 30 years. Free online SIP planner.',
+  about: `A Systematic Investment Plan (SIP) allows investors to invest a fixed amount at regular intervals — typically monthly — into a mutual fund scheme. Returns are not guaranteed (equity markets fluctuate), but long-term historical data from Indian equity markets shows that disciplined SIPs in diversified equity funds have generated 10–14% CAGR over 15-year periods.\n\nThe power of a SIP comes from two forces: rupee cost averaging (buying more units when markets fall) and compounding (every unit you hold grows in value over time). This calculator models both. The step-up feature — increasing your SIP by 10% every year — is particularly powerful because it mirrors salary growth and dramatically accelerates corpus accumulation without requiring large lump-sum investments.\n\nThe XIRR (Extended Internal Rate of Return) shown in results is the most accurate way to measure SIP returns because it accounts for the different time horizons of each monthly installment. A 12% XIRR on a 20-year SIP is genuinely excellent long-term performance — it means every rupee you invested earned 12% per year adjusted for timing.`,
 },
   {
   id: 'simple-interest',
@@ -119,7 +128,8 @@ export const financeCalculators: CalculatorConfig[] = [
     'Simple interest charges interest only on the original principal, while compound interest charges on principal + accumulated interest.',
     'Flat-rate loans use simple interest — they cost significantly more than reducing-balance loans at the same stated rate.'
   ],
-      about: `Stop guessing and start using the Simple Interest to get immediate, accurate data. Specifically engineered to sI with flat vs reducing balance comparison & time conversion, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: 'The Simple Interest Calculator computes interest charged or earned only on the original principal, not on accumulated interest. It\'s used for short-term loans, flat-rate agreements, and quick interest comparisons where reducing-balance calculations aren\'t needed.',
+  about: `Simple interest is the most straightforward form of interest — it\'s calculated only on the original loan amount (principal), regardless of how much interest has already accrued. The formula SI = P × R × T / 100 makes it easy to compute manually, and it\'s used in short-term personal loans, flat-rate car loans, and trade credit arrangements.\n\nThe key distinction from compound interest is that simple interest does not compound — the interest charge is the same every period because it always refers back to the original principal. This means a 10% simple interest loan for 3 years costs exactly 30% of the principal, no more. Compound interest on the same terms would cost more.\n\nThis calculator also shows the flat-rate vs reducing-balance comparison, which is valuable when comparing loan products. A flat-rate loan at 10% effectively costs about 18–19% on a reducing-balance basis — an important discrepancy that lenders don\'t always make transparent.`,
 },
   {
   id: 'roi',
@@ -136,7 +146,8 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'Always compare annualized ROI, not total ROI, when evaluating investments of different durations.'
   ],
-      about: `Stop guessing and start using the ROI Calculator to get immediate, accurate data. Specifically engineered to total & annual ROI with inflation-adjusted real returns, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: 'The ROI Calculator measures how much you earned (or lost) on an investment relative to what you put in. It calculates both total ROI (the overall percentage gain or loss) and annualized ROI (the equivalent yearly return), which is essential when comparing investments held for different durations.',
+  about: `Return on Investment (ROI) is one of the most widely used metrics in business and personal finance. The formula is simple: ROI = [(Final Value − Initial Investment) / Initial Investment] × 100. But its simplicity can be misleading when comparing investments held for different lengths of time — a 50% ROI over 10 years is far less impressive than a 50% ROI over 2 years.\n\nThis is why annualized ROI (CAGR — Compound Annual Growth Rate) is the correct metric for investment comparison. This calculator computes both: total ROI for a snapshot of absolute return, and annualized ROI for fair cross-investment comparison. The inflation-adjusted real return view shows purchasing-power-adjusted outcomes for long-term planning.\n\nROI is used to evaluate stocks, real estate, business projects, marketing campaigns, and virtually any activity where you put money in and expect more back. A positive ROI means the investment earned more than its cost; a negative ROI indicates a loss. This calculator helps you make that judgment quickly, with the right metric for the comparison at hand.`,
 },
   {
   id: 'salary',
@@ -152,7 +163,8 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     "Gross pay is what you earn before taxes and deductions. Net pay is your 'take-home' money after all deductions."
   ],
-      about: `Stop guessing and start using the Salary Calculator to get immediate, accurate data. Specifically engineered to pay period converter with local tax rules, allowances & net take-home, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: 'The Salary Calculator converts a gross annual or monthly salary into your net take-home pay by applying tax brackets, standard deductions, and allowances. It works across hourly, daily, weekly, bi-weekly, and monthly pay periods so you can understand what any job offer actually puts in your pocket.',
+  about: `Understanding the difference between your gross salary (what you earn before deductions) and your net pay (what you actually take home) is essential when evaluating a job offer, negotiating a raise, or building a monthly budget. Tax withholding, provident fund contributions, health insurance premiums, and other deductions can reduce gross pay by 20–40%.\n\nThis calculator applies standard tax rules including income tax slabs, standard deductions, and applicable surcharges to compute your exact net take-home amount. The pay period converter lets you input an annual CTC (Cost to Company) and see the monthly, bi-weekly, weekly, or daily equivalent — useful when comparing job offers quoted in different pay period formats.\n\nSelf-employed users should note that take-home pay calculations are more complex (quarterly estimated taxes, self-employment tax on top of income tax) and this calculator is primarily designed for salaried employees. Use the result as a reference point, and verify with a tax professional for your specific jurisdiction and filing situation.`,
 },
   {
   id: 'discount',
@@ -167,7 +179,8 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'A stacked discount is applied to the already discounted price, not the original price. E.g., 50% off + 20% off equals 60% total off, not 70%.'
   ],
-      about: `If you want to stacked multi-discounts, reverse price & tax integration, the Discount Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: 'The Discount Calculator computes the final sale price after one or more percentage discounts, including stacked discounts where a second discount applies to the already-reduced price. It also runs in reverse — enter the original and sale price to find the discount percentage applied.',
+  about: `Discount calculations are deceptively tricky because stacked discounts do not simply add together. A product marked "50% off + an extra 20% off" is not 70% off — the second discount applies to the already-reduced price, making the combined discount 60%. This calculator handles stacked discounts correctly and shows the true effective discount percentage.\n\nThe reverse mode (find discount percentage from original and sale price) is useful for retailers analyzing competitor pricing, shoppers verifying that a advertised discount is actually applied, and accountants computing discount rates from invoice data.\n\nTax integration lets you add GST, VAT, or sales tax to the discounted price to find the final checkout amount. This makes the calculator useful for both consumers comparing shopping deals and business owners setting promotional prices that remain profitable after tax.`,
 },
   {
   id: 'profit-margin',
@@ -184,7 +197,17 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'Margin is profit as a percentage of revenue. Markup is profit as a percentage of cost.'
   ],
-      about: `Stop guessing and start using the Profit Margin to get immediate, accurate data. Specifically engineered to gross margin, markup, health indicator & total profit, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: 'The Profit Margin Calculator computes gross margin, net margin, and markup from revenue and cost figures. It distinguishes between margin (profit as a percentage of revenue) and markup (profit as a percentage of cost) — two different metrics that are often confused but produce very different numbers.',
+  about: `Profit margin and markup are two related but distinct metrics that confuse even experienced business people. Margin expresses profit as a percentage of revenue: if you sell something for $100 and it costs $60, your margin is 40%. Markup expresses profit as a percentage of cost: the same $100 sale with $60 cost has a markup of 67%. Both are correct — they just measure from different reference points.\n\nGross margin is the most commonly tracked metric in retail and manufacturing. It tells you how much of each revenue dollar remains after covering the direct cost of goods sold (COGS) — the more margin you retain, the more money is available to cover operating expenses and generate profit. Net margin goes further by also subtracting operating expenses, taxes, and interest.\n\nThis calculator also shows a health indicator: margin benchmarks vary significantly by industry (grocery retail runs on 2–5%, software can be 70–90%), so the contextual color-coding helps you judge whether your margin is strong or concerning for your sector.`,
+},
+  {
+  id: 'break-even',
+  slug: 'break-even-calculator',
+  cat: 'finance',
+  name: 'Break-Even Calculator',
+  icon: '⚖️',
+  desc: 'Break-even units & revenue with contribution margin chart',
+  popular: false,
 },
   {
   id: 'break-even',
@@ -196,205 +219,8 @@ export const financeCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: true,
   isNew: false,
-  formula: 'Break-Even Units = Fixed Costs / (Selling Price - Variable Cost per Unit)',
-      about: `The Break-Even Calculator is an essential resource for anyone needing to break-even units & revenue with contribution margin chart. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
-},
-  {
-  id: 'tax',
-  slug: 'tax-calculator',
-  cat: 'finance',
-  name: 'Tax Calculator',
-  icon: '🧾',
-  desc: 'Local tax rules auto-applied based on selected currency region',
-  popular: true,
-  hasChart: false,
-  isNew: false,
-  privacy: "sensitive",
-  tips: [
-    'Effective Tax Rate is the actual percentage of your total income paid in taxes, which is usually lower than your top marginal tax bracket.'
-  ],
-      about: `Stop guessing and start using the Tax Calculator to get immediate, accurate data. Specifically engineered to local tax rules auto-applied based on selected currency region, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
-},
-  {
-  id: 'tip',
-  slug: 'tip-calculator',
-  cat: 'finance',
-  name: 'Tip Calculator',
-  icon: '🍽️',
-  desc: 'Tip amount, bill split among any group with rounding options',
-  popular: false,
-  hasChart: false,
-  isNew: false,
-  tips: [
-    'In the US, 15-20% is standard. Many European and Asian countries include service charges in the bill.',
-    "When splitting, round up each person's share to the nearest whole number — the server will appreciate it."
-  ],
-      about: `Whether you're a professional or just looking for quick answers, the Tip Calculator provides an instant solution for your needs. It helps you tip amount, bill split among any group with rounding options. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
-},
-  {
-  id: 'gst',
-  slug: 'gst-calculator',
-  cat: 'finance',
-  name: 'GST / VAT Calculator',
-  icon: '📋',
-  desc: 'Add or extract GST/VAT — label auto-changes by region',
-  popular: false,
-  hasChart: false,
-  isNew: false,
-  formula: 'GST (Exclusive) = Amount × Rate / 100\n' +
-    'GST (Inclusive): Base = Total × 100 / (100 + Rate)',
-  tips: [
-    'GST-exclusive means tax is added on top. GST-inclusive means the price already includes tax — use the reverse calculation to find the base amount.'
-  ],
-      about: `Whether you're a professional or just looking for quick answers, the GST / VAT Calculator provides an instant solution for your needs. It helps you add or extract GST/VAT — label auto-changes by region. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
-},
-  {
-  id: 'mortgage',
-  slug: 'mortgage-calculator',
-  cat: 'finance',
-  name: 'Mortgage Calculator',
-  icon: '🏠',
-  desc: 'Home loan EMI with amortization, prepayment & rate comparison',
-  popular: true,
-  hasChart: true,
-  isNew: false,
-  formula: 'EMI = [P × R × (1+R)^N] / [(1+R)^N - 1]\n' +
-    'Where P = Loan Amount, R = Monthly Rate, N = Total Months',
-  tips: [
-    'Even small prepayments dramatically reduce total interest — paying just 5% extra per month can cut years off your loan.',
-    'The first few years of a mortgage, most of your EMI goes to interest — prepayments are most effective early on.'
-  ],
-      about: `The Mortgage Calculator is an essential resource for anyone needing to home loan EMI with amortization, prepayment & rate comparison. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
-},
-  {
-  id: 'ppf',
-  slug: 'ppf-calculator',
-  cat: 'finance',
-  name: 'PPF / Savings Calculator',
-  icon: '🏛️',
-  desc: 'Fixed savings with compound growth and tax-free return visualization',
-  popular: false,
-  hasChart: true,
-  isNew: false,
-  formula: 'Maturity = Σ (Annual Deposit × (1 + r)^(N-year))\n' +
-    'Where r = annual interest rate, N = total years',
-  tips: [
-    'PPF enjoys EEE (Exempt-Exempt-Exempt) tax status — your investment, interest, and maturity are all tax-free.'
-  ],
-      about: `If you want to fixed savings with compound growth and tax-free return visualization, the PPF / Savings Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
-},
-  {
-  id: 'loan-compare',
-  slug: 'loan-comparison-calculator',
-  cat: 'finance',
-  name: 'Loan Comparison',
-  icon: '⚖️',
-  desc: 'Compare up to 3 loans side-by-side — total interest, EMI, and tenure',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-  tips: [
-    "A lower rate doesn't always mean less total cost — check the full tenure interest paid."
-  ],
-      about: `Stop guessing and start using the Loan Comparison to get immediate, accurate data. Specifically engineered to compare up to 3 loans side-by-side — total interest, EMI, and tenure, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
-},
-  {
-  id: 'retirement',
-  slug: 'retirement-calculator',
-  cat: 'finance',
-  name: 'Retirement Calculator',
-  icon: '🏖️',
-  desc: 'Calculate your retirement corpus, savings gap, and monthly savings target',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-  formula: 'Required Corpus = Annual Expenses × (1+inflation)^years / (real_rate - inflation)\n' +
-    '4% Rule: Corpus = 25 × Annual Expenses',
-  tips: [
-    'Starting 10 years earlier can cut your required monthly savings by more than half.',
-    'The 4% rule: a corpus of 25× annual expenses sustains 30+ years of withdrawals.'
-  ],
-      about: `Stop guessing and start using the Retirement Calculator to get immediate, accurate data. Specifically engineered to calculate your retirement corpus, savings gap, and monthly savings target, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
-},
-  {
-  id: 'fd',
-  slug: 'fd-calculator',
-  cat: 'finance',
-  name: 'FD / Fixed Deposit',
-  icon: '🏛️',
-  desc: 'Fixed deposit maturity with compound interest, tax deduction and effective yield',
-  popular: false,
-  hasChart: true,
-  isNew: true,
-  formula: 'Maturity = P × (1 + r/n)^(n×t)',
-  tips: [
-    'FD interest is taxable as income. The effective post-tax yield depends on your tax bracket.'
-  ],
-      about: `Whether you're a professional or just looking for quick answers, the FD / Fixed Deposit provides an instant solution for your needs. It helps you fixed deposit maturity with compound interest, tax deduction and effective yield. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
-},
-  {
-  id: 'mortgage-payoff',
-  slug: 'mortgage-payoff-calculator',
-  cat: 'finance',
-  name: 'Mortgage Payoff',
-  icon: '🏡',
-  desc: 'Early mortgage payoff with extra payments — see interest saved and years cut',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-  formula: 'Payoff Date with extra payments: recalculate amortization reducing principal faster each month',
-  tips: [
-    'Even $100 extra/month can save tens of thousands in interest and years off your mortgage.'
-  ],
-      about: `Whether you're a professional or just looking for quick answers, the Mortgage Payoff provides an instant solution for your needs. It helps you early mortgage payoff with extra payments — see interest saved and years cut. This specialized tool is designed to eliminate manual computation errors and streamline your workflow with precise, step-by-step breakdowns.`
-},
-  {
-  id: 'house-afford',
-  slug: 'house-affordability-calculator',
-  cat: 'finance',
-  name: 'House Affordability',
-  icon: '🏘️',
-  desc: 'Max affordable home price based on income, debts & DTI rule (28/36)',
-  popular: true,
-  hasChart: false,
-  isNew: true,
-  formula: 'Max Home Price = (Monthly Income × 0.28) × 12 / Annual Rate factor\n' +
-    'DTI Rule: Total debts ≤ 36% of gross income',
-  tips: [
-    'Lenders typically allow housing costs up to 28% and total debt up to 36% of gross monthly income.'
-  ],
-      about: `The House Affordability is an essential resource for anyone needing to max affordable home price based on income, debts & DTI rule (28/36). Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
-},
-  {
-  id: 'rent-vs-buy',
-  slug: 'rent-vs-buy-calculator',
-  cat: 'finance',
-  name: 'Rent vs. Buy',
-  icon: '🔑',
-  desc: 'Long-term cost comparison of renting vs buying with break-even year',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-  tips: [
-    'The break-even point is when total buying costs equal total renting costs — typically 5-7 years.'
-  ],
-      about: `The Rent vs. Buy is an essential resource for anyone needing to long-term cost comparison of renting vs buying with break-even year. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
-},
-  {
-  id: 'apr',
-  slug: 'apr-calculator',
-  cat: 'finance',
-  name: 'APR Calculator',
-  icon: '💳',
-  desc: 'Annual Percentage Rate with fees, points and comparison to nominal rate',
-  popular: false,
-  hasChart: false,
-  isNew: true,
-  formula: 'APR = ((Fees + Interest) / Principal) / Loan Term × 365 × 100',
-  tips: [
-    'APR includes fees while interest rate does not — always compare APRs, not just rates.'
-  ],
-      about: `If you want to annual Percentage Rate with fees, points and comparison to nominal rate, the APR Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: 'The Break-Even Calculator finds the sales volume at which total revenue exactly equals total costs — the point where a business neither makes a profit nor a loss. It uses fixed costs, variable cost per unit, and selling price to output the break-even units, revenue, and a contribution margin chart.',
+  about: `Break-even analysis is one of the first calculations any entrepreneur or product manager should run before launching a product or scaling operations. It answers a fundamental question: how many units do I need to sell before this business starts making money? At volumes below break-even, you\'re losing money; above it, every additional unit sold generates pure profit.\n\nThe contribution margin (selling price minus variable cost per unit) is the key metric: it tells you how much each sale contributes toward covering your fixed costs. Dividing total fixed costs by the contribution margin gives you break-even units. Break-even revenue is simply break-even units multiplied by the selling price.\n\nThis analysis is especially useful for pricing decisions. If your target volume is 1,000 units and your break-even at current pricing is 1,800 units, you either need to raise prices, reduce variable costs, or expand your addressable market. The chart makes these trade-offs visual and easy to communicate.`,
 },
   {
   id: 'down-payment',
@@ -406,66 +232,8 @@ export const financeCalculators: CalculatorConfig[] = [
   popular: false,
   hasChart: false,
   isNew: true,
-      about: `Stop guessing and start using the Down Payment Calculator to get immediate, accurate data. Specifically engineered to required down payment, PMI threshold, and time to save goal, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
-},
-  {
-  id: 'auto-loan',
-  slug: 'auto-loan-calculator',
-  cat: 'finance',
-  name: 'Auto Loan Calculator',
-  icon: '🚗',
-  desc: 'Car loan EMI with depreciation curve, total cost & best deal analysis',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-  formula: 'EMI = [P × R × (1+R)^N] / [(1+R)^N - 1]',
-  tips: [
-    'A 60-month loan vs 36-month: lower EMI but significantly more total interest paid.'
-  ],
-      about: `If you want to car loan EMI with depreciation curve, total cost & best deal analysis, the Auto Loan Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
-},
-  {
-  id: 'personal-loan',
-  slug: 'personal-loan-calculator',
-  cat: 'finance',
-  name: 'Personal Loan Calculator',
-  icon: '💸',
-  desc: 'Personal loan EMI, total repayment & early closure savings',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-      about: `If you want to personal loan EMI, total repayment & early closure savings, the Personal Loan Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
-},
-  {
-  id: 'student-loan',
-  slug: 'student-loan-calculator',
-  cat: 'finance',
-  name: 'Student Loan Calculator',
-  icon: '🎓',
-  desc: 'Student loan monthly payments with income-based repayment comparison',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-  tips: [
-    'Income-driven repayment caps payments at 10-20% of discretionary income and forgives after 20-25 years.'
-  ],
-      about: `Stop guessing and start using the Student Loan Calculator to get immediate, accurate data. Specifically engineered to student loan monthly payments with income-based repayment comparison, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
-},
-  {
-  id: 'credit-card',
-  slug: 'credit-card-calculator',
-  cat: 'finance',
-  name: 'Credit Card Calculator',
-  icon: '💳',
-  desc: 'Credit card payoff time with minimum payment trap visualization',
-  popular: true,
-  hasChart: true,
-  isNew: true,
-  formula: 'Payoff Months = -log(1 - balance×rate/payment) / log(1 + rate)',
-  tips: [
-    'Paying only the minimum on a $5,000 balance at 20% APR takes 15+ years and $6,000 in interest.'
-  ],
-      about: `The Credit Card Calculator is an essential resource for anyone needing to credit card payoff time with minimum payment trap visualization. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: 'The Down Payment Calculator determines how much you need to save for a home down payment, whether you\'ve crossed the 20% PMI threshold, and how long it will take to reach your savings goal at your current monthly savings rate.',
+  about: `The down payment is the largest single upfront cost in a home purchase — and the one with the most financial leverage. Putting down 20% instead of 5% eliminates PMI (Private Mortgage Insurance), reduces your loan amount by 15%, and results in a smaller monthly payment on a smaller balance at a lower effective rate.\n\nPMI typically costs 0.5–1.5% of the loan amount per year. On a $400,000 loan, that\'s $2,000–6,000 per year added to your housing costs until you reach 20% equity. Crossing the 20% threshold is often worth prioritizing, and this calculator shows how much additional savings is needed to hit that threshold.\n\nThe time-to-save projection helps you plan concretely: if your target down payment is $80,000 and you can save $2,000/month, you\'ll reach it in 40 months (including interest on savings). Increasing your monthly saving by $500 cuts that timeline to 32 months — a concrete trade-off this tool makes visible.`,
 },
   {
   id: 'debt-payoff',
@@ -480,7 +248,8 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'Avalanche method (highest rate first) saves most interest. Snowball (smallest balance first) provides motivation.'
   ],
-      about: `Stop guessing and start using the Debt Payoff Calculator to get immediate, accurate data. Specifically engineered to multi-debt snowball vs avalanche strategy comparison with payoff timeline, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: 'The Debt Payoff Calculator compares the Avalanche (highest interest rate first) and Snowball (smallest balance first) debt elimination strategies across all your debts simultaneously. Enter each debt, and the calculator shows the payoff order, monthly payment allocation, interest saved, and total months to debt-free under each strategy.',
+  about: `The debt avalanche and debt snowball are the two most widely recommended debt elimination strategies, and they produce meaningfully different results. The avalanche method — paying minimums on all debts except the highest-interest one, which gets all extra payments — minimizes total interest paid. The snowball method — targeting the smallest balance first — creates faster early wins that help maintain motivation.\n\nMathematically, avalanche always wins on total interest. But behavioral research suggests that many people abandon debt payoff plans that feel too slow — and the snowball\'s early payoffs (eliminating small debts quickly) help keep people on track. The right strategy is ultimately the one you\'ll stick with.\n\nThis calculator shows both strategies side by side: the full payment schedule, which debt gets paid off when, total interest under each approach, and months until completely debt-free. For most people with a mix of credit card, car loan, and student loan debt, the interest difference between strategies is modest compared to the behavioral factor — and seeing the comparison makes the trade-off concrete.`,
 },
   {
   id: 'pv',
@@ -493,7 +262,8 @@ export const financeCalculators: CalculatorConfig[] = [
   hasChart: false,
   isNew: true,
   formula: 'PV = FV / (1 + r)^n',
-      about: `The Present Value (PV) is an essential resource for anyone needing to present value of future cash flows with discount rate. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: 'The Present Value Calculator discounts a future sum of money back to its equivalent value today, using a discount rate that reflects the time value of money and risk. It answers: "What is $100,000 five years from now worth in today\'s dollars if I expect a 7% return?"',
+  about: `Present Value (PV) is one of the foundational concepts in finance: a dollar received in the future is worth less than a dollar today, because today\'s dollar can be invested and grow. The discount rate represents the opportunity cost of capital — the return you could earn by investing the money now rather than waiting.\n\nPV calculations are used everywhere: in bond pricing (the price of a bond is the PV of all its future coupon payments and face value), in real estate (the PV of future rental income determines intrinsic property value), in business valuation (DCF analysis sums the PV of all projected future cash flows), and in personal finance (the PV of a lottery lump-sum vs annuity).\n\nThe discount rate selection is critical and often controversial. A higher discount rate reduces PV more aggressively, making future cash flows worth less today. Analysts use WACC (Weighted Average Cost of Capital) for corporate valuations, the risk-free rate for government cash flows, and personal required return for individual investment decisions.`,
 },
   {
   id: 'irr',
@@ -509,7 +279,8 @@ export const financeCalculators: CalculatorConfig[] = [
   tips: [
     'IRR above your cost of capital (WACC) means the investment is profitable.'
   ],
-      about: `Stop guessing and start using the IRR Calculator to get immediate, accurate data. Specifically engineered to internal Rate of Return for a series of cash flows — investment viability, this utility takes the complexity out of everyday equations. You can easily plug in your values and instantly see the results without needing any advanced knowledge.`
+  intro: 'The IRR Calculator finds the discount rate at which a series of future cash flows has a Net Present Value of exactly zero — in other words, the annualized return the investment earns. If the IRR exceeds your required return or cost of capital, the investment creates value.',
+  about: `Internal Rate of Return (IRR) is the single most useful metric for evaluating the profitability of investments with irregular cash flows. Unlike simple ROI (which ignores timing), IRR accounts for when each cash flow occurs by finding the discount rate that makes the net present value of all flows sum to zero.\n\nIn practice, IRR is used by private equity firms, real estate investors, and corporate finance teams to compare projects with different investment amounts, timelines, and cash flow patterns on a single, comparable metric. A real estate development with an IRR of 18% is directly comparable to a bond yielding 5% — the IRR is the annualized return on invested capital.\n\nThe calculation requires iterative numerical methods (like Newton-Raphson) because there\'s no closed-form algebraic solution. This calculator performs those iterations instantly. Important caveat: if a project has multiple sign changes in its cash flow series (e.g., positive then negative then positive), it may have multiple valid IRR values — a known limitation the calculator flags when detected.`,
 },
   {
   id: '401k',
@@ -525,7 +296,8 @@ export const financeCalculators: CalculatorConfig[] = [
     "Always contribute at least enough to get the full employer match — it's free money with 100% instant return.",
     'Tax-deferred growth means you pay taxes on withdrawal, not during accumulation.'
   ],
-      about: `The 401(k) Calculator is an essential resource for anyone needing to 401k growth with employer match, tax-deferred compounding & withdrawal projections. Designed with simplicity and speed in mind, it performs the heavy lifting behind the scenes so you can focus on making informed decisions. It's completely free, requires no signups, and works seamlessly on any device.`
+  intro: 'The 401(k) Calculator projects your retirement account balance by modeling your contributions, employer match, investment growth, and tax-deferred compounding over your working years. It shows how much your account will be worth at retirement and estimates sustainable monthly withdrawal income.',
+  about: `A 401(k) is the most powerful retirement savings vehicle available to most American workers, primarily because of two features: employer matching (essentially a 100% instant return on matched contributions) and tax-deferred growth (no tax on gains until withdrawal, allowing the full pre-tax amount to compound for decades).\n\nThe employer match is universally described as free money — contributing at least enough to capture the full match is the single highest-return financial decision most employees can make. For a $100,000 salary with a 4% match, failing to contribute $4,000 means leaving $4,000 of compensation on the table annually.\n\nThis calculator models the full accumulation phase: annual contributions (with catch-up contributions for those over 50), employer match, and investment growth at a selected expected rate of return. The withdrawal projection uses the 4% safe withdrawal rate to estimate sustainable monthly income in retirement — the key number for retirement readiness planning.`,
 },
   {
   id: 'commission',
@@ -538,7 +310,8 @@ export const financeCalculators: CalculatorConfig[] = [
   hasChart: false,
   isNew: true,
   formula: 'Commission = Sales Amount × Rate / 100',
-      about: `If you want to sales commission with tiered slabs, base salary and total earnings, the Commission Calculator is your perfect companion. Our advanced online tool replaces tedious manual spreadsheets by delivering instant outputs based on industry-standard formulas. You can use it repeatedly to test different scenarios and optimize your outcomes.`
+  intro: 'The Commission Calculator computes earnings from tiered or flat commission structures, including base salary. Enter your total sales, commission rate (or multiple tiered slabs), and base pay to see your total compensation — useful for salespeople projecting monthly income and managers designing incentive structures.',
+  about: `Commission structures vary enormously: flat percentage (10% of all sales), tiered slabs (8% on first $50K, 12% on the next $50K, 15% above $100K), residual (ongoing percentage of recurring revenue), or draw-against-commission (monthly advance offset against earned commissions). Understanding your exact compensation under any structure requires calculation.\n\nThis calculator handles all major commission types and shows the income breakdown by slab in tiered structures — making it immediately clear what incremental sales are worth at each level. Knowing that you\'re at 92% of the first slab threshold but would jump to 12% on the next $8,000 in sales changes how you prioritize your week.\n\nManagers designing sales incentive plans should test their structures in this calculator to verify that the compensation at various performance levels is both motivating and financially sustainable. A commission plan that pays 20% at $500K in sales may be competitive; the same plan extended to $1M without tiered adjustment may be unaffordable.`,
 },
   {
   id: 'depreciation',

@@ -33,7 +33,7 @@
  * Total: ~220+ URLs — all submitted to Google via /sitemap.xml
  */
 import type { MetadataRoute } from 'next';
-import { ALL_CALCULATORS, CATEGORIES } from '@/data/calculatorConfigs';
+import { ALL_CALCULATORS, INDEXABLE_CALCULATORS, CATEGORIES } from '@/data/calculatorConfigs';
 import { SEO_LANDING_PAGES } from '@/data/seoLandingData';
 import { getPublishedPosts } from '@/data/blogPosts';
 
@@ -48,10 +48,10 @@ const BASE_URL = 'https://calculatorspoint.com';
  *    content actually changes. Fake "freshness" can hurt crawl trust.
  */
 const DATES = {
-  homepage:    new Date('2026-05-31'),  // Update when homepage content changes
-  content:     new Date('2026-05-31'),  // Updated: added 16 new education calculators
-  popular:     new Date('2026-05-31'),  // Updated: new popular education tools
-  static:      new Date('2026-05-26'),  // Update when legal/about pages change
+  homepage:    new Date('2026-06-06'),  // Updated: AdSense compliance + meta tags
+  content:     new Date('2026-06-06'),  // Updated: unique intro/about/worked examples added to all 225 pages
+  popular:     new Date('2026-06-06'),  // Updated: full content refresh across all categories
+  static:      new Date('2026-06-06'),  // Updated: legal pages date refresh, cookie policy added
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -83,11 +83,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  // ── 4. Calculator pages — auto-generated from ALL_CALCULATORS data ───────
-  //    Excludes coming-soon and draft calculators (no indexable content yet).
+  // ── 4. Calculator pages — auto-generated from INDEXABLE_CALCULATORS ─────
+  //    Excludes coming-soon, draft, and needsContent:true calculators.
   //    Popular calculators get higher priority + fresher lastmod date.
-  const calculatorPages: MetadataRoute.Sitemap = ALL_CALCULATORS
-    .filter((calc) => calc.status !== 'coming-soon' && calc.status !== 'draft')
+  const calculatorPages: MetadataRoute.Sitemap = INDEXABLE_CALCULATORS
     .map((calc) => ({
       url: `${BASE_URL}/calculator/${calc.slug}`,
       lastModified: (calc.popular || calc.isNew) ? DATES.popular : DATES.content,
@@ -127,10 +126,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/name-generators/app-name-generator`,                         lastModified: DATES.content, changeFrequency: 'weekly'  as const, priority: 0.8  },
   ];
 
-  // ── 8. Cheat Sheets (/cheat-sheets) ──────────────────────────────────────
-  const cheatSheetPages: MetadataRoute.Sitemap = [
-    { url: `${BASE_URL}/cheat-sheets`, lastModified: DATES.content, changeFrequency: 'monthly' as const, priority: 0.6 },
-  ];
+  // ── 8. Cheat Sheets — EXCLUDED from sitemap (all sheets are draft/coming-soon)
+  //    The /cheat-sheets page already carries `robots: noindex` in its metadata.
+  //    Noindexed pages must NOT appear in sitemap.xml per Google's guidelines.
+  //    Re-add when at least one cheat sheet has real published content.
+  // const cheatSheetPages = [{ url: `${BASE_URL}/cheat-sheets`, ... }];
+
 
   // ── 9. Static & legal pages ───────────────────────────────────────────────
   //    Low priority — important for crawlability but not search value.
@@ -141,6 +142,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/privacy-policy`,   lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
     { url: `${BASE_URL}/terms-of-service`, lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
     { url: `${BASE_URL}/disclaimer`,       lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
+    { url: `${BASE_URL}/cookie-policy`,    lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.3 },
   ];
 
   // ── 10. Blog pages ──────────────────────────────────────────────────
@@ -172,7 +174,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...toolPages,          // 12   URLs (auto from data)
     ...nameGeneratorPages, // 9    URLs
     ...ecosystemPages,     // 3    URLs
-    ...cheatSheetPages,    // 1    URL
+    // cheatSheetPages excluded — noindexed draft content
     ...blogIndexPage,      // 0-1  URL (only when published posts exist)
     ...blogPostPages,      // 0-N  URLs (only published posts, drafts excluded)
     ...staticPages,        // 6    URLs

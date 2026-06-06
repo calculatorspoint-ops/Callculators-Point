@@ -1,8 +1,8 @@
-﻿
+
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 
-const LAST_UPDATED = "January 1, 2025";
+const LAST_UPDATED = "June 6, 2026";
 const S = ({ title, icon, color, bg, children }) => (
   <div style={{ background:"var(--surface)", border:"1px solid var(--border)", borderRadius:"var(--r-xl)", padding:"22px 24px", boxShadow:"var(--sh1)", marginBottom:16 }}>
     <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:14 }}>

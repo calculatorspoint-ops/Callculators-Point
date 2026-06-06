@@ -11,6 +11,7 @@ import type { CalculatorConfig } from '@/data/calculatorConfigs';
 
 export interface CalcContent {
   about: string;
+  intro: string | null;
   formulaExplained: string | null;
   howToUse: string[];
   tips: string[];
@@ -19,6 +20,12 @@ export interface CalcContent {
   limitations: string[];
   whenToUse: string | null;
   resultMeaning: string | null;
+  workedExample: {
+    title: string;
+    inputs: string[];
+    steps: string[];
+    result: string;
+  } | null;
 }
 
 const CATEGORY_CONTEXT: Record<string, string> = {
@@ -139,6 +146,7 @@ function generateExamples(calc: CalculatorConfig): { scenario: string; result: s
 export function generateCalcContent(calc: CalculatorConfig): CalcContent {
   return {
     about: generateAbout(calc),
+    intro: calc.intro ?? null,
     formulaExplained: generateFormulaExplained(calc),
     howToUse: generateHowTo(calc),
     tips: generateTips(calc),
@@ -147,6 +155,7 @@ export function generateCalcContent(calc: CalculatorConfig): CalcContent {
     limitations: calc.limitations || [],
     whenToUse: calc.whenToUse || null,
     resultMeaning: calc.resultMeaning || null,
+    workedExample: calc.workedExample ?? null,
   };
 }
 
