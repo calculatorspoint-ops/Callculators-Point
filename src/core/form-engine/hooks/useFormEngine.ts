@@ -28,8 +28,8 @@ export function useFormEngine<TForm extends FieldValues, TDerived = any>(
       return; // Do not recalculate if invalid
     }
 
+    setIsCalculating(true);
     const timer = setTimeout(async () => {
-      setIsCalculating(true);
       try {
         const result = await onDerive(watchedValues as TForm);
         setDerivedState(result);
@@ -40,8 +40,12 @@ export function useFormEngine<TForm extends FieldValues, TDerived = any>(
       }
     }, debounceMs);
 
-    return () => clearTimeout(timer);
-  }, [JSON.stringify(watchedValues), debounceMs, onDerive, Object.keys(form.formState.errors).length]);
+    return () => {
+      clearTimeout(timer);
+      setIsCalculating(false); // Reset immediately when deps change
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(watchedValues), debounceMs]);
 
   const resetEngine = (values?: Partial<TForm>) => {
     form.reset(values as any);

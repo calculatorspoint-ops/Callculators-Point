@@ -1,3 +1,4 @@
+'use client';
 import React, { ReactNode } from 'react';
 
 export interface CalculatorShellProps {
@@ -23,14 +24,16 @@ export function CalculatorShell({ children, isLoading, isError, onRetry }: Calcu
   }
 
   return (
-    <div className="w-full animate-fade-in relative">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 relative">
+    /* position:relative via BOTH Tailwind and inline style ensures the absolute inset-0
+       loading overlay is ALWAYS contained within this shell — never escaping to viewport */
+    <div className="w-full animate-fade-in relative" style={{ position: 'relative' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8" style={{ position: 'relative' }}>
         {children}
         
         {/* Render Isolation Layer for heavy calculations */}
         {isLoading && (
           <div 
-            className="absolute inset-0 bg-[var(--surface)]/50 backdrop-blur-[2px] z-50 flex items-center justify-center rounded-2xl transition-all duration-300"
+            className="absolute inset-0 bg-[var(--surface)]/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-2xl transition-all duration-300"
             aria-busy="true"
             aria-live="polite"
           >
@@ -41,3 +44,4 @@ export function CalculatorShell({ children, isLoading, isError, onRetry }: Calcu
     </div>
   );
 }
+

@@ -605,6 +605,7 @@ input[type="range"]::-moz-range-track{height:5px;background:var(--border);border
   background:var(--surface);border:1px solid var(--border);
   border-radius:var(--r-2xl);box-shadow:var(--sh2);
   overflow:hidden;min-width:0;
+  position:relative; /* CRITICAL: contains CalculatorShell's absolute inset-0 loading overlay */
   transition:box-shadow .2s;
 }
 .calc-card:hover{box-shadow:var(--sh3);}
