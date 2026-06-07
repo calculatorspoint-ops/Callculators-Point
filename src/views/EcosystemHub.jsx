@@ -1,7 +1,5 @@
 'use client';
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { ArrowRight, TrendingUp, BookOpen, Zap, ChevronRight } from "lucide-react";
 import { CATEGORIES, BY_CATEGORY, ALL_CALCULATORS } from "@/data/calculatorConfigs";
 
@@ -183,10 +181,10 @@ function JourneyCard({ journey }) {
   );
 }
 
-export default function EcosystemHub() {
-  const { id } = useParams();
+export default function EcosystemHub({ ecosystemId }) {
+  const id = ecosystemId;
   const eco = ECOSYSTEMS[id];
-  if (!eco) redirect('/calculators'); return null;
+  if (!eco) { return null; }
 
   const allEcoCalcs = eco.groups.flatMap(g => g.tools).map(s => ALL_CALCULATORS.find(c => c.slug === s)).filter(Boolean);
   const popularInEco = allEcoCalcs.filter(c => c.popular);
@@ -337,16 +335,14 @@ export default function EcosystemHub() {
         <div>
           <h2 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text)", marginBottom: 14 }}>Explore Other Suites</h2>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            {Object.values(ECOSYSTEMS).filter(e => e.id !== id).map(e => (
-              <Link key={e.id} href={`/ecosystem/${e.id}`} style={{
+            {Object.values(ECOSYSTEMS).filter(e => e.id !== id).map(suite => (
+              <Link key={suite.id} href={`/ecosystem/${suite.id}`} style={{
                 display: "flex", alignItems: "center", gap: 10, padding: "10px 16px",
                 background: "var(--surface)", border: "1.5px solid var(--border)",
                 borderRadius: "var(--r-xl)", textDecoration: "none", color: "var(--text)",
                 fontSize: 13, fontWeight: 600, transition: "all .15s",
-              }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = eco.color; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; }}>
-                <span style={{ fontSize: 18 }}>{e.icon}</span> {e.name.split(" ").slice(0, 2).join(" ")}
+              }}>
+                <span style={{ fontSize: 18 }}>{suite.icon}</span> {suite.name.split(" ").slice(0, 2).join(" ")}
                 <ArrowRight size={12} style={{ color: "var(--text3)" }} />
               </Link>
             ))}

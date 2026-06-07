@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, and everyday life.`,
     images: [{
-      url: 'https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=180%2B+Free+Calculators',
+      url: `https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=${encodeURIComponent(`${CALC_COUNT_LABEL} Free Calculators`)}`,
       width: 1200,
       height: 630,
       alt: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, and everyday life.`,
-    images: ['https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=180%2B+Free+Calculators'],
+    images: [`https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=${encodeURIComponent(`${CALC_COUNT_LABEL} Free Calculators`)}`],
   },
   robots: {
     index: true,
@@ -152,7 +152,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </ClientProviders>
 
-        {/* ── Google Analytics — loaded after page is interactive (doesn't block render) ── */}
+        {/* ── Google Analytics — Consent Mode v2 (GDPR/PECR compliant) ────────────────
+            1. gtag.js loads after page is interactive (afterInteractive — no render blocking)
+            2. We initialize with analytics_storage + ad_storage DENIED by default
+            3. CookieConsent component calls gtag('consent','update',{...}) on Accept
+            4. This is fully compliant with EU ePrivacy Directive (PECR) and GDPR
+        ─────────────────────────────────────────────────────────────────────── */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-RZ1T9JVXMV"
           strategy="afterInteractive"
@@ -161,10 +166,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            // Consent Mode v2: deny by default until user accepts cookie banner
+            gtag('consent', 'default', {
+              analytics_storage: 'denied',
+              ad_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+              wait_for_update: 500,
+            });
             gtag('js', new Date());
             gtag('config', 'G-RZ1T9JVXMV');
           `}
         </Script>
+
       </body>
     </html>
   );

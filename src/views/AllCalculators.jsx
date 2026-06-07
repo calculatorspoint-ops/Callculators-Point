@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, ArrowRight } from "lucide-react";
 
-import { CATEGORIES, ALL_CALCULATORS } from "@/data/calculatorConfigs";
+import { CATEGORIES, ALL_CALCULATORS, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import "@/styles/all-calculators.css";
 
 export default function AllCalculators() {
@@ -30,7 +30,7 @@ export default function AllCalculators() {
       <section className="hero-premium">
         <div className="hero-premium-inner">
           <h1 className="hero-title-premium">
-            <span className="text-gradient">{ALL_CALCULATORS.length}+ Powerful Tools</span><br/>
+            <span className="text-gradient">{CALC_COUNT_LABEL} Powerful Tools</span><br/>
             For Everyday Calculations
           </h1>
           <p className="hero-subtitle-premium">

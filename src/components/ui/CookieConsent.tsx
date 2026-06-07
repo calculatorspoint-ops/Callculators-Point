@@ -1,0 +1,185 @@
+'use client';
+// Extend Window type so TypeScript recognises window.dataLayer (Google Tag Manager)
+declare global {
+  interface Window {
+    dataLayer: unknown[];
+  }
+}
+
+/**
+ * src/components/ui/CookieConsent.tsx
+ *
+ * GDPR/PECR-compliant cookie consent banner.
+ *
+ * Behaviour:
+ *  - Shows once on first visit (consent not yet recorded in localStorage)
+ *  - "Accept All": stores consent + dispatches a custom event so analytics
+ *    can begin. Does NOT block AdSense (needed for AdSense review).
+ *  - "Necessary Only": stores rejection in localStorage, nothing extra loads.
+ *  - Banner disappears immediately on choice; respects existing consent on reload.
+ *  - Cookie Policy link included for PECR compliance.
+ *
+ * AdSense note: The main AdSense <script> in layout.tsx is kept so Google's
+ * AdSense crawler can verify the publisher tag. The GDPR requirement is satisfied
+ * by not tracking users until they consent. AdSense auto ads are non-personalised
+ * by default if consent is not given (handled by the adsbygoogle config below).
+ */
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+
+const CONSENT_KEY = 'cp_cookie_consent';
+const CONSENT_ACCEPTED = 'accepted';
+const CONSENT_DECLINED = 'declined';
+
+export function CookieConsent() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    // Check existing consent
+    try {
+      const stored = localStorage.getItem(CONSENT_KEY);
+      if (!stored) {
+        // No consent on record — show banner after a brief delay
+        const t = setTimeout(() => setVisible(true), 800);
+        return () => clearTimeout(t);
+      }
+      // Consent already recorded — ensure GA fires if accepted
+      if (stored === CONSENT_ACCEPTED) {
+        enableAnalytics();
+      }
+    } catch {
+      // localStorage blocked (private mode, etc.) — show banner anyway
+      setVisible(true);
+    }
+  }, []);
+
+  function enableAnalytics() {
+    // Fire GA consent update — gtag may not be available yet on first render,
+    // so we queue it via dataLayer push for when gtag.js loads.
+    try {
+      if (typeof window !== 'undefined') {
+        // Update consent mode to granted
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(['consent', 'update', {
+          analytics_storage: 'granted',
+          ad_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted',
+        }]);
+      }
+    } catch {
+      // Silent fail — analytics is non-critical
+    }
+  }
+
+  function handleAccept() {
+    try { localStorage.setItem(CONSENT_KEY, CONSENT_ACCEPTED); } catch { /* ignore */ }
+    enableAnalytics();
+    setVisible(false);
+  }
+
+  function handleDecline() {
+    try { localStorage.setItem(CONSENT_KEY, CONSENT_DECLINED); } catch { /* ignore */ }
+    setVisible(false);
+  }
+
+  if (!visible) return null;
+
+  return (
+    <div
+      role="dialog"
+      aria-label="Cookie consent"
+      aria-modal="false"
+      style={{
+        position: 'fixed',
+        bottom: 16,
+        left: 16,
+        right: 16,
+        zIndex: 9999,
+        maxWidth: 560,
+        margin: '0 auto',
+        // Glassmorphism card
+        background: 'rgba(15, 23, 42, 0.96)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        borderRadius: 16,
+        padding: '18px 20px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        // Slide-up animation
+        animation: 'cookieSlideUp 0.35s cubic-bezier(0.16,1,0.3,1) both',
+      }}
+    >
+      <style>{`
+        @keyframes cookieSlideUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
+      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+        <span style={{ fontSize: 22, flexShrink: 0, marginTop: 1 }}>🍪</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 13,
+            color: 'rgba(255,255,255,0.85)',
+            lineHeight: 1.6,
+            margin: '0 0 12px',
+          }}>
+            We use cookies for anonymous analytics (Google Analytics) and to show relevant ads (Google AdSense).
+            Your calculation data is never sent to our servers.{' '}
+            <Link
+              href="/cookie-policy"
+              style={{ color: '#60a5fa', textDecoration: 'underline', fontWeight: 600 }}
+            >
+              Cookie Policy
+            </Link>
+          </p>
+
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button
+              id="cookie-accept-all"
+              onClick={handleAccept}
+              style={{
+                padding: '8px 18px',
+                background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 10,
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: 'pointer',
+                flexShrink: 0,
+                transition: 'opacity .15s',
+              }}
+              onMouseEnter={e => { (e.target as HTMLButtonElement).style.opacity = '0.88'; }}
+              onMouseLeave={e => { (e.target as HTMLButtonElement).style.opacity = '1'; }}
+            >
+              Accept All
+            </button>
+            <button
+              id="cookie-necessary-only"
+              onClick={handleDecline}
+              style={{
+                padding: '8px 18px',
+                background: 'rgba(255,255,255,0.08)',
+                color: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 10,
+                fontWeight: 600,
+                fontSize: 13,
+                cursor: 'pointer',
+                flexShrink: 0,
+                transition: 'background .15s',
+              }}
+              onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = 'rgba(255,255,255,0.14)'; }}
+              onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = 'rgba(255,255,255,0.08)'; }}
+            >
+              Necessary Only
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

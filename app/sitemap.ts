@@ -126,12 +126,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/name-generators/app-name-generator`,                         lastModified: DATES.content, changeFrequency: 'weekly'  as const, priority: 0.8  },
   ];
 
-  // ── 8. Cheat Sheets — EXCLUDED from sitemap (all sheets are draft/coming-soon)
-  //    The /cheat-sheets page already carries `robots: noindex` in its metadata.
-  //    Noindexed pages must NOT appear in sitemap.xml per Google's guidelines.
-  //    Re-add when at least one cheat sheet has real published content.
-  // const cheatSheetPages = [{ url: `${BASE_URL}/cheat-sheets`, ... }];
-
+  // ── 8. Cheat Sheets — re-enabled now that real formula content is published ──
+  const cheatSheetPages: MetadataRoute.Sitemap = [{
+    url: `${BASE_URL}/cheat-sheets`,
+    lastModified: DATES.content,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }];
 
   // ── 9. Static & legal pages ───────────────────────────────────────────────
   //    Low priority — important for crawlability but not search value.
@@ -174,7 +175,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...toolPages,          // 12   URLs (auto from data)
     ...nameGeneratorPages, // 9    URLs
     ...ecosystemPages,     // 3    URLs
-    // cheatSheetPages excluded — noindexed draft content
+    ...cheatSheetPages,    // 1    URL  (real formula content now published)
     ...blogIndexPage,      // 0-1  URL (only when published posts exist)
     ...blogPostPages,      // 0-N  URLs (only published posts, drafts excluded)
     ...staticPages,        // 6    URLs

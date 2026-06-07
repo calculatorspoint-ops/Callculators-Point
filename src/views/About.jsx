@@ -44,15 +44,16 @@ const VALUES = [
 ];
 
 const TECH = [
-  { name:"React 18", role:"UI Framework", icon:"⚛️" },
-  { name:"Vite 8",   role:"Build Tool",   icon:"⚡" },
-  { name:"Recharts", role:"Data Charts",  icon:"📊" },
-  { name:"Zustand",  role:"State Mgmt",   icon:"🗃️" },
-  { name:"Tailwind", role:"CSS Utility",  icon:"🎨" },
+  { name:"Next.js 15", role:"Framework",    icon:"▲" },
+  { name:"React 18",   role:"UI Library",   icon:"⚛️" },
+  { name:"TypeScript", role:"Type Safety",  icon:"🔷" },
+  { name:"Recharts",   role:"Data Charts",  icon:"📊" },
+  { name:"Zustand",    role:"State Mgmt",   icon:"🗃️" },
+  { name:"Tailwind",   role:"CSS Utility",  icon:"🎨" },
 ];
 
 const TEAM = [
-  { name:"Engineering", icon:"💻", desc:"Built with React and Vite for maximum performance and reliability." },
+  { name:"Engineering", icon:"💻", desc:"Built with Next.js and React for maximum performance, SEO, and reliability." },
   { name:"Mathematics", icon:"📐", desc:"Every formula verified by academic papers and professional financial/medical sources." },
   { name:"Design",      icon:"🎨", desc:"Clean, accessible UI that works beautifully on all screen sizes and devices." },
   { name:"Data",        icon:"📊", desc:"Interactive visualizations built with Recharts, optimized for mobile and desktop." },

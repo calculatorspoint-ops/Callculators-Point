@@ -18,6 +18,7 @@ import { Footer } from '@/components/ui/Footer';
 import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useAppStore } from '@/store/useAppStore';
+import { CookieConsent } from '@/components/ui/CookieConsent';
 
 // Defer Analytics — loads after page is interactive, doesn't affect LCP/FCP
 const Analytics = lazy(() =>
@@ -56,6 +57,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
         </ErrorBoundary>
       </main>
       <Footer />
+      <CookieConsent />
       <Toaster
         position="bottom-right"
         toastOptions={{
