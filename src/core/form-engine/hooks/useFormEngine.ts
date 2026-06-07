@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormEngineConfig, UseFormEngineReturn } from '../types';
@@ -16,6 +16,7 @@ export function useFormEngine<TForm extends FieldValues, TDerived = any>(
 
   const [derivedState, setDerivedState] = useState<TDerived | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Watch all values
   const watchedValues = form.watch();
@@ -25,11 +26,19 @@ export function useFormEngine<TForm extends FieldValues, TDerived = any>(
 
     // Check if form has validation errors before calculating
     if (Object.keys(form.formState.errors).length > 0) {
-      return; // Do not recalculate if invalid
+      // Ensure loading is cleared if we bail out due to errors
+      if (loadingTimerRef.current) clearTimeout(loadingTimerRef.current);
+      setIsCalculating(false);
+      return;
     }
 
-    setIsCalculating(true);
-    const timer = setTimeout(async () => {
+    // Only show loading spinner if calculation takes > 80ms (avoids flash for fast calcs)
+    loadingTimerRef.current = setTimeout(() => {
+      setIsCalculating(true);
+    }, 80);
+
+    const calcTimer = setTimeout(async () => {
+      if (loadingTimerRef.current) clearTimeout(loadingTimerRef.current);
       try {
         const result = await onDerive(watchedValues as TForm);
         setDerivedState(result);
@@ -41,8 +50,10 @@ export function useFormEngine<TForm extends FieldValues, TDerived = any>(
     }, debounceMs);
 
     return () => {
-      clearTimeout(timer);
-      setIsCalculating(false); // Reset immediately when deps change
+      // Cleanup: cancel both timers, reset loading state
+      clearTimeout(calcTimer);
+      if (loadingTimerRef.current) clearTimeout(loadingTimerRef.current);
+      setIsCalculating(false);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(watchedValues), debounceMs]);

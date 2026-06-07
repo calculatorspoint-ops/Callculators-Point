@@ -24,24 +24,43 @@ export function CalculatorShell({ children, isLoading, isError, onRetry }: Calcu
   }
 
   return (
-    /* position:relative via BOTH Tailwind and inline style ensures the absolute inset-0
-       loading overlay is ALWAYS contained within this shell — never escaping to viewport */
     <div className="w-full animate-fade-in relative" style={{ position: 'relative' }}>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8" style={{ position: 'relative' }}>
         {children}
         
-        {/* Render Isolation Layer for heavy calculations */}
+        {/* Calculating indicator — pointer-events:none means it NEVER blocks ANY click/tap.
+            This is the definitive fix: even if CSS containment fails, this div physically
+            cannot intercept mouse/touch events because of pointer-events:none. */}
         {isLoading && (
-          <div 
-            className="absolute inset-0 bg-[var(--surface)]/50 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-2xl transition-all duration-300"
+          <div
             aria-busy="true"
             aria-live="polite"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',  /* ← THE KEY: zero click blocking guaranteed */
+              zIndex: 5,
+              borderRadius: '1rem',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'flex-end',
+              padding: '10px',
+            }}
           >
-            <div className="w-10 h-10 border-4 border-[var(--surface2)] border-t-[var(--brand)] rounded-full animate-spin"></div>
+            {/* Tiny spinner badge in corner — visible but non-intrusive */}
+            <div style={{
+              width: 24,
+              height: 24,
+              borderRadius: '50%',
+              border: '3px solid var(--border, #e2e8f0)',
+              borderTopColor: 'var(--brand, #2563eb)',
+              animation: 'calc-spin 0.7s linear infinite',
+              flexShrink: 0,
+            }} />
           </div>
         )}
       </div>
+      <style>{`@keyframes calc-spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }
-
