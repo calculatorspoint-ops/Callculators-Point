@@ -881,43 +881,89 @@ export function IRRForm() {
   const { fm, sym } = useCurrency();
   const [initial, setInitial] = useState("-50000");
   const [cashflows, setCashflows] = useState("15000\n18000\n20000\n22000\n25000");
+  const [hurdleRate, setHurdleRate] = useState("10");
   const [res, setRes] = useState(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const flows = [+initial, ...cashflows.split("\n").map(v => +v.trim()).filter(v => !isNaN(v) && v !== 0)];
       if (flows.length < 2) { setRes(null); return; }
-      // Newton-Raphson IRR
-      let r = 0.1;
-      for (let iter = 0; iter < 1000; iter++) {
-        const npv = flows.reduce((s, cf, t) => s + cf / Math.pow(1 + r, t), 0);
-        const dnpv = flows.reduce((s, cf, t) => s - t * cf / Math.pow(1 + r, t + 1), 0);
-        if (Math.abs(dnpv) < 1e-10) break;
-        const newR = r - npv / dnpv;
-        if (Math.abs(newR - r) < 1e-8) { r = newR; break; }
-        r = newR;
+
+      // Count sign changes (Descartes' rule — warns of multiple IRR solutions)
+      let signChanges = 0;
+      for (let i = 1; i < flows.length; i++) {
+        if (flows[i] * flows[i - 1] < 0) signChanges++;
       }
-      const irr = (r * 100).toFixed(2);
-      const npvAt10 = flows.reduce((s, cf, t) => s + cf / Math.pow(1.1, t), 0);
+
+      // Newton-Raphson IRR with multiple starting points for robustness
+      function tryIRR(guess: number): number | null {
+        let r = guess;
+        for (let iter = 0; iter < 500; iter++) {
+          const npv = flows.reduce((s, cf, t) => s + cf / Math.pow(1 + r, t), 0);
+          const dnpv = flows.reduce((s, cf, t) => s - t * cf / Math.pow(1 + r, t + 1), 0);
+          if (Math.abs(dnpv) < 1e-12) break;
+          const nr = r - npv / dnpv;
+          if (!isFinite(nr)) return null;
+          if (Math.abs(nr - r) < 1e-9) return nr;
+          r = Math.max(-0.9999, nr);
+        }
+        return r;
+      }
+
+      let bestR: number | null = null;
+      for (const guess of [0.1, 0.01, 0.5, -0.05, 2.0]) {
+        const c = tryIRR(guess);
+        if (c !== null && isFinite(c) && c > -0.9999) {
+          const verify = flows.reduce((s, cf, t) => s + cf / Math.pow(1 + c, t), 0);
+          if (Math.abs(verify) < 1.0) { bestR = c; break; }
+        }
+      }
+
+      const hurdle = Math.max(0, +hurdleRate || 10);
+      const hurdleDec = hurdle / 100;
+      const npvAtHurdle = flows.reduce((s, cf, t) => s + cf / Math.pow(1 + hurdleDec, t), 0);
       const chartData = flows.slice(1).map((cf, i) => ({ period: `Year ${i + 1}`, "Cash Flow": cf }));
       const chart = { type: "bar", data: chartData, keys: ["Cash Flow"] };
+
+      if (bestR === null) {
+        setRes(buildResult("IRR", "No Solution",
+          [
+            { label: "Initial Investment", value: fm(Math.abs(+initial)) },
+            { label: "IRR", value: "Cannot be determined", warn: true },
+            { label: `NPV @ ${hurdle}%`, value: fm(Math.round(npvAtHurdle)), highlight: npvAtHurdle > 0 },
+          ],
+          [{ type: "warn", msg: "No IRR solution found. This may occur when all cashflows are the same sign, or the investment never breaks even." }],
+          chart, flows.map((cf, i) => ({ label: i === 0 ? "Initial Investment" : `Year ${i}`, value: fm(cf) }))));
+        return;
+      }
+
+      const irr = (bestR * 100).toFixed(2);
+      const insights: any[] = [];
+      if (signChanges > 1) {
+        insights.push({ type: "warn", msg: `⚠️ ${signChanges} sign changes detected — multiple IRR solutions may exist. Verify using NPV analysis.` });
+      }
+      insights.push({ type: +irr > hurdle ? "tip" : "warn", msg: +irr > hurdle ? `IRR of ${irr}% exceeds your ${hurdle}% hurdle rate — this investment creates value.` : `IRR of ${irr}% is below your ${hurdle}% hurdle rate — review the investment case.` });
+      if (npvAtHurdle > 0) insights.push({ type: "tip", msg: `Positive NPV of ${fm(Math.round(npvAtHurdle))} at ${hurdle}% confirms value creation.` });
+
       setRes(buildResult("IRR", irr + "%",
         [
           { label: "Initial Investment", value: fm(Math.abs(+initial)) },
-          { label: "IRR", value: irr + "%", highlight: +irr > 10 },
-          { label: "NPV @ 10%", value: fm(Math.round(npvAt10)), highlight: npvAt10 > 0 },
+          { label: "IRR", value: irr + "%", highlight: +irr > hurdle },
+          { label: `NPV @ ${hurdle}%`, value: fm(Math.round(npvAtHurdle)), highlight: npvAtHurdle > 0 },
           { label: "Total Cash Inflow", value: fm(flows.slice(1).reduce((s, v) => s + v, 0)) },
+          { label: "Sign Changes", value: signChanges + (signChanges > 1 ? " ⚠️" : "") },
         ],
-        [{ type: +irr > 10 ? "tip" : "warn", msg: +irr > 10 ? `IRR of ${irr}% exceeds 10% hurdle rate — this investment is profitable.` : `IRR of ${irr}% is below 10% threshold — consider alternatives.` }],
+        insights,
         chart, flows.map((cf, i) => ({ label: i === 0 ? "Initial Investment" : `Year ${i}`, value: fm(cf) }))));
     }, 200);
     return () => clearTimeout(timer);
-  }, [initial, cashflows]);
+  }, [initial, cashflows, hurdleRate]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div>
         <N label="Initial Investment (negative)" id="irrinit" value={initial} onChange={setInitial} unit={sym} hint="Enter as negative number e.g. -50000" />
+        <N label="Hurdle Rate (%)" id="irrhurdle" value={hurdleRate} onChange={setHurdleRate} unit="%" hint="Your minimum required return (used for NPV & IRR comparison)" />
         <div style={{ marginBottom: 16 }}>
           <L t="Annual Cash Flows (one per line)" id="irrflows" />
           <textarea id="irrflows" value={cashflows} onChange={e => setCashflows(e.target.value)}
@@ -1156,6 +1202,7 @@ export function BondForm() {
   const [ytm, setYtm] = useState("6");
   const [years, setYears] = useState("10");
   const [freq, setFreq] = useState("2");
+  const [dayCount, setDayCount] = useState("30/360");
   const [res, setRes] = useState(null);
 
   useEffect(() => {
@@ -1169,6 +1216,7 @@ export function BondForm() {
     const price = priceCoupons + priceFace;
     const currentYield = (periodicCoupon * f) / price * 100;
     const status = price > F + 0.5 ? "Premium" : price < F - 0.5 ? "Discount" : "Par";
+    const freqLabel = freq === "1" ? "Annual" : freq === "2" ? "Semi-Annual" : "Quarterly";
     const chartData = [];
     for (let i = 1; i <= 15; i++) {
       const r = i / 100 / f;
@@ -1183,9 +1231,13 @@ export function BondForm() {
         { label: "Current Yield", value: currentYield.toFixed(2) + "%" },
         { label: "Price vs Par", value: ((price / F - 1) * 100).toFixed(2) + "%" },
       ],
-      [{ type: "tip", msg: "Bond at " + status + ". When YTM > coupon rate, bond trades at discount. Chart shows inverse price-yield relationship." }],
-      chart, []));
-  }, [faceValue, couponRate, ytm, years, freq]);
+      [{ type: "tip", msg: "Bond at " + status + ". When YTM > coupon rate, bond trades at discount. Chart shows inverse price-yield relationship. Day-count: " + dayCount + "." }],
+      chart, [
+        { label: "Day Count Convention", value: dayCount },
+        { label: "Coupon Frequency", value: freqLabel },
+        { label: "Periods to Maturity", value: String(+years * +freq) },
+      ]));
+  }, [faceValue, couponRate, ytm, years, freq, dayCount]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1199,6 +1251,12 @@ export function BondForm() {
           <N label="Years to Maturity" id="byr" value={years} onChange={setYears} unit="yrs" />
           <Sel label="Coupon Frequency" id="bfreq" value={freq} onChange={setFreq} opts={[{v:"1",l:"Annual"},{v:"2",l:"Semi-Annual"},{v:"4",l:"Quarterly"}]} />
         </Row2>
+        <Sel label="Day Count Convention" id="bdaycount" value={dayCount} onChange={setDayCount} opts={[
+          { v: "30/360",  l: "30/360 (US Corporate, Municipal)" },
+          { v: "Act/360", l: "Act/360 (Money Market, USD LIBOR)" },
+          { v: "Act/365", l: "Act/365 (UK Gilts, AUD bonds)" },
+          { v: "Act/Act", l: "Act/Act (US Treasuries, Eurozone govts)" },
+        ]} />
       </div>
       <div className="sticky-res"><Panel result={res} loading={null} label="Bond Price" /></div>
     </div>
@@ -1424,7 +1482,12 @@ export function SocialSecurityForm() {
         <Sl label="Estimated Benefit at Age 67" id="ss_b" min={500} max={4000} step={50} value={benefitAt67} onChange={setBenefitAt67} fmt={v => "$" + v + "/mo"} />
         <Sl label="Claiming Age" id="ss_age" min={62} max={70} step={1} value={claimAge} onChange={setClaimAge} fmt={v => "Age " + v} />
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Social Security" /></div>
+      <div className="sticky-res">
+        <Panel result={res} loading={null} label="Social Security" />
+        <p style={{ fontSize: 11, color: 'var(--text3)', marginTop: 12, padding: '10px 14px', background: 'var(--surface2)', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', lineHeight: 1.6 }}>
+          🏛️ <strong>Disclaimer:</strong> This is a simplified estimate. Actual Social Security benefits depend on your full earnings history, AIME (Average Indexed Monthly Earnings), and prevailing SSA benefit formulas. For your official benefit projection, visit <strong>ssa.gov/myaccount</strong> or call SSA at 1-800-772-1213.
+        </p>
+      </div>
     </div>
   );
 }

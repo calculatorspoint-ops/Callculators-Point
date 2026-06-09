@@ -163,6 +163,17 @@ function GPAFormUI({ control }: { control: any }) {
       >
         + Add Course
       </button>
+
+      {/* ── Dean's List Threshold ─────────────────────────────────── */}
+      <div style={{ marginTop: 8, padding: '12px 14px', background: 'var(--surface2)', borderRadius: 12, border: '1px solid var(--border)' }}>
+        <NumericInput
+          name="deansThreshold"
+          control={control}
+          label="Dean's List Threshold (GPA)"
+          decimals={1}
+          hint="Default: 3.5. Set your institution's required GPA for Dean's List recognition."
+        />
+      </div>
     </div>
   );
 }
@@ -170,13 +181,23 @@ function GPAFormUI({ control }: { control: any }) {
 const GPA_BANDS = [
   { min: 3.7, label: 'Summa / Magna Cum Laude', color: 'text-green-700 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800' },
   { min: 3.3, label: 'Cum Laude', color: 'text-emerald-700 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-200 dark:border-emerald-800' },
-  { min: 3.0, label: "Dean's List (typical)", color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800' },
+  { min: 3.0, label: "Dean's List (typical 3.0–3.5 threshold)", color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800' },
   { min: 2.0, label: 'Good Standing', color: 'text-yellow-700 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900/20', border: 'border-yellow-200 dark:border-yellow-800' },
   { min: 0.0, label: 'Academic Warning', color: 'text-red-700 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-200 dark:border-red-800' },
 ];
 
+function getDeansBand(gpa: number, deansThreshold: number) {
+  if (gpa >= 3.7) return { label: "Summa / Magna Cum Laude", tier: 'top' };
+  if (gpa >= 3.3) return { label: "Cum Laude", tier: 'high' };
+  if (gpa >= deansThreshold) return { label: `Dean's List (≥ ${deansThreshold.toFixed(1)})`, tier: 'deans' };
+  if (gpa >= 2.0) return { label: "Good Standing", tier: 'ok' };
+  return { label: "Academic Warning", tier: 'warn' };
+}
+
 function GPAResultUI({ result }: { result: GPAResult }) {
+  const dt = result.deansThreshold ?? 3.5;
   const band = GPA_BANDS.find(b => result.gpa >= b.min) ?? GPA_BANDS[GPA_BANDS.length - 1];
+  const deansInfo = getDeansBand(result.gpa, dt);
 
   return (
     <div className={`${band.bg} p-6 rounded-2xl border ${band.border} flex flex-col items-center justify-center text-center shadow-sm`}>
@@ -189,18 +210,18 @@ function GPAResultUI({ result }: { result: GPAResult }) {
       </div>
       <div className={`text-7xl font-black ${band.color}`}>{result.gpa.toFixed(2)}</div>
       <div className={`mt-3 font-bold text-sm ${band.color} px-5 py-1.5 rounded-full bg-white/50 dark:bg-black/20 backdrop-blur-sm`}>
-        {band.label}
+        {deansInfo.label}
       </div>
       <div className={`text-xs mt-3 opacity-70 ${band.color}`}>
-        Across {result.totalCredits} total credit hours
+        Across {result.totalCredits} total credit hours &middot; Dean&apos;s List threshold: {dt.toFixed(1)}
       </div>
     </div>
   );
 }
 
-function interpretGPA(result: GPAResult, form: GPAForm): InterpretationCardProps {
+function interpretGPA(result: GPAResult, _form: GPAForm): InterpretationCardProps {
   const { gpa, totalCredits } = result;
-  const failedCourses = form.courses.filter(c => c.grade === 'F');
+  const failedCourses = _form.courses.filter(c => c.grade === 'F');
 
   if (failedCourses.length > 0) {
     return {
@@ -242,7 +263,7 @@ export const GPACalculator = CalculatorFactory.create({
   domain: 'math',
   title: 'GPA Calculator',
   schema: GPASchema,
-  defaultValues: { courses: [{ name: '', credits: 3, grade: 'A' }] },
+  defaultValues: { courses: [{ name: '', credits: 3, grade: 'A' }], deansThreshold: 3.5 },
   engine: calculateGPA,
   interpretation: interpretGPA,
   formLayout: GPAFormUI,

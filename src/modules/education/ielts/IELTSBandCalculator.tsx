@@ -93,6 +93,10 @@ export function IELTSBandCalculator() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* IELTS Disclaimer */}
+      <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 10, fontSize: 12, color: '#15803d', fontWeight: 600 }}>
+        📋 <strong>Unofficial Estimate Only.</strong> Band scores are approximations based on published IELTS conversion tables. Official band scores are determined by certified IELTS examiners and can only be obtained through an authorised test centre (British Council, IDP, or Cambridge Assessment English). Raw score to band conversions may vary slightly by test sitting.
+      </div>
       {/* Mode Toggles */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <div>

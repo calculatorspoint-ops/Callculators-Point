@@ -3,6 +3,7 @@ import { GPAForm } from '../schemas/gpaSchema';
 export interface GPAResult {
   gpa: number;
   totalCredits: number;
+  deansThreshold: number;
 }
 
 const GradePoints: Record<string, number> = {
@@ -20,8 +21,10 @@ export function calculateGPA(params: GPAForm): GPAResult {
     totalCredits += c.credits;
   });
 
+  const dt = Math.max(2.0, Math.min(4.0, Number(params.deansThreshold) || 3.5));
   return {
     gpa: totalCredits > 0 ? Number((totalPoints / totalCredits).toFixed(2)) : 0,
-    totalCredits
+    totalCredits,
+    deansThreshold: dt,
   };
 }

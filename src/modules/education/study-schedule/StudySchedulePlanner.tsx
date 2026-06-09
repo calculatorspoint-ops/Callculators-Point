@@ -75,6 +75,76 @@ function defaultExamDate(offsetDays = 30) {
   return d.toISOString().slice(0, 10);
 }
 
+// ─── ICS / iCalendar export (Browser Blob API) ──────────────────────────────
+function generateICS(subjects: Subject[], results: SubjectResult[], studyDays: string[], hoursPerDay: number): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const toICSDate = (d: Date) =>
+    `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+
+  const lines: string[] = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//CalculatorsPoint//Study Schedule Planner//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+  ];
+
+  const DAY_TO_NUM: Record<string, number> = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  results.forEach(r => {
+    // Add exam day reminder event
+    if (r.examDate) {
+      const examDay = new Date(r.examDate);
+      const dtstart = toICSDate(examDay) + 'Z';
+      lines.push(
+        'BEGIN:VEVENT',
+        `UID:exam-${r.id}@calculatorspoint.com`,
+        `DTSTART;VALUE=DATE:${r.examDate.replace(/-/g,'').slice(0,8)}`,
+        `DTEND;VALUE=DATE:${r.examDate.replace(/-/g,'').slice(0,8)}`,
+        `SUMMARY:📝 EXAM: ${r.name}`,
+        `DESCRIPTION:Exam Day for ${r.name}. Allocated ${r.totalHours.toFixed(0)} study hours. Good luck!`,
+        'BEGIN:VALARM',
+        'TRIGGER:-PT24H',
+        'ACTION:DISPLAY',
+        `DESCRIPTION:Exam tomorrow: ${r.name}`,
+        'END:VALARM',
+        'END:VEVENT'
+      );
+    }
+
+    // Add weekly study block events for each study day (next 4 weeks)
+    const hpd = r.hoursPerDay;
+    if (hpd <= 0) return;
+    for (let week = 0; week < 4; week++) {
+      studyDays.forEach(day => {
+        const targetDow = DAY_TO_NUM[day] ?? 1;
+        const date = new Date(today);
+        const dayDiff = (targetDow - today.getDay() + 7) % 7 + week * 7;
+        date.setDate(today.getDate() + dayDiff);
+        if (r.examDate && date >= new Date(r.examDate)) return;
+        const startHour = 9;
+        date.setHours(startHour, 0, 0, 0);
+        const endDate = new Date(date);
+        endDate.setMinutes(Math.round(hpd * 60));
+        lines.push(
+          'BEGIN:VEVENT',
+          `UID:study-${r.id}-wk${week}-${day}@calculatorspoint.com`,
+          `DTSTART:${toICSDate(date)}`,
+          `DTEND:${toICSDate(endDate)}`,
+          `SUMMARY:📚 Study: ${r.name} (${hpd.toFixed(1)}h)`,
+          `DESCRIPTION:Study session for ${r.name}. Priority × Difficulty weight: ${r.weight}. Days until exam: ${r.daysLeft}.`,
+          'END:VEVENT'
+        );
+      });
+    }
+  });
+
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 export function StudySchedulePlanner() {
   const [hoursPerDay, setHoursPerDay] = useState('6');
@@ -169,21 +239,24 @@ export function StudySchedulePlanner() {
         `${r.name.padEnd(20)} ${r.examDate.padEnd(12)} ${String(r.daysLeft).padEnd(10)} ${r.hoursPerDay.toFixed(1).padEnd(9)} ${r.totalHours.toFixed(1).padEnd(10)} ${r.urgencyLabel}`
       );
     });
-    lines.push('');
-    lines.push('─── WEEKLY SCHEDULE (Hours per Day) ───');
-    const header = `${'Day'.padEnd(12)} ` + results.map(r => r.name.slice(0, 9).padEnd(10)).join(' ') + ' | Total';
-    lines.push(header);
-    lines.push('─'.repeat(header.length));
-    studyDays.forEach(day => {
-      if (!studyDays.includes(day)) return;
-      const row = `${DAY_FULL[day].padEnd(12)} ` +
-        results.map(r => r.hoursPerDay.toFixed(1).padEnd(10)).join(' ') +
-        ` | ${results.reduce((s, r) => s + r.hoursPerDay, 0).toFixed(1)}h`;
-      lines.push(row);
-    });
     navigator.clipboard.writeText(lines.join('\n'));
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+  };
+
+  // ─── Export .ics ────────────────────────────────────────────────────────────
+  const exportICS = () => {
+    if (results.length === 0) return;
+    const icsContent = generateICS(subjects, results, studyDays, parseFloat(hoursPerDay) || 6);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'study-schedule.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   // ─── Style shortcuts ────────────────────────────────────────────────────────
@@ -383,19 +456,32 @@ export function StudySchedulePlanner() {
           <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p style={{ ...sectionHdr, marginBottom: 0 }}>Per-Subject Allocation</p>
-              <button
-                onClick={copySchedule}
-                style={{
-                  padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 800,
-                  cursor: 'pointer',
-                  background: copied ? '#dcfce7' : 'var(--surface2)',
-                  color: copied ? '#15803d' : 'var(--text)',
-                  border: `1.5px solid ${copied ? '#86efac' : 'var(--border)'}`,
-                  transition: 'all .2s',
-                }}
-              >
-                {copied ? '✓ Copied!' : '📋 Copy Schedule'}
-              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={exportICS}
+                  title="Export to Google Calendar / Apple Calendar / Outlook"
+                  style={{
+                    padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 800,
+                    cursor: 'pointer', background: '#eff6ff', color: '#2563eb',
+                    border: '1.5px solid #bfdbfe', transition: 'all .2s',
+                  }}
+                >
+                  📅 Export .ics
+                </button>
+                <button
+                  onClick={copySchedule}
+                  style={{
+                    padding: '6px 14px', borderRadius: 8, fontSize: 11, fontWeight: 800,
+                    cursor: 'pointer',
+                    background: copied ? '#dcfce7' : 'var(--surface2)',
+                    color: copied ? '#15803d' : 'var(--text)',
+                    border: `1.5px solid ${copied ? '#86efac' : 'var(--border)'}`,
+                    transition: 'all .2s',
+                  }}
+                >
+                  {copied ? '✓ Copied!' : '📋 Copy Schedule'}
+                </button>
+              </div>
             </div>
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>

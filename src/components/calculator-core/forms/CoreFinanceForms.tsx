@@ -98,10 +98,6 @@ export function EMIForm() {
   return (
     <>
       <CalcLayout inputs={inputs} result={res} label="EMI" />
-      <SEOSection title="How is EMI Calculated?">
-        <p>EMI = P × r × (1+r)^n ÷ ((1+r)^n − 1), where P = principal, r = monthly rate, n = tenure in months.</p>
-        <p style={{marginTop:8}}>Making even small extra payments dramatically reduces total interest — paying ₹5,000 extra/month on a ₹30L loan can save ₹5–7 lakhs in interest and cut years off your loan.</p>
-      </SEOSection>
     </>
   );
 }
@@ -456,7 +452,7 @@ export function TaxForm() {
       <div className="calc-inputs-grid">
         <InputSection title="Income & Profile" icon="💼" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
           <Sl label="Annual Gross Income" id="tax_inc" min={100000} max={10000000} step={50000} value={income} onChange={setIncome} fmt={v => fmSlider(v)} />
-          <Sel label="Tax Regime" id="tax_reg" value={regime} onChange={setRegime} opts={[{ v: "new", l: "New Tax Regime (2024-25)" }, { v: "old", l: "Old Tax Regime" }]} />
+          <Sel label="Tax Regime" id="tax_reg" value={regime} onChange={setRegime} opts={[{ v: "new", l: "New Tax Regime (FY 2025-26)" }, { v: "old", l: "Old Tax Regime" }]} />
           <Sel label="Age Group" id="tax_age" value={ageGroup} onChange={setAgeGroup} opts={[{ v: "below60", l: "Below 60 years" }, { v: "60to80", l: "60–80 years (Senior)" }, { v: "above80", l: "Above 80 (Super Senior)" }]} />
         </InputSection>
         <InputSection title="Deductions (Old Regime)" icon="🧾" gradient="linear-gradient(135deg,#d97706,#b45309)">
@@ -468,8 +464,8 @@ export function TaxForm() {
   return (
     <>
       <CalcLayout inputs={inputs} result={res} label="Income Tax" />
-      <SEOSection title="New vs Old Tax Regime (FY 2024-25)">
-        <p>New Regime: No deductions but lower slabs. Better for those with few investments. Old Regime: Allows 80C, HRA, home loan deductions. Better for those maxing all deductions. If your deductions exceed ₹3.5L, Old Regime is usually better.</p>
+      <SEOSection title="New vs Old Tax Regime (FY 2025-26)">
+        <p>New Regime (FY 2025-26): No deductions but lower slabs. Better for those with few investments. Old Regime: Allows 80C, HRA, home loan deductions. Better for those maxing all deductions. If your deductions exceed ₹3.5L, Old Regime is usually better. <em>Tax slabs verified for FY 2025-26. Consult a CA for individual advice.</em></p>
       </SEOSection>
     </>
   );

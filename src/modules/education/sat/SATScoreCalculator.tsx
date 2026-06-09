@@ -84,6 +84,10 @@ export function SATScoreCalculator() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Digital SAT Notice */}
+      <div style={{ padding: '10px 14px', background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 10, fontSize: 12, color: '#1e40af', fontWeight: 600 }}>
+        📱 <strong>Digital SAT Format (2024–onwards):</strong> This calculator uses the Digital SAT scoring model — two sections (Math + Reading &amp; Writing), each scored 200–800, total 400–1600. The paper SAT was discontinued in the US in 2023. Bluebook app score conversions are approximate.
+      </div>
       {/* Input type toggle */}
       <div>
         <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 6 }}>Input Method</p>

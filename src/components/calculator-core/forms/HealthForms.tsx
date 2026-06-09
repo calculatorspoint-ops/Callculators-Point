@@ -54,7 +54,12 @@ export function BMIForm(){
         <Sl label={unit==="metric"?"Height (cm)":"Height (ft)"} id="bh" min={unit==="metric"?100:3} max={unit==="metric"?250:8} step={unit==="metric"?0.5:0.1} value={h} onChange={setH} fmt={v=>`${v} ${unit==="metric"?"cm":"ft"}`}/>
         <Sl label="Age" id="bage" min={10} max={100} value={age} onChange={setAge} fmt={v=>`${v} years`}/>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={load} label="Your BMI" shareParams={{w,h,age,sex}}/></div>
+      <div className="sticky-res">
+        <Panel result={res} loading={load} label="Your BMI" shareParams={{w,h,age,sex}}/>
+        <p style={{ fontSize: 11, color: 'var(--text3)', marginTop: 12, padding: '10px 14px', background: 'var(--surface2)', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', lineHeight: 1.6 }}>
+          ⚕️ <strong>Medical Disclaimer:</strong> BMI is a screening tool, not a diagnostic measure. It does not account for muscle mass, bone density, or fat distribution. "Est. Body Fat" uses the Deurenberg formula — an approximation only. Consult a healthcare provider for a complete health assessment.
+        </p>
+      </div>
     </div>
   );
 }
@@ -89,7 +94,12 @@ export function CalorieForm(){
           <Sel label="Formula" id="cf2" value={formula} onChange={setFormula} opts={[{v:"mifflin",l:"Mifflin-St Jeor"},{v:"harris",l:"Harris-Benedict"}]}/>
         </Row2>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={load} label="Daily Calories" shareParams={{w,h,a:a,sex,act,goal}}/></div>
+      <div className="sticky-res">
+        <Panel result={res} loading={load} label="Daily Calories" shareParams={{w,h,a:a,sex,act,goal}}/>
+        <p style={{ fontSize: 11, color: 'var(--text3)', marginTop: 12, padding: '10px 14px', background: 'var(--surface2)', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', lineHeight: 1.6 }}>
+          📊 <strong>Note:</strong> Weight change projections use ~7,700 kcal/kg (range: 7,000–8,000 kcal/kg by individual). Results are estimates. Actual results depend on metabolism, hormones, exercise type, and adherence. Consult a registered dietitian for personalized plans.
+        </p>
+      </div>
     </div>
   );
 }
@@ -370,23 +380,25 @@ export function PregnancyForm(){
   // Default LMP to ~8 weeks ago (realistic starting point)
   const defaultLMP = (() => { const d = new Date(); d.setDate(d.getDate()-56); return d.toISOString().split('T')[0]; })();
   const [lmp,setLmp]=useState(defaultLMP);
+  const [cycleLength,setCycleLength]=useState(28);
   const [res,setRes]=useState(null);
   useEffect(()=>{
     const t=setTimeout(()=>{
-      const d=calcPregnancy({lmp});
+      const d=calcPregnancy({lmp, cycleLength});
       if(!d){setRes(null);return;}
       setRes({
         ...buildResult("Due Date",d.edd,
-          [{label:"Weeks Pregnant",value:d.weeksPregnant+"wks"},{label:"Trimester",value:d.trimester},{label:"Days Left",value:d.daysLeft}],
+          [{label:"Weeks Pregnant",value:d.weeksPregnant+"wks"},{label:"Trimester",value:d.trimester},{label:"Days Left",value:d.daysLeft},{label:"Cycle Length",value:d.cycleLength+" days"}],
           d.insights,null,d.breakdowns),
         milestones: d.milestones
       });
     },80);
     return()=>clearTimeout(t);
-  },[lmp]);
+  },[lmp, cycleLength]);
   return (
     <div>
       <N label="First Day of Last Menstrual Period (LMP)" id="lmp" value={lmp} onChange={setLmp} type="date" hint="Used to calculate Naegele's Rule due date"/>
+      <N label="Menstrual Cycle Length (days)" id="preg-cycle" value={String(cycleLength)} onChange={v=>setCycleLength(Math.max(21,Math.min(45,+v||28)))} unit="days" hint="Default 28 days (range 21–45). Adjusts EDD from standard Naegele's Rule."/>
       {res&&(
         <>
           <ResultBox label={res.primary.label} value={res.primary.value}/>
@@ -395,7 +407,7 @@ export function PregnancyForm(){
           <L t="Pregnancy Milestones"/>
           {res.milestones?.map(m=>(
             <div key={m.week} style={{display:"flex",justifyContent:"space-between",padding:"8px 14px",borderBottom:"1px solid var(--border2)",fontSize:13}}>
-              <span style={{color:"var(--text2)"}}>Week {m.week}</span>
+              <span style={{color:"var(--text2)"}}>{`Week ${m.week}`}</span>
               <span style={{color:"var(--text)"}}>{m.label}</span>
             </div>
           ))}
@@ -686,6 +698,10 @@ export function BACForm() {
 
   return (
     <div>
+      <div style={{ padding: '12px 16px', background: '#fef2f2', borderRadius: 'var(--r-lg)', border: '1.5px solid #fca5a5', fontSize: 12, color: '#991b1b', fontWeight: 600, marginBottom: 16, display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+        <span style={{ fontSize: 18, flexShrink: 0 }}>⚠️</span>
+        <span><strong>Safety Warning:</strong> This tool is for <strong>educational purposes only</strong>. BAC estimates are approximate and affected by food intake, health conditions, and medications. <strong>Never drive after drinking.</strong> If in doubt, do not drive.</span>
+      </div>
       <Presets items={presets} onApply={p => {
         setDrinkType(p.v.drinkType); setDrinks(p.v.drinks); setHours(p.v.hours);
         setWeight(p.v.weight); setGender(p.v.gender);
@@ -1286,6 +1302,7 @@ export function ArmyBodyFatForm() {
       <Tabs tabs={["Male", "Female"]} active={gender === "male" ? "Male" : "Female"} onChange={v => setGender(v.toLowerCase())} />
       <p style={{ fontSize: 12, color: "var(--text3)", marginBottom: 14 }}>
         All measurements in <strong>inches</strong>. Measure neck at narrowest point; waist at navel level.
+        {' '}<span style={{ fontSize: 11, color: 'var(--brand)', fontWeight: 700 }}>Per US Army Regulation AR 600-9.</span>
       </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
@@ -1464,7 +1481,92 @@ export function BodyTypeForm() {
 }
 
 export function GFRForm() {
-  return null;
+  const [creatinine, setCreatinine] = useState('1.0');
+  const [age, setAge] = useState('45');
+  const [sex, setSex] = useState('male');
+  const [unit, setUnit] = useState('mg/dL');
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      let scr = parseFloat(creatinine);
+      const a = parseFloat(age);
+      if (!scr || !a || a < 18) { setRes(null); return; }
+      if (unit === 'μmol/L') scr = scr / 88.42;
+      // 2021 CKD-EPI race-free equation (Inker et al., NEJM 2021)
+      const kappa = sex === 'female' ? 0.7 : 0.9;
+      const alpha = sex === 'female' ? -0.241 : -0.302;
+      const sexMult = sex === 'female' ? 1.012 : 1.0;
+      const ratio = scr / kappa;
+      const egfr = 142 *
+        Math.pow(Math.min(ratio, 1), alpha) *
+        Math.pow(Math.max(ratio, 1), -1.200) *
+        Math.pow(0.9938, a) *
+        sexMult;
+      const egfrRounded = Math.round(egfr);
+      let stage, stageLabel, stageTip;
+      if (egfrRounded >= 90)      { stage='G1';  stageLabel='Normal or High';          stageTip='Kidney function is normal. Monitor annually if other risk factors present.'; }
+      else if (egfrRounded >= 60) { stage='G2';  stageLabel='Mildly Decreased';        stageTip='Mildly decreased kidney function. Monitor every 1–2 years.'; }
+      else if (egfrRounded >= 45) { stage='G3a'; stageLabel='Mildly-Moderately ↓';    stageTip='Moderate CKD. Nephrology referral may be needed. Monitor every 6 months.'; }
+      else if (egfrRounded >= 30) { stage='G3b'; stageLabel='Moderately-Severely ↓';  stageTip='Moderate-severe CKD. Nephrology referral recommended.'; }
+      else if (egfrRounded >= 15) { stage='G4';  stageLabel='Severely Decreased';      stageTip='Severe CKD. Nephrology care essential. Prepare for kidney replacement therapy discussion.'; }
+      else                        { stage='G5';  stageLabel='Kidney Failure';           stageTip='Kidney failure. Immediate nephrology care required.'; }
+      const insights = [
+        { type: egfrRounded >= 60 ? 'tip' : 'warn', msg: stageTip },
+        { type: 'info', msg: 'Formula: 2021 CKD-EPI (race-free) — Inker et al., NEJM 2021.' },
+      ];
+      if (egfrRounded < 60) insights.push({ type: 'warn', msg: '⚕️ Consult a nephrologist. This estimate must be confirmed with clinical evaluation.' });
+      setRes(buildResult(
+        'eGFR (CKD-EPI 2021)',
+        egfrRounded + ' mL/min/1.73m²',
+        [
+          { label: 'eGFR',             value: egfrRounded + ' mL/min/1.73m²', highlight: egfrRounded >= 60, warn: egfrRounded < 45 },
+          { label: 'CKD Stage',        value: stage + ' — ' + stageLabel },
+          { label: 'Serum Creatinine', value: scr.toFixed(2) + ' mg/dL' },
+          { label: 'Age',              value: a + ' years' },
+        ],
+        insights,
+        null,
+        [
+          { label: 'Formula',   value: '2021 CKD-EPI (race-free)' },
+          { label: 'κ (kappa)', value: kappa + (sex==='female' ? ' (female)' : ' (male)') },
+          { label: 'α (alpha)', value: alpha + (sex==='female' ? ' (female)' : ' (male)') },
+          { label: 'G1 (≥ 90)',  value: 'Normal or High' },
+          { label: 'G2 (60–89)', value: 'Mildly Decreased' },
+          { label: 'G3a (45–59)',value: 'Mildly-Mod. Decreased' },
+          { label: 'G3b (30–44)',value: 'Mod.-Severely Decreased' },
+          { label: 'G4 (15–29)', value: 'Severely Decreased' },
+          { label: 'G5 (< 15)', value: 'Kidney Failure' },
+          { label: 'Reference', value: 'Inker LA et al. NEJM 2021;385:1737-49' },
+        ]
+      ));
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [creatinine, age, sex, unit]);
+
+  return (
+    <div>
+      <div style={{ padding: '12px 16px', background: '#fffbeb', borderRadius: 'var(--r-lg)', border: '1.5px solid #fde68a', fontSize: 12, color: '#92400e', fontWeight: 600, marginBottom: 16 }}>
+        ⚕️ <strong>Screening Tool Only.</strong> Uses the 2021 CKD-EPI race-free equation. Results must be confirmed by a qualified healthcare provider.
+      </div>
+      <Tabs tabs={['Male', 'Female']} active={sex === 'male' ? 'Male' : 'Female'} onChange={v => setSex(v.toLowerCase())} />
+      <Tabs tabs={['mg/dL', 'μmol/L']} active={unit} onChange={setUnit} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <N label={unit === 'mg/dL' ? 'Serum Creatinine (mg/dL)' : 'Serum Creatinine (μmol/L)'} id="gfr-scr" value={creatinine} onChange={setCreatinine} unit={unit} hint={unit === 'mg/dL' ? 'Normal: 0.6–1.2 (male), 0.5–1.1 (female) mg/dL' : 'Normal: 53–106 (male), 44–97 (female) μmol/L'} />
+          <N label="Age (years)" id="gfr-age" value={age} onChange={setAge} unit="yrs" hint="Must be ≥ 18 years" />
+        </div>
+        <div className="sticky-res">
+          <Panel result={res} loading={null} label="eGFR" />
+          {res && (
+            <p style={{ fontSize: 11, color: 'var(--text3)', marginTop: 12, lineHeight: 1.6 }}>
+              Based on <strong>2021 CKD-EPI race-free equation</strong> (Inker et al., NEJM 2021). Does not require race as an input.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

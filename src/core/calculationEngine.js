@@ -339,8 +339,52 @@ export function calcSIP({ monthlyAmount, annualReturn, duration, stepUp=0 }) {
     return { year:`Y${i}`, corpus:round(corpus), invested:round(m_val*i*12) };
   });
 
-  // XIRR approximation
-  const xirr = round((Math.pow(fvRegular/invRegular, 1/y_val)-1)*100, 2);
+  // True XIRR via Newton-Raphson (irregular cashflows)
+  // Build cashflow array: -monthly investment at each month, +corpus at end
+  function calcXIRR(cashflows, dates) {
+    // cashflows[i] paired with dates[i] (Date objects)
+    // Newton-Raphson on NPV = sum(cf_i / (1+r)^((d_i - d_0)/365)) = 0
+    let r = 0.1;
+    const d0 = dates[0].getTime();
+    for (let iter = 0; iter < 200; iter++) {
+      let npv = 0, dnpv = 0;
+      for (let i = 0; i < cashflows.length; i++) {
+        const t = (dates[i].getTime() - d0) / 31557600000; // years (365.25 day)
+        const disc = Math.pow(1 + r, t);
+        npv += cashflows[i] / disc;
+        dnpv -= t * cashflows[i] / (disc * (1 + r));
+      }
+      if (Math.abs(dnpv) < 1e-12) break;
+      const nr = r - npv / dnpv;
+      if (Math.abs(nr - r) < 1e-9) { r = nr; break; }
+      r = Math.max(-0.999, nr); // prevent negative > -100%
+    }
+    return r;
+  }
+
+  // Build SIP cashflow timeline for XIRR
+  const today = new Date();
+  const xirrCFs = [];
+  const xirrDates = [];
+  for (let i = 0; i < n_val; i++) {
+    const d = new Date(today);
+    d.setMonth(d.getMonth() - (n_val - i));
+    xirrCFs.push(-m_val);
+    xirrDates.push(d);
+  }
+  xirrCFs.push(fvRegular);
+  xirrDates.push(today);
+  let xirrRate;
+  try {
+    xirrRate = calcXIRR(xirrCFs, xirrDates);
+    // Sanity check: must be finite and reasonable
+    if (!isFinite(xirrRate) || xirrRate < -0.99 || xirrRate > 100) {
+      xirrRate = (Math.pow(fvRegular / invRegular, 1 / y_val) - 1);
+    }
+  } catch (e) {
+    xirrRate = (Math.pow(fvRegular / invRegular, 1 / y_val) - 1);
+  }
+  const xirr = round(xirrRate * 100, 2);
 
   return {
     corpus:round(fvRegular), invested:round(invRegular), gains:round(fvRegular-invRegular),
@@ -353,7 +397,7 @@ export function calcSIP({ monthlyAmount, annualReturn, duration, stepUp=0 }) {
       {label:"Duration",          value:y_val+" years"},
       ...(su_val>0?[{label:"Annual Step-up",value:stepUp+"%"}]:[]),
       {label:"Total Invested",    value:fmtC(invRegular)},
-      {label:"Est. XIRR",         value:xirr+"%"},
+      {label:"XIRR (Newton-Raphson)", value:xirr+"%"},
       {label:"Gains",             value:fmtC(fvRegular-invRegular),bold:true},
       {label:"Final Corpus",      value:fmtC(fvRegular),bold:true},
       ...(su_val>0?[{label:"With Step-up",value:fmtC(fvStepUpNum),bold:true}]:[]),
@@ -483,18 +527,18 @@ export function calcSalary({ amount, period, region="global", taxSlab="pk2024", 
   let regionLabel = "Global (Flat 10% est.)";
 
   if (region === "pk" || taxSlab.startsWith("pk")) {
-    // Pakistan FBR 2024-25 tax slabs
+    // Pakistan FBR 2025-26 tax slabs
     const PK_SLABS=[
       {min:0,       max:600000,   rate:0,     fixed:0},
       {min:600000,  max:1200000,  rate:0.05,  fixed:0},
-      {min:1200000, max:2400000,  rate:0.15,  fixed:30000},
-      {min:2400000, max:3600000,  rate:0.25,  fixed:210000},
-      {min:3600000, max:6000000,  rate:0.30,  fixed:510000},
-      {min:6000000, max:Infinity, rate:0.35,  fixed:1230000},
+      {min:1200000, max:2200000,  rate:0.15,  fixed:30000},
+      {min:2200000, max:3200000,  rate:0.25,  fixed:180000},
+      {min:3200000, max:4100000,  rate:0.30,  fixed:430000},
+      {min:4100000, max:Infinity, rate:0.35,  fixed:700000},
     ];
     const slab = PK_SLABS.find(s=>annual>=s.min&&annual<s.max)||PK_SLABS[0];
     annualTax = slab.fixed + (annual - slab.min) * slab.rate;
-    regionLabel = "Pakistan FBR 2024-25";
+    regionLabel = "Pakistan FBR 2025-26";
   } else {
     // Global generic flat tax approximation
     annualTax = annual * 0.10; 
@@ -778,13 +822,14 @@ export function calcDateDiff({ date1, date2, excludeWeekends=false, holidays=[],
 }
 
 // ── GPA Engine ────────────────────────────────────────────────────────
-export function calcGPA({ courses, scale="4.0" }) {
+export function calcGPA({ courses, scale="4.0", deansThreshold=3.5 }) {
   if(!courses?.length) return null;
   const totalCr=courses.reduce((s,c)=>s+(+c.credits||0),0);
   const gpa=totalCr>0?round(courses.reduce((s,c)=>s+(+c.grade||0)*(+c.credits||0),0)/totalCr,2):0;
   const LETTER=[[3.7,"A"],[3.3,"A−"],[3.0,"B+"],[2.7,"B"],[2.3,"B−"],[2.0,"C+"],[1.7,"C"],[0,"F"]];
   const letter=LETTER.find(([g])=>gpa>=g)?.[1]||"F";
-  const status=gpa>=3.7?"Dean's List":gpa>=3.5?"Honors":gpa>=2.0?"Good Standing":"Academic Warning";
+  const dt = Math.max(2.0, Math.min(4.0, +deansThreshold || 3.5));
+  const status=gpa>=dt?"Dean's List":gpa>=(dt-0.2)?"Honors":gpa>=2.0?"Good Standing":"Academic Warning";
 
   // What-if: what grade needed in remaining course?
   const whatIf=(targetGPA,extraCredits)=>{
@@ -794,11 +839,12 @@ export function calcGPA({ courses, scale="4.0" }) {
   };
 
   return {
-    gpa, letter, status, totalCredits:totalCr,
+    gpa, letter, status, totalCredits:totalCr, deansThreshold:dt,
     breakdown:courses.map(c=>({label:c.name||"Course",value:`${c.grade} × ${c.credits} = ${round(+c.grade*+c.credits,2)}`})),
     insights:[
-      gpa>=3.7&&{type:"good",msg:"Dean's List! Excellent academic performance. 🎓"},
-      gpa>=3.0&&gpa<3.7&&{type:"info",msg:"Good standing. Keep pushing toward Dean's List!"},
+      gpa>=dt&&{type:"good",msg:`Dean's List! Excellent academic performance. 🎓 (threshold: ${dt})`},
+      gpa>=(dt-0.2)&&gpa<dt&&{type:"info",msg:`Honors! You are ${round(dt-gpa,2)} points away from Dean's List (${dt}).`},
+      gpa>=3.0&&gpa<(dt-0.2)&&{type:"info",msg:`Good standing. Keep pushing toward Dean's List (${dt})!`},
       gpa<2.0&&{type:"bad",msg:"Academic warning zone. Seek counseling and improve immediately."},
       {type:"info",msg:`Status: ${status}`},
     ].filter(Boolean),
@@ -929,14 +975,14 @@ export function calcTax({ income, region="global", type="salary", period="annual
   let regionName = "Global";
 
   if (region === "pk") {
-    regionName = "Pakistan";
+    regionName = "Pakistan FBR 2025-26";
     const SLABS=[
       {min:0,       max:600000,   rate:0,    fixed:0,      label:"Up to 600K"},
       {min:600000,  max:1200000,  rate:0.05, fixed:0,      label:"600K–1.2M"},
-      {min:1200000, max:2400000,  rate:0.15, fixed:30000,  label:"1.2M–2.4M"},
-      {min:2400000, max:3600000,  rate:0.25, fixed:210000, label:"2.4M–3.6M"},
-      {min:3600000, max:6000000,  rate:0.30, fixed:510000, label:"3.6M–6M"},
-      {min:6000000, max:Infinity, rate:0.35, fixed:1230000,label:"Above 6M"},
+      {min:1200000, max:2200000,  rate:0.15, fixed:30000,  label:"1.2M–2.2M"},
+      {min:2200000, max:3200000,  rate:0.25, fixed:180000, label:"2.2M–3.2M"},
+      {min:3200000, max:4100000,  rate:0.30, fixed:430000, label:"3.2M–4.1M"},
+      {min:4100000, max:Infinity, rate:0.35, fixed:700000, label:"Above 4.1M"},
     ];
     const slab=SLABS.find(s=>annual>=s.min&&annual<s.max)||SLABS[0];
     tax=slab.fixed+(annual-slab.min)*slab.rate;
@@ -972,6 +1018,7 @@ export function calcTax({ income, region="global", type="salary", period="annual
     insights:[
       {type:"info",msg:`${regionName} Tax Slab: ${slabLabel} at ${effRate}%`},
       {type:effRate<10?"good":effRate<25?"info":"warn",msg:`Effective tax rate: ${effRate}%`},
+      (region === "pk")&&{type:"info",msg:"Tax Year 2025-26 | FBR Slabs. For guidance only — consult a tax advisor for filing."},
       (region === "pk" && annual<=600000)&&{type:"good",msg:"Your income is below the taxable threshold (600K). Zero tax!"},
     ].filter(Boolean),
   };
@@ -1330,10 +1377,13 @@ export function calcSimpleInterest({ principal, rate, time, unit="years" }) {
 }
 
 // ── Pregnancy Due Date ────────────────────────────────────────────────
-export function calcPregnancy({ lmp }) {
+export function calcPregnancy({ lmp, cycleLength=28 }) {
   if(!lmp) return null;
   const start=new Date(lmp);
-  const edd=new Date(start.getTime()+280*86400000);
+  // Naegele's Rule adjusted for cycle length: standard assumes 28-day cycle
+  const cl = Math.max(21, Math.min(45, +cycleLength || 28));
+  const adjustedDays = 280 + (cl - 28);
+  const edd=new Date(start.getTime()+adjustedDays*86400000);
   const now=new Date();
   const daysPregnant=Math.max(0,Math.floor((now-start)/86400000));
   const weeksPregnant=Math.floor(daysPregnant/7);
@@ -1346,16 +1396,19 @@ export function calcPregnancy({ lmp }) {
   ];
   return {
     edd:edd.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"}),
-    weeksPregnant, daysLeft, trimester, milestones,
+    weeksPregnant, daysLeft, trimester, milestones, cycleLength:cl,
     breakdowns:[
-      {label:"LMP",         value:start.toLocaleDateString("en-GB")},
-      {label:"Due Date",    value:edd.toLocaleDateString("en-GB"),bold:true},
-      {label:"Weeks",       value:weeksPregnant+" weeks pregnant"},
-      {label:"Trimester",   value:trimester},
-      {label:"Days Left",   value:daysLeft},
+      {label:"LMP",           value:start.toLocaleDateString("en-GB")},
+      {label:"Cycle Length",  value:cl+" days"},
+      {label:"Due Date",      value:edd.toLocaleDateString("en-GB"),bold:true},
+      {label:"Weeks",         value:weeksPregnant+" weeks pregnant"},
+      {label:"Trimester",     value:trimester},
+      {label:"Days Left",     value:daysLeft},
+      {label:"Formula",       value:"Naegele's Rule ± cycle adjustment"},
     ],
     insights:[
       weeksPregnant>0&&weeksPregnant<=42&&{type:"info",msg:`${weeksPregnant} weeks pregnant · ${daysLeft} days until due date · ${trimester} trimester`},
+      cl!==28&&{type:"info",msg:`Cycle length of ${cl} days shifts EDD by ${cl-28>0?"+":""}${cl-28} days from the standard 28-day calculation.`},
       {type:"good",msg:"Schedule regular prenatal checkups every 4 weeks until week 28."},
     ].filter(Boolean),
   };
