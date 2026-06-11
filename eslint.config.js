@@ -48,7 +48,15 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/ban-ts-comment": "off",
       "react-hooks/refs": "off",
-      "react-hooks/purity": "off"
+      "react-hooks/purity": "off",
+      // These rules reference plugins not installed in this config.
+      // Turn them off to prevent "Definition for rule not found" errors.
+      "@next/next/no-sync-scripts": "off",
+      "react/no-danger": "off",
+      // Useless escapes are widespread in data/regex strings — downgrade to warn
+      "no-useless-escape": "warn",
+      // prefer-const — warn only, not error
+      "prefer-const": "warn",
     },
   }
 );

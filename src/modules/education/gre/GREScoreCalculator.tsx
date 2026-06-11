@@ -82,6 +82,55 @@ function PercentileBar({ pct, color }: { pct: number; color: string }) {
   );
 }
 
+// ── ScoreCard — defined at module scope to prevent re-creation on every render ──
+function ScoreCard({
+  label,
+  score,
+  pct,
+  min,
+  max,
+  color,
+  suffix = '',
+  cardStyle,
+  sectionHeaderStyle,
+}: {
+  label: string;
+  score: number;
+  pct: number;
+  min: number;
+  max: number;
+  color: string;
+  suffix?: string;
+  cardStyle: React.CSSProperties;
+  sectionHeaderStyle: React.CSSProperties;
+}) {
+  const range = max - min;
+  const fill = ((score - min) / range) * 100;
+  return (
+    <div
+      style={{
+        ...cardStyle,
+        background: `linear-gradient(135deg, ${color}22, ${color}0a)`,
+        border: `2px solid ${color}55`,
+      }}
+    >
+      <div style={sectionHeaderStyle}>{label}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+        <span style={{ fontSize: 52, fontWeight: 900, color, lineHeight: 1, fontFamily: 'var(--font-display)' }}>
+          {score}{suffix}
+        </span>
+        <span style={{ fontSize: 13, color: 'var(--text2)', fontWeight: 600 }}>
+          / {max}
+        </span>
+      </div>
+      <div style={{ fontSize: 13, color: 'var(--text2)', fontWeight: 700, marginBottom: 4 }}>
+        {pct}th Percentile
+      </div>
+      <PercentileBar pct={fill} color={color} />
+    </div>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 export function GREScoreCalculator() {
   const [inputMode, setInputMode] = useState<'scaled' | 'raw'>('scaled');
@@ -164,54 +213,9 @@ export function GREScoreCalculator() {
     marginBottom: 6,
   };
 
-  // Determine which tier the user qualifies for
   const qualifiedTier = PROGRAM_TIERS.slice().reverse().find(
     t => verbal >= t.v && quant >= t.q && awa >= t.awa
   );
-
-  function ScoreCard({
-    label,
-    score,
-    pct,
-    min,
-    max,
-    color,
-    suffix = '',
-  }: {
-    label: string;
-    score: number;
-    pct: number;
-    min: number;
-    max: number;
-    color: string;
-    suffix?: string;
-  }) {
-    const range = max - min;
-    const fill = ((score - min) / range) * 100;
-    return (
-      <div
-        style={{
-          ...cardStyle,
-          background: `linear-gradient(135deg, ${color}22, ${color}0a)`,
-          border: `2px solid ${color}55`,
-        }}
-      >
-        <div style={sectionHeaderStyle}>{label}</div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
-          <span style={{ fontSize: 52, fontWeight: 900, color, lineHeight: 1, fontFamily: 'var(--font-display)' }}>
-            {score}{suffix}
-          </span>
-          <span style={{ fontSize: 13, color: 'var(--text2)', fontWeight: 600 }}>
-            / {max}
-          </span>
-        </div>
-        <div style={{ fontSize: 13, color: 'var(--text2)', fontWeight: 700, marginBottom: 4 }}>
-          {pct}th Percentile
-        </div>
-        <PercentileBar pct={fill} color={color} />
-      </div>
-    );
-  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -342,9 +346,9 @@ export function GREScoreCalculator() {
 
       {/* ── Section Score Cards ── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-        <ScoreCard label="Verbal" score={verbal} pct={vPct} min={130} max={170} color="#2563eb" />
-        <ScoreCard label="Quant" score={quant} pct={qPct} min={130} max={170} color="#059669" />
-        <ScoreCard label="AWA" score={awa} pct={awaPct} min={0} max={6} color="#d97706" suffix="" />
+        <ScoreCard label="Verbal" score={verbal} pct={vPct} min={130} max={170} color="#2563eb" cardStyle={cardStyle} sectionHeaderStyle={sectionHeaderStyle} />
+        <ScoreCard label="Quant" score={quant} pct={qPct} min={130} max={170} color="#059669" cardStyle={cardStyle} sectionHeaderStyle={sectionHeaderStyle} />
+        <ScoreCard label="AWA" score={awa} pct={awaPct} min={0} max={6} color="#d97706" suffix="" cardStyle={cardStyle} sectionHeaderStyle={sectionHeaderStyle} />
       </div>
 
       {/* ── Raw Score Note ── */}

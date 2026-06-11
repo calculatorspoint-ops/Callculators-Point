@@ -65,7 +65,7 @@ export function AssignmentGradeCalculator() {
 
   // ── Calculation ────────────────────────────────────────────────────────────
   const calc = useCallback(() => {
-    let items = assignments.map((a) => {
+    const items = assignments.map((a) => {
       const score    = parseFloat(a.score)    || 0;
       const maxScore = parseFloat(a.maxScore) || 100;
       const weight   = parseFloat(a.weight)   || 0;

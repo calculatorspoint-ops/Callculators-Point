@@ -140,7 +140,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             Publisher ID: ca-pub-5164672592255197
         ─────────────────────────────────────────────────── */}
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5164672592255197"

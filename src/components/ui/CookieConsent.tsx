@@ -34,31 +34,12 @@ const CONSENT_DECLINED = 'declined';
 export function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    // Check existing consent
-    try {
-      const stored = localStorage.getItem(CONSENT_KEY);
-      if (!stored) {
-        // No consent on record — show banner after a brief delay
-        const t = setTimeout(() => setVisible(true), 800);
-        return () => clearTimeout(t);
-      }
-      // Consent already recorded — ensure GA fires if accepted
-      if (stored === CONSENT_ACCEPTED) {
-        enableAnalytics();
-      }
-    } catch {
-      // localStorage blocked (private mode, etc.) — show banner anyway
-      setVisible(true);
-    }
-  }, []);
-
+  // Declared before the useEffect that calls it — avoids "accessed before declaration" lint error
   function enableAnalytics() {
     // Fire GA consent update — gtag may not be available yet on first render,
     // so we queue it via dataLayer push for when gtag.js loads.
     try {
       if (typeof window !== 'undefined') {
-        // Update consent mode to granted
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push(['consent', 'update', {
           analytics_storage: 'granted',
@@ -82,6 +63,26 @@ export function CookieConsent() {
     try { localStorage.setItem(CONSENT_KEY, CONSENT_DECLINED); } catch { /* ignore */ }
     setVisible(false);
   }
+
+  useEffect(() => {
+    // Check existing consent
+    try {
+      const stored = localStorage.getItem(CONSENT_KEY);
+      if (!stored) {
+        // No consent on record — show banner after a brief delay
+        const t = setTimeout(() => setVisible(true), 800);
+        return () => clearTimeout(t);
+      }
+      // Consent already recorded — ensure GA fires if accepted
+      if (stored === CONSENT_ACCEPTED) {
+        enableAnalytics();
+      }
+    } catch {
+      // localStorage blocked (private mode, etc.) — show banner anyway
+      setVisible(true);
+    }
+   
+  }, []);
 
   if (!visible) return null;
 

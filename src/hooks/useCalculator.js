@@ -9,7 +9,7 @@ import { useAppStore } from "../store/useAppStore";
 export function useCalculator(config) {
   const { addRecent } = useAppStore();
   const tracked = useRef(false);
-  // eslint-disable-next-line no-unused-vars
+   
   const [isPending, startTransition] = useTransition();
 
   // ── Input state (keyed by input.id) ───────────────────
