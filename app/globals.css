@@ -111,3 +111,25 @@ body {
 .calc-card-min-h {
   min-height: 360px;
 }
+
+/* ── Critical: Skeleton loader animation ── */
+/* Defined here (critical CSS) so skeleton shimmer animates immediately,
+   before secondary CSS chunks (index.css) are parsed.
+   DO NOT remove — this is the single source of truth for shimmer.
+   The .skeleton class in index.css references the same rule; having it
+   here means it's available from the very first paint on slow connections. */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--border, #e2e8f0) 25%,
+    var(--surf2, #f8fafc)  50%,
+    var(--border, #e2e8f0) 75%
+  );
+  background-size: 1200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}

@@ -115,11 +115,24 @@ export async function GET(request: Request) {
       {
         width: 1200,
         height: 630,
+        headers: {
+          // Cache each unique OG image at the CDN edge for 24 h.
+          // stale-while-revalidate gives a 7-day grace window so crawlers
+          // never hit a cold-start — the old image is served while the new
+          // one generates in the background.
+          'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
+        },
       }
     );
   } catch (e: any) {
     return new Response(`Failed to generate the image`, {
       status: 500,
+      headers: {
+        // Short negative-cache TTL to allow retry — avoids caching broken
+        // images for long periods at the CDN while still reducing thundering
+        // herd on repeated failures.
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
     });
   }
 }

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney } from './SharedComponents';
 import { ScenarioCompare } from '@/components/calculator-core/ScenarioCompare';
+import { useAmortizationWorker } from '@/hooks/useAmortizationWorker';
 
 // ── Mortgage Payoff Calculator ────────────────────────────────────────
 export function MortgagePayoffForm() {
@@ -1880,68 +1881,40 @@ export function AmortizationForm() {
   const [yearlySchedule, setYearlySchedule] = useState([]);
   const [summary, setSummary] = useState(null);
 
-  function buildSchedule(P, annualRate, termYears, extraPmt) {
-    const r = annualRate / 100 / 12;
-    const n = termYears * 12;
-    if (!P || !annualRate || !termYears || r <= 0) return null;
-    const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-    let bal = P;
-    let totalInterest = 0;
-    let months = 0;
-    const rows = [];
-    while (bal > 0.005 && months < n + 1) {
-      months++;
-      const interestPmt = bal * r;
-      let principalPmt = Math.min(emi - interestPmt + extraPmt, bal);
-      if (principalPmt < 0) principalPmt = 0;
-      bal = Math.max(0, bal - principalPmt);
-      totalInterest += interestPmt;
-      rows.push({
-        month: months,
-        year: Math.ceil(months / 12),
-        payment: emi + extraPmt,
-        principal: principalPmt,
-        interest: interestPmt,
-        balance: bal,
-        cumInterest: totalInterest,
-        cumPrincipal: P - bal,
-      });
-      if (bal < 0.005) break;
-    }
-    const byYear = {};
-    rows.forEach(r => {
-      if (!byYear[r.year]) byYear[r.year] = { year: r.year, payment: 0, principal: 0, interest: 0, balance: r.balance, months: 0 };
-      byYear[r.year].payment += r.payment;
-      byYear[r.year].principal += r.principal;
-      byYear[r.year].interest += r.interest;
-      byYear[r.year].balance = r.balance;
-      byYear[r.year].months++;
-    });
-    const yearly = Object.values(byYear).map(y => ({
-      ...y,
-      payment: Math.round(y.payment),
-      principal: Math.round(y.principal),
-      interest: Math.round(y.interest),
-      balance: Math.round(y.balance),
-    }));
-    const originalInterest = emi * n - P;
-    const payoffDate = new Date();
-    payoffDate.setMonth(payoffDate.getMonth() + months);
-    return { rows, yearly, emi, totalMonths: months, totalInterest, originalInterest, payoffDate, n };
-  }
+  // ── Web Worker: off-main-thread amortization math ──────────────────────
+  const { calculate, terminate } = useAmortizationWorker();
+
+  // Terminate worker when this component unmounts to free memory
+  useEffect(() => {
+    return () => { terminate(); };
+  }, [terminate]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // 100ms debounce — avoids thrashing the worker on every keystroke
+    const timer = setTimeout(async () => {
       const extraPmt = +extra || 0;
-      const data = buildSchedule(principal, rate, term, extraPmt);
+
+      // Run the heavy schedule math in the Worker thread
+      const data = await calculate({ P: principal, annualRate: rate, termYears: term, extraPmt });
       if (!data) { setRes(null); setSchedule([]); setYearlySchedule([]); setSummary(null); return; }
-      const { rows, yearly, emi, totalMonths, totalInterest, originalInterest, payoffDate, n } = data;
+
+      // payoffDate arrives as ISO string from the Worker (structured clone)
+      const payoffDate = new Date(data.payoffDateISO);
+      const { rows, yearly, emi, totalMonths, totalInterest, originalInterest, n } = data;
       setSchedule(rows);
       setYearlySchedule(yearly);
-      const originalData = extraPmt > 0 ? buildSchedule(principal, rate, term, 0) : null;
-      const monthsSaved = originalData ? originalData.totalMonths - totalMonths : 0;
-      const interestSaved = originalData ? originalData.totalInterest - totalInterest : 0;
+
+      // If extra payment is set, run a second Worker call to get the base scenario
+      let monthsSaved = 0, interestSaved = 0;
+      if (extraPmt > 0) {
+        const originalData = await calculate({ P: principal, annualRate: rate, termYears: term, extraPmt: 0 });
+        if (originalData) {
+          monthsSaved = originalData.totalMonths - totalMonths;
+          interestSaved = originalData.totalInterest - totalInterest;
+        }
+      }
       setSummary({ emi, totalMonths, totalInterest, originalInterest, payoffDate, n, monthsSaved, interestSaved, extraPmt });
+
       const chartData = yearly.filter((_, i) => i % Math.max(1, Math.floor(yearly.length / 15)) === 0).map(y => ({
         year: "Yr " + y.year,
         "Principal": Math.round(y.principal),
@@ -1968,7 +1941,7 @@ export function AmortizationForm() {
       setRes(buildResult("Monthly Payment", fm(Math.round(emi + extraPmt)), stats, insights, chart, breakdowns));
     }, 100);
     return () => clearTimeout(timer);
-  }, [principal, rate, term, extra]);
+  }, [principal, rate, term, extra, calculate]);
 
   const exportCSV = (mode) => {
     let csv, filename;

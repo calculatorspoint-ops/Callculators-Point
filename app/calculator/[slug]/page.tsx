@@ -9,6 +9,7 @@
  */
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { getCalcBySlug, ALL_CALCULATORS, CATEGORIES, INDEXABLE_CALCULATORS } from '@/data/calculatorConfigs';
 import { CalculatorPageClient } from './calculator-client';
 import { SchemaMarkup } from '@/components/seo/SchemaMarkup';
@@ -113,6 +114,76 @@ export async function generateMetadata(
   };
 }
 
+/**
+ * CalcPageHeader — server-rendered above-the-fold shell.
+ *
+ * WHY SERVER-RENDERED:
+ *   The breadcrumb, H1, description, and badges are pure static data
+ *   derived from the calculator config. Rendering them in a Server
+ *   Component means they appear in the initial HTML byte — no JS or
+ *   hydration needed. This:
+ *     1. Eliminates the blank-header flash on slow JS execution
+ *     2. Removes CLS from the header area popping in after hydration
+ *     3. Makes H1 available to crawlers before any client JS runs
+ *
+ *   The interactive buttons (favorite, share) live in CalculatorPageClient
+ *   and hydrate separately without blocking above-the-fold paint.
+ */
+function CalcPageHeader({ calc, cat }: {
+  calc: NonNullable<ReturnType<typeof getCalcBySlug>>;
+  cat: { id: string; name: string; icon: string } | undefined;
+}) {
+  const calculatorName = calc.name.trim();
+  const pageH1 = /calculator/i.test(calculatorName)
+    ? `Free ${calculatorName} Online`
+    : `Free ${calculatorName} Calculator Online`;
+
+  return (
+    <div className="calc-page-head">
+      <div className="cph-inner">
+        <nav className="cph-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="cph-breadcrumb-sep">›</span>
+          {cat && <Link href={`/category/${cat.id}`}>{cat.icon} {cat.name}</Link>}
+          <span className="cph-breadcrumb-sep">›</span>
+          <span style={{ color: 'rgba(255,255,255,.72)' }}>{calc.name}</span>
+        </nav>
+
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+          {/* Left side: Icon + Texts — static, server-rendered */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: '1 1 300px', minWidth: 0 }}>
+            <div style={{ fontSize: 34, lineHeight: 1, flexShrink: 0 }}>{calc.icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h1 className="cph-title">{pageH1}</h1>
+              {calc.desc && (
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', lineHeight: 1.6, marginBottom: 12 }}>
+                  {calc.desc}
+                </p>
+              )}
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {calc.popular && <span className="badge badge-amber">🔥 Popular</span>}
+                {calc.isNew   && <span className="badge badge-green">✨ New</span>}
+                {calc.hasChart && <span className="badge badge-blue">📊 Chart</span>}
+              </div>
+            </div>
+          </div>
+
+          {/*
+            Action buttons (favorite toggle, share) are client-only.
+            We reserve their space here with a min-width placeholder so
+            the layout doesn't shift when they hydrate.
+            CalculatorPageClient renders the real buttons into this area.
+          */}
+          <div
+            aria-hidden="true"
+            style={{ display: 'flex', gap: 8, flexShrink: 0, minWidth: 80, minHeight: 36 }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Page component */
 export default async function CalculatorPage({
   params,
@@ -134,8 +205,14 @@ export default async function CalculatorPage({
       {/* JSON-LD Schema — server-rendered, zero JS cost */}
       <SchemaMarkup calc={calc} cat={cat} faqs={faqs} />
 
-      {/* Calculator form — client component */}
-      <CalculatorPageClient slug={slug} />
+      {/*
+        Static above-the-fold shell — server HTML, paints with first byte.
+        Breadcrumb, H1, description, and badges are visible before any JS.
+      */}
+      <CalcPageHeader calc={calc} cat={cat} />
+
+      {/* Calculator form — client component (hydrates lazily) */}
+      <CalculatorPageClient slug={slug} headerAlreadyRendered />
 
       {/* SEO content — server-rendered at build time, fully indexed by Google */}
       <div className="seo-content-wrapper">

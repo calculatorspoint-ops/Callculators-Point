@@ -62,16 +62,11 @@ function FormFallback() {
         <div className="skeleton" style={{ width: 110, height: 14, borderRadius: 4, margin: '0 auto 14px' }} />
         <div className="skeleton" style={{ width: 180, height: 48, borderRadius: 8, margin: '0 auto' }} />
       </div>
-
-      <style>{`
-        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-        @keyframes shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
-      `}</style>
     </div>
   );
 }
 
-export function CalculatorPageClient({ slug }: { slug: string }) {
+export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { slug: string; headerAlreadyRendered?: boolean }) {
   const calc = getCalcBySlug(slug);
   const { toggleFavorite, favorites, addRecent } = useAppStore();
   const [mounted, setMounted] = useState(false);
@@ -112,37 +107,19 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
 
   return (
     <>
-      {/* ── Page Header ── */}
-      <div className="calc-page-head">
-        <div className="cph-inner">
-          <nav className="cph-breadcrumb" aria-label="Breadcrumb">
-            <Link href="/">Home</Link>
-            <span className="cph-breadcrumb-sep">›</span>
-            {cat && <Link href={`/category/${cat.id}`}>{cat.icon} {cat.name}</Link>}
-            <span className="cph-breadcrumb-sep">›</span>
-            <span style={{ color: 'rgba(255,255,255,.72)' }}>{calc.name}</span>
-          </nav>
-
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-            {/* Left side: Icon + Texts */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: '1 1 300px', minWidth: 0 }}>
-              <div style={{ fontSize: 34, lineHeight: 1, flexShrink: 0 }}>{calc.icon}</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h1 className="cph-title">{pageH1}</h1>
-                {calc.desc && (
-                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', lineHeight: 1.6, marginBottom: 12 }}>
-                    {calc.desc}
-                  </p>
-                )}
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {calc.popular && <span className="badge badge-amber">🔥 Popular</span>}
-                  {calc.isNew && <span className="badge badge-green">✨ New</span>}
-                  {calc.hasChart && <span className="badge badge-blue">📊 Chart</span>}
-                </div>
-              </div>
-            </div>
-
-            {/* Action buttons */}
+      {/*
+        Page Header — only rendered here if the server did NOT pre-render it.
+        When headerAlreadyRendered=true (set by page.tsx), the server component
+        CalcPageHeader already emitted the breadcrumb + H1 + badges as static HTML.
+        We only render the interactive action buttons (favorite, share) to avoid
+        duplicating the header content.
+      */}
+      {headerAlreadyRendered ? (
+        // Action buttons overlay — positioned to replace the placeholder div
+        // the server rendered (aria-hidden spacer, minWidth 80px).
+        // Uses the same calc-page-head container so CSS is consistent.
+        <div className="calc-page-head" style={{ paddingTop: 0, paddingBottom: 0, marginTop: 0 }}>
+          <div className="cph-inner" style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
               <button
                 onClick={() => toggleFavorite(calc.id)}
@@ -163,7 +140,60 @@ export function CalculatorPageClient({ slug }: { slug: string }) {
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        // Full header — rendered when no server pre-render (e.g., direct CSR navigation)
+        <div className="calc-page-head">
+          <div className="cph-inner">
+            <nav className="cph-breadcrumb" aria-label="Breadcrumb">
+              <Link href="/">Home</Link>
+              <span className="cph-breadcrumb-sep">›</span>
+              {cat && <Link href={`/category/${cat.id}`}>{cat.icon} {cat.name}</Link>}
+              <span className="cph-breadcrumb-sep">›</span>
+              <span style={{ color: 'rgba(255,255,255,.72)' }}>{calc.name}</span>
+            </nav>
+
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+              {/* Left side: Icon + Texts */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: '1 1 300px', minWidth: 0 }}>
+                <div style={{ fontSize: 34, lineHeight: 1, flexShrink: 0 }}>{calc.icon}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h1 className="cph-title">{pageH1}</h1>
+                  {calc.desc && (
+                    <p style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', lineHeight: 1.6, marginBottom: 12 }}>
+                      {calc.desc}
+                    </p>
+                  )}
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {calc.popular && <span className="badge badge-amber">🔥 Popular</span>}
+                    {calc.isNew && <span className="badge badge-green">✨ New</span>}
+                    {calc.hasChart && <span className="badge badge-blue">📊 Chart</span>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <button
+                  onClick={() => toggleFavorite(calc.id)}
+                  className="nav-icon-btn"
+                  aria-label={isFav ? 'Remove from favorites' : 'Save to favorites'}
+                  style={{ background: 'rgba(255,255,255,.08)', borderColor: 'rgba(255,255,255,.15)', color: '#fff' }}
+                >
+                  {isFav ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                </button>
+                <button
+                  onClick={share}
+                  className="nav-icon-btn"
+                  aria-label="Share calculator"
+                  style={{ background: 'rgba(255,255,255,.08)', borderColor: 'rgba(255,255,255,.15)', color: '#fff' }}
+                >
+                  <Share2 size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Main layout ── */}
       <div className="calc-layout">

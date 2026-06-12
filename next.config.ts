@@ -37,6 +37,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Cache processed/optimized images for 24 h server-side.
+    // Without this, Next.js defaults to 60 s — causing repeated re-processing
+    // on every page load. 86400 s (24 h) aligns with our OG image CDN TTL.
+    minimumCacheTTL: 86400,
+    // Serve modern formats where browsers support them.
+    // Next.js will automatically pick the best format per user-agent.
+    formats: ['image/avif', 'image/webp'],
   },
 
   // ── Redirects ─────────────────────────────────────────────────────────────
