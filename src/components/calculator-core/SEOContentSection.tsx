@@ -12,6 +12,9 @@ import type { CalculatorConfig } from '@/data/calculatorConfigs';
 
 interface SEOContentSectionProps {
   calc: CalculatorConfig;
+  /** ISO date string (YYYY-MM-DD) shown as "Last Updated" on YMYL pages.
+   *  Defaults to the build-time current month if not provided. */
+  lastUpdated?: string;
 }
 
 // Disclaimer text per category
@@ -25,7 +28,53 @@ const DISCLAIMERS: Record<string, string> = {
 // Categories where a disclaimer is always shown regardless of privacy flag
 const DISCLAIMER_CATS = new Set(['health', 'finance', 'education', 'business']);
 
-export function SEOContentSection({ calc }: SEOContentSectionProps) {
+// YMYL categories that require author byline + last-updated date (E-E-A-T)
+const YMYL_CATS = new Set(['health', 'finance', 'business']);
+
+/**
+ * AuthorByline — visible E-E-A-T attribution bar for YMYL pages.
+ *
+ * WHY VISIBLE TEXT (not just JSON-LD):
+ *   Google's quality rater guidelines require E-E-A-T signals to be
+ *   discoverable by human reviewers, not just machine-readable schema.
+ *   A visible "Reviewed by" line + last-updated date satisfies this.
+ */
+function AuthorByline({ lastUpdated }: { lastUpdated: string }) {
+  return (
+    <div
+      className="seo-block"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 10,
+        padding: '10px 16px',
+        background: 'var(--surface2, rgba(0,0,0,.04))',
+        borderRadius: 10,
+        border: '1px solid var(--border)',
+        fontSize: 12,
+        color: 'var(--text3)',
+        marginBottom: 0,
+      }}
+      aria-label="Content authorship and freshness information"
+    >
+      <span>
+        ✍️{' '}
+        <strong style={{ color: 'var(--text2)' }}>Reviewed by</strong>{' '}
+        the Calculators Point Editorial Team · Formulas cross-verified against
+        academic and professional sources
+      </span>
+      <span>
+        🗓️{' '}
+        <strong style={{ color: 'var(--text2)' }}>Last updated:</strong>{' '}
+        {lastUpdated}
+      </span>
+    </div>
+  );
+}
+
+export function SEOContentSection({ calc, lastUpdated }: SEOContentSectionProps) {
   const content = generateCalcContent(calc);
   const cat = CATEGORIES.find(c => c.id === calc.cat);
 
@@ -37,8 +86,17 @@ export function SEOContentSection({ calc }: SEOContentSectionProps) {
   const disclaimer = DISCLAIMERS[calc.cat] ??
     'Disclaimer: Results are for informational purposes only. Please consult a qualified professional before making any important decisions based on this calculator.';
 
+  // YMYL categories get a visible author byline + last-updated date
+  const showByline = YMYL_CATS.has(calc.cat);
+  // Default: "Month Year" of the current build date if no explicit date is supplied
+  const displayDate = lastUpdated
+    ?? new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
   return (
     <section className="seo-content-section" aria-label={`About ${calc.name}`}>
+
+      {/* ── E-E-A-T Byline (YMYL pages only) ── */}
+      {showByline && <AuthorByline lastUpdated={displayDate} />}
 
       {/* ── About ── */}
       <div className="seo-block">

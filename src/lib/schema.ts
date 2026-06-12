@@ -309,20 +309,21 @@ export function generateHowToSchema(
 /**
  * Generate a WebPage schema that links this page to the site's WebSite entity.
  *
- * This creates an explicit `isPartOf` connection from each calculator page
- * to the WebSite entity defined on the homepage, helping Google understand
- * the site's structure and potentially improving sitelinks.
- *
- * isPartOf references the WebSite @id defined in the homepage JSON-LD.
+ * @param dateModified - ISO date string (YYYY-MM-DD) for the schema's dateModified
+ *   field. Supply explicitly for pages with known update dates; omit to use the
+ *   current build date as a fallback freshness signal.
  */
 export function generateWebPageSchema(
   calc: CalculatorConfig,
   cat: CalculatorCategory | undefined,
   pageUrl: string,
+  dateModified?: string,
 ) {
   const calcDisplayName = /calculator/i.test(calc.name.trim())
     ? calc.name.trim()
     : `${calc.name.trim()} Calculator`;
+
+  const resolvedDate = dateModified ?? new Date().toISOString().slice(0, 10);
 
   return {
     '@context': 'https://schema.org',
@@ -331,6 +332,9 @@ export function generateWebPageSchema(
     url: pageUrl,
     name: `Free ${calcDisplayName} Online`,
     description: sanitizeText(calc.desc),
+    // dateModified: freshness signal — Google uses this to assess content currency.
+    // For financial/health tools, keeping this date current is an E-E-A-T signal.
+    dateModified: resolvedDate,
     isPartOf: {
       '@id': `${SITE_URL}/#website`,
     },

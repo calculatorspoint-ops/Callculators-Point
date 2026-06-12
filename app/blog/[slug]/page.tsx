@@ -248,8 +248,6 @@ export default async function BlogPostPage({
                     borderRadius: 14, textDecoration: 'none', color: 'inherit',
                     transition: 'border-color .15s, transform .15s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--brand)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'none'; }}
                 >
                   <span style={{ fontSize: 24, flexShrink: 0 }}>{calc.icon ?? '🧮'}</span>
                   <div>

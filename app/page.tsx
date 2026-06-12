@@ -12,7 +12,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { CATEGORIES, CALC_COUNT_LABEL } from '@/data/calculatorConfigs';
+import { CATEGORIES, CALC_COUNT_LABEL, POPULAR } from '@/data/calculatorConfigs';
 import HomePageClient from './home-client';
 import { SITE_URL } from '@/config/site';
 import { QuickCalc } from '@/components/ui/QuickCalc';
@@ -178,6 +178,95 @@ function HeroSection() {
   );
 }
 
+/**
+ * PopularSection — server-rendered crawlable popular calculator links.
+ *
+ * WHY SERVER-RENDERED:
+ *   The Home.jsx "Trending Now" section is gated behind requestIdleCallback
+ *   + belowFoldReady state — Googlebot sees NONE of those links in the initial
+ *   HTML. This server component emits all popular calculator links in the
+ *   first-byte HTML response so they are 100% crawlable.
+ *
+ *   Hover effects are CSS-only (:hover) to avoid any JS dependency.
+ */
+function PopularSection() {
+  const popular = POPULAR.slice(0, 10);
+  return (
+    <div
+      style={{
+        background: 'var(--surface)',
+        borderBottom: '1px solid var(--border)',
+        overflowX: 'hidden',
+      }}
+      aria-label="Popular calculators"
+    >
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '20px clamp(12px,4vw,20px)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span aria-hidden="true">🔥</span>
+            <span style={{ fontSize: 14, fontWeight: 800, color: 'var(--text)' }}>Trending Now</span>
+          </div>
+          <Link
+            href="/calculators"
+            style={{ fontSize: 12, fontWeight: 700, color: 'var(--brand)', display: 'flex', alignItems: 'center', gap: 4 }}
+          >
+            View All →
+          </Link>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            gap: 10,
+            overflowX: 'auto',
+            paddingBottom: 4,
+            scrollbarWidth: 'none',
+          }}
+        >
+          {popular.map((c, i) => {
+            const cat = CATEGORIES.find(x => x.id === c.cat);
+            return (
+              <Link
+                key={c.id}
+                href={`/calculator/${c.slug}`}
+                aria-label={`${c.name} — rank #${i + 1}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6,
+                  padding: '12px 14px',
+                  background: cat?.bg ?? 'var(--surf2)',
+                  border: `1.5px solid ${cat?.color ?? 'var(--border)'}20`,
+                  borderRadius: 'var(--r-xl)',
+                  textDecoration: 'none',
+                  minWidth: 130,
+                  flexShrink: 0,
+                  transition: 'all .15s',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 22 }} aria-hidden="true">{c.icon}</span>
+                  <span
+                    style={{
+                      fontSize: 10, fontWeight: 800, color: '#92400e',
+                      background: '#fef3c7', padding: '1px 6px', borderRadius: 100,
+                    }}
+                    aria-label={`Rank ${i + 1}`}
+                  >
+                    #{i + 1}
+                  </span>
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', lineHeight: 1.4 }}>
+                  {c.name}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   return (
     <>
@@ -192,6 +281,15 @@ export default function HomePage() {
           The client component below will hydrate the hero and replace the skeleton
           with the real QuickCalc widget. */}
       <HeroSection />
+
+      {/*
+        ── SERVER-RENDERED POPULAR SECTION ──
+        All popular calculator links are in the first-byte HTML.
+        Googlebot and other crawlers can follow these links without running JS.
+        The interactive client component below will hide this section and replace
+        it with its own version once hydrated (both render the same data).
+      */}
+      <PopularSection />
 
       {/* ── CLIENT COMPONENT (everything below the hero) ──
           Hydrated after the hero is already painted on screen. */}
