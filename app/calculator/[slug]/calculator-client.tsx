@@ -122,30 +122,34 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
         duplicating the header content.
       */}
       {headerAlreadyRendered ? (
-        // Action buttons overlay — positioned to replace the placeholder div
-        // the server rendered (aria-hidden spacer, minWidth 80px).
-        // Uses the same calc-page-head container so CSS is consistent.
-        <div className="calc-page-head" style={{ paddingTop: 0, paddingBottom: 0, marginTop: 0 }}>
-          <div className="cph-inner" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-              <button
-                onClick={() => toggleFavorite(calc.id)}
-                className="nav-icon-btn"
-                aria-label={isFav ? 'Remove from favorites' : 'Save to favorites'}
-                style={{ background: 'rgba(255,255,255,.08)', borderColor: 'rgba(255,255,255,.15)', color: '#fff' }}
-              >
-                {isFav ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-              </button>
-              <button
-                onClick={share}
-                className="nav-icon-btn"
-                aria-label="Share calculator"
-                style={{ background: 'rgba(255,255,255,.08)', borderColor: 'rgba(255,255,255,.15)', color: '#fff' }}
-              >
-                <Share2 size={16} />
-              </button>
-            </div>
-          </div>
+        // Action buttons as a fixed overlay — does NOT create a block-level layout
+        // element, so it never intercepts clicks on sidebar links below.
+        <div
+          style={{
+            position: 'fixed',
+            top: 'calc(var(--nav-h, 56px) + 8px)',
+            right: '20px',
+            display: 'flex',
+            gap: 8,
+            zIndex: 150,
+          }}
+        >
+          <button
+            onClick={() => toggleFavorite(calc.id)}
+            className="nav-icon-btn"
+            aria-label={isFav ? 'Remove from favorites' : 'Save to favorites'}
+            style={{ background: 'rgba(15,27,61,.7)', borderColor: 'rgba(255,255,255,.2)', color: '#fff', backdropFilter: 'blur(8px)' }}
+          >
+            {isFav ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+          </button>
+          <button
+            onClick={share}
+            className="nav-icon-btn"
+            aria-label="Share calculator"
+            style={{ background: 'rgba(15,27,61,.7)', borderColor: 'rgba(255,255,255,.2)', color: '#fff', backdropFilter: 'blur(8px)' }}
+          >
+            <Share2 size={16} />
+          </button>
         </div>
       ) : (
         // Full header — rendered when no server pre-render (e.g., direct CSR navigation)
