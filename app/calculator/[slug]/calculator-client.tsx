@@ -7,7 +7,9 @@
 'use client';
 
 import { Suspense, lazy, useEffect, useState } from 'react';
-import { incrementCalcViews } from '@/lib/firebase/firestore';
+// IMPORTANT: Do NOT statically import firebase here.
+// The Firebase SDK is ~200KB and would block the main thread on every calculator page.
+// It's dynamically imported inside useEffect after the page is interactive.
 import { useAppStore } from '@/store/useAppStore';
 import { getCalcBySlug, getRelated, getRelatedCalcs, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
 import { BASE_FAQS, CALC_FAQS } from '@/data/faqData';
@@ -75,8 +77,13 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
 
   useEffect(() => {
     if (calc?.id) addRecent(calc.id);
-    // Track calculator page view in Firestore (silently, never blocks UI)
-    if (calc?.slug) incrementCalcViews(calc.slug);
+    // Track calculator view in Firestore — dynamically imported so Firebase SDK
+    // doesn't block the initial render / main thread parse.
+    if (calc?.slug) {
+      import('@/lib/firebase/firestore')
+        .then(({ incrementCalcViews }) => incrementCalcViews(calc.slug))
+        .catch(() => {}); // silently fail — never block UI for a stat counter
+    }
   }, [calc?.id, calc?.slug, addRecent]);
 
   if (!calc) return null;

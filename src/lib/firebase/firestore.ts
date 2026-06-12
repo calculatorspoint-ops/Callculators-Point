@@ -28,10 +28,16 @@ export interface CalcRating {
 /**
  * Fetch current rating counts for a calculator.
  * Returns { up: 0, down: 0 } if no ratings yet.
+ * 5-second timeout prevents Firebase from hanging the page on slow/blocked connections.
  */
 export async function getRating(calcSlug: string): Promise<CalcRating> {
   try {
-    const snap = await getDoc(doc(db, 'ratings', calcSlug));
+    const snap = await Promise.race([
+      getDoc(doc(db, 'ratings', calcSlug)),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Firebase timeout')), 5000)
+      ),
+    ]);
     if (!snap.exists()) return { up: 0, down: 0 };
     const data = snap.data();
     return { up: data.up ?? 0, down: data.down ?? 0 };
@@ -42,26 +48,16 @@ export async function getRating(calcSlug: string): Promise<CalcRating> {
 
 /**
  * Submit a thumbs up or thumbs down for a calculator.
- * Atomically increments the correct counter using Firestore increment().
+ * Uses setDoc with merge + increment to avoid a getDoc round-trip.
  */
 export async function submitRating(calcSlug: string, type: RatingType): Promise<void> {
   const ref = doc(db, 'ratings', calcSlug);
-  const snap = await getDoc(ref);
-
-  if (!snap.exists()) {
-    // First rating ever — create the document
-    await setDoc(ref, {
-      up:        type === 'up' ? 1 : 0,
-      down:      type === 'down' ? 1 : 0,
-      updatedAt: serverTimestamp(),
-    });
-  } else {
-    // Atomically increment without read-modify-write race condition
-    await updateDoc(ref, {
-      [type]:    increment(1),
-      updatedAt: serverTimestamp(),
-    });
-  }
+  // setDoc with merge: true creates the doc if missing, or merges if it exists.
+  // Using increment() handles both first-vote and subsequent-vote atomically.
+  await setDoc(ref, {
+    [type]:    increment(1),
+    updatedAt: serverTimestamp(),
+  }, { merge: true });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -100,20 +96,18 @@ export async function submitContactForm(data: ContactFormData): Promise<string> 
 /**
  * Increment the view counter for a calculator.
  * Called once per page visit, silently — no UI needed.
+ * Uses setDoc with merge to avoid the extra getDoc() round-trip that was
+ * previously causing a double network request + potential main-thread stall.
  */
 export async function incrementCalcViews(calcSlug: string): Promise<void> {
   try {
     const ref = doc(db, 'usage_stats', calcSlug);
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) {
-      await setDoc(ref, { views: 1, lastViewedAt: serverTimestamp() });
-    } else {
-      await updateDoc(ref, {
-        views:        increment(1),
-        lastViewedAt: serverTimestamp(),
-      });
-    }
+    // setDoc with merge: true handles both "create" and "update" atomically.
+    // No getDoc() needed — eliminates the extra round-trip.
+    await setDoc(ref, {
+      views:        increment(1),
+      lastViewedAt: serverTimestamp(),
+    }, { merge: true });
   } catch {
     // Silently fail — never break the UI for a stat counter
   }

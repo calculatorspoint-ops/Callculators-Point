@@ -1,9 +1,14 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ThumbsUp, ThumbsDown, Flag } from "lucide-react";
 import { track } from "@vercel/analytics/react";
-import { getRating, submitRating, type RatingType } from "@/lib/firebase/firestore";
+// Firebase imported dynamically — the SDK is ~200KB and should NOT be in the
+// initial bundle. It loads in useEffect after the calculator is interactive.
+
+// Local type mirror — matches RatingType from firestore.ts
+type RatingType = 'up' | 'down';
+
 
 export function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcSlug: string }) {
   const [feedback, setFeedback] = useState<RatingType | null>(null);
@@ -11,37 +16,40 @@ export function FeedbackWidget({ calcName, calcSlug }: { calcName: string; calcS
   const [loading, setLoading]   = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Load real rating counts from Firestore on mount
+  // Load rating counts from Firestore — Firebase SDK loaded dynamically so it
+  // doesn't block the initial render or prevent links/tabs from working.
   useEffect(() => {
-    getRating(calcSlug).then(r => {
-      setCounts(r);
-      setLoading(false);
-    });
+    let cancelled = false;
+    import('@/lib/firebase/firestore').then(({ getRating }) => {
+      getRating(calcSlug).then(r => {
+        if (!cancelled) {
+          setCounts(r);
+          setLoading(false);
+        }
+      });
+    }).catch(() => setLoading(false));
 
-    // Restore previous feedback from localStorage (so button stays highlighted on revisit)
+    // Restore previous feedback from localStorage
     const saved = localStorage.getItem(`feedback_${calcSlug}`);
-    if (saved === 'up' || saved === 'down') setFeedback(saved);
+    if (saved === 'up' || saved === 'down') setFeedback(saved as RatingType);
+
+    return () => { cancelled = true; };
   }, [calcSlug]);
 
-  const handleFeedback = async (type: RatingType) => {
-    // Prevent double-voting
+  const handleFeedback = useCallback(async (type: RatingType) => {
     if (feedback || submitting) return;
-
     setSubmitting(true);
     setFeedback(type);
-    // Optimistic UI — show updated count immediately
     setCounts(prev => ({ ...prev, [type]: prev[type] + 1 }));
-
-    // Persist vote in localStorage so it survives page refresh
     localStorage.setItem(`feedback_${calcSlug}`, type);
-
-    // Save to Firestore
-    await submitRating(calcSlug, type);
+    // Load Firebase only when user actually clicks — maximum deferral
+    try {
+      const { submitRating } = await import('@/lib/firebase/firestore');
+      await submitRating(calcSlug, type);
+    } catch { /* silently fail */ }
     setSubmitting(false);
-
-    // Also track in Vercel Analytics
     try { track('Feedback', { calculator: calcSlug, helpful: type }); } catch { /* ignore */ }
-  };
+  }, [feedback, submitting, calcSlug]);
 
   const total = counts.up + counts.down;
   const pct   = total > 0 ? Math.round((counts.up / total) * 100) : null;
