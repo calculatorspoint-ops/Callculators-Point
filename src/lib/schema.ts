@@ -102,11 +102,14 @@ export function generateBreadcrumbSchema(items: BreadcrumbItem[]) {
  * Convenience: build the standard 4-level breadcrumb for a calculator page.
  *
  * Hierarchy: Home → All Calculators → Category → Calculator
+ *
+ * The `@id` anchor (`${pageUrl}#breadcrumb`) allows the WebPage schema to
+ * reference this breadcrumb entity via `breadcrumb: { '@id': '...#breadcrumb' }`.
  */
 export function generateCalculatorBreadcrumbSchema(
   calc: CalculatorConfig,
   cat: CalculatorCategory | undefined,
-): ReturnType<typeof generateBreadcrumbSchema> {
+): ReturnType<typeof generateBreadcrumbSchema> & { '@id'?: string } {
   const calcDisplayName = /calculator/i.test(calc.name.trim())
     ? calc.name.trim()
     : `${calc.name.trim()} Calculator`;
@@ -125,7 +128,12 @@ export function generateCalculatorBreadcrumbSchema(
     item: `${SITE_URL}/calculator/${calc.slug}`,
   });
 
-  return generateBreadcrumbSchema(items);
+  const schema = generateBreadcrumbSchema(items);
+  // Add @id so WebPage schema can cross-reference this entity
+  return {
+    ...schema,
+    '@id': `${SITE_URL}/calculator/${calc.slug}#breadcrumb`,
+  };
 }
 
 // ── 2. WebApplication ─────────────────────────────────────────────────────────

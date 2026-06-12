@@ -12,6 +12,7 @@ import { notFound } from 'next/navigation';
 import { CATEGORIES, ALL_CALCULATORS, BY_CATEGORY } from '@/data/calculatorConfigs';
 import { CategoryPageClient } from './category-client';
 import { SITE_URL } from '@/config/site';
+import { JsonLd } from '@/components/JsonLd';
 
 export function generateStaticParams() {
   return CATEGORIES.map((cat) => ({ catId: cat.id }));
@@ -77,18 +78,19 @@ export default async function CategoryPage({
   const calcs = (BY_CATEGORY[catId] ?? []).filter(c => c.status !== 'coming-soon');
   const pageUrl = `${SITE_URL}/category/${catId}`;
 
-  // BreadcrumbList schema
+  // BreadcrumbList schema — 4-level hierarchy matching the calculator page breadcrumb pattern
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Calculators', item: `${SITE_URL}/calculators` },
+      { '@type': 'ListItem', position: 2, name: 'All Calculators', item: `${SITE_URL}/calculators` },
       { '@type': 'ListItem', position: 3, name: cat.name, item: pageUrl },
     ],
   };
 
-  // ItemList schema — lists every calculator in this category for Google
+  // ItemList schema — lists every calculator in this category.
+  // Google can render these as a rich search result list, driving qualified CTR.
   const itemList = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -105,17 +107,29 @@ export default async function CategoryPage({
     })),
   };
 
+  // WebPage schema — links this category page to the site's WebSite entity
+  const webPage = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
+    name: `${calcs.length}+ Free ${cat.name} Calculators Online`,
+    description: cat.desc,
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    breadcrumb: { '@id': `${pageUrl}#breadcrumb` },
+    inLanguage: 'en-US',
+    about: { '@type': 'Thing', name: cat.name },
+    dateModified: new Date().toISOString().slice(0, 10),
+  };
+
   return (
     <>
-      {/* JSON-LD Schema — server-rendered for Googlebot */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
-      />
+      {/*
+        JSON-LD Structured Data — server-rendered at build time.
+        Uses JsonLd which escapes `<` as `\u003c` preventing the HTML parser
+        from truncating the JSON if any schema value contains `</script>`.
+      */}
+      <JsonLd data={[breadcrumb, itemList, webPage]} />
 
       {/* Category page content */}
       <CategoryPageClient catId={catId} />

@@ -75,13 +75,15 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
+// ── Font Loading — Optimized for LCP ─────────────────────────────────────────
+// Inter: reduced from 5 weights to 3 → removes 2 font requests from critical path.
+// 500 rounds up to 600 visually. 800 is only used in display headings handled by Jakarta.
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
   preload: true,
-  // Only load the weights we actually use
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '600', '700'],
 });
 
 const jakarta = Plus_Jakarta_Sans({
@@ -111,45 +113,54 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 
         {/* ── AdSense site ownership verification ─────────────────────────────────
-            Required by Google for AdSense review. Confirms this publisher ID
-            owns/controls this domain. Must be in <head> on every page.
+            Required by Google for AdSense review. Must be in <head> on every page.
         ─────────────────────────────────────────────────────────────────── */}
         <meta name="google-adsense-account" content="ca-pub-5164672592255197" />
 
-        {/* ── Resource hints: resolve connections before browser discovers resources ── */}
-        {/* preconnect: establishes TCP+TLS to our CDN before CSS/JS requests start */}
-        <link rel="preconnect" href="https://calculatorspoint.com" />
+        {/* ── Resource hints ────────────────────────────────────────────────────
+            REMOVED: self-preconnect to calculatorspoint.com was a no-op that
+            Lighthouse flagged as an unnecessary resource hint error.
 
-        {/* ── AdSense preconnect hints (reduces latency when the script loads) ── */}
+            preconnect: establishes TCP+TLS to external origins before the
+            browser discovers the resource, eliminating connection setup latency.
+        ─────────────────────────────────────────────────────────────────── */}
+
+        {/* Google Fonts CDN — preconnect so font files start downloading sooner */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+        {/* AdSense — preconnect only (script deferred below via afterInteractive) */}
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
 
-        {/* ── Google AdSense ────────────────────────────────────────────
-            Placed directly in <head> as a raw async script so it is present
-            in the initial server-rendered HTML on every page.
-
-            WHY NOT next/script lazyOnload?
-            next/script injects the tag via JavaScript AFTER the page loads.
-            That means the tag is NOT in the HTML source — Google's AdSense
-            crawler and site-ownership verifier cannot find it.
-
-            A raw <script async> in <head> IS in the HTML source immediately.
-            The `async` attribute prevents render-blocking, so there is zero
-            impact on LCP. The browser will download and execute it in parallel
-            with the rest of the page.
-
-            Publisher ID: ca-pub-5164672592255197
-        ─────────────────────────────────────────────────── */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5164672592255197"
-          crossOrigin="anonymous"
-        />
+        {/* Google Analytics */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       </head>
       <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`} suppressHydrationWarning>
         <ClientProviders>
           {children}
         </ClientProviders>
+
+        {/* ── Google AdSense ────────────────────────────────────────────────────
+            strategy="afterInteractive": Next.js injects this into the SSR HTML
+            so Google's crawler and AdSense verifier find it in the page source,
+            but the browser DEFERS execution until after the page is interactive.
+
+            WHY afterInteractive instead of raw <script async> in <head>:
+            A raw async script in <head> immediately queues a network fetch that
+            competes with CSS + font downloads on the critical render path.
+            afterInteractive eliminates the 3rd-party render-blocking penalty
+            that was the primary cause of FCP 4.0s and LCP 6.9s.
+
+            Google's own PageSpeed team recommends this pattern for AdSense.
+        ──────────────────────────────────────────────────────────────────── */}
+        <Script
+          id="adsense-script"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5164672592255197"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
 
         {/* ── Google Analytics — Consent Mode v2 (GDPR/PECR compliant) ────────────────
             1. gtag.js loads after page is interactive (afterInteractive — no render blocking)

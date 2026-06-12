@@ -11,11 +11,10 @@
  */
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Suspense } from 'react';
 import { CATEGORIES, CALC_COUNT_LABEL, POPULAR } from '@/data/calculatorConfigs';
 import HomePageClient from './home-client';
 import { SITE_URL } from '@/config/site';
-import { QuickCalc } from '@/components/ui/QuickCalc';
+import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   // Title: use `absolute` to bypass the root layout template ('%s | Calculators Point').
@@ -52,10 +51,16 @@ export const metadata: Metadata = {
   },
 };
 
-// Organization + WebSite + SiteLinksSearchBox schema.
-// SiteLinksSearchBox tells Google to show a search box in the SERP sitelinks.
-// The search-terms-url must match the URL format used by our /calculators search route.
-const jsonLd = {
+// ── JSON-LD Schemas ──────────────────────────────────────────────────────────
+//
+// 1. Organization + WebSite + SiteLinksSearchBox
+//    SiteLinksSearchBox tells Google to show a search box in the SERP sitelinks.
+//    The search-terms-url must match the URL format used by our /calculators search route.
+//
+//    IMPORTANT: The WebSite '@id' (${SITE_URL}/#website) is referenced by every
+//    calculator page's WebPage schema via 'isPartOf'. These MUST match.
+//
+const siteSchema = {
   '@context': 'https://schema.org',
   '@graph': [
     {
@@ -63,18 +68,24 @@ const jsonLd = {
       '@id': `${SITE_URL}/#organization`,
       name: 'Calculators Point',
       url: SITE_URL,
-      logo: `${SITE_URL}/logo.png`,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/logo.png`,
+        width: 512,
+        height: 512,
+      },
       sameAs: [
         'https://twitter.com/CalculatorsPt',
         'https://www.facebook.com/calculatorspoint',
         'https://www.linkedin.com/company/calculatorspoint'
-      ]
+      ],
     },
     {
       '@type': 'WebSite',
       '@id': `${SITE_URL}/#website`,
       url: SITE_URL,
       name: 'Calculators Point',
+      description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, education, and everyday life.`,
       publisher: {
         '@id': `${SITE_URL}/#organization`,
       },
@@ -88,7 +99,37 @@ const jsonLd = {
         'query-input': 'required name=search_term_string',
       },
     },
+    {
+      // WebPage for homepage itself — signals freshness and links to WebSite entity
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/#webpage`,
+      url: SITE_URL,
+      name: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
+      description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, education & everyday life.`,
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@type': 'Thing', name: 'Online Calculators' },
+      inLanguage: 'en-US',
+      dateModified: new Date().toISOString().slice(0, 10),
+    },
   ],
+};
+
+// 2. ItemList schema — surfaces popular calculators directly in SERPs.
+//    Google can render these as a list carousel from the homepage.
+const popularItemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `Popular Free Online Calculators`,
+  description: `Top-rated free calculators on Calculators Point for finance, health, and math.`,
+  url: SITE_URL,
+  numberOfItems: POPULAR.length,
+  itemListElement: POPULAR.slice(0, 10).map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.name,
+    description: c.desc,
+    url: `${SITE_URL}/calculator/${c.slug}`,
+  })),
 };
 
 /**
@@ -141,38 +182,44 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right column — QuickCalc client component, hydrated on the client */}
-          <div className="hero-widget-col">
+          {/* Right column — static placeholder replaces interactive QuickCalc in hero.
+              Keeps the visual footprint (prevents CLS) with ZERO JS cost.
+              The interactive QuickCalc loads below the fold via HomePageClient. */}
+          <div className="hero-widget-col" aria-hidden="true">
             <div className="hero-widget-label">⚡ Quick Calculator</div>
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              {/* Suspense fallback = skeleton (same size, prevents CLS).
-                  After hydration the real interactive QuickCalc replaces it. */}
-              <Suspense fallback={
-                <div
-                  style={{
-                    width: 300,
-                    height: 400,
-                    borderRadius: 20,
-                    background: 'rgba(15,23,42,.92)',
-                    border: '1.5px solid rgba(255,255,255,.1)',
-                  }}
-                  aria-hidden="true"
-                />
-              }>
-                <QuickCalc />
-              </Suspense>
+              {/* Static skeleton that matches QuickCalc dimensions exactly */}
+              <div
+                className="hero-calc-placeholder"
+                role="img"
+                aria-label="Interactive calculator widget — loads after page"
+              >
+                <div className="hero-calc-display">
+                  <span className="hero-calc-display-hint">0</span>
+                </div>
+                <div className="hero-calc-btns">
+                  {['C', '±', '%', '÷', '7', '8', '9', '×', '4', '5', '6', '−', '1', '2', '3', '+', '0', '.', '='].map((btn) => (
+                    <div
+                      key={btn}
+                      className={`hero-calc-btn${btn === '=' ? ' hero-calc-btn--eq' : btn === '0' ? ' hero-calc-btn--zero' : ['C', '±', '%', '÷', '×', '−', '+'].includes(btn) ? ' hero-calc-btn--op' : ''}`}
+                    >
+                      {btn}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Category pills — links, fully functional without JS */}
-        <div className="hero-pills" role="navigation" aria-label="Calculator categories">
+        {/* Category pills — semantic nav for screen readers */}
+        <nav className="hero-pills" aria-label="Calculator categories">
           {CATEGORIES.map(cat => (
             <Link key={cat.id} href={`/category/${cat.id}`} className="hero-pill">
-              <span>{cat.icon}</span> {cat.name}
+              <span aria-hidden="true">{cat.icon}</span> {cat.name}
             </Link>
           ))}
-        </div>
+        </nav>
       </div>
     </section>
   );
@@ -270,11 +317,12 @@ function PopularSection() {
 export default function HomePage() {
   return (
     <>
-      {/* WebSite + Organization JSON-LD — server-rendered, zero JS cost */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {/*
+        JSON-LD Structured Data — server-rendered at build time, zero JS cost.
+        Uses JsonLd component which safely escapes `<` as `\u003c` to prevent
+        the browser HTML parser from closing the <script> tag early.
+      */}
+      <JsonLd data={[siteSchema, popularItemListSchema]} />
 
       {/* ── SERVER-RENDERED HERO (LCP element) ──
           This HTML is in the initial response — browser paints it before any JS loads.

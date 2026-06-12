@@ -14,11 +14,20 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Navbar } from '@/components/ui/Navbar';
-import { Footer } from '@/components/ui/Footer';
-import { ScrollToTop } from '@/components/ui/ScrollToTop';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { useAppStore } from '@/store/useAppStore';
-import { CookieConsent } from '@/components/ui/CookieConsent';
+
+// Defer below-fold components until after the page is interactive.
+// This removes them from the critical JS parse path, improving TBT and TTI.
+const Footer = lazy(() =>
+  import('@/components/ui/Footer').then(m => ({ default: m.Footer }))
+);
+const CookieConsent = lazy(() =>
+  import('@/components/ui/CookieConsent').then(m => ({ default: m.CookieConsent }))
+);
+const ScrollToTop = lazy(() =>
+  import('@/components/ui/ScrollToTop').then(m => ({ default: m.ScrollToTop }))
+);
 
 // Defer Analytics — loads after page is interactive, doesn't affect LCP/FCP
 const Analytics = lazy(() =>
@@ -47,7 +56,10 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <ScrollToTop />
+      {/* ScrollToTop: lazy — no visual impact until user scrolls */}
+      <Suspense fallback={null}>
+        <ScrollToTop />
+      </Suspense>
       <Navbar />
       <main style={{ minHeight: '100vh' }}>
         <ErrorBoundary>
@@ -56,8 +68,14 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
           </Suspense>
         </ErrorBoundary>
       </main>
-      <Footer />
-      <CookieConsent />
+      {/* Footer: lazy — always below fold, no impact on FCP/LCP */}
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
+      {/* CookieConsent: lazy — non-critical UI, can load after paint */}
+      <Suspense fallback={null}>
+        <CookieConsent />
+      </Suspense>
       <Toaster
         position="bottom-right"
         toastOptions={{

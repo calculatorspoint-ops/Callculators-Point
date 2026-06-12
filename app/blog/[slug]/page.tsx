@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { getPostBySlug, getPublishedPosts, getCategoryMeta, calcReadingTime, BLOG_POSTS } from '@/data/blogPosts';
 import { getCalcBySlug } from '@/data/calculatorConfigs';
 import { SITE_URL } from '@/config/site';
+import { JsonLd } from '@/components/JsonLd';
 
 // Pre-render only PUBLISHED posts at build time.
 // Draft posts are excluded — they fall back to on-demand rendering for preview.
@@ -104,26 +105,33 @@ export default async function BlogPostPage({
   const articleSchema = !post.draft ? {
     '@context': 'https://schema.org',
     '@type': 'Article',
+    '@id': `${SITE_URL}/blog/${post.slug}#article`,
     headline: post.title,
     description: post.description,
-    author: { '@type': 'Person', name: post.author },
+    author: {
+      '@type': 'Person',
+      name: post.author,
+    },
     publisher: {
-      '@type': 'Organization',
-      name: 'Calculators Point',
-      url: SITE_URL,
-      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
+      '@id': `${SITE_URL}/#organization`,
     },
     datePublished: post.publishedAt,
     dateModified: post.updatedAt ?? post.publishedAt,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${post.slug}` },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/blog/${post.slug}#webpage`,
+    },
+    isPartOf: { '@id': `${SITE_URL}/#website` },
     keywords: post.tags.join(', '),
     articleSection: catMeta?.name,
+    inLanguage: 'en-US',
     url: `${SITE_URL}/blog/${post.slug}`,
   } : null;
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
+    '@id': `${SITE_URL}/blog/${post.slug}#breadcrumb`,
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
       { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
@@ -133,17 +141,12 @@ export default async function BlogPostPage({
 
   return (
     <>
-      {/* JSON-LD — server-rendered, zero JS cost */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      {articleSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-      )}
+      {/*
+        JSON-LD — server-rendered at build time, zero JS cost.
+        JsonLd escapes `<` as `\u003c` preventing HTML-parser from
+        prematurely closing the <script> block.
+      */}
+      <JsonLd data={[breadcrumbSchema, articleSchema].filter(Boolean) as object[]} />
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: 'clamp(24px, 5vw, 60px) clamp(16px, 4vw, 32px)' }}>
 

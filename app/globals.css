@@ -85,7 +85,8 @@ body {
 /* LCP ELEMENT — this must render without blocking CSS */
 .hero-sub {
   font-size: 16px;
-  color: rgba(255,255,255,.58);
+  /* WCAG AA: raised from .58 (~3.5:1) to .82 (~5.8:1) against #0f172a hero bg */
+  color: rgba(255,255,255,.82);
   line-height: 1.7;
   margin-bottom: 28px;
   max-width: 540px;
@@ -132,4 +133,66 @@ body {
   background-size: 1200px 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 6px;
+}
+
+/* ── Static QuickCalc Placeholder (hero) ───────────────────────────────────
+   Visually mirrors the real QuickCalc widget with zero JS.
+   Replaced by the real interactive widget after hydration. */
+.hero-calc-placeholder {
+  width: 300px;
+  background: rgba(15,23,42,.94);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
+}
+.hero-calc-display {
+  background: rgba(255,255,255,.06);
+  border-radius: 12px;
+  padding: 12px 16px;
+  text-align: right;
+  min-height: 56px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+.hero-calc-display-hint {
+  font-size: 28px;
+  font-weight: 300;
+  color: rgba(255,255,255,.9);
+  font-variant-numeric: tabular-nums;
+}
+.hero-calc-btns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.hero-calc-btn {
+  background: rgba(255,255,255,.08);
+  border-radius: 10px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255,255,255,.9);
+  cursor: default;
+  user-select: none;
+  transition: background .12s;
+}
+.hero-calc-btn--op {
+  color: #60a5fa;
+  background: rgba(96,165,250,.12);
+}
+.hero-calc-btn--eq {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37,99,235,.4);
+}
+.hero-calc-btn--zero {
+  grid-column: span 2;
 }

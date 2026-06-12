@@ -32,7 +32,6 @@ import {
   generateFAQSchema,
   generateHowToSchema,
   generateWebPageSchema,
-  mergeCalcFaqs,
 } from '@/lib/schema';
 import { SITE_URL } from '@/config/site';
 

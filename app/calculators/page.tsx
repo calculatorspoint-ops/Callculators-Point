@@ -24,6 +24,7 @@ import {
 } from '@/data/calculatorConfigs';
 import { SITE_URL } from '@/config/site';
 import AllCalculatorsClient from './all-calculators-client';
+import { JsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = {
   title: `All ${CALC_COUNT_LABEL} Free Online Calculators`,
@@ -53,6 +54,7 @@ export const metadata: Metadata = {
 const breadcrumb = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
+  '@id': `${SITE_URL}/calculators#breadcrumb`,
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
     { '@type': 'ListItem', position: 2, name: 'All Calculators', item: `${SITE_URL}/calculators` },
@@ -63,9 +65,14 @@ const breadcrumb = {
 const collectionPage = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
+  '@id': `${SITE_URL}/calculators#webpage`,
   name: `All ${CALC_COUNT_LABEL} Free Online Calculators`,
   description: `A comprehensive collection of ${LIVE_CALC_COUNT} free online calculators covering finance, health, math, education, converters, and everyday tools.`,
   url: `${SITE_URL}/calculators`,
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  breadcrumb: { '@id': `${SITE_URL}/calculators#breadcrumb` },
+  inLanguage: 'en-US',
+  dateModified: new Date().toISOString().slice(0, 10),
   numberOfItems: LIVE_CALC_COUNT,
   hasPart: INDEXABLE_CALCULATORS.slice(0, 50).map((c) => ({
     '@type': 'WebApplication',
@@ -80,9 +87,11 @@ const collectionPage = {
 export default function AllCalculatorsPage() {
   return (
     <>
-      {/* JSON-LD schema — server-rendered at build time */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPage) }} />
+      {/*
+        JSON-LD Structured Data — server-rendered at build time.
+        JsonLd safely escapes `<` as `\u003c` preventing HTML-parser breakage.
+      */}
+      <JsonLd data={[breadcrumb, collectionPage]} />
 
       {/*
         AllCalculatorsClient handles search/filter interactivity.
