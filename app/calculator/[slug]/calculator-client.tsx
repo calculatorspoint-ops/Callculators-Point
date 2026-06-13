@@ -217,7 +217,7 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
           )}
 
           {/* Calculator form — min-height reserves space to prevent CLS while skeleton is shown */}
-          <div className="calc-card" style={{ marginBottom: 16, minHeight: 360 }}>
+          <div id="calc-export-target" className="calc-card" style={{ marginBottom: 16, minHeight: 360 }}>
             <ErrorBoundary>
               <Suspense fallback={<FormFallback />}>
                 <CalculatorWidget calc={calc} />
