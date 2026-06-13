@@ -601,3 +601,528 @@
   color: var(--text3);
   flex-shrink: 0;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   FORM SPACING & LABEL ALIGNMENT — Global fix for all calculator input panels
+   ─────────────────────────────────────────────────────────────────────────────
+   Problem: Labels (Annual Salary, Your Contribution %, etc.) are too close to
+   the card border. Sliders, inputs, and min/max labels look cramped because
+   inline marginBottom values in SharedComponents.tsx are too small and the
+   InputSection body padding is insufficient.
+
+   Fix strategy (CSS-only, zero changes to calculator logic):
+    1. Increase calc-card-body padding (desktop: 32px, mobile: 20px)
+    2. Fix InputSection body padding — proper inset so labels never touch border
+    3. Give every N (number input) field group more vertical space
+    4. Give every Sl (slider) field group more vertical space between instances
+    5. Label font-size, weight, and margin-bottom — consistent across all fields
+    6. Slider track area: label row margin, glass-panel sizing, min/max row
+    7. Select (Sel) field group spacing
+    8. Tabs, Toggle, Presets — consistent vertical rhythm
+    9. Full responsive breakpoints: 1440px → 1024px → 767px → 480px
+   10. Dark mode preserved — only spacing/sizing properties changed
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────────────────────────
+   1. CALCULATOR CARD BODY — generous desktop padding
+   Labels and inputs must never touch the card border edge.
+   Desktop: 32px sides, Mobile: 20px sides
+──────────────────────────────────────────────────────────────── */
+.calc-card-body {
+  padding: 32px 30px 28px !important;
+}
+
+@media (max-width: 1024px) {
+  .calc-card-body { padding: 26px 24px 22px !important; }
+}
+
+@media (max-width: 767px) {
+  .calc-card-body { padding: 20px 18px 18px !important; }
+}
+
+@media (max-width: 480px) {
+  .calc-card-body { padding: 16px 14px 14px !important; }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   2. INPUT SECTION — the grouped card (InputSection component)
+   Head: gradient header bar
+   Body: where N, Sl, Sel live — needs good inset padding
+──────────────────────────────────────────────────────────────── */
+.input-section-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;   /* space between consecutive InputSections */
+}
+
+.input-section-body {
+  padding: 22px 20px 12px !important;   /* was 18px 16px 8px — more room */
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0;                 /* vertical gap controlled by N/Sl margin-bottom */
+}
+
+@media (max-width: 767px) {
+  .input-section-body { padding: 16px 14px 10px !important; }
+  .input-section-wrap { margin-bottom: 14px; }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   3. N COMPONENT — number input field group
+   Used for: Annual Salary, Loan Amount, Price, etc.
+   Each N renders: <div style="marginBottom:12"> + <L> label + <input>
+   We override the inline marginBottom with a larger value via the
+   class on the input itself (N-input class → parent selector trick)
+──────────────────────────────────────────────────────────────── */
+
+/* Target the wrapper div that contains N-input — increases bottom spacing */
+.calc-card-body .N-input,
+.input-section-body .N-input {
+  height: 52px !important;          /* taller than 50px inline style */
+  font-size: 15px !important;       /* slightly larger than 16px inline (same) */
+  border-radius: var(--r-md) !important;
+}
+
+/* Space between consecutive N field wrappers (the div with marginBottom:12) */
+.calc-card-body > div > div:has(.N-input),
+.input-section-body > div:has(.N-input) {
+  margin-bottom: 18px !important;   /* was 12px inline */
+}
+
+/* ── The L label inside N/Sel ── */
+.calc-card-body label[for],
+.input-section-body label[for] {
+  display: block;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text2) !important;
+  margin-bottom: 8px !important;    /* was 7px — small increase for clarity */
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   4. Sl COMPONENT — premium slider field group
+   Used for: contribution %, years, salary sliders
+   Each Sl renders: <div class="mobile-premium-slider" style="marginBottom:28">
+     → header row (label + glass number input)
+     → range input (premium-slider class)
+     → min/max row
+──────────────────────────────────────────────────────────────── */
+.mobile-premium-slider {
+  margin-bottom: 32px !important;   /* was 28px — more breathing between sliders */
+  padding: 0;
+}
+
+/* Label + glass-panel header row */
+.mobile-premium-slider > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px !important;   /* was 14px inline — slightly tighter to slider */
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+
+/* Slider label text (the label element inside the header row) */
+.mobile-premium-slider > div:first-child label {
+  font-size: 14px !important;       /* was 15px inline */
+  font-weight: 800 !important;
+  color: var(--text) !important;
+  letter-spacing: 0.01em;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.35;
+  margin-bottom: 0 !important;      /* no bottom margin — handled by parent row gap */
+}
+
+/* Glass panel (number input box on the right of the label) */
+.glass-panel {
+  display: flex !important;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--border);
+  overflow: hidden;
+  padding: 3px 12px 3px 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  background: var(--surface);
+  min-width: 0;
+  transition: border-color 0.15s;
+}
+
+.glass-panel:focus-within {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+/* Number input inside glass panel */
+.glass-panel input[type="number"] {
+  width: clamp(80px, 8vw, 120px) !important;
+  min-width: 80px !important;
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: right;
+  font-size: 15px !important;
+  font-weight: 800;
+  color: var(--brand);
+  padding: 6px 4px 6px 8px;
+  appearance: none;
+  -moz-appearance: textfield;
+}
+
+/* Unit suffix (%, yr, etc.) inside glass panel */
+.glass-panel span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+/* The range slider track */
+.premium-slider {
+  width: 100%;
+  display: block;
+  margin: 8px 0 6px !important;    /* cleaner spacing above/below slider track */
+}
+
+/* Min/Max label row below slider */
+.mobile-premium-slider > div:last-child {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;                   /* slight indent so numbers align with thumb */
+  margin-top: 6px !important;
+}
+
+.mobile-premium-slider > div:last-child span {
+  font-size: 11px !important;
+  font-weight: 700;
+  color: var(--text3);
+  line-height: 1;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   5. Sel COMPONENT — select dropdown field group
+   Same wrapper pattern as N: div style="marginBottom:12" + <L> + <select>
+──────────────────────────────────────────────────────────────── */
+.calc-card-body .f-select,
+.input-section-body .f-select {
+  height: 52px !important;
+  font-size: 15px !important;
+  border-radius: var(--r-md) !important;
+}
+
+/* Space between consecutive Sel field wrappers */
+.calc-card-body > div > div:has(.f-select),
+.input-section-body > div:has(.f-select) {
+  margin-bottom: 18px !important;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   6. TABS (Tabs component) — mode selector at top of calculator
+──────────────────────────────────────────────────────────────── */
+.f-tabs {
+  margin-bottom: 24px !important;
+  border-radius: var(--r-lg) !important;
+  padding: 4px !important;
+  gap: 4px !important;
+}
+
+.f-tab {
+  padding: 10px 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: var(--r-md) !important;
+  min-height: 40px;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   7. TOGGLE SWITCH (Toggle component) — boolean inputs
+──────────────────────────────────────────────────────────────── */
+.calc-card-body [role="switch"],
+.input-section-body [role="switch"] {
+  /* No size changes — toggle is perfectly sized */
+  flex-shrink: 0;
+}
+
+/* Toggle wrapper row */
+.calc-card-body > div:has([role="switch"]),
+.input-section-body > div:has([role="switch"]) {
+  margin-bottom: 18px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border2);
+}
+
+.calc-card-body > div:has([role="switch"]):last-child,
+.input-section-body > div:has([role="switch"]):last-child {
+  border-bottom: none;
+  margin-bottom: 8px;
+}
+
+/* Toggle label text */
+.calc-card-body [role="switch"] ~ div label,
+.input-section-body [role="switch"] ~ div label {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-bottom: 0 !important;
+  line-height: 1.4;
+}
+
+/* Toggle hint text */
+.calc-card-body [role="switch"] ~ div p,
+.input-section-body [role="switch"] ~ div p {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   8. PRESETS ROW (Presets component)
+──────────────────────────────────────────────────────────────── */
+.presets-section {
+  background: var(--surf2);
+  border: 1px solid var(--bord2);
+  border-radius: var(--r-md);
+  padding: 12px 16px;
+  margin-bottom: 22px;
+}
+
+.presets-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  margin: 0 0 10px;
+}
+
+.presets-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.preset-chip {
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+  transition: var(--t);
+  white-space: nowrap;
+}
+
+.preset-chip:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-l);
+  transform: translateY(-1px);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   9. CALC-CARD HEAD — icon + title row at top of the card
+──────────────────────────────────────────────────────────────── */
+.calc-card-head {
+  padding: 18px 26px 16px !important;  /* match new card-body side padding */
+}
+
+@media (max-width: 767px) {
+  .calc-card-head { padding: 14px 18px 12px !important; }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   10. ROW2 / ROW3 — 2 and 3-column input grid rows
+──────────────────────────────────────────────────────────────── */
+.sc-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.sc-row3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 640px) {
+  .sc-row2 { grid-template-columns: 1fr; gap: 0; }
+  .sc-row3 { grid-template-columns: 1fr 1fr; gap: 10px; }
+}
+
+@media (max-width: 400px) {
+  .sc-row3 { grid-template-columns: 1fr; }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   11. PANEL TOOLBAR — Save / Share / Export CSV buttons row
+──────────────────────────────────────────────────────────────── */
+.panel-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border2);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   12. SECTION SEPARATOR — visual divider between input groups
+   when not using InputSection wrapper
+──────────────────────────────────────────────────────────────── */
+.calc-section-sep {
+  height: 1px;
+  background: var(--border2);
+  margin: 18px 0;
+  border: none;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   13. HINT TEXT & ERROR TEXT
+──────────────────────────────────────────────────────────────── */
+.f-hint {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+.f-error {
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   14. CALCULATE / SUBMIT BUTTON (used in many form footers)
+──────────────────────────────────────────────────────────────── */
+.calc-btn,
+.btn-calc,
+button[type="submit"].f-btn,
+.f-btn-primary {
+  display: block;
+  width: 100%;
+  padding: 15px 24px;
+  margin-top: 22px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border-radius: var(--r-lg);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
+  background: linear-gradient(135deg, var(--brand), var(--brand-d));
+  color: #fff;
+  box-shadow: var(--sh-brand);
+  font-family: var(--font);
+}
+
+.calc-btn:hover,
+.btn-calc:hover,
+.f-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   15. MOBILE — complete responsive pass
+──────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Sliders: more compact on mobile */
+  .mobile-premium-slider {
+    margin-bottom: 24px !important;
+  }
+
+  /* Glass panel input narrower */
+  .glass-panel input[type="number"] {
+    width: 80px !important;
+    min-width: 70px !important;
+    font-size: 14px !important;
+  }
+
+  /* Slider label slightly smaller */
+  .mobile-premium-slider > div:first-child label {
+    font-size: 13px !important;
+  }
+
+  /* Min/max hint text */
+  .mobile-premium-slider > div:last-child span {
+    font-size: 10px !important;
+  }
+
+  /* Tabs full-width pill style */
+  .f-tab {
+    padding: 9px 6px !important;
+    font-size: 12px !important;
+    min-height: 38px;
+  }
+
+  /* N-input + f-select height iOS-safe */
+  .N-input,
+  .f-input,
+  .f-select {
+    height: 48px !important;
+    font-size: 16px !important;    /* 16px prevents iOS zoom on focus */
+  }
+
+  /* InputSection body */
+  .input-section-body {
+    padding: 14px 12px 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Presets horizontal scroll on very small screens */
+  .presets-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .presets-row::-webkit-scrollbar { display: none; }
+
+  .preset-chip { flex-shrink: 0; }
+
+  /* Tabs: 2 columns */
+  .f-tabs { flex-wrap: wrap; }
+  .f-tab  { flex: 1 1 45%; }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   16. DARK MODE — spacing is colour-agnostic, only ensure
+   surfaces and borders are visible in dark mode
+──────────────────────────────────────────────────────────────── */
+.dark .input-section-body {
+  background: var(--surface);
+}
+
+.dark .glass-panel {
+  background: var(--surf2);
+  border-color: var(--border);
+}
+
+.dark .glass-panel input[type="number"] {
+  color: var(--brand);
+}
+
+.dark .presets-section {
+  background: var(--surf2);
+  border-color: var(--border);
+}
