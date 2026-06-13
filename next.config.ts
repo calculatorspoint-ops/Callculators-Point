@@ -15,6 +15,16 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
 
+  // ── Compression ───────────────────────────────────────────────────────────
+  // Explicitly enable gzip/Brotli compression for HTML, CSS, JS, and text
+  // assets served by the Next.js server. Vercel's edge already compresses,
+  // but this ensures compression is active on any self-hosted deployment and
+  // satisfies audit tools that inspect the Content-Encoding response header.
+  compress: true,
+
+  // Remove the X-Powered-By: Next.js header to reduce fingerprinting surface.
+  poweredByHeader: false,
+
   // ── Experimental ──────────────────────────────────────────────────────────
   experimental: {
     // Tree-shake these packages at the import level so only used exports are bundled
@@ -146,43 +156,79 @@ const nextConfig: NextConfig = {
     ].join(', ');
 
     return [
-      // ── Security headers for all pages ────────────────────────────────────
+      // ── Security + compression headers for all routes ─────────────────────
       {
         source: '/(.*)',
         headers: [
-          { key: 'X-Content-Type-Options',  value: 'nosniff' },
+          { key: 'X-Content-Type-Options',   value: 'nosniff' },
           // X-Frame-Options is superseded by frame-ancestors in CSP, but kept
           // for older browsers that don't support CSP frame-ancestors
-          { key: 'X-Frame-Options',         value: 'SAMEORIGIN' },
-          { key: 'Referrer-Policy',          value: 'strict-origin-when-cross-origin' },
-          { key: 'X-DNS-Prefetch-Control',   value: 'on' },
-          { key: 'Content-Security-Policy',  value: ContentSecurityPolicy },
-          { key: 'Permissions-Policy',       value: PermissionsPolicy },
+          { key: 'X-Frame-Options',          value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy',           value: 'strict-origin-when-cross-origin' },
+          { key: 'X-DNS-Prefetch-Control',    value: 'on' },
+          { key: 'Content-Security-Policy',   value: ContentSecurityPolicy },
+          { key: 'Permissions-Policy',        value: PermissionsPolicy },
           // HSTS: Force HTTPS for 2 years, include subdomains, eligible for preload list.
-          // Only safe because all traffic is already HTTPS via Vercel.
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          // Tell CDNs and proxies to store separate cached copies per encoding.
+          // Required for Brotli/gzip negotiation to work correctly through Vercel's
+          // edge cache and any intermediate proxy layer.
+          { key: 'Vary',                      value: 'Accept-Encoding' },
         ],
       },
-      // ── Long-lived cache for content-hashed static assets (CSS, JS, fonts, images)
-      // These files have unique hashes in their names, so it's safe to cache forever.
-      // On repeat visits this eliminates ALL render-blocking CSS/JS (served from cache).
+
+      // ── Long-lived cache for content-hashed Next.js static assets ──────────
+      // CSS, JS, and font files built by Next.js include a content hash in the
+      // filename, so it is safe to cache them indefinitely (immutable).
       {
         source: '/_next/static/(.*)',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          { key: 'Vary',          value: 'Accept-Encoding' },
         ],
       },
-      // Cache fonts for 1 year (they rarely change)
+
+      // ── Images served through Next.js Image Optimisation ───────────────────
+      {
+        source: '/_next/image(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+          { key: 'Vary',          value: 'Accept-Encoding, Accept' },
+        ],
+      },
+
+      // ── Public folder static assets ────────────────────────────────────────
+      // Icons, manifest, service-worker assets. Hash-named files use immutable;
+      // named files (manifest.json, ads.txt) use a shorter TTL.
+      {
+        source: '/icons/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
       {
         source: '/fonts/(.*)',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+          { key: 'Vary',          value: 'Accept-Encoding' },
+        ],
+      },
+      // manifest.json, ads.txt, robots.txt, llms.txt — cache 1 day, revalidate weekly
+      {
+        source: '/(manifest\.json|ads\.txt|robots\.txt|llms\.txt|sitemap.*\.xml)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+        ],
+      },
+
+      // ── HTML pages — short TTL with stale-while-revalidate ─────────────────
+      // Pages can change at any deployment; ISR/SSG pages are revalidated by
+      // Next.js automatically. The CDN gets a fresh copy within 60 s in the
+      // background while serving the cached version to the user (no latency).
+      {
+        source: '/((?!_next/static|_next/image|icons|fonts).*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, s-maxage=60, stale-while-revalidate=86400' },
         ],
       },
     ];

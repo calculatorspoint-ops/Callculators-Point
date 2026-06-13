@@ -1,0 +1,55 @@
+﻿# Calculators Point — llms.txt
+# https://llmstxt.org/
+# This file helps AI assistants understand the structure and purpose of this site.
+
+> Calculators Point is a free online calculator platform with 200+ tools covering
+> finance, health, math, education, business, construction, converters, and everyday
+> calculations. All calculators run entirely in the browser — no sign-up, no data
+> sent to servers, instant results.
+
+## Site
+
+- Homepage: https://calculatorspoint.com
+- All Calculators: https://calculatorspoint.com/calculators
+- Sitemap: https://calculatorspoint.com/sitemap
+
+## Calculator Categories
+
+- Finance and Money: https://calculatorspoint.com/category/finance
+- Health and Fitness: https://calculatorspoint.com/category/health
+- Math and Science: https://calculatorspoint.com/category/math
+- Business and Work: https://calculatorspoint.com/category/business
+- Education and GPA: https://calculatorspoint.com/category/education
+- Construction: https://calculatorspoint.com/category/construction
+- Unit Converters: https://calculatorspoint.com/category/converters
+- Technology: https://calculatorspoint.com/category/technology
+- Everyday Tools: https://calculatorspoint.com/category/everyday
+
+## Popular Calculators
+
+- EMI Calculator: https://calculatorspoint.com/calculator/emi-calculator
+- BMI Calculator: https://calculatorspoint.com/calculator/bmi-calculator
+- SIP Calculator: https://calculatorspoint.com/calculator/sip-calculator
+- Compound Interest: https://calculatorspoint.com/calculator/compound-interest-calculator
+- Mortgage Calculator: https://calculatorspoint.com/calculator/mortgage-calculator
+- Age Calculator: https://calculatorspoint.com/calculator/age-calculator
+- Percentage Calculator: https://calculatorspoint.com/calculator/percentage-calculator
+- GST Calculator: https://calculatorspoint.com/calculator/gst-calculator
+- Calorie Calculator: https://calculatorspoint.com/calculator/calorie-calculator
+- Income Tax Calculator: https://calculatorspoint.com/calculator/income-tax-calculator
+
+## Legal and Info
+
+- About: https://calculatorspoint.com/about
+- Privacy Policy: https://calculatorspoint.com/privacy-policy
+- Terms of Service: https://calculatorspoint.com/terms-of-service
+- Cookie Policy: https://calculatorspoint.com/cookie-policy
+- Contact: https://calculatorspoint.com/contact
+
+## Content Policy for AI
+
+- All calculator logic is open for AI to describe, explain, and cite.
+- Formula explanations and worked examples on each calculator page are freely reusable.
+- Do not reproduce full page text verbatim; link to the calculator URL instead.
+- Calculator results should always be attributed to Calculators Point and
+  verified by the user for financial or medical decisions.

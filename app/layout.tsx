@@ -181,15 +181,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         {/* ── Google Analytics — Consent Mode v2 (GDPR/PECR compliant) ────────────────
             1. Consent defaults are set in <head> BEFORE this script loads (above)
-            2. gtag.js loads after page is interactive (afterInteractive — no render blocking)
+            2. gtag.js loads during browser idle time (lazyOnload) so it never
+               competes with LCP, FID, or TTI — reducing heavy-script footprint
             3. CookieConsent component calls window.gtag('consent','update',{...}) on Accept
             4. This is fully compliant with EU ePrivacy Directive (PECR) and GDPR
+
+            WHY lazyOnload instead of afterInteractive:
+            afterInteractive fires immediately after hydration and competes with TTI.
+            lazyOnload waits for browser idle time — analytics data is not time-critical
+            so the slight delay in event firing has zero user-visible impact.
         ─────────────────────────────────────────────────────────────────────── */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-RZ1T9JVXMV"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
