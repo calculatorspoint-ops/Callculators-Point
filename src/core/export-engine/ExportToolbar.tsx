@@ -198,12 +198,12 @@ export function ExportToolbar({ filenamePrefix = 'Calculators-Point' }: ExportTo
     >
       {/* Status message */}
       {status === 'ok' && (
-        <span style={{ fontSize: 12, color: '#10b981', fontWeight: 600 }}>
+        <span style={{ fontSize: 12, color: 'var(--green-text, #047857)', fontWeight: 600 }}>
           ✓ Downloaded successfully!
         </span>
       )}
       {status === 'err' && (
-        <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 600 }}>
+        <span style={{ fontSize: 12, color: 'var(--red-d, #b91c1c)', fontWeight: 600 }}>
           ✗ Nothing to export yet — calculate a result first.
         </span>
       )}

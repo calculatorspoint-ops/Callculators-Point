@@ -2360,7 +2360,7 @@ img { content-visibility: auto; }
   color: var(--brand);
   background: var(--brand-l);
 }
-.calc-tool-btn.danger:hover { color: var(--red); border-color: var(--red); background: var(--red-l); }
+.calc-tool-btn.danger:hover { color: var(--red-d); border-color: var(--red-d); background: var(--red-l); }
 .calc-tool-btn.success:hover { color: var(--green-text); border-color: var(--green-ll); background: var(--green-l); }
 @media(max-width:640px){ .calc-tool-btn{ padding:7px 11px; font-size:11.5px; } }
 
