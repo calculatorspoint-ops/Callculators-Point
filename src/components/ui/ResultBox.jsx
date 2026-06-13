@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Copy, Check, Share2, TrendingUp } from "lucide-react";
 
-export function ResultBox({ label, value, sub, loading }) {
+export function ResultBox({ label, value, sub, loading, accentColor }) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -36,8 +36,8 @@ export function ResultBox({ label, value, sub, loading }) {
   );
 
   return (
-    <div className="result-card">
-      {/* Decorative circles */}
+    <div className="result-card" style={{ position: "relative", overflow: "hidden" }}>
+      {/* Decorative ambient glow */}
       <div className="result-deco-1" />
       <div className="result-deco-2" />
       <div className="result-deco-3" />
@@ -51,7 +51,7 @@ export function ResultBox({ label, value, sub, loading }) {
         {/* Label */}
         <p className="result-lbl">{label}</p>
 
-        {/* Main value — aria-live announces to screen readers when result changes */}
+        {/* Main value */}
         <p
           className="result-val"
           aria-live="polite"

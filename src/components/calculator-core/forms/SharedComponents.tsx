@@ -20,8 +20,8 @@ export const formatMoney = (n) => { try { return _fmtMoney(n, useCurrencyStore.g
 // ── Label ──────────────────────────────────────────────────────────────
 export const L = ({ t, id }) => (
   <label htmlFor={id} style={{
-    display: "block", fontSize: 12, fontWeight: 700,
-    color: "var(--text2)", marginBottom: 7, letterSpacing: ".01em"
+    display: "block", fontSize: 13, fontWeight: 700,
+    color: "var(--text2)", marginBottom: 8, letterSpacing: ".01em", lineHeight: 1.4
   }}>
     {t}
   </label>
@@ -85,13 +85,13 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
   const hasLeft = icon || prefix;
 
   return (
-    <div style={{ marginBottom: 12 }}>
+    <div style={{ marginBottom: 20 }}>
       {label && <L t={label} id={id} />}
       <div style={{ position: "relative" }}>
         {hasLeft && (
           <div style={{
             position: "absolute", left: 0, top: 0, bottom: 0,
-            width: 44, display: "flex", alignItems: "center", justifyContent: "center",
+            width: 46, display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: prefix ? 13 : 16, color: focused ? "var(--brand)" : "var(--text3)",
             fontWeight: 700, pointerEvents: "none", transition: "color .15s",
             borderRight: "1px solid var(--border)", zIndex: 1
@@ -102,23 +102,24 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
         <input
           id={id} type={type} value={displayValue} onChange={handleChange}
           placeholder={placeholder} min={min} max={max} step={step}
-          inputMode={type === "number" ? "decimal.js" : undefined}
+          inputMode={type === "number" ? "decimal" : undefined}
           aria-label={label || placeholder}
           className="N-input"
           style={{
             width: "100%",
-            height: 50,
-            paddingLeft: hasLeft ? 52 : 14,
-            paddingRight: unit ? 48 : 14,
+            height: 52,
+            paddingLeft: hasLeft ? 54 : 16,
+            paddingRight: unit ? 52 : 16,
             background: focused ? "var(--surface)" : "var(--surface2)",
             border: focused ? "2px solid var(--brand)" : "1.5px solid var(--border)",
             borderRadius: "var(--r-md)",
-            fontSize: 16,
+            fontSize: 15,
             fontWeight: 600,
             color: "var(--text)", outline: "none", fontFamily: "var(--font)",
-            transition: "all .18s",
+            transition: "border-color .18s, box-shadow .18s, background .18s",
             boxShadow: focused ? "0 0 0 4px rgba(67,97,238,.1)" : "none",
             WebkitAppearance: "none",
+            boxSizing: "border-box",
           }}
           onFocus={() => setFocused(true)}
           onBlur={handleBlur}
@@ -131,7 +132,7 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
           }}>{unit}</span>
         )}
       </div>
-      {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 4, lineHeight: 1.5 }}>{hint}</p>}
+      {hint && <p style={{ fontSize: 11.5, color: "var(--text3)", marginTop: 6, lineHeight: 1.5 }}>{hint}</p>}
     </div>
   );
 }
@@ -157,14 +158,15 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
     <div style={{ marginBottom: 28 }} className="mobile-premium-slider">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         {label && (
-          <label htmlFor={id} style={{ fontSize: 15, fontWeight: 800, color: "var(--text)", letterSpacing: ".01em" }}>
+          <label htmlFor={id} style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", letterSpacing: ".01em" }}>
             {label}
           </label>
         )}
         <div className="glass-panel" style={{
           display: "flex", alignItems: "center", flexShrink: 0,
-          borderRadius: "var(--r-md)", border: "1px solid var(--border)", overflow: "hidden",
-          padding: "2px 10px 2px 2px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
+          borderRadius: "var(--r-md)", border: "1.5px solid var(--border)", overflow: "hidden",
+          padding: "2px 10px 2px 2px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+          background: "var(--surface2)",
         }}>
           <input
             type="number"
@@ -182,12 +184,12 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
             aria-label={label + " input"}
             style={{
               width: 120, background: "transparent", border: "none", outline: "none",
-              textAlign: "right", fontSize: 16, fontWeight: 800, color: "var(--brand)",
+              textAlign: "right", fontSize: 15, fontWeight: 800, color: "var(--brand)",
               padding: "6px 4px 6px 10px", minWidth: 80,
               appearance: "none", MozAppearance: "textfield"
             }}
           />
-          {unitStr && <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text3)", marginLeft: 2, pointerEvents: "none", whiteSpace: "nowrap" }}>{unitStr}</span>}
+          {unitStr && <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text3)", marginLeft: 2, pointerEvents: "none", whiteSpace: "nowrap" }}>{unitStr}</span>}
         </div>
       </div>
       
@@ -209,9 +211,9 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
         aria-label={label}
       />
       
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, padding: "0 8px" }}>
-        <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(min) : min}</span>
-        <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(max) : max}</span>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, padding: "0 4px" }}>
+        <span style={{ fontSize: 11, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(min) : min}</span>
+        <span style={{ fontSize: 11, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(max) : max}</span>
       </div>
     </div>
   );
@@ -225,7 +227,6 @@ export function Sel({ label, id, value, onChange, opts }) {
     const saved = localStorage.getItem(`calc_input_${id}`);
     if (saved !== null && saved !== value) {
       isRestored.current = true;
-      // Ensure the saved value actually exists in the options
       if (opts.some(o => String(o.v) === saved)) {
         onChange(saved);
       }
@@ -233,7 +234,7 @@ export function Sel({ label, id, value, onChange, opts }) {
   }, [id, value, onChange, opts]);
 
   return (
-    <div style={{ marginBottom: 12 }}>
+    <div style={{ marginBottom: 20 }}>
       {label && <L t={label} id={id} />}
       <select
         id={id} value={value} onChange={e => {
@@ -242,7 +243,7 @@ export function Sel({ label, id, value, onChange, opts }) {
           onChange(val);
         }}
         aria-label={label} className="f-select"
-        style={{ height: 50, fontSize: 16, fontWeight: 600 }}
+        style={{ height: 52, fontSize: 15, fontWeight: 600, borderRadius: "var(--r-md)", padding: "0 14px", border: "1.5px solid var(--border)" }}
       >
         {opts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
       </select>
@@ -263,7 +264,7 @@ export function Tabs({ tabs, active, onChange }) {
           key={t} onClick={() => onChange(t)}
           aria-label={"Switch to " + t} aria-pressed={active === t}
           className={`f-tab ${active === t ? 'active' : ''}`}
-          style={{ flex: tabs.length > 3 ? "1 1 45%" : 1 }}
+          style={{ flex: tabs.length > 3 ? "1 1 45%" : 1, height: 38, fontSize: 13, fontWeight: 700 }}
         >
           {t}
         </button>
@@ -275,7 +276,7 @@ export function Tabs({ tabs, active, onChange }) {
 // ── Row helpers ────────────────────────────────────────────────────────
 export function Row2({ children }) {
   return (
-    <div className="sc-row2" style={{ gap: 12, marginBottom: 0 }}>
+    <div className="sc-row2" style={{ gap: 14, marginBottom: 0 }}>
       {children}
     </div>
   );
@@ -307,10 +308,39 @@ export function Presets({ items, onApply }) {
   );
 }
 
+// ── CalcInputCard ──────────────────────────────────────────────────────
+// Premium self-contained input card wrapper.
+// Wraps inputs in their own bordered card so labels are NEVER clipped
+// by the outer calc-card border-radius + overflow:hidden.
+export function CalcInputCard({ title, icon, children, accentColor = "var(--brand)" }) {
+  return (
+    <div style={{
+      background: "var(--surface)",
+      border: "1.5px solid var(--border)",
+      borderRadius: 16,
+      marginBottom: 20,
+      overflow: "hidden",
+    }}>
+      {(title || icon) && (
+        <div style={{
+          padding: "12px 20px",
+          borderBottom: "1px solid var(--border)",
+          background: "var(--surf2)",
+          display: "flex", alignItems: "center", gap: 8,
+        }}>
+          {icon && <span style={{ fontSize: 16 }}>{icon}</span>}
+          {title && <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--text3)", margin: 0 }}>{title}</p>}
+        </div>
+      )}
+      <div style={{ padding: "20px 24px 16px" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ── Input Section ──────────────────────────────────────────────────────
-// Groups related inputs with a gradient header
 export function InputSection({ title, icon, gradient, accentClass, children }) {
-  // Map legacy gradient colours -> CSS accent class for the left-border
   const gradToAccent: Record<string, string> = {
     "#4361ee": "accent-finance", "#3451c7": "accent-finance",
     "#059669": "accent-invest",  "#047857": "accent-invest",
@@ -362,15 +392,14 @@ export function Toggle({ label, id, checked, onChange, hint }) {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
-      {/* Native button with role="switch" — keyboard accessible via Tab + Space/Enter */}
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 16 }}>
       <button
         role="switch"
         aria-checked={checked}
         onClick={() => handleChange(!checked)}
         aria-label={label}
         style={{
-          width: 44, height: 24, borderRadius: 12, flexShrink: 0,
+          width: 46, height: 26, borderRadius: 13, flexShrink: 0,
           background: checked ? "var(--brand)" : "var(--border)",
           position: "relative", cursor: "pointer", transition: "background .2s",
           boxShadow: checked ? "0 0 0 3px rgba(67,97,238,.2)" : "none",
@@ -378,7 +407,7 @@ export function Toggle({ label, id, checked, onChange, hint }) {
         }}
       >
         <span style={{
-          position: "absolute", top: 3, left: checked ? 23 : 3,
+          position: "absolute", top: 4, left: checked ? 24 : 4,
           width: 18, height: 18, borderRadius: "50%",
           background: "#fff", transition: "left .2s",
           boxShadow: "0 1px 3px rgba(0,0,0,.25)"
@@ -389,7 +418,7 @@ export function Toggle({ label, id, checked, onChange, hint }) {
           onClick={() => handleChange(!checked)}>
           {label}
         </label>
-        {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2, lineHeight: 1.4 }}>{hint}</p>}
+        {hint && <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 3, lineHeight: 1.4 }}>{hint}</p>}
       </div>
     </div>
   );
@@ -454,7 +483,7 @@ export function Panel({ result, loading, label, shareParams }) {
       <ResultBox label={result.primary.label} value={result.primary.value} sub={result.primary.sub} />
       {result.stats?.length > 0 && <StatsGrid items={result.stats} />}
       {result.chart && (
-        <div style={{ marginTop: 14 }}>
+        <div style={{ marginTop: 16 }}>
           <CalcChart chartData={result.chart} />
         </div>
       )}
@@ -464,8 +493,8 @@ export function Panel({ result, loading, label, shareParams }) {
       )}
       
       {result.schedule?.length > 0 && (
-        <div style={{ marginTop: 14, background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", overflow: "hidden" }}>
-          <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ marginTop: 16, background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", overflow: "hidden" }}>
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h4 style={{ fontSize: 12, fontWeight: 800, color: "var(--text)", textTransform: "uppercase", letterSpacing: ".05em" }}>Amortization Schedule</h4>
           </div>
           <div style={{ maxHeight: 300, overflowY: "auto", overflowX: "auto" }}>
@@ -493,9 +522,8 @@ export function Panel({ result, loading, label, shareParams }) {
         </div>
       )}
 
-      {/* ── Steps ── */}
       {result.steps?.length > 0 && (
-        <div style={{ marginTop: 14, textAlign: "left" }}>
+        <div style={{ marginTop: 16, textAlign: "left" }}>
           <details style={{ background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", padding: "2px 16px" }}>
             <summary style={{ fontSize: 12, fontWeight: 800, color: "var(--brand)", textTransform: "uppercase", letterSpacing: ".05em", cursor: "pointer", padding: "10px 0", outline: "none", listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span>Step-by-Step Explanation</span>
@@ -534,7 +562,7 @@ export function Panel({ result, loading, label, shareParams }) {
 
       {/* ── History ── */}
       {currentHistory.length > 0 && (
-        <div style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 14, textAlign: "left" }}>
+        <div style={{ marginTop: 16, borderTop: "1px solid var(--border)", paddingTop: 14, textAlign: "left" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".05em", color: "var(--text3)", display: "flex", alignItems: "center", gap: 5 }}>
               🕐 Recent History

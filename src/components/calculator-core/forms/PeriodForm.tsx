@@ -91,10 +91,10 @@ function calcPeriod({ lastPeriodDate, cycleLength, periodDuration, prevCycles = 
 
 // ── Styles ────────────────────────────────────────────────────────────
 const S = {
-  label: { display: "block", fontSize: 11, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".07em", marginBottom: 6 },
-  input: { width: "100%", padding: "9px 12px", background: "var(--surface2)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 14, color: "var(--text)", fontFamily: "var(--font)", outline: "none", boxSizing: "border-box" },
-  field: { marginBottom: 16 },
-  card: (bg, border) => ({ background: bg, border: `1.5px solid ${border}`, borderRadius: 14, padding: "14px 16px", marginBottom: 12 }),
+  label: { display: "block", fontSize: 13, fontWeight: 700, color: "var(--text2)", marginBottom: 8, letterSpacing: ".01em", lineHeight: 1.4 },
+  input: { display: "block", width: "100%", height: 50, padding: "0 16px", background: "var(--surface2)", border: "1.5px solid var(--border)", borderRadius: 12, fontSize: 15, color: "var(--text)", fontFamily: "var(--font)", outline: "none", boxSizing: "border-box", fontWeight: 600 },
+  field: { marginBottom: 18 },
+  card: (bg, border) => ({ background: bg, border: `1.5px solid ${border}`, borderRadius: 14, padding: "14px 18px", marginBottom: 12 }),
   badge: (color, bg) => ({ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 12px", background: bg, color, borderRadius: 100, fontSize: 12, fontWeight: 700 }),
   sectionTitle: { fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".08em", color: "var(--text3)", marginBottom: 12, marginTop: 4 },
 };
@@ -166,47 +166,65 @@ export function PeriodForm() {
   ];
 
   return (
-    <div>
-      {/* Privacy Notice */}
-      <div style={{ ...S.card("#f0fdf4", "#bbf7d0"), display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-        <span aria-hidden="true" style={{ fontSize: 18 }}>🔒</span>
-        <span style={{ fontSize: 12, color: "#166534", fontWeight: 600 }}>100% Private — all data stays in your browser. Nothing is sent to any server.</span>
-      </div>
+    <div style={{ maxWidth: 680, margin: '0 auto', padding: '4px 0', fontFamily: 'var(--font)' }}>
 
-      {/* Inputs */}
-      <div style={S.field}>
-        <label style={S.label}>First Day of Last Period</label>
-        <input type="date" value={lastPeriod} max={today} onChange={e => setLastPeriod(e.target.value)} style={S.input} />
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-        <div>
-          <label style={S.label}>Cycle Length (days)</label>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <input type="range" min={15} max={50} value={cycleLen} onChange={e => setCycleLen(+e.target.value)}
-              style={{ flex: 1, accentColor: "var(--brand)" }} />
-            <span style={{ minWidth: 28, fontWeight: 800, color: "var(--brand)", fontSize: 16 }}>{cycleLen}</span>
+      {/* ─── INPUT CARD ─── */}
+      <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
+        {/* Card header */}
+        <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--border)', background: 'var(--surf2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 16 }}>🩸</span>
+            <p style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.09em', color: 'var(--text3)', margin: 0 }}>Your Cycle Details</p>
           </div>
-          <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Normal: 21–35 days</div>
+          <span style={{ fontSize: 11, color: '#166534', fontWeight: 700, background: '#f0fdf4', padding: '3px 10px', borderRadius: 100, border: '1px solid #bbf7d0' }}>🔒 Private</span>
         </div>
-        <div>
-          <label style={S.label}>Period Duration (days)</label>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <input type="range" min={1} max={10} value={periodDur} onChange={e => setPeriodDur(+e.target.value)}
-              style={{ flex: 1, accentColor: "#ef4444" }} />
-            <span style={{ minWidth: 28, fontWeight: 800, color: "#ef4444", fontSize: 16 }}>{periodDur}</span>
+
+        <div style={{ padding: '22px 28px 20px' }}>
+          {/* LMP */}
+          <div style={S.field}>
+            <label htmlFor="per-lmp" style={S.label}>First Day of Last Period</label>
+            <input id="per-lmp" type="date" value={lastPeriod} max={today}
+              onChange={e => setLastPeriod(e.target.value)} style={S.input}
+              onFocus={e => { e.currentTarget.style.borderColor = 'var(--brand)'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(67,97,238,.1)'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+            />
           </div>
-          <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Normal: 2–7 days</div>
+
+          {/* Sliders */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 18 }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <label style={S.label}>Cycle Length</label>
+                <span style={{ background: 'var(--brand)', color: '#fff', borderRadius: 8, padding: '2px 10px', fontSize: 13, fontWeight: 700 }}>{cycleLen}d</span>
+              </div>
+              <input type="range" min={15} max={50} value={cycleLen} onChange={e => setCycleLen(+e.target.value)}
+                style={{ width: '100%', accentColor: 'var(--brand)', display: 'block' }} />
+              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4, fontWeight: 600 }}>Normal: 21–35 days</div>
+            </div>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <label style={S.label}>Period Duration</label>
+                <span style={{ background: '#ef4444', color: '#fff', borderRadius: 8, padding: '2px 10px', fontSize: 13, fontWeight: 700 }}>{periodDur}d</span>
+              </div>
+              <input type="range" min={1} max={10} value={periodDur} onChange={e => setPeriodDur(+e.target.value)}
+                style={{ width: '100%', accentColor: '#ef4444', display: 'block' }} />
+              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4, fontWeight: 600 }}>Normal: 2–7 days</div>
+            </div>
+          </div>
+
+          {/* Previous cycles */}
+          <div style={S.field}>
+            <label htmlFor="per-prev" style={S.label}>Previous Cycle Lengths <span style={{ fontWeight: 500, color: 'var(--text3)', fontSize: 11 }}>(optional — improves accuracy)</span></label>
+            <input id="per-prev" type="text" value={prevInput} onChange={e => setPrevInput(e.target.value)}
+              placeholder="e.g. 28, 30, 27, 29" style={S.input}
+              onFocus={e => { e.currentTarget.style.borderColor = 'var(--brand)'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(67,97,238,.1)'; }}
+              onBlur={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+            />
+            <p style={{ fontSize: 11.5, color: 'var(--text3)', marginTop: 6 }}>Separate with commas. More cycles = higher prediction confidence.</p>
+          </div>
         </div>
       </div>
 
-      {/* Previous cycles for adaptive prediction */}
-      <div style={S.field}>
-        <label style={S.label}>Previous Cycle Lengths (optional — improves accuracy)</label>
-        <input type="text" value={prevInput} onChange={e => setPrevInput(e.target.value)}
-          placeholder="e.g. 28, 30, 27, 29" style={S.input} />
-        <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 4 }}>Separate with commas. More cycles = higher prediction confidence.</div>
-      </div>
 
       {/* Results */}
       {res && (

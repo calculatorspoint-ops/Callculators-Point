@@ -85,7 +85,7 @@ export function TemperatureForm(){
   return (
     <div>
       <N label="Celsius (°C)" id="tc" value={c} onChange={v=>{setC(v);fromC(v);}}/>
-      <N label="Fahrenheit (°F)" id="tf" value={f} onChange={v=>{setF(v);fromF(v);}}/>
+      <N label="Fahrenheit (°F)" id="tf" value={f} onChange={setF} onChange={v=>{setF(v);fromF(v);}}/>
       <N label="Kelvin (K)" id="tk" value={k} onChange={v=>{setK(v);fromK(v);}}/>
       <div style={{padding:"10px 14px",background:"var(--p50)",border:"1px solid var(--p100)",borderRadius:"var(--r-md)",fontSize:13,color:"var(--brand)"}}>
         💡 Type in any field — all others update instantly
@@ -164,101 +164,188 @@ export function AgeForm() {
       : `${yrs} yrs, ${mos} mo, ${days} days`;
 
     setRes({
-      primary: { label: "Your Exact Age", value: timeStr },
-      stats: [
-        { label: "Total Days",    value: totalDays.toLocaleString() },
-        { label: "Total Weeks",   value: totalWeeks.toLocaleString() },
-        { label: "Total Hours",   value: totalHours.toLocaleString() },
-        { label: "Total Minutes", value: totalMinutes.toLocaleString() },
-        ...(tob ? [{ label: "Total Seconds", value: totalSeconds.toLocaleString(), highlight: true }] : []),
-        { label: "Next Birthday", value: `In ${daysToNext} days` },
-        { label: "Zodiac Sign",   value: zodiac },
-      ],
-      insights: [
-        { type: "good", msg: `You have lived for ${totalDays.toLocaleString()} days. Your next birthday is in ${daysToNext} day${daysToNext !== 1 ? "s" : ""}! 🎂` },
-        tob && { type: "info", msg: `With exact birth time: ${totalHours.toLocaleString()} hours · ${totalMinutes.toLocaleString()} minutes · ${totalSeconds.toLocaleString()} seconds alive.` },
-        { type: "info", msg: `Zodiac sign: ${zodiac}` },
-      ].filter(Boolean),
-      breakdowns: [
-        { label: "Date of Birth",   value: birth.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }) },
-        ...(tob ? [{ label: "Time of Birth", value: tob }] : []),
-        { label: "Age",             value: timeStr, bold: true },
-        { label: "Total Days",      value: totalDays.toLocaleString() },
-        { label: "Total Weeks",     value: totalWeeks.toLocaleString() },
-        { label: "Total Hours",     value: totalHours.toLocaleString() },
-        ...(tob ? [{ label: "Total Seconds", value: totalSeconds.toLocaleString(), bold: true }] : []),
-        { label: "Next Birthday",   value: `In ${daysToNext} days` },
-        { label: "Zodiac Sign",     value: zodiac },
-      ]
+      yrs, mos, days, totalDays, totalWeeks, totalMonths, totalHours, totalMinutes, totalSeconds,
+      daysToNext, zodiac, birth, timeStr, secs, hrs, mins,
     });
   }, [dob, tob, targetDate, targetTime, tick]);
 
-  const inputBase = {
-    width: "100%", padding: "9px 12px", background: "var(--surface2)",
-    border: "1.5px solid var(--border)", borderRadius: "var(--r-md)",
-    fontSize: 14, color: "var(--text)", fontFamily: "var(--font)", outline: "none"
+  const accent = "#6366f1";
+  const inputStyle = {
+    display: "block", width: "100%", height: 50, padding: "0 14px",
+    background: "var(--surface2)", border: "1.5px solid var(--border)",
+    borderRadius: 12, fontSize: 15, color: "var(--text)",
+    fontFamily: "var(--font)", outline: "none", fontWeight: 600, boxSizing: "border-box",
+  };
+  const lbl = { display: "block", fontSize: 13, fontWeight: 700, color: "var(--text2)", marginBottom: 8 };
+
+  // Milestones
+  const milestones = res ? [
+    { days: 1000,  label: "1,000 Days",  done: res.totalDays >= 1000 },
+    { days: 5000,  label: "5,000 Days",  done: res.totalDays >= 5000 },
+    { days: 10000, label: "10,000 Days", done: res.totalDays >= 10000 },
+    { days: 18250, label: "50 Years",    done: res.totalDays >= 18250 },
+  ] : [];
+
+  const ZODIAC_EMOJI = {
+    Capricorn:"♑", Aquarius:"♒", Pisces:"♓", Aries:"♈", Taurus:"♉",
+    Gemini:"♊", Cancer:"♋", Leo:"♌", Virgo:"♍", Libra:"♎", Scorpio:"♏", Sagittarius:"♐"
   };
 
   return (
-    <div>
-      {/* Date of Birth */}
-      <div style={{ marginBottom: 14 }}>
-        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>
-          Date of Birth
-        </label>
-        <input type="date" value={dob} onChange={e => setDob(e.target.value)} style={inputBase} />
-      </div>
+    <div style={{ maxWidth: 680, margin: "0 auto", padding: "4px 0", fontFamily: "var(--font)" }}>
 
-      {/* Time toggle */}
-      <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: showTime ? 12 : 20, cursor: "pointer", fontSize: 13, fontWeight: 600, color: "var(--brand)" }}>
-        <input type="checkbox" checked={showTime} onChange={e => setShowTime(e.target.checked)}
-          style={{ accentColor: "var(--brand)", width: 15, height: 15 }} />
-        ⏱ Include time of birth (for exact age in seconds)
-      </label>
-
-      {showTime && (
-        <Row2>
-          <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>
-              Time of Birth
-            </label>
-            <input type="time" value={tob} onChange={e => setTob(e.target.value)} style={inputBase} />
-          </div>
-          <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>
-              Target Time (optional)
-            </label>
-            <input type="time" value={targetTime} onChange={e => setTargetTime(e.target.value)} style={inputBase} />
-          </div>
-        </Row2>
-      )}
-
-      {/* Target date */}
-      <div style={{ marginBottom: 20 }}>
-        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>
-          Age on Date <span style={{ fontWeight: 400, textTransform: "none", opacity: .7 }}>(optional — leave blank for live now)</span>
-        </label>
-        <input type="date" value={targetDate} onChange={e => setTargetDate(e.target.value)} style={inputBase}
-          placeholder="Leave blank for today" />
-      </div>
-
-      {tob && !targetDate && (
-        <div style={{ padding: "10px 14px", background: "var(--p50)", border: "1px solid var(--p100)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--brand)", marginBottom: 16 }}>
-          ⏱ Live — updating every second with exact seconds alive
+      {/* ─── INPUT CARD ─── */}
+      <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 16, overflow: "hidden", marginBottom: 20 }}>
+        <div style={{ padding: "12px 20px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 8, background: "var(--surf2, var(--surface2))" }}>
+          <span style={{ fontSize: 16 }}>🎂</span>
+          <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".09em", color: "var(--text3)", margin: 0 }}>Your Birthday Details</p>
+          {tob && !targetDate && (
+            <span style={{ marginLeft: "auto", fontSize: 11, color: accent, fontWeight: 700, background: `${accent}15`, padding: "2px 8px", borderRadius: 100, border: `1px solid ${accent}40` }}>⏱ Live</span>
+          )}
         </div>
-      )}
 
+        <div style={{ padding: "22px 28px 20px" }}>
+          {/* DOB */}
+          <div style={{ marginBottom: 18 }}>
+            <label htmlFor="age-dob" style={lbl}>Date of Birth</label>
+            <input id="age-dob" type="date" value={dob} onChange={e => setDob(e.target.value)} style={inputStyle}
+              onFocus={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 4px ${accent}18`; }}
+              onBlur={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+            />
+          </div>
+
+          {/* Time toggle */}
+          <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: showTime ? 16 : 18, cursor: "pointer", fontSize: 13, fontWeight: 600, color: accent }}>
+            <input type="checkbox" checked={showTime} onChange={e => setShowTime(e.target.checked)}
+              style={{ accentColor: accent, width: 15, height: 15 }} />
+            ⏱ Include exact time of birth (seconds-accurate)
+          </label>
+
+          {showTime && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
+              <div>
+                <label htmlFor="age-tob" style={lbl}>Time of Birth</label>
+                <input id="age-tob" type="time" value={tob} onChange={e => setTob(e.target.value)} style={inputStyle}
+                  onFocus={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 4px ${accent}18`; }}
+                  onBlur={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+                />
+              </div>
+              <div>
+                <label htmlFor="age-tt" style={lbl}>Target Time <span style={{ fontWeight: 400, color: "var(--text3)", fontSize: 11 }}>(optional)</span></label>
+                <input id="age-tt" type="time" value={targetTime} onChange={e => setTargetTime(e.target.value)} style={inputStyle}
+                  onFocus={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 4px ${accent}18`; }}
+                  onBlur={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Target date */}
+          <div>
+            <label htmlFor="age-td" style={lbl}>
+              Calculate Age On <span style={{ fontWeight: 500, color: "var(--text3)", fontSize: 11 }}>(optional — leave blank for today)</span>
+            </label>
+            <input id="age-td" type="date" value={targetDate} onChange={e => setTargetDate(e.target.value)} style={inputStyle}
+              onFocus={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.boxShadow = `0 0 0 4px ${accent}18`; }}
+              onBlur={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ─── RESULTS ─── */}
       {res && (
-        <>
-          <ResultBox label={res.primary.label} value={res.primary.value} />
-          <StatsGrid items={res.stats} />
-          <InsightBox insights={res.insights} />
-          <Breakdown rows={res.breakdowns} />
-        </>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+          {/* HERO */}
+          <div style={{ background: `linear-gradient(135deg,${accent}18,${accent}06)`, border: `2px solid ${accent}30`, borderRadius: 20, padding: "28px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: -50, left: "50%", transform: "translateX(-50%)", width: 220, height: 220, background: `radial-gradient(circle,${accent}20,transparent 70%)`, pointerEvents: "none" }} />
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: accent, marginBottom: 8 }}>🎂 Exact Age</p>
+              <p style={{ fontSize: "clamp(28px,7vw,52px)", fontWeight: 900, color: "var(--text)", lineHeight: 1.05, margin: "0 0 8px", letterSpacing: "-.02em" }}>
+                {res.yrs} <span style={{ fontSize: "0.45em", fontWeight: 700, color: "var(--text3)" }}>years</span>
+              </p>
+              <p style={{ fontSize: 15, color: "var(--text2)", fontWeight: 600, margin: "0 0 10px" }}>
+                {res.mos} months, {res.days} days{tob ? `, ${res.hrs}h ${res.mins}m ${res.secs}s` : ""}
+              </p>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "4px 14px", background: `${accent}20`, borderRadius: 100, border: `1px solid ${accent}40` }}>
+                <span>{ZODIAC_EMOJI[res.zodiac] || "⭐"}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: accent }}>{res.zodiac}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3-METRIC GRID */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
+            {[
+              { icon: "📅", label: "Total Days",   val: res.totalDays.toLocaleString() },
+              { icon: "📆", label: "Total Weeks",  val: res.totalWeeks.toLocaleString() },
+              { icon: "🗓️", label: "Total Months", val: res.totalMonths.toLocaleString() },
+            ].map(m => (
+              <div key={m.label} style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 14, padding: "16px 10px", textAlign: "center" }}>
+                <div style={{ fontSize: 20, marginBottom: 8 }}>{m.icon}</div>
+                <div style={{ fontSize: "clamp(13px,3vw,19px)", fontWeight: 900, color: "var(--text)", lineHeight: 1, wordBreak: "break-word" }}>{m.val}</div>
+                <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 6, fontWeight: 600 }}>{m.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* BIRTHDAY COUNTDOWN */}
+          <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 14, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 22 }}>🎉</span>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", margin: 0 }}>Next Birthday</p>
+                <p style={{ fontSize: 11, color: "var(--text3)", margin: "2px 0 0", fontWeight: 600 }}>Turning {res.yrs + 1}</p>
+              </div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <p style={{ fontSize: "clamp(18px,4vw,26px)", fontWeight: 900, color: accent, margin: 0, lineHeight: 1 }}>{res.daysToNext}</p>
+              <p style={{ fontSize: 11, color: "var(--text3)", margin: "2px 0 0", fontWeight: 600 }}>days away</p>
+            </div>
+          </div>
+
+          {/* MILESTONE TRACKER */}
+          <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ padding: "12px 20px", borderBottom: "1px solid var(--border)", background: "var(--surf2, var(--surface2))" }}>
+              <p style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", margin: 0 }}>🏆 Life Milestones</p>
+            </div>
+            {milestones.map((m, i) => (
+              <div key={m.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 20px", borderBottom: i < milestones.length - 1 ? "1px solid var(--border)" : "none", opacity: m.done ? 1 : 0.55 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: 16 }}>{m.done ? "✅" : "⬜"}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>{m.label}</span>
+                </div>
+                {m.done
+                  ? <span style={{ fontSize: 11, fontWeight: 700, color: "#059669", background: "rgba(5,150,105,.1)", padding: "2px 10px", borderRadius: 100 }}>Achieved!</span>
+                  : <span style={{ fontSize: 12, color: "var(--text3)", fontWeight: 600 }}>{(m.days - res.totalDays).toLocaleString()} days left</span>
+                }
+              </div>
+            ))}
+          </div>
+
+          {/* EXTRA STATS (hours/minutes/seconds) */}
+          {tob && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
+              {[
+                { icon: "⏰", label: "Total Hours",   val: res.totalHours.toLocaleString() },
+                { icon: "⏱", label: "Total Minutes", val: res.totalMinutes.toLocaleString() },
+                { icon: "💓", label: "Total Seconds", val: res.totalSeconds.toLocaleString() },
+              ].map(m => (
+                <div key={m.label} style={{ background: `${accent}08`, border: `1.5px solid ${accent}25`, borderRadius: 14, padding: "14px 10px", textAlign: "center" }}>
+                  <div style={{ fontSize: 18, marginBottom: 6 }}>{m.icon}</div>
+                  <div style={{ fontSize: "clamp(11px,2.5vw,15px)", fontWeight: 900, color: accent, lineHeight: 1, wordBreak: "break-word" }}>{m.val}</div>
+                  <div style={{ fontSize: 10, color: "var(--text3)", marginTop: 5, fontWeight: 600 }}>{m.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
 }
+
 
 // ── Date Difference ──────────────────────────────────────────────────
 export function DateDiffForm(){

@@ -35,7 +35,6 @@ export function EMIForm() {
   const setTenureSafe    = (v) => setTenure(Math.max(1, Math.min(360, Math.round(+v) || 1)));
 
   useEffect(() => {
-    // Validate all inputs before computing — prevents negative EMI / NaN display
     const safeAmount = Math.max(10000, +loanAmount || 0);
     const safeRate   = Math.max(0.01, +rate || 0);
     const safeTenure = Math.max(1, Math.round(+tenure) || 1);
@@ -44,12 +43,11 @@ export function EMIForm() {
     const r = safeRate / 100 / 12;
     const n = safeTenure;
     const emi = r > 0 ? (safeAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : safeAmount / n;
-    if (!isFinite(emi) || emi <= 0) return; // safety: never display garbage
-    const totalPayable    = Math.max(safeAmount, emi * n);
-    const totalInterest   = Math.max(0, totalPayable - safeAmount);
+    if (!isFinite(emi) || emi <= 0) return;
+    const totalPayable  = Math.max(safeAmount, emi * n);
+    const totalInterest = Math.max(0, totalPayable - safeAmount);
     const ep = Math.max(0, +extraPayment || 0);
 
-    // With extra payment
     let bal = safeAmount, mo = 0, intWithExtra = 0;
     if (ep > 0) {
       while (bal > 0 && mo < n * 2) {
@@ -59,7 +57,6 @@ export function EMIForm() {
     }
     const interestSaved = ep > 0 ? Math.max(0, totalInterest - intWithExtra) : 0;
 
-    // Amortization (first year)
     const amTable = [];
     let b = safeAmount;
     for (let i = 1; i <= Math.min(n, 12); i++) {
@@ -76,8 +73,8 @@ export function EMIForm() {
         { label: "Total Interest", value: fm(Math.round(totalInterest)), warn: true },
         { label: "Total Payable",  value: fm(Math.round(totalPayable)) },
         { label: "Tenure",         value: (safeTenure / 12).toFixed(1) + " years" },
-        ep > 0 ? { label: "Interest Saved",            value: fm(Math.round(interestSaved)), highlight: true } : null,
-        ep > 0 ? { label: "Payoff Date (with extra)",  value: payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }) } : null,
+        ep > 0 ? { label: "Interest Saved",           value: fm(Math.round(interestSaved)), highlight: true } : null,
+        ep > 0 ? { label: "Payoff Date (with extra)", value: payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }) } : null,
       ].filter(Boolean),
       [{ type: totalInterest > safeAmount ? "warn" : "tip", msg: "Total interest (" + fm(Math.round(totalInterest)) + ") is " + (totalInterest / safeAmount * 100).toFixed(0) + "% of your loan amount." + (ep > 0 ? " Extra payment of " + fm(ep) + "/mo saves " + fm(Math.round(interestSaved)) + "!" : " Consider making extra payments to reduce this.") }],
       { type: "donut", data: [{ name: "Principal", value: safeAmount }, { name: "Interest", value: Math.round(totalInterest) }], keys: ["value"] },
@@ -85,31 +82,148 @@ export function EMIForm() {
     ));
   }, [loanAmount, rate, tenure, extraPayment, mode]);
 
-  const inputs = (
-    <>
-      <Presets items={[
-        { label: "Home Loan 20yr", v: { a: 3000000, r: 8.5, t: 240, ep: "0" } },
-        { label: "Car Loan 5yr",   v: { a: 800000,  r: 9.5, t: 60,  ep: "0" } },
-        { label: "Personal 3yr",   v: { a: 200000,  r: 14,  t: 36,  ep: "0" } },
-      ]} onApply={pr => { setLoanAmountSafe(pr.v.a); setRateSafe(pr.v.r); setTenureSafe(pr.v.t); setExtraPayment(pr.v.ep); }} />
+  // ── derived display values ──────────────────────────────────────
+  const safeAmount  = Math.max(10000, +loanAmount || 0);
+  const safeRate    = Math.max(0.01,  +rate || 0);
+  const safeTenure  = Math.max(1, Math.round(+tenure) || 1);
+  const r0          = safeRate / 100 / 12;
+  const emiDisp     = r0 > 0 ? (safeAmount * r0 * Math.pow(1 + r0, safeTenure)) / (Math.pow(1 + r0, safeTenure) - 1) : safeAmount / safeTenure;
+  const totalPayDisp   = isFinite(emiDisp) ? Math.max(safeAmount, emiDisp * safeTenure) : safeAmount;
+  const totalIntDisp   = Math.max(0, totalPayDisp - safeAmount);
+  const interestPct    = totalPayDisp > 0 ? Math.round((totalIntDisp / totalPayDisp) * 100) : 0;
 
-      <div className="calc-inputs-grid">
-        <InputSection title="Loan Details" icon="🏦" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
-          <Sl label="Loan Amount" id="emi_a" min={10000} max={20000000} step={10000} value={loanAmount} onChange={setLoanAmountSafe} fmt={v => fmSlider(v)} />
-          <Sl label="Interest Rate (% p.a.)" id="emi_r" min={0.01} max={30} step={0.05} value={rate} onChange={setRateSafe} fmt={v => v + "%"} />
-          <Sl label="Tenure (months)" id="emi_t" min={1} max={360} step={1} value={tenure} onChange={setTenureSafe} fmt={v => v + " mo (" + (v / 12).toFixed(1) + " yr)"} />
-        </InputSection>
-        <InputSection title="Advanced Options" icon="⚡" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
-          <N label="Extra Monthly Payment" id="emi_ep" value={extraPayment} onChange={setExtraPayment} unit={sym} placeholder="0" hint="Additional payment above your regular EMI" />
-          <N label="Annual Step-Up %" id="emi_su" value={stepUp} onChange={setStepUp} unit="%" placeholder="0" hint="Increase EMI by this % each year" />
-        </InputSection>
-      </div>
-    </>
-  );
+  // amortization rows (first 12) for table
+  const amRows = [];
+  let bDisp = safeAmount;
+  for (let i = 1; i <= Math.min(safeTenure, 12); i++) {
+    const intAm = bDisp * r0;
+    const prinAm = (isFinite(emiDisp) ? emiDisp : 0) - intAm;
+    bDisp -= prinAm;
+    amRows.push({ month: i, emi: isFinite(emiDisp) ? Math.round(emiDisp) : 0, principal: Math.round(Math.max(0, prinAm)), interest: Math.round(Math.max(0, intAm)), balance: Math.max(0, Math.round(bDisp)) });
+  }
+
+  const accent = '#4361ee';
+
   return (
-    <>
-      <CalcLayout inputs={inputs} result={res} label="EMI" />
-    </>
+    <div style={{maxWidth:680, margin:'0 auto', padding:'4px 0', fontFamily:'var(--font)'}}>
+
+      {/* INPUT CARD */}
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🏦 Loan Details
+        </p>
+
+        <Presets items={[
+          { label: "Home Loan 20yr", v: { a: 3000000, r: 8.5, t: 240, ep: "0" } },
+          { label: "Car Loan 5yr",   v: { a: 800000,  r: 9.5, t: 60,  ep: "0" } },
+          { label: "Personal 3yr",   v: { a: 200000,  r: 14,  t: 36,  ep: "0" } },
+        ]} onApply={pr => { setLoanAmountSafe(pr.v.a); setRateSafe(pr.v.r); setTenureSafe(pr.v.t); setExtraPayment(pr.v.ep); }} />
+
+        <Sl label="Loan Amount" id="emi_a" min={10000} max={20000000} step={10000} value={loanAmount} onChange={setLoanAmountSafe} fmt={v => fmSlider(v)} />
+        <Sl label="Interest Rate (% p.a.)" id="emi_r" min={0.01} max={30} step={0.05} value={rate} onChange={setRateSafe} fmt={v => v + "%"} />
+        <Sl label="Tenure (months)" id="emi_t" min={1} max={360} step={1} value={tenure} onChange={setTenureSafe} fmt={v => v + " mo (" + (v / 12).toFixed(1) + " yr)"} />
+
+        <div style={{marginTop:16, paddingTop:16, borderTop:'1px solid var(--border)'}}>
+          <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 14px'}}>⚡ Advanced Options</p>
+          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
+            <div>
+              <label htmlFor="emi_ep" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:6}}>Extra Monthly Payment</label>
+              <N label="" id="emi_ep" value={extraPayment} onChange={setExtraPayment} unit={sym} placeholder="0" hint="Additional payment above EMI" />
+            </div>
+            <div>
+              <label htmlFor="emi_su" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:6}}>Annual Step-Up %</label>
+              <N label="" id="emi_su" value={stepUp} onChange={setStepUp} unit="%" placeholder="0" hint="Increase EMI % each year" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* RESULT SECTION */}
+      {res && (
+        <div style={{display:'flex', flexDirection:'column', gap:16}}>
+
+          {/* HERO RESULT */}
+          <div style={{background:`linear-gradient(135deg,${accent}18,${accent}06)`, border:`2px solid ${accent}30`, borderRadius:20, padding:'28px 24px', textAlign:'center', position:'relative', overflow:'hidden'}}>
+            <div style={{position:'absolute', top:-50, left:'50%', transform:'translateX(-50%)', width:220, height:220, background:`radial-gradient(circle,${accent}20,transparent 70%)`, pointerEvents:'none'}} />
+            <div style={{position:'relative', zIndex:1}}>
+              <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.1em', color:accent, marginBottom:8}}>💳 MONTHLY EMI</p>
+              <p style={{fontSize:'clamp(26px,6vw,44px)', fontWeight:900, color:'var(--text)', lineHeight:1.1, margin:0}}>
+                {isFinite(emiDisp) && emiDisp > 0 ? fm(Math.round(emiDisp)) : '—'}
+              </p>
+            </div>
+          </div>
+
+          {/* 3-METRIC GRID */}
+          <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
+            {[
+              { icon:'💰', label:'Total Payment',    val: fm(Math.round(totalPayDisp)) },
+              { icon:'📈', label:'Total Interest',   val: fm(Math.round(totalIntDisp)) },
+              { icon:'🏦', label:'Principal Amount', val: fm(safeAmount) },
+            ].map(m => (
+              <div key={m.label} style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'16px 10px', textAlign:'center'}}>
+                <div style={{fontSize:22, marginBottom:8}}>{m.icon}</div>
+                <div style={{fontSize:'clamp(14px,3vw,20px)', fontWeight:900, color:'var(--text)', lineHeight:1}}>{m.val}</div>
+                <div style={{fontSize:11, color:'var(--text3)', marginTop:6, fontWeight:600}}>{m.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* PROGRESS BAR — Interest vs Principal */}
+          <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'18px 22px'}}>
+            <div style={{display:'flex', justifyContent:'space-between', marginBottom:10}}>
+              <span style={{fontSize:13, fontWeight:700, color:'var(--text2)'}}>Interest vs Principal</span>
+              <span style={{fontSize:13, fontWeight:800, color:accent}}>{interestPct}% interest</span>
+            </div>
+            <div style={{height:10, background:'var(--surf2)', borderRadius:100, overflow:'hidden'}}>
+              <div style={{height:'100%', width:`${interestPct}%`, background:`linear-gradient(90deg,${accent}88,${accent})`, borderRadius:100, transition:'width .6s'}} />
+            </div>
+            <div style={{display:'flex', justifyContent:'space-between', marginTop:8}}>
+              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Principal {100 - interestPct}%</span>
+              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Interest {interestPct}%</span>
+            </div>
+          </div>
+
+          {/* AMORTIZATION TABLE (first 12 months) */}
+          {amRows.length > 0 && (
+            <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, overflow:'hidden'}}>
+              <div style={{padding:'14px 20px', borderBottom:'1px solid var(--border)', background:'var(--surf2)'}}>
+                <p style={{fontSize:13, fontWeight:800, color:'var(--text)', margin:0}}>📋 Amortization Schedule (First 12 Months)</p>
+              </div>
+              {/* header */}
+              <div style={{display:'grid', gridTemplateColumns:'60px 1fr 1fr 1fr 1fr', gap:0, padding:'8px 20px', background:'var(--surf2)', borderBottom:'1px solid var(--border)'}}>
+                {['Mo', 'EMI', 'Principal', 'Interest', 'Balance'].map(h => (
+                  <span key={h} style={{fontSize:11, fontWeight:800, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'.06em'}}>{h}</span>
+                ))}
+              </div>
+              {amRows.map((row, i) => (
+                <div key={i} style={{display:'grid', gridTemplateColumns:'60px 1fr 1fr 1fr 1fr', gap:0, padding:'10px 20px', borderBottom: i < amRows.length - 1 ? '1px solid var(--border)' : 'none', background: i % 2 === 0 ? 'transparent' : 'var(--surf2)'}}>
+                  <span style={{fontSize:12, color:'var(--text3)', fontWeight:700}}>{row.month}</span>
+                  <span style={{fontSize:12, color:'var(--text)', fontWeight:600}}>{fm(row.emi)}</span>
+                  <span style={{fontSize:12, color:'#059669', fontWeight:700}}>{fm(row.principal)}</span>
+                  <span style={{fontSize:12, color:accent, fontWeight:600}}>{fm(row.interest)}</span>
+                  <span style={{fontSize:12, color:'var(--text2)', fontWeight:600}}>{fm(row.balance)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* INSIGHTS */}
+          {res.insights?.filter(Boolean).map((ins, i) => (
+            <div key={i} style={{display:'flex', gap:12, padding:'12px 16px', borderRadius:12,
+              background: ins.type === 'warn' ? 'rgba(239,68,68,.08)' : `${accent}0f`,
+              border: `1px solid ${ins.type === 'warn' ? 'rgba(239,68,68,.25)' : `${accent}30`}`}}>
+              <span>{ins.type === 'warn' ? '⚠️' : 'ℹ️'}</span>
+              <p style={{fontSize:13, color:'var(--text2)', margin:0, lineHeight:1.6}}>{ins.msg}</p>
+            </div>
+          ))}
+
+          {/* DISCLAIMER */}
+          <p style={{fontSize:11.5, color:'var(--text3)', lineHeight:1.7, padding:'12px 16px', background:'var(--surf2)', borderRadius:12, border:'1px solid var(--border)', margin:0}}>
+            🏦 <strong>Disclaimer:</strong> EMI figures are indicative only. Actual repayment amounts may vary based on bank policies, processing fees, and GST charges. Please consult your lender for exact figures.
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -244,7 +358,6 @@ export function SIPForm() {
     const totalInvested = sipAmount * n;
     const estReturns = futureValue - totalInvested;
 
-    // Step-up SIP
     const su = +stepUpRate || 0;
     let stepUpFV = 0, yearSip = sipAmount;
     for (let y = 0; y < years; y++) {
@@ -276,38 +389,134 @@ export function SIPForm() {
     ));
   }, [sipAmount, rate, years, stepUpRate, mode, targetAmount]);
 
-  const inputs = (
-    <>
-      <Tabs tabs={["SIP", "Reverse SIP"]} active={mode} onChange={setMode} />
-      <Presets items={[
-        { label: "Crorepati 20yr", v: { s: 15000, r: 12, y: 20, su: "10" } },
-        { label: "Conservative 10yr", v: { s: 5000, r: 8, y: 10, su: "0" } },
-        { label: "Aggressive 25yr", v: { s: 20000, r: 15, y: 25, su: "15" } },
-      ]} onApply={pr => { setSipAmount(pr.v.s); setRate(pr.v.r); setYears(pr.v.y); setStepUpRate(pr.v.su); setMode("SIP"); }} />
+  // ── derived display values ──────────────────────────────────────
+  const r0           = rate / 100 / 12;
+  const n0           = years * 12;
+  const fvDisp       = mode !== 'Reverse' ? sipAmount * ((Math.pow(1 + r0, n0) - 1) / r0) * (1 + r0) : 0;
+  const investedDisp = mode !== 'Reverse' ? sipAmount * n0 : 0;
+  const returnsDisp  = Math.max(0, fvDisp - investedDisp);
+  const wealthGainPct = investedDisp > 0 ? ((returnsDisp / investedDisp) * 100).toFixed(1) : '0';
+  const investedPct   = fvDisp > 0 ? Math.round((investedDisp / fvDisp) * 100) : 0;
 
-      <div className="calc-inputs-grid">
-        <InputSection title={mode === "SIP" ? "SIP Parameters" : "Target Parameters"} icon="💹" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
-          {mode === "Reverse" ? (
-            <N label="Target Maturity Amount" id="sip_ta" value={targetAmount} onChange={setTargetAmount} unit={sym} placeholder="10000000" hint="How much you want to accumulate" />
-          ) : (
-            <Sl label="Monthly SIP Amount" id="sip_s" min={500} max={200000} step={500} value={sipAmount} onChange={setSipAmount} fmt={v => fmSlider(v)} />
-          )}
-          <Sl label="Expected Return (% p.a.)" id="sip_r" min={4} max={30} step={0.5} value={rate} onChange={setRate} fmt={v => v + "%"} />
-          <Sl label="Investment Duration (Years)" id="sip_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
-        </InputSection>
-        <InputSection title="Step-Up SIP" icon="📶" gradient="linear-gradient(135deg,#059669,#047857)">
-          <N label="Annual Step-Up Rate (%)" id="sip_su" value={stepUpRate} onChange={setStepUpRate} unit="%" placeholder="0" hint="Increase SIP by this % each year (e.g. annual appraisal)" />
-        </InputSection>
-      </div>
-    </>
-  );
+  const accent = '#059669';
+
   return (
-    <>
-      <CalcLayout inputs={inputs} result={res} label="SIP" />
+    <div style={{maxWidth:680, margin:'0 auto', padding:'4px 0', fontFamily:'var(--font)'}}>
+
+      {/* INPUT CARD */}
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          💹 SIP Investment Details
+        </p>
+
+        <Tabs tabs={["SIP", "Reverse SIP"]} active={mode} onChange={setMode} />
+
+        <div style={{marginTop:14}}>
+          <Presets items={[
+            { label: "Crorepati 20yr",    v: { s: 15000, r: 12, y: 20, su: "10" } },
+            { label: "Conservative 10yr", v: { s: 5000,  r: 8,  y: 10, su: "0"  } },
+            { label: "Aggressive 25yr",   v: { s: 20000, r: 15, y: 25, su: "15" } },
+          ]} onApply={pr => { setSipAmount(pr.v.s); setRate(pr.v.r); setYears(pr.v.y); setStepUpRate(pr.v.su); setMode("SIP"); }} />
+        </div>
+
+        {mode === "Reverse" ? (
+          <div style={{marginBottom:18}}>
+            <label htmlFor="sip_ta" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:8}}>Target Maturity Amount</label>
+            <N label="" id="sip_ta" value={targetAmount} onChange={setTargetAmount} unit={sym} placeholder="10000000" hint="How much you want to accumulate" />
+          </div>
+        ) : (
+          <Sl label="Monthly SIP Amount" id="sip_s" min={500} max={200000} step={500} value={sipAmount} onChange={setSipAmount} fmt={v => fmSlider(v)} />
+        )}
+        <Sl label="Expected Return (% p.a.)" id="sip_r" min={4} max={30} step={0.5} value={rate} onChange={setRate} fmt={v => v + "%"} />
+        <Sl label="Investment Duration (Years)" id="sip_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
+
+        <div style={{marginTop:16, paddingTop:16, borderTop:'1px solid var(--border)'}}>
+          <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 10px'}}>📶 Step-Up SIP</p>
+          <label htmlFor="sip_su" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:6}}>Annual Step-Up Rate (%)</label>
+          <N label="" id="sip_su" value={stepUpRate} onChange={setStepUpRate} unit="%" placeholder="0" hint="Increase SIP by this % each year (e.g. annual appraisal)" />
+        </div>
+      </div>
+
+      {/* RESULT SECTION */}
+      {res && mode !== 'Reverse' && (
+        <div style={{display:'flex', flexDirection:'column', gap:16}}>
+
+          {/* HERO RESULT */}
+          <div style={{background:`linear-gradient(135deg,${accent}18,${accent}06)`, border:`2px solid ${accent}30`, borderRadius:20, padding:'28px 24px', textAlign:'center', position:'relative', overflow:'hidden'}}>
+            <div style={{position:'absolute', top:-50, left:'50%', transform:'translateX(-50%)', width:220, height:220, background:`radial-gradient(circle,${accent}20,transparent 70%)`, pointerEvents:'none'}} />
+            <div style={{position:'relative', zIndex:1}}>
+              <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.1em', color:accent, marginBottom:8}}>🌱 MATURITY AMOUNT</p>
+              <p style={{fontSize:'clamp(26px,6vw,44px)', fontWeight:900, color:'var(--text)', lineHeight:1.1, margin:0}}>
+                {isFinite(fvDisp) && fvDisp > 0 ? fm(Math.round(fvDisp)) : '—'}
+              </p>
+            </div>
+          </div>
+
+          {/* 3-METRIC GRID */}
+          <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
+            {[
+              { icon:'💰', label:'Invested Amount',  val: fm(investedDisp) },
+              { icon:'📈', label:'Est. Returns',      val: fm(Math.round(returnsDisp)) },
+              { icon:'🚀', label:'Wealth Gained',     val: wealthGainPct + '%' },
+            ].map(m => (
+              <div key={m.label} style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'16px 10px', textAlign:'center'}}>
+                <div style={{fontSize:22, marginBottom:8}}>{m.icon}</div>
+                <div style={{fontSize:'clamp(14px,3vw,20px)', fontWeight:900, color:'var(--text)', lineHeight:1}}>{m.val}</div>
+                <div style={{fontSize:11, color:'var(--text3)', marginTop:6, fontWeight:600}}>{m.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* PROGRESS BAR — Invested vs Returns */}
+          <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'18px 22px'}}>
+            <div style={{display:'flex', justifyContent:'space-between', marginBottom:10}}>
+              <span style={{fontSize:13, fontWeight:700, color:'var(--text2)'}}>Invested vs Returns</span>
+              <span style={{fontSize:13, fontWeight:800, color:accent}}>{100 - investedPct}% returns</span>
+            </div>
+            <div style={{height:10, background:'var(--surf2)', borderRadius:100, overflow:'hidden'}}>
+              <div style={{height:'100%', width:`${investedPct}%`, background:`linear-gradient(90deg,${accent}55,${accent}88)`, borderRadius:100, transition:'width .6s'}} />
+            </div>
+            <div style={{display:'flex', justifyContent:'space-between', marginTop:8}}>
+              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Invested {investedPct}%</span>
+              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Returns {100 - investedPct}%</span>
+            </div>
+          </div>
+
+          {/* INSIGHTS */}
+          {res.insights?.filter(Boolean).map((ins, i) => (
+            <div key={i} style={{display:'flex', gap:12, padding:'12px 16px', borderRadius:12,
+              background:`${accent}0d`,
+              border:`1px solid ${accent}30`}}>
+              <span>✅</span>
+              <p style={{fontSize:13, color:'var(--text2)', margin:0, lineHeight:1.6}}>{ins.msg}</p>
+            </div>
+          ))}
+
+          {/* DISCLAIMER */}
+          <p style={{fontSize:11.5, color:'var(--text3)', lineHeight:1.7, padding:'12px 16px', background:'var(--surf2)', borderRadius:12, border:'1px solid var(--border)', margin:0}}>
+            📊 <strong>Disclaimer:</strong> SIP returns are subject to market risks. Past performance does not guarantee future results. Please read all scheme related documents carefully before investing.
+          </p>
+        </div>
+      )}
+
+      {/* REVERSE SIP result fallback — still uses Panel */}
+      {res && mode === 'Reverse' && (
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px'}}>
+          <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>🎯 Required Monthly SIP</p>
+          <p style={{fontSize:'clamp(28px,6vw,44px)', fontWeight:900, color:accent, margin:'0 0 16px'}}>{res.primary}</p>
+          {res.rows?.map((row, i) => (
+            <div key={i} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid var(--border)'}}>
+              <span style={{fontSize:13, color:'var(--text3)', fontWeight:600}}>{row.label}</span>
+              <span style={{fontSize:13, color:'var(--text)', fontWeight:700}}>{row.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <SEOSection title="SIP — Systematic Investment Plan">
         <p>SIP investing uses Rupee Cost Averaging — you buy more units when prices fall and fewer when prices rise, reducing average cost over time. Consistency beats timing. Starting a SIP of ₹10,000/month at 25 vs. 35 years of age can mean the difference of ₹3-4 crore in final corpus.</p>
       </SEOSection>
-    </>
+    </div>
   );
 }
 

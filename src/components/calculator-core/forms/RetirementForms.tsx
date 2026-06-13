@@ -74,35 +74,128 @@ export function RetirementPlanForm() {
     ));
   }, [currentAge, retireAge, currentSavings, returnRate, inflationRate, monthlyExpenses, withdrawRate]);
 
-  const inputs = (
-    <>
-      <Presets items={[
-        { label: "Early Retire 45", v: { ca: 28, ra: 45, cs: 1000000, ret: 14, inf: 6, me: 80000, wr: 4 } },
-        { label: "Standard 60", v: { ca: 30, ra: 60, cs: 500000, ret: 12, inf: 6, me: 50000, wr: 4 } },
-        { label: "Conservative", v: { ca: 35, ra: 60, cs: 2000000, ret: 10, inf: 6, me: 60000, wr: 3.5 } },
-      ]} onApply={pr => { setCurrentAge(pr.v.ca); setRetireAge(pr.v.ra); setCurrentSavings(pr.v.cs); setReturnRate(pr.v.ret); setInflationRate(pr.v.inf); setMonthlyExpenses(pr.v.me); setWithdrawRate(pr.v.wr); }} />
-      <div className="calc-inputs-grid">
-        <InputSection title="Current Status" icon="👤" gradient="linear-gradient(135deg,#d97706,#b45309)">
+  const accent = "#059669";
+  const yearsToRetire = retireAge - currentAge;
+  const agePct = yearsToRetire > 0 ? Math.round((currentAge / retireAge) * 100) : 0;
+  const projectedFromSavings = currentSavings * Math.pow(1 + returnRate / 100, Math.max(0, yearsToRetire));
+  const investmentGrowth = projectedFromSavings - currentSavings;
+
+  return (
+    <div style={{maxWidth:680, margin:'0 auto', padding:'4px 0', fontFamily:'var(--font)'}}>
+
+      {/* INPUT CARD */}
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🌿 Your Retirement Details
+        </p>
+
+        <Presets items={[
+          { label: "Early Retire 45", v: { ca: 28, ra: 45, cs: 1000000, ret: 14, inf: 6, me: 80000, wr: 4 } },
+          { label: "Standard 60", v: { ca: 30, ra: 60, cs: 500000, ret: 12, inf: 6, me: 50000, wr: 4 } },
+          { label: "Conservative", v: { ca: 35, ra: 60, cs: 2000000, ret: 10, inf: 6, me: 60000, wr: 3.5 } },
+        ]} onApply={pr => { setCurrentAge(pr.v.ca); setRetireAge(pr.v.ra); setCurrentSavings(pr.v.cs); setReturnRate(pr.v.ret); setInflationRate(pr.v.inf); setMonthlyExpenses(pr.v.me); setWithdrawRate(pr.v.wr); }} />
+
+        <div style={{marginBottom:6}}>
+          <p style={{fontSize:11, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'.06em', margin:'0 0 12px'}}>👤 Current Status</p>
           <Sl label="Current Age" id="rp_ca" min={20} max={55} value={currentAge} onChange={setCurrentAge} fmt={v => v + " years"} />
           <Sl label="Retirement Age" id="rp_ra" min={40} max={70} value={retireAge} onChange={setRetireAge} fmt={v => v + " years"} />
           <Sl label="Current Savings / Investments" id="rp_cs" min={0} max={50000000} step={50000} value={currentSavings} onChange={setCurrentSavings} fmt={v => fmSlider(v)} />
-        </InputSection>
-        <InputSection title="Growth & Needs" icon="📈" gradient="linear-gradient(135deg,#059669,#047857)">
+        </div>
+
+        <div style={{marginTop:16}}>
+          <p style={{fontSize:11, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'.06em', margin:'0 0 12px'}}>📈 Growth & Needs</p>
           <Sl label="Expected Return (% p.a.)" id="rp_ret" min={6} max={20} step={0.5} value={returnRate} onChange={setReturnRate} fmt={v => v + "%"} />
           <Sl label="Expected Inflation (% p.a.)" id="rp_inf" min={3} max={10} step={0.5} value={inflationRate} onChange={setInflationRate} fmt={v => v + "%"} />
           <Sl label="Monthly Expenses Needed (today's value)" id="rp_me" min={10000} max={500000} step={5000} value={monthlyExpenses} onChange={setMonthlyExpenses} fmt={v => fmSlider(v)} />
           <Sl label="Withdrawal Rate (%)" id="rp_wr" min={2} max={6} step={0.5} value={withdrawRate} onChange={setWithdrawRate} fmt={v => v + "%"} />
-        </InputSection>
+        </div>
       </div>
-    </>
-  );
-  return (
-    <>
-      <CalcLayout inputs={inputs} result={res} label="Retirement Plan" />
+
+      {/* RESULT SECTION */}
+      {res && (
+        <div style={{display:'flex', flexDirection:'column', gap:16}}>
+
+          {/* HERO CARD */}
+          <div style={{background:`linear-gradient(135deg,${accent}18,${accent}06)`, border:`2px solid ${accent}30`, borderRadius:20, padding:'28px 24px', textAlign:'center', position:'relative', overflow:'hidden'}}>
+            <div style={{position:'absolute',top:-50,left:'50%',transform:'translateX(-50%)',width:220,height:220,background:`radial-gradient(circle,${accent}20,transparent 70%)`,pointerEvents:'none'}}/>
+            <div style={{position:'relative',zIndex:1}}>
+              <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:accent,marginBottom:8}}>
+                🏦 Retirement Corpus Needed
+              </p>
+              <p style={{fontSize:'clamp(26px,6vw,44px)',fontWeight:900,color:'var(--text)',lineHeight:1.1,margin:'0 0 6px'}}>
+                {res.primary.value}
+              </p>
+              <p style={{fontSize:12,color:'var(--text3)',margin:0,fontWeight:600}}>
+                Target nest egg at age {retireAge}
+              </p>
+            </div>
+          </div>
+
+          {/* METRICS GRID */}
+          <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
+            {[
+              {icon:'💰', label:'Current Savings', val: fmSlider(currentSavings)},
+              {icon:'📈', label:'Projected Growth', val: fmSlider(Math.round(Math.max(0, investmentGrowth)))},
+              {icon:'⏳', label:'Years to Retire', val: Math.max(0, yearsToRetire) + ' yrs'},
+            ].map(m => (
+              <div key={m.label} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'16px 10px',textAlign:'center'}}>
+                <div style={{fontSize:22, marginBottom:8}}>{m.icon}</div>
+                <div style={{fontSize:'clamp(14px,3vw,20px)',fontWeight:900,color:'var(--text)',lineHeight:1,wordBreak:'break-word'}}>{m.val}</div>
+                <div style={{fontSize:11,color:'var(--text3)',marginTop:6,fontWeight:600}}>{m.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* PROGRESS BAR */}
+          <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'18px 22px'}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:10}}>
+              <span style={{fontSize:13,fontWeight:700,color:'var(--text2)'}}>🗓️ Retirement Journey</span>
+              <span style={{fontSize:13,fontWeight:800,color:accent}}>Age {currentAge} → {retireAge}</span>
+            </div>
+            <div style={{height:10,background:'var(--surf2, var(--surface))',borderRadius:100,overflow:'hidden',border:'1px solid var(--border)'}}>
+              <div style={{height:'100%',width:`${Math.min(100,agePct)}%`,background:`linear-gradient(90deg,${accent}88,${accent})`,borderRadius:100,transition:'width .6s'}}/>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',marginTop:6}}>
+              <span style={{fontSize:11,color:'var(--text3)',fontWeight:600}}>Born (approx)</span>
+              <span style={{fontSize:11,color:accent,fontWeight:700}}>{Math.max(0,yearsToRetire)} years remaining</span>
+              <span style={{fontSize:11,color:'var(--text3)',fontWeight:600}}>Retirement</span>
+            </div>
+          </div>
+
+          {/* BREAKDOWN TABLE */}
+          <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,overflow:'hidden'}}>
+            <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',background:'var(--surf2, var(--surface))'}}>
+              <p style={{fontSize:13,fontWeight:800,color:'var(--text)',margin:0}}>📋 Retirement Breakdown</p>
+            </div>
+            {(res.stats||[]).map((r,i) => (
+              <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'11px 20px',borderBottom: i < (res.stats||[]).length-1 ? '1px solid var(--border)' : 'none'}}>
+                <span style={{fontSize:13,color:'var(--text3)',fontWeight:600}}>{r.label}</span>
+                <span style={{fontSize:13,color:r.highlight?accent:r.warn?'#ef4444':'var(--text)',fontWeight:r.highlight||r.warn?800:600}}>{r.value}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* INSIGHTS */}
+          {(res.insights||[]).filter(Boolean).map((ins,i) => (
+            <div key={i} style={{display:'flex',gap:12,padding:'12px 16px',borderRadius:12,
+              background:ins.type==='tip'||ins.type==='good'?'rgba(5,150,105,.08)':'rgba(239,68,68,.07)',
+              border:`1px solid ${ins.type==='tip'||ins.type==='good'?'rgba(5,150,105,.25)':'rgba(239,68,68,.2)'}`}}>
+              <span>{ins.type==='tip'||ins.type==='good'?'✅':'⚠️'}</span>
+              <p style={{fontSize:13,color:'var(--text2)',margin:0,lineHeight:1.6}}>{ins.msg}</p>
+            </div>
+          ))}
+
+          {/* DISCLAIMER */}
+          <p style={{fontSize:11.5,color:'var(--text3)',lineHeight:1.7,padding:'12px 16px',background:'var(--surf2, var(--surface))',borderRadius:12,border:'1px solid var(--border)',margin:0}}>
+            💡 <strong>Disclaimer:</strong> These projections are for illustrative purposes only and assume constant rates of return. Actual returns may vary. Consult a SEBI-registered financial advisor before making investment decisions.
+          </p>
+        </div>
+      )}
+
       <SEOSection title="How Much Do You Need to Retire?">
         <p>The 4% rule: a 4% withdrawal rate from a diversified portfolio is historically sustainable for 30+ years. Multiply your annual expenses by 25 to get your corpus target. Inflation doubles prices every 12 years at 6% — so ₹50,000 today will feel like ₹25,000 in purchasing power 12 years later. Start saving early and increase your SIP annually by your salary hike rate.</p>
       </SEOSection>
-    </>
+    </div>
   );
 }
 
