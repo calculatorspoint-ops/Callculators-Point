@@ -25,7 +25,7 @@ declare global {
  * by not tracking users until they consent. AdSense auto ads are non-personalised
  * by default if consent is not given (handled by the adsbygoogle config below).
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 const CONSENT_KEY = 'cp_cookie_consent';
@@ -34,6 +34,15 @@ const CONSENT_DECLINED = 'declined';
 
 export function CookieConsent() {
   const [visible, setVisible] = useState(false);
+  const [countdown, setCountdown] = useState(15); // seconds until auto-accept
+  const autoTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tickTimer   = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Clear all timers helper
+  function clearTimers() {
+    if (autoTimer.current)  clearTimeout(autoTimer.current);
+    if (tickTimer.current)  clearInterval(tickTimer.current);
+  }
 
   // Declared before the useEffect that calls it — avoids "accessed before declaration" lint error
   function enableAnalytics() {
@@ -73,12 +82,14 @@ export function CookieConsent() {
   }
 
   function handleAccept() {
+    clearTimers();
     try { localStorage.setItem(CONSENT_KEY, CONSENT_ACCEPTED); } catch { /* ignore */ }
     enableAnalytics();
     setVisible(false);
   }
 
   function handleDecline() {
+    clearTimers();
     try { localStorage.setItem(CONSENT_KEY, CONSENT_DECLINED); } catch { /* ignore */ }
     // Push explicit consent denial via window.gtag (correct Consent Mode v2 API)
     try {
@@ -111,8 +122,39 @@ export function CookieConsent() {
       // localStorage blocked (private mode, etc.) — show banner anyway
       setVisible(true);
     }
-   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-accept countdown — starts when banner becomes visible
+  useEffect(() => {
+    if (!visible) return;
+
+    // Reset countdown each time banner opens
+    setCountdown(15);
+
+    // Tick every second to update the countdown display
+    tickTimer.current = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(tickTimer.current!);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    // Auto-accept after 15 seconds
+    autoTimer.current = setTimeout(() => {
+      clearInterval(tickTimer.current!);
+      try { localStorage.setItem(CONSENT_KEY, CONSENT_ACCEPTED); } catch { /* ignore */ }
+      enableAnalytics();
+      setVisible(false);
+    }, 15000);
+
+    // Cleanup on unmount or when banner hides
+    return () => clearTimers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
 
   if (!visible) return null;
 
@@ -129,15 +171,15 @@ export function CookieConsent() {
         zIndex: 9999,
         maxWidth: 560,
         margin: '0 auto',
-        // Glassmorphism card
         background: 'rgba(15, 23, 42, 0.96)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         border: '1px solid rgba(255, 255, 255, 0.12)',
         borderRadius: 16,
-        padding: '18px 20px',
+        // No bottom padding — progress bar sits flush at bottom
+        padding: '18px 20px 0',
         boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-        // Slide-up animation
+        overflow: 'hidden',
         animation: 'cookieSlideUp 0.35s cubic-bezier(0.16,1,0.3,1) both',
       }}
     >
@@ -213,6 +255,47 @@ export function CookieConsent() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Auto-accept countdown row */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '8px 20px 10px',
+        marginTop: 10,
+      }}>
+        <span style={{
+          fontSize: 11,
+          color: 'rgba(255,255,255,0.38)',
+          fontStyle: 'italic',
+          userSelect: 'none',
+        }}>
+          Auto-accepting in {countdown}s
+        </span>
+        <span style={{
+          fontSize: 11,
+          color: 'rgba(255,255,255,0.28)',
+          userSelect: 'none',
+        }}>
+          continuing to use the site = consent
+        </span>
+      </div>
+
+      {/* Shrinking progress bar — fills full width, shrinks left over 15s */}
+      <div style={{
+        height: 3,
+        background: 'rgba(255,255,255,0.08)',
+        borderRadius: '0 0 16px 16px',
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          height: '100%',
+          width: `${(countdown / 15) * 100}%`,
+          background: 'linear-gradient(90deg, #3b82f6, #60a5fa)',
+          borderRadius: '0 0 16px 0',
+          transition: 'width 1s linear',
+        }} />
       </div>
     </div>
   );
