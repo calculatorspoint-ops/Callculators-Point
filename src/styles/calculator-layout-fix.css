@@ -1136,3 +1136,61 @@ button[type="submit"].f-btn,
   background: var(--surf2);
   border-color: var(--border);
 }
+
+/* ════════════════════════════════════════════════════════════════
+   17. PREGNANCY-STYLE UNIVERSAL STACKED LAYOUT
+   Converts all 2-column input/result grids inside calc-card-body
+   to a single stacked column — matching the pregnancy-due-date
+   layout on every calculator.
+════════════════════════════════════════════════════════════════ */
+
+/*
+ * Override Tailwind's 2-column grid inside calculator card bodies.
+ * [class*="grid-cols-2"] matches any element whose class attribute
+ * contains "grid-cols-2" (covers both grid-cols-2 and lg:grid-cols-2).
+ */
+.calc-card-body [class*="grid-cols-2"] {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  grid-template-columns: unset !important;
+}
+
+/*
+ * sticky-res — disable sticky positioning; result panel becomes
+ * a full-width block naturally below the inputs.
+ */
+.calc-card-body .sticky-res {
+  position: static !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/*
+ * Input wrapper (always first child in the 2-col pattern) — give it
+ * the pregnancy-style bordered card if it has NO class of its own
+ * (plain <div> wrappers that previously relied on being a grid column).
+ */
+.calc-card-body [class*="grid-cols-2"] > div:first-child:not([class]) {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px 20px;
+}
+
+/*
+ * Panel toolbar — always a horizontal flex row
+ */
+.panel-toolbar {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/*
+ * Result live region — full width block
+ */
+.calc-card-body .result-live-region {
+  width: 100%;
+  min-width: 0;
+}

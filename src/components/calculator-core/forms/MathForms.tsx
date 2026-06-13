@@ -21,7 +21,10 @@ export function PercentageForm(){
   useEffect(()=>{const t=setTimeout(()=>{const d=calcPercentage({x,y});setRes(d);},60);return()=>clearTimeout(t);},[x,y]);
   return (
     <div>
-      <Row2><N label="Value X" id="px" value={x} onChange={setX} placeholder="25"/><N label="Value Y" id="py" value={y} onChange={setY} placeholder="200"/></Row2>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>🔢 Your Inputs</p>
+        <Row2><N label="Value X" id="px" value={x} onChange={setX} placeholder="25"/><N label="Value Y" id="py" value={y} onChange={setY} placeholder="200"/></Row2>
+      </div>
       {res?.results&&(
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
           {res.results.map((r,i)=>(
@@ -71,10 +74,13 @@ export function StatsForm(){
   },[input]);
   return (
     <div>
-      <L t="Dataset (comma or space separated)"/>
-      <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter numbers: 12, 34, 56, 78..."
-        style={{width:"100%",minHeight:90,padding:14,background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontSize:14,fontFamily:"var(--font-mono)",color:"var(--text)",outline:"none",resize:"vertical",marginBottom:16}}
-        onFocus={e=>{e.target.style.borderColor="var(--brand)";}} onBlur={e=>{e.target.style.borderColor="var(--border)";}}/>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>📊 Your Inputs</p>
+        <L t="Dataset (comma or space separated)"/>
+        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter numbers: 12, 34, 56, 78..."
+          style={{width:"100%",minHeight:90,padding:14,background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontSize:14,fontFamily:"var(--font-mono)",color:"var(--text)",outline:"none",resize:"vertical",marginBottom:0}}
+          onFocus={e=>{e.target.style.borderColor="var(--brand)";}} onBlur={e=>{e.target.style.borderColor="var(--border)";}}/>
+      </div>
       {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><CalcChart chartData={res.chart}/><Breakdown rows={res.breakdowns}/></>}
     </div>
   );
@@ -99,10 +105,13 @@ export function QuadraticForm(){
   },[a,b,c]);
   return (
     <div>
-      <div style={{textAlign:"center",fontFamily:"var(--font-mono)",fontSize:18,fontWeight:700,padding:"14px",background:"var(--surface2)",border:"1px solid var(--border)",borderRadius:"var(--r-md)",color:"var(--text)",marginBottom:18}}>
-        {a}x² + ({b})x + ({c}) = 0
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>📐 Your Inputs</p>
+        <div style={{textAlign:"center",fontFamily:"var(--font-mono)",fontSize:18,fontWeight:700,padding:"14px",background:"var(--surface2)",border:"1px solid var(--border)",borderRadius:"var(--r-md)",color:"var(--text)",marginBottom:18}}>
+          {a}x² + ({b})x + ({c}) = 0
+        </div>
+        <Row3><N label="a (x²)" id="qa" value={a} onChange={setA}/><N label="b (x)" id="qb" value={b} onChange={setB}/><N label="c (constant)" id="qc" value={c} onChange={setC}/></Row3>
       </div>
-      <Row3><N label="a (x²)" id="qa" value={a} onChange={setA}/><N label="b (x)" id="qb" value={b} onChange={setB}/><N label="c (constant)" id="qc" value={c} onChange={setC}/></Row3>
       {res&&(
         <>
           <Panel result={res} loading={null} label="Quadratic" />
@@ -135,8 +144,11 @@ export function PythagoreanForm(){
   },[a,b,solve]);
   return (
     <div>
-      <Tabs tabs={["Find c","Find a","Find b"]} active={`Find ${solve}`} onChange={v=>setSolve(v.split(" ")[1])}/>
-      <Row2><N label="Side a" id="pa" value={a} onChange={setA}/><N label="Side b" id="pb" value={b} onChange={setB}/></Row2>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>📐 Your Inputs</p>
+        <Tabs tabs={["Find c","Find a","Find b"]} active={`Find ${solve}`} onChange={v=>setSolve(v.split(" ")[1])}/>
+        <Row2><N label="Side a" id="pa" value={a} onChange={setA}/><N label="Side b" id="pb" value={b} onChange={setB}/></Row2>
+      </div>
       {res&&<Panel result={res} loading={null} label="Pythagorean" />}
     </div>
   );
@@ -150,23 +162,26 @@ export function FractionForm(){
     const t=setTimeout(()=>{
       const d=calcFraction({n1,d1,n2,d2,op});
       if(!d){setRes(null);return;}
-      setRes(buildResult("Result",d.result,[{label:"Decimal",value:d.decimal},{label:"Mixed",value:d.mixed||"N/A"}],d.insights,null,d.breakdowns, null, d.steps));
+      setRes(buildResult("Result",d.result,[{label:"Decimal",value:d.decimal},{label:"Simplified",value:d.simplified}],d.insights,null,d.breakdowns));
     },80);
     return()=>clearTimeout(t);
   },[n1,d1,n2,d2,op]);
   return (
     <div>
-      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18,flexWrap:"wrap"}}>
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-          <N label="" id="fn1" value={n1} onChange={setN1} placeholder="1"/>
-          <div style={{height:2,background:"var(--border)",width:60}}/>
-          <N label="" id="fd1" value={d1} onChange={setD1} placeholder="2"/>
-        </div>
-        <Sel label="" id="fop" value={op} onChange={setOp} opts={[{v:"+",l:"+"},{v:"-",l:"−"},{v:"×",l:"×"},{v:"÷",l:"÷"}]}/>
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-          <N label="" id="fn2" value={n2} onChange={setN2} placeholder="1"/>
-          <div style={{height:2,background:"var(--border)",width:60}}/>
-          <N label="" id="fd2" value={d2} onChange={setD2} placeholder="3"/>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>½ Your Inputs</p>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:0,flexWrap:"wrap"}}>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+            <N label="" id="fn1" value={n1} onChange={setN1} placeholder="1"/>
+            <div style={{height:2,background:"var(--border)",width:60}}/>
+            <N label="" id="fd1" value={d1} onChange={setD1} placeholder="2"/>
+          </div>
+          <Sel label="" id="fop" value={op} onChange={setOp} opts={[{v:"+",l:"+"},{v:"-",l:"−"},{v:"×",l:"×"},{v:"÷",l:"÷"}]}/>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+            <N label="" id="fn2" value={n2} onChange={setN2} placeholder="1"/>
+            <div style={{height:2,background:"var(--border)",width:60}}/>
+            <N label="" id="fd2" value={d2} onChange={setD2} placeholder="3"/>
+          </div>
         </div>
       </div>
       {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><Breakdown rows={res.breakdowns}/></>}
@@ -498,8 +513,8 @@ export function LogForm() {
   }, [value, base]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:"flex",flexDirection:"column",gap:20}}>
+      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
         <Tabs
           tabs={["Base 10", "Base 2", "Natural (e)", "Custom"]}
           active={{ "10": "Base 10", "2": "Base 2", "e": "Natural (e)" }[base] || "Custom"}
@@ -524,9 +539,7 @@ export function LogForm() {
           ))}
         </div>
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Logarithm Result" />
-      </div>
+      <Panel result={res} loading={null} label="Logarithm Result" />
     </div>
   );
 }
@@ -568,8 +581,8 @@ export function RatioForm() {
   }, [a, b, c, mode]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:"flex",flexDirection:"column",gap:20}}>
+      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
         <Tabs
           tabs={["Simplify Ratio", "Find Missing Value"]}
           active={mode === "simplify" ? "Simplify Ratio" : "Find Missing Value"}
@@ -598,9 +611,7 @@ export function RatioForm() {
           </>
         )}
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Ratio Result" />
-      </div>
+      <Panel result={res} loading={null} label="Ratio Result" />
     </div>
   );
 }
@@ -632,8 +643,8 @@ export function ReadingTimeForm() {
   }, [wordCount, wpm]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:"flex",flexDirection:"column",gap:20}}>
+      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
         <N label="Word Count" id="rt-words" value={wordCount} onChange={setWordCount} hint="Number of words in your text" placeholder="e.g. 1000"/>
         <Sl label="Your Reading Speed (WPM)" id="rt-wpm" min={50} max={600} step={10} value={wpm} onChange={setWpm} fmt={v => `${v} WPM`}/>
         <div style={{ marginTop: 16, padding: "14px 16px", background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
@@ -651,9 +662,7 @@ export function ReadingTimeForm() {
           ))}
         </div>
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Reading Time" />
-      </div>
+      <Panel result={res} loading={null} label="Reading Time" />
     </div>
   );
 }
@@ -1109,3 +1118,4 @@ export function DistanceForm() {
 }
 
 // Default export
+

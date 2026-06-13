@@ -2219,27 +2219,28 @@ img { content-visibility: auto; }
 /* ── Input Section (replaces colorful gradient headers) ── */
 .input-section-wrap {
   border: 1.5px solid var(--border);
-  border-radius: var(--r-xl);
+  border-radius: 16px;
   overflow: hidden;
-  margin-bottom: 14px;
-  transition: box-shadow .18s;
+  margin-bottom: 16px;
+  transition: box-shadow .2s, border-color .2s;
+  background: var(--surface);
 }
 .input-section-wrap:focus-within {
-  box-shadow: 0 0 0 3px rgba(37,99,235,.08);
-  border-color: rgba(37,99,235,.35);
+  box-shadow: 0 0 0 4px rgba(67,97,238,.08);
+  border-color: rgba(67,97,238,.3);
 }
 .input-section-head {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 16px;
+  padding: 12px 20px;
   background: var(--surf2);
   border-bottom: 1.5px solid var(--border);
   border-left: 4px solid var(--brand);
   position: relative;
 }
 .input-section-icon {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -2247,11 +2248,11 @@ img { content-visibility: auto; }
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: .07em;
+  letter-spacing: .08em;
   color: var(--text2);
 }
 .input-section-body {
-  padding: 16px 16px 6px;
+  padding: 22px 24px 14px;
   background: var(--surface);
 }
 .dark .input-section-head {
@@ -2262,15 +2263,23 @@ img { content-visibility: auto; }
   background: var(--surface);
 }
 
-/* ── Color variants for InputSection left border ── */
+/* ── Color variants for InputSection left border + title ── */
 .input-section-head.accent-finance  { border-left-color: var(--brand); }
+.input-section-head.accent-finance .input-section-title { color: var(--brand); }
 .input-section-head.accent-health   { border-left-color: #db2777; }
+.input-section-head.accent-health .input-section-title { color: #db2777; }
 .input-section-head.accent-math     { border-left-color: #0891b2; }
+.input-section-head.accent-math .input-section-title { color: #0891b2; }
 .input-section-head.accent-invest   { border-left-color: var(--green); }
+.input-section-head.accent-invest .input-section-title { color: var(--green); }
 .input-section-head.accent-loan     { border-left-color: var(--red); }
+.input-section-head.accent-loan .input-section-title { color: var(--red); }
 .input-section-head.accent-tax      { border-left-color: var(--amber); }
+.input-section-head.accent-tax .input-section-title { color: var(--amber); }
 .input-section-head.accent-violet   { border-left-color: var(--violet); }
+.input-section-head.accent-violet .input-section-title { color: var(--violet); }
 .input-section-head.accent-tech     { border-left-color: #374151; }
+.input-section-head.accent-tech .input-section-title { color: #374151; }
 
 /* ── N-input (number/text input) ── */
 .N-input {

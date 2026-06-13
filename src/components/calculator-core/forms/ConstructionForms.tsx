@@ -42,16 +42,21 @@ export function ConcreteForm() {
 
   return (
     <div>
-      <Tabs tabs={["Slab", "Wall", "Column"]} active={shape} onChange={setShape} />
-      <Tabs tabs={["Imperial (ft/in)", "Metric (m)"]} active={unit === "imperial" ? "Imperial (ft/in)" : "Metric (m)"} onChange={v => setUnit(v.includes("Imperial") ? "imperial" : "metric")} />
-      <Row3>
-        <N label={`Length (${unit === "imperial" ? "ft" : "m"})`} id="con_l" value={l} onChange={setL} unit={unit === "imperial" ? "ft" : "m"} />
-        <N label={`Width (${unit === "imperial" ? "ft" : "m"})`} id="con_w" value={w} onChange={setW} unit={unit === "imperial" ? "ft" : "m"} />
-        <N label={`Depth (${unit === "imperial" ? "in" : "m"})`} id="con_d" value={d} onChange={setD} unit={unit === "imperial" ? "in" : "m"} />
-      </Row3>
-      <Sel label="Bag Size" id="con_bag" value={bagSize} onChange={setBagSize} opts={[
-        { v: "80", l: "80 lb bags" }, { v: "60", l: "60 lb bags" }, { v: "40", l: "40 lb bags" },
-      ]} />
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🏗️ Your Inputs
+        </p>
+        <Tabs tabs={["Slab", "Wall", "Column"]} active={shape} onChange={setShape} />
+        <Tabs tabs={["Imperial (ft/in)", "Metric (m)"]} active={unit === "imperial" ? "Imperial (ft/in)" : "Metric (m)"} onChange={v => setUnit(v.includes("Imperial") ? "imperial" : "metric")} />
+        <Row3>
+          <N label={`Length (${unit === "imperial" ? "ft" : "m"})`} id="con_l" value={l} onChange={setL} unit={unit === "imperial" ? "ft" : "m"} />
+          <N label={`Width (${unit === "imperial" ? "ft" : "m"})`} id="con_w" value={w} onChange={setW} unit={unit === "imperial" ? "ft" : "m"} />
+          <N label={`Depth (${unit === "imperial" ? "in" : "m"})`} id="con_d" value={d} onChange={setD} unit={unit === "imperial" ? "in" : "m"} />
+        </Row3>
+        <Sel label="Bag Size" id="con_bag" value={bagSize} onChange={setBagSize} opts={[
+          { v: "80", l: "80 lb bags" }, { v: "60", l: "60 lb bags" }, { v: "40", l: "40 lb bags" },
+        ]} />
+      </div>
       {res && <Panel result={res} loading={null} label="Concrete" />}
     </div>
   );
@@ -91,8 +96,11 @@ export function PaintForm() {
   }, [rooms, coats, coverage, pricePerGal]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🎨 Your Inputs
+        </p>
         {rooms.map((r, i) => (
           <div key={i} style={{ marginBottom: 16, padding: 14, background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -121,7 +129,7 @@ export function PaintForm() {
           <N label="Price/Gallon" id="pprice" value={pricePerGal} onChange={setPricePerGal} unit={sym} />
         </Row3>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Paint Calculator" /></div>
+      <Panel result={res} loading={null} label="Paint Calculator" />
     </div>
   );
 }
@@ -160,8 +168,11 @@ export function SquareFootageForm() {
   }, [rooms, material, pricePerSqft, waste]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          📐 Your Inputs
+        </p>
         {rooms.map((r, i) => (
           <div key={i} style={{ marginBottom: 12, padding: 14, background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
@@ -194,7 +205,7 @@ export function SquareFootageForm() {
           <N label="Price/sq ft" id="sfprice" value={pricePerSqft} onChange={setPricePerSqft} unit={sym} />
         </Row3>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Square Footage" /></div>
+      <Panel result={res} loading={null} label="Square Footage" />
     </div>
   );
 }
@@ -241,8 +252,11 @@ export function ConstructionCostForm() {
   }, [area, laborRate, materialRate, contingency, extras]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🏠 Your Inputs
+        </p>
         <N label="Project Area (sq ft)" id="cca" value={area} onChange={setArea} unit="sq ft" />
         <Row2>
           <N label="Labor Rate (per sq ft)" id="cclr" value={laborRate} onChange={setLaborRate} unit={sym} />
@@ -266,7 +280,7 @@ export function ConstructionCostForm() {
           + Add Cost Item
         </button>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Construction Cost" /></div>
+      <Panel result={res} loading={null} label="Construction Cost" />
     </div>
   );
 }
@@ -304,8 +318,11 @@ export function ElectricalLoadForm() {
   }, [appliances, voltage]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          ⚡ Your Inputs
+        </p>
         <Sel label="Voltage" id="elv" value={voltage} onChange={setVoltage} opts={[{ v: "120", l: "120V (US)" }, { v: "230", l: "230V (EU/Asia)" }, { v: "240", l: "240V (UK/AU)" }]} />
         <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", marginBottom: 10 }}>Appliances</p>
         {appliances.map((a, i) => (
@@ -328,7 +345,7 @@ export function ElectricalLoadForm() {
           + Add Appliance
         </button>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Electrical Load" /></div>
+      <Panel result={res} loading={null} label="Electrical Load" />
     </div>
   );
 }
@@ -366,11 +383,16 @@ export function DensityForm() {
 
   return (
     <div>
-      <Tabs tabs={["Solve Density", "Solve Mass", "Solve Volume"]} active={solve === "density" ? "Solve Density" : solve === "mass" ? "Solve Mass" : "Solve Volume"} onChange={v => setSolve(v.split(" ")[1].toLowerCase())} />
-      <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-        {solve !== "density" && <N label="Density (kg/m³)" id="den_d" value={density} onChange={setDensity} unit="kg/m³" />}
-        {solve !== "mass" && <N label="Mass (kg)" id="den_m" value={mass} onChange={setMass} unit="kg" />}
-        {solve !== "volume" && <N label="Volume (m³)" id="den_v" value={volume} onChange={setVolume} unit="m³" />}
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          ⚖️ Your Inputs
+        </p>
+        <Tabs tabs={["Solve Density", "Solve Mass", "Solve Volume"]} active={solve === "density" ? "Solve Density" : solve === "mass" ? "Solve Mass" : "Solve Volume"} onChange={v => setSolve(v.split(" ")[1].toLowerCase())} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          {solve !== "density" && <N label="Density (kg/m³)" id="den_d" value={density} onChange={setDensity} unit="kg/m³" />}
+          {solve !== "mass" && <N label="Mass (kg)" id="den_m" value={mass} onChange={setMass} unit="kg" />}
+          {solve !== "volume" && <N label="Volume (m³)" id="den_v" value={volume} onChange={setVolume} unit="m³" />}
+        </div>
       </div>
       {res && <Panel result={res} loading={null} label="Density" />}
     </div>
@@ -401,10 +423,15 @@ export function PressureForm() {
 
   return (
     <div>
-      <Row2>
-        <N label="Force (Newtons)" id="pref" value={force} onChange={setForce} unit="N" />
-        <N label="Area (m²)" id="prea" value={area} onChange={setArea} unit="m²" />
-      </Row2>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🌡️ Your Inputs
+        </p>
+        <Row2>
+          <N label="Force (Newtons)" id="pref" value={force} onChange={setForce} unit="N" />
+          <N label="Area (m²)" id="prea" value={area} onChange={setArea} unit="m²" />
+        </Row2>
+      </div>
       {res && <Panel result={res} loading={null} label="Pressure" />}
     </div>
   );
@@ -435,10 +462,15 @@ export function PipeVolumeForm() {
 
   return (
     <div>
-      <Row2>
-        <N label="Inner Diameter (m)" id="pvd" value={diameter} onChange={setDiameter} unit="m" hint="Inner diameter of pipe" />
-        <N label="Length (m)" id="pvl" value={length} onChange={setLength} unit="m" />
-      </Row2>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🔧 Your Inputs
+        </p>
+        <Row2>
+          <N label="Inner Diameter (m)" id="pvd" value={diameter} onChange={setDiameter} unit="m" hint="Inner diameter of pipe" />
+          <N label="Length (m)" id="pvl" value={length} onChange={setLength} unit="m" />
+        </Row2>
+      </div>
       {res && <Panel result={res} loading={null} label="Pipe Volume" />}
     </div>
   );
@@ -479,13 +511,18 @@ export function MaterialForm({ type = "sand" }) {
 
   return (
     <div>
-      <Tabs tabs={["Imperial (ft/in)", "Metric (m)"]} active={unit === "imperial" ? "Imperial (ft/in)" : "Metric (m)"} onChange={v => setUnit(v.includes("Imperial") ? "imperial" : "metric")} />
-      <Row3>
-        <N label={`Length (${unit === "imperial" ? "ft" : "m"})`} id={`mat_l`} value={length} onChange={setLength} unit={unit === "imperial" ? "ft" : "m"} />
-        <N label={`Width (${unit === "imperial" ? "ft" : "m"})`} id={`mat_w`} value={width} onChange={setWidth} unit={unit === "imperial" ? "ft" : "m"} />
-        <N label={`Depth (${unit === "imperial" ? "in" : "m"})`} id={`mat_d`} value={depth} onChange={setDepth} unit={unit === "imperial" ? "in" : "m"} />
-      </Row3>
-      <N label={`Price per Ton (${sym})`} id={`mat_p`} value={pricePerTon} onChange={setPricePerTon} unit={sym} placeholder="0" hint="Optional: for cost estimate" />
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🧱 Your Inputs
+        </p>
+        <Tabs tabs={["Imperial (ft/in)", "Metric (m)"]} active={unit === "imperial" ? "Imperial (ft/in)" : "Metric (m)"} onChange={v => setUnit(v.includes("Imperial") ? "imperial" : "metric")} />
+        <Row3>
+          <N label={`Length (${unit === "imperial" ? "ft" : "m"})`} id={`mat_l`} value={length} onChange={setLength} unit={unit === "imperial" ? "ft" : "m"} />
+          <N label={`Width (${unit === "imperial" ? "ft" : "m"})`} id={`mat_w`} value={width} onChange={setWidth} unit={unit === "imperial" ? "ft" : "m"} />
+          <N label={`Depth (${unit === "imperial" ? "in" : "m"})`} id={`mat_d`} value={depth} onChange={setDepth} unit={unit === "imperial" ? "in" : "m"} />
+        </Row3>
+        <N label={`Price per Ton (${sym})`} id={`mat_p`} value={pricePerTon} onChange={setPricePerTon} unit={sym} placeholder="0" hint="Optional: for cost estimate" />
+      </div>
       {res && <Panel result={res} loading={null} label={labels[type]} />}
     </div>
   );
@@ -517,12 +554,17 @@ export function CubicYardForm() {
 
   return (
     <div>
-      <Sel label="Input Units" id="cyu" value={unit} onChange={setUnit} opts={[{ v: "feet", l: "Feet" }, { v: "inches", l: "Inches" }, { v: "meters", l: "Meters" }]} />
-      <Row3>
-        <N label="Length" id="cyl" value={l} onChange={setL} unit={unit[0]} />
-        <N label="Width" id="cyw" value={w} onChange={setW} unit={unit[0]} />
-        <N label="Depth" id="cyd" value={d} onChange={setD} unit={unit[0]} />
-      </Row3>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          📦 Your Inputs
+        </p>
+        <Sel label="Input Units" id="cyu" value={unit} onChange={setUnit} opts={[{ v: "feet", l: "Feet" }, { v: "inches", l: "Inches" }, { v: "meters", l: "Meters" }]} />
+        <Row3>
+          <N label="Length" id="cyl" value={l} onChange={setL} unit={unit[0]} />
+          <N label="Width" id="cyw" value={w} onChange={setW} unit={unit[0]} />
+          <N label="Depth" id="cyd" value={d} onChange={setD} unit={unit[0]} />
+        </Row3>
+      </div>
       {res && <Panel result={res} loading={null} label="Cubic Yard" />}
     </div>
   );
@@ -560,8 +602,11 @@ export function RoofingForm() {
   }, [length, width, pitch, waste, pricePerBundle]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
+          🏠 Your Inputs
+        </p>
         <Row2>
           <N label="Length (ft)" id="rfl" value={length} onChange={setLength} unit="ft" />
           <N label="Width (ft)" id="rfw" value={width} onChange={setWidth} unit="ft" />
@@ -572,7 +617,7 @@ export function RoofingForm() {
           <N label="Price/Bundle" id="rfprice" value={pricePerBundle} onChange={setPricePerBundle} unit={sym} />
         </Row3>
       </div>
-      <div className="sticky-res"><Panel result={res} loading={null} label="Roofing" /></div>
+      <Panel result={res} loading={null} label="Roofing" />
     </div>
   );
 }

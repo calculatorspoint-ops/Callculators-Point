@@ -105,9 +105,11 @@ function ResultCard({ label, value, mono, accent, badge }) {
 
 function twoColWrap(left, right) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>{left}</div>
-      <div className="sticky-res">{right}</div>
+    <div style={{display:'flex',flexDirection:'column',gap:20}}>
+      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+        {left}
+      </div>
+      {right}
     </div>
   );
 }

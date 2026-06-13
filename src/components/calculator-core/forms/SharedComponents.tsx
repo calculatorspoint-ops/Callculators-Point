@@ -479,23 +479,29 @@ export function Panel({ result, loading, label, shareParams }) {
   const currentHistory = savedLocally.filter(s => s.calcId === activeCalc?.id).slice(0, 5);
 
   return (
-    <div id="calc-result-area" className="result-live-region" aria-live="polite" aria-atomic="false" style={{ minWidth: 0, width: "100%", margin: "0 auto", textAlign: "center" }}>
+    <div id="calc-result-area" className="result-live-region" aria-live="polite" aria-atomic="false" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Hero result — pregnancy-style gradient card */}
       <ResultBox label={result.primary.label} value={result.primary.value} sub={result.primary.sub} />
-      {result.stats?.length > 0 && <StatsGrid items={result.stats} />}
+
+      {/* Metrics grid */}
+      {result.stats?.length > 0 && (
+        <StatsGrid items={result.stats} />
+      )}
+
       {result.chart && (
-        <div style={{ marginTop: 16 }}>
+        <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 14, padding: "16px 18px" }}>
           <CalcChart chartData={result.chart} />
         </div>
       )}
+
       {result.insights?.length > 0 && <InsightBox insights={result.insights} />}
-      {result.breakdowns?.length > 0 && (
-        <Breakdown rows={result.breakdowns} title="Step-by-Step Breakdown" />
-      )}
-      
+
+      {result.breakdowns?.length > 0 && <Breakdown rows={result.breakdowns} title="Step-by-Step Breakdown" />}
+
       {result.schedule?.length > 0 && (
-        <div style={{ marginTop: 16, background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", overflow: "hidden" }}>
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h4 style={{ fontSize: 12, fontWeight: 800, color: "var(--text)", textTransform: "uppercase", letterSpacing: ".05em" }}>Amortization Schedule</h4>
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", background: "var(--surface2)" }}>
+            <h4 style={{ fontSize: 12, fontWeight: 800, color: "var(--text)", textTransform: "uppercase", letterSpacing: ".05em", margin: 0 }}>Amortization Schedule</h4>
           </div>
           <div style={{ maxHeight: 300, overflowY: "auto", overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11, textAlign: "right" }}>
@@ -523,16 +529,21 @@ export function Panel({ result, loading, label, shareParams }) {
       )}
 
       {result.steps?.length > 0 && (
-        <div style={{ marginTop: 16, textAlign: "left" }}>
-          <details style={{ background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", padding: "2px 16px" }}>
-            <summary style={{ fontSize: 12, fontWeight: 800, color: "var(--brand)", textTransform: "uppercase", letterSpacing: ".05em", cursor: "pointer", padding: "10px 0", outline: "none", listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span>Step-by-Step Explanation</span>
-              <span style={{fontSize: 14}}>▾</span>
+        <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 14, overflow: "hidden" }}>
+          <details>
+            <summary style={{
+              padding: "13px 18px", fontSize: 12, fontWeight: 800, color: "var(--text)",
+              textTransform: "uppercase", letterSpacing: ".06em", cursor: "pointer",
+              listStyle: "none", display: "flex", justifyContent: "space-between", alignItems: "center",
+              background: "var(--surf2)", borderBottom: "1px solid var(--border)",
+            }}>
+              <span>📋 Step-by-Step Explanation</span>
+              <span style={{ fontSize: 14, color: "var(--text3)" }}>▾</span>
             </summary>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingBottom: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: 16 }}>
               {result.steps.map((step, i) => (
-                <div key={i} style={{ padding: "10px 14px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-md)" }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)", textTransform: "uppercase", marginBottom: 4 }}>{step.title}</div>
+                <div key={i} style={{ padding: "10px 14px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 10 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", marginBottom: 4 }}>{step.title}</div>
                   <div style={{ fontSize: 13, fontFamily: "var(--font-mono)", color: "var(--text)" }}>{step.desc}</div>
                 </div>
               ))}
@@ -541,8 +552,7 @@ export function Panel({ result, loading, label, shareParams }) {
         </div>
       )}
 
-      {/* ── Toolbar ── */}
-      <div className="panel-toolbar">
+      <div className="panel-toolbar" style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 16, padding: 12, display: "flex", gap: 8 }}>
         <button onClick={handleSaveHistory} className="calc-tool-btn" title="Save this result" aria-label="Save this calculation result">
           💾 Save
         </button>
@@ -560,7 +570,6 @@ export function Panel({ result, loading, label, shareParams }) {
         )}
       </div>
 
-      {/* ── History ── */}
       {currentHistory.length > 0 && (
         <div style={{ marginTop: 16, borderTop: "1px solid var(--border)", paddingTop: 14, textAlign: "left" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>

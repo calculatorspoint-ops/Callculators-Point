@@ -118,8 +118,8 @@ export function MarkupForm() {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Retail 50%", v: { tab: "Markup → Price", cost: "50", markup: "50", margin: "33.33", selling: "75" } },
@@ -160,10 +160,8 @@ export function MarkupForm() {
           </div>
         </div>
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Markup" />
-        <ScenarioCompare currentResult={res} currentParams={params} calcLabel="Markup" />
-      </div>
+      <Panel result={res} loading={null} label="Markup" />
+      <ScenarioCompare currentResult={res} currentParams={params} calcLabel="Markup" />
     </div>
   );
 }
@@ -235,8 +233,8 @@ export function InventoryTurnoverForm() {
   }, [cogs, beginInv, endInv, industry]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Retail Store", v: { cogs: "500000", beginInv: "80000", endInv: "60000", industry: "retail" } },
@@ -266,9 +264,7 @@ export function InventoryTurnoverForm() {
           ]}
         />
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Inventory Turnover" />
-      </div>
+      <Panel result={res} loading={null} label="Inventory Turnover" />
     </div>
   );
 }
@@ -339,8 +335,8 @@ export function EOQForm() {
   }, [demand, orderCost, holdingCost, leadTimeDays, safetyStock]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Small Retailer", v: { demand: "5000", orderCost: "50", holdingCost: "2", leadTimeDays: "7", safetyStock: "50" } },
@@ -357,9 +353,7 @@ export function EOQForm() {
           <N label="Safety Stock (units)" id="eoq-ss" value={safetyStock} onChange={setSafetyStock} unit="units" hint="Buffer stock against demand variability" />
         </Row2>
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="EOQ" />
-      </div>
+      <Panel result={res} loading={null} label="EOQ" />
     </div>
   );
 }
@@ -454,8 +448,8 @@ export function TimeCardForm() {
   const inputStyle = { height: 32, padding: "0 6px", background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 12, color: "var(--text)", outline: "none", fontFamily: "var(--font)" };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Standard 9–5", v: { hourlyRate: "25", otMode: "weekly", otThreshold: "40", dailyOtThreshold: "8" } },
@@ -505,9 +499,7 @@ export function TimeCardForm() {
           </table>
         </div>
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Time Card" />
-      </div>
+      <Panel result={res} loading={null} label="Time Card" />
     </div>
   );
 }
@@ -572,8 +564,8 @@ export function OvertimeForm() {
   }, [hourlyRate, regHours, otHours, doubleHours]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Standard Week", v: { hourlyRate: "20", regHours: "40", otHours: "0", doubleHours: "0" } },
@@ -588,9 +580,7 @@ export function OvertimeForm() {
         <N label="Overtime Hours (1.5×)" id="ov-ot" value={otHours} onChange={setOtHours} unit="hrs" hint="Hours paid at 1.5× base rate" />
         <N label="Double Time Hours (2×)" id="ov-dbl" value={doubleHours} onChange={setDoubleHours} unit="hrs" hint="Holiday or extended overtime at 2× base rate" placeholder="0" />
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Overtime Pay" />
-      </div>
+      <Panel result={res} loading={null} label="Overtime Pay" />
     </div>
   );
 }
@@ -703,8 +693,8 @@ export function SalaryToHourlyForm() {
   }, [tab, salary, hourly, period, hoursPerWeek, weeksPerYear]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Entry Level $45k", v: { tab: "Salary → Hourly", salary: "45000", period: "annual", hourly: "21.63", hoursPerWeek: 40, weeksPerYear: 52 } },
@@ -729,10 +719,8 @@ export function SalaryToHourlyForm() {
         <Sl label="Hours per Week" id="s2h-hpw" min={1} max={80} step={0.5} value={hoursPerWeek} onChange={setHoursPerWeek} fmt={v => `${v} hrs/week`} />
         <Sl label="Weeks per Year" id="s2h-wpy" min={40} max={52} step={1} value={weeksPerYear} onChange={setWeeksPerYear} fmt={v => `${v} weeks/yr`} />
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Salary to Hourly" />
-        <ScenarioCompare currentResult={res} currentParams={params} calcLabel="Salary" />
-      </div>
+      <Panel result={res} loading={null} label="Salary to Hourly" />
+      <ScenarioCompare currentResult={res} currentParams={params} calcLabel="Salary" />
     </div>
   );
 }
@@ -818,8 +806,8 @@ export function MeetingCostForm() {
   const liveMin = Math.floor(elapsed / 60), liveSec = elapsed % 60;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Quick Standup", v: { attendees: 6, avgSalary: "70000", duration: 15, recurringFreq: "daily" } },
@@ -858,9 +846,7 @@ export function MeetingCostForm() {
           { v: "monthly", l: "Monthly (12×/yr)" },
         ]} />
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Meeting Cost" />
-      </div>
+      <Panel result={res} loading={null} label="Meeting Cost" />
     </div>
   );
 }
@@ -930,8 +916,8 @@ export function ConversionRateForm() {
   }, [visitors, conversions, avgValue, improveBy, confidenceLevel, minEffect]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "E-Commerce (2.5%)", v: { visitors: "10000", conversions: "250", avgValue: "65", improveBy: 0.5, confidenceLevel: "95", minEffect: "20" } },
@@ -955,9 +941,7 @@ export function ConversionRateForm() {
           </Row2>
         </div>
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Conversion Rate" />
-      </div>
+      <Panel result={res} loading={null} label="Conversion Rate" />
     </div>
   );
 }
@@ -1039,8 +1023,8 @@ export function CLVForm() {
   }, [avgPurchase, frequency, lifespan, margin, cac, discountRate]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "SaaS Monthly", v: { avgPurchase: "49", frequency: "12", lifespan: "3", margin: "80", cac: "200", discountRate: "10" } },
@@ -1059,9 +1043,7 @@ export function CLVForm() {
         </Row2>
         <N label="Discount Rate %" id="clv-dr" value={discountRate} onChange={setDiscountRate} unit="%" hint="Discount rate for future cash flows (WACC or cost of capital)" />
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Customer Lifetime Value" />
-      </div>
+      <Panel result={res} loading={null} label="Customer Lifetime Value" />
     </div>
   );
 }
@@ -1134,8 +1116,8 @@ export function CPCCPAForm() {
   }, [adSpend, impressions, clicks, conversions, revenue]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "Google Search", v: { adSpend: "5000", impressions: "50000", clicks: "2500", conversions: "75", revenue: "22500" } },
@@ -1151,9 +1133,7 @@ export function CPCCPAForm() {
         <N label="Total Conversions" id="cpc-conv" value={conversions} onChange={setConversions} unit="sales" hint="Sales, sign-ups, or desired actions" />
         <N label="Total Revenue Generated" id="cpc-rev" value={revenue} onChange={setRevenue} unit={sym} hint="Total revenue attributed to this campaign" />
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="CPC / CPA / ROAS" />
-      </div>
+      <Panel result={res} loading={null} label="CPC / CPA / ROAS" />
     </div>
   );
 }
@@ -1227,8 +1207,8 @@ export function EmployeeCostForm() {
   }, [salary, benefits, payrollTax, overhead, productiveHours]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div>
+    <div style={{display:'flex', flexDirection:'column', gap:20}}>
+      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <Presets
           items={[
             { label: "US Entry Level", v: { salary: "45000", benefits: 20, payrollTax: 7.65, overhead: 10, productiveHours: 1600 } },
@@ -1247,10 +1227,8 @@ export function EmployeeCostForm() {
           💡 <strong>Tip:</strong> US payroll tax = 7.65% (FICA). UK National Insurance = 13.8%. Benefits include health, dental, retirement match. Overhead = office, equipment, software.
         </div>
       </div>
-      <div className="sticky-res">
-        <Panel result={res} loading={null} label="Employee Cost" />
-        <ScenarioCompare currentResult={res} currentParams={params} calcLabel="Employee Cost" />
-      </div>
+      <Panel result={res} loading={null} label="Employee Cost" />
+      <ScenarioCompare currentResult={res} currentParams={params} calcLabel="Employee Cost" />
     </div>
   );
 }
