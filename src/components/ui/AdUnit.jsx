@@ -82,6 +82,10 @@ export function AdUnit({
     return () => observer.disconnect();
   }, [pushed]);
 
+  // Guard: don't render anything if the slot ID hasn't been configured yet.
+  // This prevents empty grey "Advertisement" boxes during the AdSense review period.
+  if (!slot || slot.startsWith('REPLACE_WITH')) return null;
+
   return (
     /*
      * CLS PREVENTION WRAPPER
@@ -172,6 +176,8 @@ const AD_SLOTS = {
  */
 export function AdBanner({ position = "top" }) {
   const config = AD_SLOTS[position] || AD_SLOTS.top;
+  // Guard: don't render during review period when slot IDs aren't yet configured
+  if (!config.slot || config.slot.startsWith('REPLACE_WITH')) return null;
   return (
     // Outer container guarantees the reserved height even before AdUnit renders
     <div

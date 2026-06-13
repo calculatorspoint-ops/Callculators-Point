@@ -219,8 +219,9 @@ export default function Contact() {
             <div className="content-card" style={{ marginBottom:16 }}>
               <h2 style={{ fontSize:"1rem" }}>Quick Info</h2>
               {[
+                { icon:"📧", title:"Email Us Directly",  desc:<a href="mailto:contact@calculatorspoint.com" style={{ color:"var(--brand)", fontWeight:600, textDecoration:"none" }}>contact@calculatorspoint.com</a> },
                 { icon:"⏱️", title:"Response Time",   desc:"Within 24–48 business hours" },
-                { icon:"🌍", title:"Language",         desc:"English (primary)" },
+                { icon:"🌍", title:"Location",          desc:"Calculators Point — Pakistan" },
                 { icon:"📋", title:"What to include",  desc:"For bugs: calculator name, inputs used, and expected vs actual result" },
                 { icon:"🔒", title:"Your data",        desc:"Messages are stored securely in Firebase. We never share your email." },
               ].map(item => (
@@ -240,7 +241,7 @@ export default function Contact() {
               {[
                 ["Privacy Policy",   "/privacy-policy", "How we handle data"],
                 ["Disclaimer",       "/disclaimer",     "About result accuracy"],
-                ["All Calculators",  "/calculators",    "Browse all 200+ tools"],
+                ["All Calculators",  "/calculators",    "Browse all our free tools"],
               ].map(([l, h, d]) => (
                 <Link key={h} href={h}
                   style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:"1px solid var(--bord2)", textDecoration:"none", fontSize:13, color:"var(--text2)", transition:"color .15s" }}

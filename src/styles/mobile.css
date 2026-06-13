@@ -167,7 +167,7 @@ html.mob-menu-open body { overflow: hidden; }
   .ip-result-row { word-break: break-all !important; }
   table { display: block !important; overflow-x: auto !important; white-space: nowrap !important; width: 100% !important; }
 
-  .stat-strip { flex-wrap: wrap !important; overflow: visible !important; }
+  /* stat-strip is styled via the Phase 2 rule below (overflow: hidden) */
   .stat-strip-item {
     flex: 0 0 50% !important;
     border-bottom: 1px solid var(--border) !important;
@@ -183,8 +183,8 @@ html.mob-menu-open body { overflow: hidden; }
   /* ══ HOME PAGE ═══════════════════════════════ */
   .home-wrap { padding: 14px 12px 48px !important; }
 
-  /* Ecosystem hubs strip */
-  .home-wrap > div[style*="overflowX"] { padding: 12px 12px !important; }
+  /* Ecosystem hubs strip — uses .ecosystem-hubs-strip class set on the div in Home.jsx */
+  .ecosystem-hubs-strip { padding: 12px 12px !important; }
 
   /* Category blocks */
   .home-cat-head { padding: 12px 14px; gap: 10px; flex-wrap: wrap; }

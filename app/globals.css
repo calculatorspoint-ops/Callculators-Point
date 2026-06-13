@@ -24,10 +24,10 @@ body {
 }
 
 /* ── Critical: Navbar placeholder so page doesn't jump on load ── */
-/* Must match --nav-h CSS variable (56px) defined in index.css */
+/* Must match --nav-h CSS variable (68px desktop / 56px mobile) defined in index.css */
 .navbar {
-  min-height: 56px;
-  height: 56px;
+  min-height: 68px;
+  height: 68px;
   display: flex;
   align-items: center;
   position: sticky;

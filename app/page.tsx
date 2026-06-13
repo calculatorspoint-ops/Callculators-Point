@@ -149,7 +149,8 @@ function HeroSection() {
             </div>
 
             <h1 className="hero-title">
-              Free Online<br />
+              Free Online{' '}
+              <br />
               <span className="hero-accent">Calculators</span>
             </h1>
 
@@ -314,6 +315,192 @@ function PopularSection() {
   );
 }
 
+// ── Home Page FAQ — server-rendered, fully indexed ──────────────────────────
+const HOME_FAQS = [
+  {
+    q: 'Are all calculators on Calculators Point completely free?',
+    a: 'Yes. Every calculator on Calculators Point is 100% free with no signup, no subscription, and no hidden fees. All calculations run locally in your browser, so your data is never sent to our servers.',
+  },
+  {
+    q: 'How accurate are your finance calculators?',
+    a: 'Our finance calculators (EMI, mortgage, SIP, compound interest) use standard mathematical formulas — the same formulas used by banks and financial institutions. EMI is calculated using the standard reducing-balance method. Results are highly accurate for planning purposes, though actual loan terms may vary slightly by lender.',
+  },
+  {
+    q: 'Do the health calculators (BMI, BMR, calorie) use clinically validated formulas?',
+    a: 'Yes. BMI uses the WHO standard formula (weight ÷ height²). BMR uses the Mifflin-St Jeor equation (1990), which is the most clinically validated formula for estimating resting metabolic rate. Results are for informational purposes — always consult a healthcare professional for medical decisions.',
+  },
+  {
+    q: 'Does the site work offline?',
+    a: 'Calculators Point is a Progressive Web App (PWA). Once you visit the site, the core pages and popular calculators are cached by your browser\'s service worker, allowing them to work without an internet connection.',
+  },
+  {
+    q: 'Can I use these calculators on my mobile phone?',
+    a: 'Absolutely. Every calculator is fully responsive and optimized for mobile devices. Sliders, inputs, and result charts all adapt to small screens. You can also add the site to your home screen for quick access.',
+  },
+];
+
+const homeFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: HOME_FAQS.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+/** Reusable card styles for the homepage content sections */
+const CARD_BASE = {
+  display: 'block',
+  padding: '16px 18px',
+  borderRadius: 12,
+  textDecoration: 'none',
+  border: '1px solid',
+  transition: 'transform .15s, box-shadow .15s',
+} as const;
+
+/** Finance calculators section — server-rendered H2 with direct links */
+function FinanceSection() {
+  const items = [
+    { href: '/calculator/loan-emi-calculator',      icon: '🏦', name: 'EMI Calculator',        desc: 'Monthly loan repayment with full amortization schedule' },
+    { href: '/calculator/mortgage-calculator',       icon: '🏠', name: 'Mortgage Calculator',   desc: 'Home loan payments, total interest, and payoff timeline' },
+    { href: '/calculator/sip-calculator',            icon: '📈', name: 'SIP Calculator',        desc: 'Systematic investment returns with step-up contributions' },
+    { href: '/calculator/compound-interest-calculator', icon: '💰', name: 'Compound Interest', desc: 'Grow your savings with compounding over time' },
+    { href: '/calculator/fd-calculator',             icon: '🏛️', name: 'FD Calculator',        desc: 'Fixed deposit maturity amount and interest earned' },
+    { href: '/calculator/gst-calculator',            icon: '🧾', name: 'GST Calculator',        desc: 'Add or remove GST/VAT from any amount instantly' },
+  ];
+  return (
+    <section style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px clamp(16px,4vw,24px)' }}>
+        <h2 style={{ fontSize: 'clamp(1.25rem,3vw,1.75rem)', fontWeight: 800, color: 'var(--text)', marginBottom: 8, letterSpacing: '-.03em' }}>
+          Finance Calculators
+        </h2>
+        <p style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 24, maxWidth: 640 }}>
+          Plan loans, investments, taxes, and savings with precision. Our finance calculators use bank-standard reducing-balance and compound-interest formulas.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
+          {items.map(c => (
+            <Link key={c.href} href={c.href} style={{ ...CARD_BASE, background: '#eff6ff', borderColor: '#bfdbfe' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <span style={{ fontSize: 22 }} aria-hidden="true">{c.icon}</span>
+                <span style={{ fontWeight: 700, fontSize: 14, color: '#1e40af' }}>{c.name}</span>
+              </div>
+              <p style={{ fontSize: 12, color: '#374151', margin: 0, lineHeight: 1.5 }}>{c.desc}</p>
+            </Link>
+          ))}
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <Link href="/category/finance" style={{ fontSize: 13, fontWeight: 700, color: '#2563eb' }}>
+            View all finance calculators →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Health calculators section */
+function HealthSection() {
+  const items = [
+    { href: '/calculator/bmi-calculator',           icon: '⚖️', name: 'BMI Calculator',         desc: 'Body Mass Index using WHO standard formula' },
+    { href: '/calculator/bmr-calculator',           icon: '🔥', name: 'BMR Calculator',         desc: 'Basal metabolic rate via Mifflin-St Jeor equation' },
+    { href: '/calculator/calorie-calculator',       icon: '🥗', name: 'Calorie Calculator',     desc: 'Daily calorie needs based on your activity level' },
+    { href: '/calculator/ideal-weight-calculator',  icon: '💪', name: 'Ideal Weight',           desc: 'Healthy weight range for your height and gender' },
+    { href: '/calculator/body-fat-calculator',      icon: '📏', name: 'Body Fat Calculator',    desc: 'Estimate body fat percentage using skinfold method' },
+    { href: '/calculator/pregnancy-calculator',     icon: '🤰', name: 'Pregnancy Calculator',   desc: 'Due date, trimester, and gestational age tracker' },
+  ];
+  return (
+    <section style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px clamp(16px,4vw,24px)' }}>
+        <h2 style={{ fontSize: 'clamp(1.25rem,3vw,1.75rem)', fontWeight: 800, color: 'var(--text)', marginBottom: 8, letterSpacing: '-.03em' }}>
+          Health &amp; Fitness Calculators
+        </h2>
+        <p style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 24, maxWidth: 640 }}>
+          Evidence-based health tools that use clinically validated formulas — WHO BMI standards, Mifflin-St Jeor BMR, and more. For informational use only.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 12 }}>
+          {items.map(c => (
+            <Link key={c.href} href={c.href} style={{ ...CARD_BASE, background: '#f0fdf4', borderColor: '#bbf7d0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                <span style={{ fontSize: 22 }} aria-hidden="true">{c.icon}</span>
+                <span style={{ fontWeight: 700, fontSize: 14, color: '#166534' }}>{c.name}</span>
+              </div>
+              <p style={{ fontSize: 12, color: '#374151', margin: 0, lineHeight: 1.5 }}>{c.desc}</p>
+            </Link>
+          ))}
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <Link href="/category/health" style={{ fontSize: 13, fontWeight: 700, color: '#16a34a' }}>
+            View all health calculators →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** How It Works — methodology, accuracy, privacy */
+function HowItWorksSection() {
+  const pillars = [
+    { icon: '🔢', title: 'Verified Formulas', body: 'Every calculator uses peer-reviewed or industry-standard formulas. Finance calculators follow RBI/bank reducing-balance standards. Health calculators use WHO and Mifflin-St Jeor methods.' },
+    { icon: '🔒', title: 'Your Data Stays Local', body: 'All calculations run entirely in your browser using JavaScript. No input data is ever sent to our servers, stored in a database, or shared with third parties.' },
+    { icon: '⚡', title: 'Instant Results', body: 'Results appear as you type — no page reloads, no waiting. Interactive charts update live, and step-by-step formulas explain every result.' },
+    { icon: '📱', title: 'Works on Any Device', body: 'Every calculator is responsive and tested on mobile, tablet, and desktop. The site is also a PWA — add it to your home screen for offline access.' },
+  ];
+  return (
+    <section style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px clamp(16px,4vw,24px)' }}>
+        <h2 style={{ fontSize: 'clamp(1.25rem,3vw,1.75rem)', fontWeight: 800, color: 'var(--text)', marginBottom: 8, letterSpacing: '-.03em' }}>
+          How Our Calculators Work
+        </h2>
+        <p style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 24, maxWidth: 640 }}>
+          Built for accuracy, transparency, and privacy. Here&apos;s what makes Calculators Point different from generic tool sites.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 16 }}>
+          {pillars.map(p => (
+            <div key={p.title} style={{ padding: '20px 18px', background: 'var(--bg)', borderRadius: 12, border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: 28, marginBottom: 10 }} aria-hidden="true">{p.icon}</div>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>{p.title}</h3>
+              <p style={{ fontSize: 13, color: 'var(--text2)', margin: 0, lineHeight: 1.6 }}>{p.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** FAQ section — server-rendered, fully accessible, with FAQPage schema */
+function HomeFAQSection() {
+  return (
+    <section style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ maxWidth: 860, margin: '0 auto', padding: '40px clamp(16px,4vw,24px)' }}>
+        <h2 style={{ fontSize: 'clamp(1.25rem,3vw,1.75rem)', fontWeight: 800, color: 'var(--text)', marginBottom: 24, letterSpacing: '-.03em' }}>
+          Frequently Asked Questions
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {HOME_FAQS.map((f, i) => (
+            <details
+              key={i}
+              style={{ borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface)', overflow: 'hidden' }}
+            >
+              <summary
+                style={{ padding: '14px 18px', cursor: 'pointer', fontWeight: 700, fontSize: 14, color: 'var(--text)', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}
+              >
+                {f.q}
+                <span aria-hidden="true" style={{ fontSize: 18, color: 'var(--brand)', flexShrink: 0 }}>+</span>
+              </summary>
+              <div style={{ padding: '0 18px 16px', fontSize: 14, color: 'var(--text2)', lineHeight: 1.7 }}>
+                {f.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HomePage() {
   return (
     <>
@@ -322,7 +509,7 @@ export default function HomePage() {
         Uses JsonLd component which safely escapes `<` as `\u003c` to prevent
         the browser HTML parser from closing the <script> tag early.
       */}
-      <JsonLd data={[siteSchema, popularItemListSchema]} />
+      <JsonLd data={[siteSchema, popularItemListSchema, homeFaqSchema]} />
 
       {/* ── SERVER-RENDERED HERO (LCP element) ──
           This HTML is in the initial response — browser paints it before any JS loads.
@@ -342,6 +529,16 @@ export default function HomePage() {
       {/* ── CLIENT COMPONENT (everything below the hero) ──
           Hydrated after the hero is already painted on screen. */}
       <HomePageClient skipHero />
+
+      {/* ── SERVER-RENDERED TOPICAL DEPTH SECTIONS ──
+          These sections are pure static HTML — zero JS, fully crawlable.
+          They add H2 headings, topical keyword coverage, and E-E-A-T signals
+          that the dynamic HomePageClient content cannot provide to crawlers. */}
+      <FinanceSection />
+      <HealthSection />
+      <HowItWorksSection />
+      <HomeFAQSection />
     </>
   );
 }
+

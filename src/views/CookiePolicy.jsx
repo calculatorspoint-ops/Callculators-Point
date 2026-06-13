@@ -108,7 +108,7 @@ export default function CookiePolicy() {
               </div>
 
               <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8, marginTop: 20 }}>2.2 Advertising Cookies (Google AdSense)</p>
-              <P>Calculators Point is funded through advertising served by Google AdSense. Google may use cookies to serve ads based on your visit to this site and other sites on the internet. These cookies are controlled entirely by Google.</P>
+              <P>Calculators Point may display advertising through Google AdSense or similar advertising partners after approval. If active, Google may use cookies to serve ads based on your visit to this site and other sites on the internet. These cookies are controlled entirely by Google.</P>
               <div style={{ overflowX: "auto", marginBottom: 14 }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>

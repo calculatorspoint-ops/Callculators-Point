@@ -1,0 +1,603 @@
+/**
+ * src/styles/calculator-layout-fix.css
+ *
+ * Global layout fix for all calculator pages.
+ *
+ * Problem: On 1366px–1440px screens, the calc-layout grid (1fr 310px sidebar)
+ * leaves only ~940px for the calculator, making sliders, result cards, stat
+ * cards, and chart containers too cramped. Labels, currency values, and buttons
+ * get clipped or squeezed.
+ *
+ * Fix strategy:
+ *  1. Widen the sidebar column → 280px (saves 30px, gives it to the calculator)
+ *  2. Add calc-max override to use full viewport width up to 1400px
+ *  3. Increase calc-card-body padding for breathing room
+ *  4. Fix stat-card labels — remove nowrap/ellipsis, allow wrap
+ *  5. Widen slider number input so currency values fit (£850,147)
+ *  6. Ensure the result-val and result-inner have enough padding
+ *  7. Fix chart container min-height so axis labels and legends show
+ *  8. Fix calc-inputs-grid (left/right panel split inside calc-card)
+ *  9. Remove overflow:hidden from calc-card-body (replaced with overflow-wrap)
+ * 10. Fix responsive: tablet stacks gracefully, mobile no h-scroll
+ *
+ * This file is imported AFTER index.css so it can safely override rules.
+ * Do NOT use !important unless overriding an existing !important rule.
+ */
+
+/* ══════════════════════════════════════════════════════════════
+   1. WIDEN THE OVERALL CALCULATOR LAYOUT
+   Was: max-width:1280px, grid: 1fr 310px
+   Now: max-width:1400px, grid: 1fr 280px (sidebar narrowed 30px)
+   Net gain: ~50px more for calculator on 1366px screens
+══════════════════════════════════════════════════════════════ */
+.calc-layout {
+  max-width: 1400px;
+  /* Wider sidebar at 280px — still enough for two sidebar cards side-by-side text */
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  padding: clamp(16px, 2.5vw, 28px) clamp(16px, 2.5vw, 28px) 60px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   2. CALCULATOR CARD — increase body padding, fix overflow
+══════════════════════════════════════════════════════════════ */
+.calc-card-body {
+  padding: 28px 26px 24px;
+  /* Replace overflow:hidden with overflow-wrap so content wraps instead of clips */
+  overflow: visible;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 767px) {
+  .calc-card-body { padding: 18px 16px 16px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   3. STAT CARDS — allow labels to wrap instead of clip with ellipsis
+   Was: white-space:nowrap; overflow:hidden; text-overflow:ellipsis
+   Now: wrap allowed, min-height added so taller label rows don't collapse
+══════════════════════════════════════════════════════════════ */
+.stat-card-lbl {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  line-height: 1.35;
+  min-height: 28px;   /* room for 2-line labels */
+}
+
+.stat-card {
+  /* Taller cards so wrapped labels + values don't collapse */
+  min-height: 80px;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-card-val {
+  font-size: 17px;
+  /* Allow long values (£850,147.00/yr) to wrap */
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+/* Stats grid — wider cards on desktop so currency values fit */
+.stats-grid {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4. SLIDER NUMBER INPUT — wider so long currency values fit
+   The glass-panel holds the editable number + unit suffix.
+   £850,147 is 10 chars; at 16px font it needs ≥130px minimum.
+══════════════════════════════════════════════════════════════ */
+.calc-layout .mobile-premium-slider .glass-panel input[type="number"],
+.calc-layout input.glass-number {
+  min-width: 90px !important;
+  width: clamp(90px, 10vw, 140px) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   5. INPUT SECTION WRAP (InputSection component)
+   Adds proper spacing so sections breathe
+══════════════════════════════════════════════════════════════ */
+.input-section-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.input-section-head {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #fff;
+}
+
+.input-section-body {
+  padding: 18px 16px 8px;
+  background: var(--surface);
+}
+
+/* Accent left-border colours for InputSection */
+.input-section-head.accent-finance  { background: linear-gradient(135deg, #4361ee, #3451c7); }
+.input-section-head.accent-invest   { background: linear-gradient(135deg, #059669, #047857); }
+.input-section-head.accent-violet   { background: linear-gradient(135deg, #7c3aed, #5b21b6); }
+.input-section-head.accent-tax      { background: linear-gradient(135deg, #d97706, #b45309); }
+.input-section-head.accent-loan     { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+.input-section-head.accent-math     { background: linear-gradient(135deg, #0891b2, #0e7490); }
+.input-section-head.accent-health   { background: linear-gradient(135deg, #db2777, #be185d); }
+.input-section-head.accent-tech     { background: linear-gradient(135deg, #374151, #1f2937); }
+
+.input-section-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.input-section-title {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   6. CALC INPUTS GRID — the left/right panel split inside calc-card
+   Many calculators render inputs in two columns (Loan Details | Advanced).
+   On screen < 900px the columns should stack.
+══════════════════════════════════════════════════════════════ */
+.calc-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .calc-inputs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   7. RESULT PRIMARY VALUE — more padding, no clipping
+══════════════════════════════════════════════════════════════ */
+.result-inner {
+  padding: 30px 26px 22px;
+}
+
+.result-val {
+  /* Allow very long currency strings to wrap gracefully */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-size: clamp(22px, 5vw, 44px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   8. CHART CONTAINER — enough height for axis labels and legends
+══════════════════════════════════════════════════════════════ */
+
+/* Recharts chart wrappers — set via the CalcChart component */
+.recharts-wrapper,
+.calc-chart-wrap,
+[class*="chart-container"],
+[class*="chart-wrap"] {
+  min-height: 260px !important;
+  width: 100% !important;
+}
+
+/* Chart outer container rendered by CalcChart/LazyCalcChart */
+.calc-layout .recharts-responsive-container {
+  min-height: 260px;
+}
+
+/* Chart controls toolbar (zoom/download buttons) */
+[class*="chart-toolbar"],
+[class*="chart-controls"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   9. TOOLBAR BUTTONS (CalcShell + Panel)
+   Copy / Share / Reset / PDF / CSV buttons must not clip
+══════════════════════════════════════════════════════════════ */
+.calc-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  min-height: 32px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text2);
+  transition: all 0.15s;
+  white-space: nowrap;  /* never wrap button label */
+  font-family: var(--font);
+  flex-shrink: 0;
+}
+
+.calc-tool-btn:hover {
+  background: var(--surf2);
+  border-color: var(--brand);
+  color: var(--brand);
+  transform: translateY(-1px);
+}
+
+.calc-tool-btn.danger   { border-color: #fca5a5; color: #dc2626; }
+.calc-tool-btn.success  { border-color: #86efac; color: #16a34a; }
+.calc-tool-btn.active   { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+/* The toolbar row wraps so buttons never overflow on narrow screens */
+.calc-tool-btn-row,
+[class*="panel-toolbar"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   10. PRESETS ROW
+══════════════════════════════════════════════════════════════ */
+.presets-section {
+  background: var(--surf2);
+  border: 1px solid var(--bord2);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  margin-bottom: 18px;
+}
+
+.presets-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  margin: 0 0 8px;
+}
+
+.presets-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   11. INFO BOX
+══════════════════════════════════════════════════════════════ */
+.info-box {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid;
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+.info-box-tip   { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+.info-box-warn  { background: #fef2f2; border-color: #fca5a5; color: #7f1d1d; }
+.info-box-info  { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+.info-box-bad   { background: #fef2f2; border-color: #fca5a5; color: #7f1d1d; }
+
+.dark .info-box-tip   { background: #1c1400; border-color: #78350f; color: #fcd34d; }
+.dark .info-box-warn  { background: #1f1212; border-color: #991b1b; color: #f87171; }
+.dark .info-box-info  { background: #0f1e3d; border-color: #1e3a5f; color: #93c5fd; }
+
+.info-box-icon { flex-shrink: 0; font-size: 15px; }
+.info-box-text { margin: 0; overflow-wrap: break-word; }
+
+/* ══════════════════════════════════════════════════════════════
+   12. ROW HELPERS (Row2 / Row3 — used for inline 2- and 3-col groups)
+══════════════════════════════════════════════════════════════ */
+.sc-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sc-row3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 480px) {
+  .sc-row2 { grid-template-columns: 1fr; }
+  .sc-row3 { grid-template-columns: 1fr 1fr; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   13. RESULT LIVE REGION (Panel component wrapper)
+══════════════════════════════════════════════════════════════ */
+.result-live-region {
+  min-width: 0;
+  width: 100%;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   14. SLIDER RANGE INPUT — wider track, bigger thumb for touch
+══════════════════════════════════════════════════════════════ */
+.premium-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(
+    to right,
+    var(--brand) 0%,
+    var(--brand) var(--slider-val, 50%),
+    var(--border) var(--slider-val, 50%),
+    var(--border) 100%
+  );
+  border-radius: 100px;
+  cursor: pointer;
+  outline: none;
+}
+
+.premium-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid var(--brand);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.premium-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid var(--brand);
+  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  cursor: pointer;
+}
+
+.premium-slider::-webkit-slider-thumb:hover,
+.premium-slider:active::-webkit-slider-thumb {
+  transform: scale(1.18);
+  box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   15. RESPONSIVE BREAKPOINTS
+
+   1366px–1400px: sidebar narrower, calculator gets more space
+   1024px–1280px: single column, full width
+   767px: mobile — no horizontal scrolling
+   480px: small mobile — reduce padding
+══════════════════════════════════════════════════════════════ */
+
+/* ── At 1200px, reduce sidebar further so calc always ≥800px wide ── */
+@media (max-width: 1200px) {
+  .calc-layout {
+    grid-template-columns: 1fr 260px;
+    gap: 16px;
+  }
+}
+
+/* ── At 1024px, collapse to single column ── */
+@media (max-width: 1024px) {
+  .calc-layout {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .calc-layout > aside {
+    display: none !important;
+  }
+  /* On tablet, stat cards get extra width */
+  .stats-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+/* ── Mobile ≤767px ── */
+@media (max-width: 767px) {
+  .calc-layout {
+    padding: 14px 14px 48px !important;
+    gap: 12px !important;
+  }
+
+  .calc-card-body {
+    padding: 16px 14px 14px !important;
+  }
+
+  /* Single column stat cards on small screens */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Prevent any horizontal scroll from wide calc content */
+  .calc-card,
+  .calc-card-body,
+  .result-card,
+  .result-inner {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Row helpers collapse to single column */
+  .sc-row2,
+  .sc-row3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Slider value input — narrower on phones */
+  .mobile-premium-slider .glass-panel input[type="number"] {
+    width: 80px !important;
+    min-width: 80px !important;
+  }
+
+  /* Smaller result font on phones */
+  .result-val {
+    font-size: clamp(20px, 8vw, 34px);
+  }
+
+  /* Tool buttons wrap properly */
+  .calc-tool-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}
+
+/* ── Small mobile ≤480px ── */
+@media (max-width: 480px) {
+  .calc-layout {
+    padding: 12px 10px 40px !important;
+  }
+
+  .calc-card-body {
+    padding: 14px 12px 12px !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    min-height: 60px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   16. WIDE DESKTOP ENHANCEMENT (≥1440px)
+   At 1440px+ give even more horizontal breathing room
+══════════════════════════════════════════════════════════════ */
+@media (min-width: 1440px) {
+  .calc-layout {
+    grid-template-columns: 1fr 290px;
+    gap: 24px;
+    padding: 28px 28px 64px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .calc-layout {
+    max-width: 1600px;
+    grid-template-columns: 1fr 300px;
+    gap: 28px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   17. OVERFLOW-WRAP safety net — prevent any element from
+   causing horizontal scroll inside the calculator card
+══════════════════════════════════════════════════════════════ */
+.calc-card *,
+.result-card * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Number inputs inside calc-card should never exceed container width */
+.calc-card input[type="number"],
+.calc-card input[type="text"],
+.calc-card input[type="range"],
+.calc-card select {
+  max-width: 100%;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   18. GLASS PANEL (slider value input wrapper)
+   Ensure the value + unit suffix never clips
+══════════════════════════════════════════════════════════════ */
+.glass-panel {
+  display: flex !important;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  padding: 2px 10px 2px 2px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-width: 0;
+}
+
+/* Prevent the slider label from wrapping onto 3 lines */
+.mobile-premium-slider > div:first-child {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   19. RESULT ACTIONS (Copy / Share buttons inside result card)
+══════════════════════════════════════════════════════════════ */
+.result-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.result-btn {
+  /* Ensure buttons don't clip on narrow cards */
+  white-space: nowrap;
+  min-height: 32px;
+  padding: 7px 16px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   20. SIDEBAR CARDS — clean, never overlap the calculator
+══════════════════════════════════════════════════════════════ */
+.side-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--sh1);
+}
+
+/* Sidebar links — truncate long names properly */
+.calc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: var(--text);
+  border-bottom: 1px solid var(--bord2);
+  transition: background 0.12s;
+  min-width: 0;
+}
+
+.calc-row:last-child { border-bottom: none; }
+.calc-row:hover { background: var(--surf2); }
+
+.calc-row-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.calc-row-arrow {
+  font-size: 14px;
+  color: var(--text3);
+  flex-shrink: 0;
+}

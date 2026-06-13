@@ -121,8 +121,8 @@ const nextConfig: NextConfig = {
       "img-src 'self' data: https: blob:",
       // Frames: only Google Ad frames allowed
       "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
-      // XHR/fetch: self + Google Analytics + AdSense reporting
-      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://firebaseapp.com https://*.firebaseio.com",
+      // XHR/fetch: self + Google Analytics + AdSense reporting + Firebase Firestore
+      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://firebaseapp.com https://*.firebaseio.com https://firestore.googleapis.com https://*.googleapis.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com",
       // No plugins, no applets
       "object-src 'none'",
       // Prevent base-tag hijacking
@@ -158,6 +158,9 @@ const nextConfig: NextConfig = {
           { key: 'X-DNS-Prefetch-Control',   value: 'on' },
           { key: 'Content-Security-Policy',  value: ContentSecurityPolicy },
           { key: 'Permissions-Policy',       value: PermissionsPolicy },
+          // HSTS: Force HTTPS for 2 years, include subdomains, eligible for preload list.
+          // Only safe because all traffic is already HTTPS via Vercel.
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
         ],
       },
       // ── Long-lived cache for content-hashed static assets (CSS, JS, fonts, images)

@@ -203,6 +203,7 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
             <button
               onClick={() => { setQ(""); setOpen(false); }}
               className="navbar-search-clear"
+              aria-label="Clear search"
             >
               ×
             </button>

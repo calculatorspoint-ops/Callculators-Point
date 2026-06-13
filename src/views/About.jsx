@@ -116,6 +116,29 @@ export default function About() {
           </p>
         </div>
 
+        {/* ═══ WHO WE ARE ════════════════════════════════════════════════ */}
+        <div className="content-card" style={{ marginBottom:24 }}>
+          <h2>Who We Are</h2>
+          <p>
+            Calculators Point is an independent web platform built and operated from <strong>Pakistan</strong>. 
+            We are a dedicated team of engineers, mathematicians, and designers who believe that high-quality 
+            financial, health, and educational calculators should be accessible to everyone — regardless of location or income.
+          </p>
+          <p>
+            We are not a large corporation. We are a focused, independent team passionate about building tools 
+            that are genuinely useful. Every calculator is hand-crafted with verified formulas, worked examples, 
+            and real explanations — not just a number output.
+          </p>
+          <div style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 16px", background:"var(--brand-l)", borderRadius:"var(--r-lg)", border:"1px solid var(--brand-ll)", marginTop:16 }}>
+            <span style={{ fontSize:20 }}>📧</span>
+            <div>
+              <div style={{ fontSize:13, fontWeight:700, color:"var(--brand)" }}>Get in Touch</div>
+              <a href="mailto:contact@calculatorspoint.com" style={{ fontSize:13, color:"var(--brand)", textDecoration:"none" }}>contact@calculatorspoint.com</a>
+              <span style={{ fontSize:12, color:"var(--text3)", marginLeft:8 }}>· Pakistan</span>
+            </div>
+          </div>
+        </div>
+
         {/* ═══ VALUES ═════════════════════════════════════════════════ */}
         <h2 style={{ fontFamily:"var(--font-hd)", fontSize:"1.4rem", fontWeight:900, color:"var(--text)", marginBottom:20, letterSpacing:"-.03em" }}>
           Our Core Values

@@ -32,15 +32,9 @@ const ExportToolbar = lazy(() =>
 function FormFallback() {
   return (
     <div
-      role="status"
-      aria-live="polite"
-      aria-busy="true"
-      aria-label="Calculator loading"
+      aria-hidden="true"
       style={{ minHeight: 360, padding: '22px' }}
     >
-      {/* Screen-reader announcement */}
-      <span className="sr-only">Loading calculator, please wait…</span>
-
       {/* Skeleton header row */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
         <div className="skeleton" style={{ width: 80, height: 32, borderRadius: 8 }} />

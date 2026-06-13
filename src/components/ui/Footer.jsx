@@ -77,14 +77,16 @@ export function Footer() {
             {[["Privacy Policy","/privacy-policy"],["Terms of Service","/terms-of-service"],["Disclaimer","/disclaimer"],["Cookie Policy","/cookie-policy"]].map(([l,h])=>(
               <Link key={h} href={h} className="footer-link" style={{ marginBottom:8 }}>{l}</Link>
             ))}
+            <p className="footer-head" style={{ marginTop:20 }}>Contact</p>
+            <a href="mailto:contact@calculatorspoint.com" className="footer-link">contact@calculatorspoint.com</a>
           </nav>
         </div>
 
         {/* Ad disclosure */}
         <div className="footer-disc">
           <strong style={{ color:"#94a3b8" }}>Advertising Disclosure:</strong>{" "}
-          Calculators Point is free to use and supported by non-intrusive advertising via Google AdSense.
-          Ads are clearly labeled and never influence our calculator results or editorial content.
+          Calculators Point is free to use and may be supported by advertising in the future.
+          All results are provided for informational and educational purposes only and are never influenced by advertising.
           See our{" "}
           <Link href="/privacy-policy" style={{ color:"var(--footer-link-hover)" }}>Privacy Policy</Link> and{" "}
           <Link href="/disclaimer" style={{ color:"var(--footer-link-hover)" }}>Disclaimer</Link> for details.

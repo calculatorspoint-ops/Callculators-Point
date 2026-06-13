@@ -42,8 +42,8 @@ export default function TermsOfService() {
         </S>
 
         <S id="description" n="2" title="Description of Service">
-          <P>Calculators Point provides a free, browser-based calculation platform offering 200+ calculators across multiple categories including finance, health, mathematics, education, unit conversions, and everyday utilities.</P>
-          <P>The Service is provided free of charge, supported by advertising. We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.</P>
+          <P>Calculators Point provides a free, browser-based calculation platform offering hundreds of calculators across multiple categories including finance, health, mathematics, education, unit conversions, and everyday utilities.</P>
+          <P>The Service is provided free of charge. It may be supported by advertising in the future. We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.</P>
         </S>
 
         <S id="permitted" n="3" title="Permitted Use">
@@ -105,11 +105,11 @@ export default function TermsOfService() {
         </S>
 
         <S id="advertising" n="8" title="Advertising">
-          <P>Calculators Point displays advertisements via Google AdSense to fund the free Service. By using Calculators Point, you acknowledge and accept:</P>
+          <P>Calculators Point may display advertisements through advertising networks such as Google AdSense after approval. By using Calculators Point, you acknowledge and accept:</P>
           <Ul>
-            <Li>Advertisements may appear on pages alongside calculator content</Li>
-            <Li>Advertisers do not influence calculator results, formulas, or editorial content</Li>
-            <Li>All ads are clearly labeled as "Advertisement"</Li>
+            <Li>If advertisements appear, they will display alongside calculator content</Li>
+            <Li>Advertisers do not and will not influence calculator results, formulas, or editorial content</Li>
+            <Li>Any ads will be clearly labeled as "Advertisement"</Li>
             <Li>Use of ad-blocking software is permitted but may affect our ability to provide the free Service</Li>
           </Ul>
         </S>
@@ -132,7 +132,10 @@ export default function TermsOfService() {
         </S>
 
         <S id="contact-tos" n="13" title="Contact Us">
-          <P>If you have questions about these Terms of Service, please contact us via our <Link href="/contact" style={{ color:"var(--brand)" }}>Contact Page</Link>.</P>
+          <P>If you have questions about these Terms of Service, please contact us:</P>
+          <P><strong>Email:</strong> <a href="mailto:contact@calculatorspoint.com" style={{ color:"var(--brand)" }}>contact@calculatorspoint.com</a></P>
+          <P><strong>Website:</strong> <Link href="/contact" style={{ color:"var(--brand)" }}>calculatorspoint.com/contact</Link></P>
+          <P><strong>Operator:</strong> Calculators Point, Pakistan</P>
         </S>
 
         {/* Navigation */}

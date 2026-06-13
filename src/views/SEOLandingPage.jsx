@@ -10,13 +10,22 @@ import CurrencyBanner from '@/components/ui/CurrencyBanner';
 
 function Loader() {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300, flexDirection: "column", gap: 12 }}>
-      <div style={{ width: 28, height: 28, border: "2.5px solid var(--border)", borderTopColor: "var(--brand)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-      <p style={{ fontSize: 12, fontWeight: 600, color: "var(--text3)" }}>Loading Calculator...</p>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    <div aria-hidden="true" style={{ minHeight: 260, padding: '20px' }}>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+        <div className="skeleton" style={{ width: 90, height: 28, borderRadius: 6 }} />
+        <div className="skeleton" style={{ width: 130, height: 28, borderRadius: 6 }} />
+      </div>
+      {[1, 2, 3].map(i => (
+        <div key={i} style={{ marginBottom: 16 }}>
+          <div className="skeleton" style={{ width: `${50 + i * 10}%`, height: 13, borderRadius: 4, marginBottom: 8 }} />
+          <div className="skeleton" style={{ width: '100%', height: 44, borderRadius: 10 }} />
+        </div>
+      ))}
+      <div className="skeleton" style={{ width: '100%', height: 44, borderRadius: 10, marginTop: 8 }} />
     </div>
   );
 }
+
 
 export default function SEOLandingPage({ slug }) {
   const landing = getLandingBySlug(slug);

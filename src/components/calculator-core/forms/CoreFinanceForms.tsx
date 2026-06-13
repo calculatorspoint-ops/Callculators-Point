@@ -29,31 +29,42 @@ export function EMIForm() {
   const [mode, setMode] = useState("Basic");
   const [res, setRes] = useState(null);
 
+  // Clamped setters — prevent impossible values from being stored in state
+  const setLoanAmountSafe = (v) => setLoanAmount(Math.max(10000, Math.min(20000000, +v || 10000)));
+  const setRateSafe      = (v) => setRate(Math.max(0.01, Math.min(30, +v || 0.01)));
+  const setTenureSafe    = (v) => setTenure(Math.max(1, Math.min(360, Math.round(+v) || 1)));
+
   useEffect(() => {
-    if (!loanAmount || !rate || !tenure) return;
-    const r = rate / 100 / 12;
-    const n = tenure;
-    const emi = r > 0 ? (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : loanAmount / n;
-    const totalPayable = emi * n;
-    const totalInterest = totalPayable - loanAmount;
-    const ep = +extraPayment || 0;
+    // Validate all inputs before computing — prevents negative EMI / NaN display
+    const safeAmount = Math.max(10000, +loanAmount || 0);
+    const safeRate   = Math.max(0.01, +rate || 0);
+    const safeTenure = Math.max(1, Math.round(+tenure) || 1);
+    if (!safeAmount || !safeRate || !safeTenure) return;
+
+    const r = safeRate / 100 / 12;
+    const n = safeTenure;
+    const emi = r > 0 ? (safeAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : safeAmount / n;
+    if (!isFinite(emi) || emi <= 0) return; // safety: never display garbage
+    const totalPayable    = Math.max(safeAmount, emi * n);
+    const totalInterest   = Math.max(0, totalPayable - safeAmount);
+    const ep = Math.max(0, +extraPayment || 0);
 
     // With extra payment
-    let bal = loanAmount, mo = 0, intWithExtra = 0;
+    let bal = safeAmount, mo = 0, intWithExtra = 0;
     if (ep > 0) {
       while (bal > 0 && mo < n * 2) {
         const i = bal * r; intWithExtra += i;
         const p = Math.min(emi + ep - i, bal); bal -= p; mo++;
       }
     }
-    const interestSaved = ep > 0 ? totalInterest - intWithExtra : 0;
+    const interestSaved = ep > 0 ? Math.max(0, totalInterest - intWithExtra) : 0;
 
     // Amortization (first year)
     const amTable = [];
-    let b = loanAmount;
+    let b = safeAmount;
     for (let i = 1; i <= Math.min(n, 12); i++) {
       const int = b * r; const prin = emi - int; b -= prin;
-      amTable.push({ label: "Month " + i, value: "EMI " + fm(Math.round(emi)) + " | Principal " + fm(Math.round(prin)) + " | Balance " + fm(Math.max(0, Math.round(b))) });
+      amTable.push({ label: "Month " + i, value: "EMI " + fm(Math.round(emi)) + " | Principal " + fm(Math.round(Math.max(0, prin))) + " | Balance " + fm(Math.max(0, Math.round(b))) });
     }
 
     const payoffDate = new Date();
@@ -61,15 +72,15 @@ export function EMIForm() {
 
     setRes(buildResult("Monthly EMI", fm(Math.round(emi)),
       [
-        { label: "Loan Amount", value: fm(loanAmount) },
+        { label: "Loan Amount",    value: fm(safeAmount) },
         { label: "Total Interest", value: fm(Math.round(totalInterest)), warn: true },
-        { label: "Total Payable", value: fm(Math.round(totalPayable)) },
-        { label: "Tenure", value: (tenure / 12).toFixed(1) + " years" },
-        ep > 0 ? { label: "Interest Saved", value: fm(Math.round(interestSaved)), highlight: true } : null,
-        ep > 0 ? { label: "Payoff Date (with extra)", value: payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }) } : null,
+        { label: "Total Payable",  value: fm(Math.round(totalPayable)) },
+        { label: "Tenure",         value: (safeTenure / 12).toFixed(1) + " years" },
+        ep > 0 ? { label: "Interest Saved",            value: fm(Math.round(interestSaved)), highlight: true } : null,
+        ep > 0 ? { label: "Payoff Date (with extra)",  value: payoffDate.toLocaleDateString("en-US", { month: "short", year: "numeric" }) } : null,
       ].filter(Boolean),
-      [{ type: totalInterest > loanAmount ? "warn" : "tip", msg: "Total interest (" + fm(Math.round(totalInterest)) + ") is " + (totalInterest / loanAmount * 100).toFixed(0) + "% of your loan amount." + (ep > 0 ? " Extra payment of " + fm(ep) + "/mo saves " + fm(Math.round(interestSaved)) + "!" : " Consider making extra payments to reduce this.") }],
-      { type: "donut", data: [{ name: "Principal", value: loanAmount }, { name: "Interest", value: Math.round(totalInterest) }], keys: ["value"] },
+      [{ type: totalInterest > safeAmount ? "warn" : "tip", msg: "Total interest (" + fm(Math.round(totalInterest)) + ") is " + (totalInterest / safeAmount * 100).toFixed(0) + "% of your loan amount." + (ep > 0 ? " Extra payment of " + fm(ep) + "/mo saves " + fm(Math.round(interestSaved)) + "!" : " Consider making extra payments to reduce this.") }],
+      { type: "donut", data: [{ name: "Principal", value: safeAmount }, { name: "Interest", value: Math.round(totalInterest) }], keys: ["value"] },
       amTable
     ));
   }, [loanAmount, rate, tenure, extraPayment, mode]);
@@ -78,15 +89,15 @@ export function EMIForm() {
     <>
       <Presets items={[
         { label: "Home Loan 20yr", v: { a: 3000000, r: 8.5, t: 240, ep: "0" } },
-        { label: "Car Loan 5yr", v: { a: 800000, r: 9.5, t: 60, ep: "0" } },
-        { label: "Personal 3yr", v: { a: 200000, r: 14, t: 36, ep: "0" } },
-      ]} onApply={pr => { setLoanAmount(pr.v.a); setRate(pr.v.r); setTenure(pr.v.t); setExtraPayment(pr.v.ep); }} />
+        { label: "Car Loan 5yr",   v: { a: 800000,  r: 9.5, t: 60,  ep: "0" } },
+        { label: "Personal 3yr",   v: { a: 200000,  r: 14,  t: 36,  ep: "0" } },
+      ]} onApply={pr => { setLoanAmountSafe(pr.v.a); setRateSafe(pr.v.r); setTenureSafe(pr.v.t); setExtraPayment(pr.v.ep); }} />
 
       <div className="calc-inputs-grid">
         <InputSection title="Loan Details" icon="🏦" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
-          <Sl label="Loan Amount" id="emi_a" min={10000} max={20000000} step={10000} value={loanAmount} onChange={setLoanAmount} fmt={v => fmSlider(v)} />
-          <Sl label="Interest Rate (% p.a.)" id="emi_r" min={4} max={30} step={0.05} value={rate} onChange={setRate} fmt={v => v + "%"} />
-          <Sl label="Tenure (months)" id="emi_t" min={6} max={360} step={6} value={tenure} onChange={setTenure} fmt={v => v + " mo (" + (v / 12).toFixed(1) + " yr)"} />
+          <Sl label="Loan Amount" id="emi_a" min={10000} max={20000000} step={10000} value={loanAmount} onChange={setLoanAmountSafe} fmt={v => fmSlider(v)} />
+          <Sl label="Interest Rate (% p.a.)" id="emi_r" min={0.01} max={30} step={0.05} value={rate} onChange={setRateSafe} fmt={v => v + "%"} />
+          <Sl label="Tenure (months)" id="emi_t" min={1} max={360} step={1} value={tenure} onChange={setTenureSafe} fmt={v => v + " mo (" + (v / 12).toFixed(1) + " yr)"} />
         </InputSection>
         <InputSection title="Advanced Options" icon="⚡" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
           <N label="Extra Monthly Payment" id="emi_ep" value={extraPayment} onChange={setExtraPayment} unit={sym} placeholder="0" hint="Additional payment above your regular EMI" />

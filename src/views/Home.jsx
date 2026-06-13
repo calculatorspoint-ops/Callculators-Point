@@ -146,8 +146,9 @@ export default function Home({ skipHero } = {}) {
               </div>
 
               <h1 className="hero-title">
-                Your All-in-One<br />
-                <span className="hero-accent">Calculator Suite</span>
+                Free Online{' '}
+                <br />
+                <span className="hero-accent">Calculators</span>
               </h1>
 
               <p className="hero-sub">
@@ -208,7 +209,7 @@ export default function Home({ skipHero } = {}) {
       <div className="stat-strip" role="complementary" aria-label="Site statistics">
         {[
           { n: `${ALL_CALCULATORS.length}+`, l: "Calculators", icon: "🧮" },
-          { n: "6",    l: "Categories",  icon: "📂" },
+          { n: `${CATEGORIES.length}`,    l: "Categories",  icon: "📂" },
           { n: "∞",    l: "Free Always", icon: "🆓" },
           { n: "0",    l: "Data Stored", icon: "🔒" },
         ].map(({ n, l, icon }) => (
@@ -224,7 +225,7 @@ export default function Home({ skipHero } = {}) {
       <div className="home-wrap">
 
         {/* ═══ ECOSYSTEM HUBS STRIP (deferred — below fold) ════════════════════════ */}
-        {belowFoldReady && <div style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", overflowX: "hidden" }}>
+        {belowFoldReady && <div className="ecosystem-hubs-strip" style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)", overflowX: "hidden" }}>
           <div style={{ maxWidth: 1280, margin: "0 auto", padding: "16px clamp(12px,4vw,20px)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
               <BookOpen size={14} style={{ color: "var(--brand)" }} />
@@ -237,7 +238,7 @@ export default function Home({ skipHero } = {}) {
                 { id: "fitness", icon: "💪", label: "Fitness Suite", sub: "BMI, Calories, Macros", color: "#b91c1c", bg: "#fef2f2" },
                 { id: "women-health", icon: "🌸", label: "Women's Health", sub: "Period, Ovulation, Fertility", color: "#9d174d", bg: "#fdf2f8" },
               ].map(eco => (
-                <Link key={eco.id} href={`/ecosystem/${eco.id}`} style={{
+                <Link key={eco.id} href={eco.id === "women-health" ? `/category/health` : `/ecosystem/${eco.id}`} style={{
                   display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
                   background: eco.bg, border: `1.5px solid ${eco.color}20`,
                   borderRadius: "var(--r-xl)", textDecoration: "none", flexShrink: 0,
@@ -424,7 +425,7 @@ export default function Home({ skipHero } = {}) {
                       <span style={{ fontSize: 16, flexShrink: 0 }}>{c.icon}</span>
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>{c.name}</div>
-                        <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 1 }}>{c.cat}</div>
+                        <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 1 }}>{CATEGORIES.find(cat => cat.id === c.cat)?.name || c.cat}</div>
                       </div>
                     </Link>
                   ))}
@@ -459,7 +460,11 @@ export default function Home({ skipHero } = {}) {
               <Link href="/name-generators" style={{ display: "block", textAlign: "center", padding: "9px 0", background: "rgba(255,255,255,.2)", borderRadius: 10, color: "#fff", fontWeight: 700, fontSize: 13, textDecoration: "none", border: "1px solid rgba(255,255,255,.3)", transition: "all .15s" }}
                 onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,.3)"}
                 onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,.2)"}>
-                Explore 8 Name Generators →
+                Explore {[
+                "baby-name-generator","islamic-baby-names","business-name-generator",
+                "brand-name-generator","youtube-channel-name-generator","instagram-username-generator",
+                "domain-name-generator","app-name-generator"
+              ].length} Name Generators →
               </Link>
             </div>
 
@@ -475,12 +480,22 @@ export default function Home({ skipHero } = {}) {
               </Link>
             </div>
 
-            {/* Ad slot */}
-            <div className="sidebar-ad">
-              <p className="sidebar-ad-label">Advertisement</p>
-              <div className="sidebar-ad-slot">300×250</div>
-            </div>
-          </aside>
+            {/* Resources CTA — replaces old ad placeholder */}
+              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "18px", marginBottom: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                  <span style={{ fontSize: 20 }}>📋</span>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text)" }}>Formula Cheat Sheets</div>
+                </div>
+                <p style={{ fontSize: 12, color: "var(--text3)", marginBottom: 14, lineHeight: 1.6 }}>
+                  Free printable reference sheets for finance (EMI, SIP), student GPA, and health metrics (BMI, BMR).
+                </p>
+                <Link href="/cheat-sheets" style={{ display: "block", textAlign: "center", padding: "9px 0", background: "var(--brand)", borderRadius: 10, color: "#fff", fontWeight: 700, fontSize: 13, textDecoration: "none", transition: "opacity .15s" }}
+                  onMouseEnter={e => e.currentTarget.style.opacity = "0.88"}
+                  onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
+                  View Cheat Sheets →
+                </Link>
+              </div>
+            </aside>
         </div>
 
         {/* ═══ WHY SECTION ════════════════════════════════════════════════════════ */}

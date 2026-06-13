@@ -61,6 +61,18 @@ export function CookieConsent() {
 
   function handleDecline() {
     try { localStorage.setItem(CONSENT_KEY, CONSENT_DECLINED); } catch { /* ignore */ }
+    // Push explicit consent denial to dataLayer for Google Consent Mode v2
+    try {
+      if (typeof window !== 'undefined') {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(['consent', 'update', {
+          analytics_storage: 'denied',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+        }]);
+      }
+    } catch { /* silent fail */ }
     setVisible(false);
   }
 
@@ -70,7 +82,7 @@ export function CookieConsent() {
       const stored = localStorage.getItem(CONSENT_KEY);
       if (!stored) {
         // No consent on record — show banner after a brief delay
-        const t = setTimeout(() => setVisible(true), 800);
+        const t = setTimeout(() => setVisible(true), 300);
         return () => clearTimeout(t);
       }
       // Consent already recorded — ensure GA fires if accepted
@@ -121,21 +133,24 @@ export function CookieConsent() {
       <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
         <span style={{ fontSize: 22, flexShrink: 0, marginTop: 1 }}>🍪</span>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{
-            fontSize: 13,
-            color: 'rgba(255,255,255,0.85)',
-            lineHeight: 1.6,
-            margin: '0 0 12px',
-          }}>
-            We use cookies for anonymous analytics (Google Analytics) and to show relevant ads (Google AdSense).
-            Your calculation data is never sent to our servers.{' '}
-            <Link
-              href="/cookie-policy"
-              style={{ color: '#60a5fa', textDecoration: 'underline', fontWeight: 600 }}
-            >
-              Cookie Policy
-            </Link>
-          </p>
+            <p style={{
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.85)',
+              lineHeight: 1.6,
+              margin: '0 0 10px',
+            }}>
+              We use <strong style={{ color: '#fff' }}>Google Analytics</strong> for anonymous traffic insights and <strong style={{ color: '#fff' }}>Firebase</strong> for calculator ratings. We may display ads in the future via Google AdSense.
+              Your calculation data is never sent to our servers.{' '}
+              <Link href="/cookie-policy" style={{ color: '#60a5fa', textDecoration: 'underline', fontWeight: 600 }}>
+                Cookie Policy
+              </Link>
+            </p>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: '0 0 12px' }}>
+              🇺🇸 California residents:{' '}
+              <Link href="/privacy-policy#do-not-sell" style={{ color: '#60a5fa', textDecoration: 'underline' }}>
+                Do Not Sell My Personal Information
+              </Link>
+            </p>
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button

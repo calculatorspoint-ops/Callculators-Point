@@ -8,6 +8,7 @@
 @tailwind utilities;
 
 
+
 /* ══════════════════════════════════════════════════════════════
    CSS DESIGN TOKENS — Professional, stress-free palette
 ══════════════════════════════════════════════════════════════ */
@@ -600,12 +601,13 @@ input[type="range"]::-moz-range-track{height:5px;background:var(--border);border
    CALCULATOR LAYOUT
 ══════════════════════════════════════════════════════════════ */
 .calc-layout{
-  max-width:var(--calc-max);margin:0 auto;
-  padding:clamp(14px,2.5vw,24px) clamp(12px,2vw,20px) 60px;
-  display:grid;grid-template-columns:1fr 310px;gap:22px;
+  max-width:1400px;margin:0 auto;
+  padding:clamp(16px,2.5vw,28px) clamp(16px,2.5vw,28px) 60px;
+  display:grid;grid-template-columns:1fr 280px;gap:20px;
   min-width:0;
 }
-@media(max-width:1023px){.calc-layout{grid-template-columns:1fr;}}
+@media(max-width:1200px){.calc-layout{grid-template-columns:1fr 260px;gap:16px;}}
+@media(max-width:1023px){.calc-layout{grid-template-columns:1fr;gap:14px;}}
 
 .calc-card{
   background:var(--surface);border:1px solid var(--border);
@@ -620,7 +622,7 @@ input[type="range"]::-moz-range-track{height:5px;background:var(--border);border
   display:flex;align-items:flex-start;justify-content:space-between;
   gap:12px;flex-wrap:wrap;min-width:0;
 }
-.calc-card-body{padding:24px 22px 22px;min-width:0;overflow:hidden;}
+.calc-card-body{padding:28px 26px 24px;min-width:0;overflow:visible;overflow-wrap:break-word;}
 @media(max-width:640px){.calc-card-body{padding:18px 16px 16px;}}
 
 /* ══════════════════════════════════════════════════════════════
@@ -720,7 +722,7 @@ input[type="range"]::-moz-range-track{height:5px;background:var(--border);border
 .result-deco-1{display:none;}
 .result-deco-2{display:none;}
 .result-deco-3{display:none;}
-.result-inner{position:relative;z-index:1;padding:26px 22px 20px;background:var(--result-bg);border-radius:var(--r-2xl);}
+.result-inner{position:relative;z-index:1;padding:30px 26px 22px;background:var(--result-bg);border-radius:var(--r-2xl);}
 .result-icon-wrap{
   width:40px;height:40px;border-radius:12px;
   background:rgba(16,185,129,.15);border:1px solid var(--result-border);
@@ -788,7 +790,8 @@ input[type="range"]::-moz-range-track{height:5px;background:var(--border);border
 .stat-card-lbl{
   font-size:10px;font-weight:800;text-transform:uppercase;
   letter-spacing:.07em;color:var(--text3);margin-bottom:6px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  white-space:normal;overflow:visible;text-overflow:unset;
+  line-height:1.35;min-height:26px;
 }
 .stat-card.hi .stat-card-lbl{color:#065f46;}
 .stat-card.warn .stat-card-lbl{color:#dc2626;}

@@ -48,10 +48,10 @@ const BASE_URL = 'https://calculatorspoint.com';
  *    content actually changes. Fake "freshness" can hurt crawl trust.
  */
 const DATES = {
-  homepage:    new Date('2026-06-06'),  // Updated: AdSense compliance + meta tags
-  content:     new Date('2026-06-06'),  // Updated: unique intro/about/worked examples added to all 225 pages
-  popular:     new Date('2026-06-06'),  // Updated: full content refresh across all categories
-  static:      new Date('2026-06-06'),  // Updated: legal pages date refresh, cookie policy added
+  homepage:    new Date('2026-06-13'),  // Updated: Firebase fix, H2 content sections, FAQ schema, E-E-A-T, security headers
+  content:     new Date('2026-06-13'),  // Updated: EMI validation, SEO text fix, accessibility improvements
+  popular:     new Date('2026-06-13'),  // Updated: UI/UX audit fixes, sitemap freshness aligned
+  static:      new Date('2026-06-13'),  // Updated: legal pages, consent compliance, HSTS header
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {

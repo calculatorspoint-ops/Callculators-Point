@@ -18,6 +18,7 @@ import type { Viewport, Metadata } from 'next';
 import Script from 'next/script';
 import './globals.css';
 import '../src/styles/index.css';
+import '../src/styles/calculator-layout-fix.css';
 import '../src/styles/mobile.css';
 import '../src/styles/mobile-overflow-killer.css';
 // NOTE: all-calculators.css is imported inside AllCalculators.jsx (page-scoped)
@@ -129,8 +130,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 
-        {/* AdSense — preconnect only (script deferred below via afterInteractive) */}
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+        {/* AdSense — dns-prefetch only; preconnect removed because lazyOnload
+            fires during idle time — a preconnect that early wastes a TCP slot */}
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
 
         {/* Google Analytics */}
@@ -143,22 +144,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ClientProviders>
 
         {/* ── Google AdSense ────────────────────────────────────────────────────
-            strategy="afterInteractive": Next.js injects this into the SSR HTML
-            so Google's crawler and AdSense verifier find it in the page source,
-            but the browser DEFERS execution until after the page is interactive.
+            strategy="lazyOnload": fires during browser idle time AFTER LCP is
+            already painted. This is the least impactful strategy for Core Web
+            Vitals — the ad script never competes with LCP or FID.
 
-            WHY afterInteractive instead of raw <script async> in <head>:
-            A raw async script in <head> immediately queues a network fetch that
-            competes with CSS + font downloads on the critical render path.
-            afterInteractive eliminates the 3rd-party render-blocking penalty
-            that was the primary cause of FCP 4.0s and LCP 6.9s.
+            WHY lazyOnload over afterInteractive:
+            afterInteractive fires immediately after hydration, which can still
+            compete with TTI. lazyOnload waits for idle time, giving the page
+            full rendering priority before any ad scripts run.
 
-            Google's own PageSpeed team recommends this pattern for AdSense.
+            Google's own PageSpeed team recommends lazyOnload for AdSense.
         ──────────────────────────────────────────────────────────────────── */}
         <Script
           id="adsense-script"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5164672592255197"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           crossOrigin="anonymous"
         />
 

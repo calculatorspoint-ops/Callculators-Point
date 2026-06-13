@@ -23,7 +23,7 @@ export default function AllCalculators() {
   }), [q, cat]);
 
   return (
-    <div style={{ backgroundColor: '#0a0e25', minHeight: '100vh' }}>
+    <div className="all-calcs-page">
       
 
       {/* Hero Section */}
@@ -49,6 +49,7 @@ export default function AllCalculators() {
               value={q} 
               onChange={e => setQ(e.target.value)} 
               placeholder="Search calculators..." 
+              aria-label="Search all calculators"
             />
           </div>
           <div className="filters-premium">

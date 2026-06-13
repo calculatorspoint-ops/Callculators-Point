@@ -1,7 +1,7 @@
 
 import Link from "next/link";
 
-const LAST_UPDATED = "June 6, 2026";
+const LAST_UPDATED = "June 13, 2026";
 
 const Section = ({ id, title, children }) => (
   <div id={id} style={{ marginBottom:32 }}>
@@ -25,8 +25,9 @@ const TABLE_OF_CONTENTS = [
   ["#security",          "Data Security"],
   ["#childrens",         "Children's Privacy"],
   ["#rights",            "Your Rights"],
+  ["#do-not-sell",       "Do Not Sell (CCPA)"],
   ["#changes",           "Changes to This Policy"],
-  ["#contact",           "Contact Us"],
+  ["#contact-pp",        "Contact Us"],
 ];
 
 export default function PrivacyPolicy() {
@@ -69,7 +70,7 @@ export default function PrivacyPolicy() {
                 {[
                   "All calculations run entirely in your browser — we never see your inputs",
                   "We use Google Analytics for anonymous page view statistics only",
-                  "We display Google AdSense ads (non-personalized by default)",
+                  "We may display ads through Google AdSense or similar advertising partners after approval",
                   "We use localStorage to save your preferences (theme, currency, recent tools)",
                   "We do not sell, rent, or share your data with third parties",
                   "No account creation required — ever",
@@ -174,10 +175,10 @@ export default function PrivacyPolicy() {
               <P>You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={{ color:"var(--brand)" }}>Google Analytics Opt-out Browser Add-on</a>.</P>
             </Section>
 
-            <Section id="advertising" title="7. Advertising (Google AdSense)">
-              <P>Calculators Point is supported by advertising through Google AdSense. By default, we serve non-personalized ads that do not use cookies for ad personalization.</P>
-              <P>Google AdSense may use cookies to serve ads based on your visit to our site and other sites on the internet. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color:"var(--brand)" }}>Google's Ad Settings</a>.</P>
-              <P><strong>Advertising Disclosure:</strong> Ads are clearly labeled with "Advertisement" and never influence our calculator results, formulas, or editorial content.</P>
+            <Section id="advertising" title="7. Advertising">
+              <P>Calculators Point may display advertisements through Google AdSense or similar advertising partners. If and when ads are active, we serve non-personalized ads by default that do not use cookies for ad personalization.</P>
+              <P>If Google AdSense is active, Google may use cookies to serve ads based on your visit to our site and other sites on the internet. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color:"var(--brand)" }}>Google's Ad Settings</a>.</P>
+              <P><strong>Advertising Disclosure:</strong> Any advertisements displayed will be clearly labeled and will never influence our calculator results, formulas, or editorial content.</P>
             </Section>
 
             <Section id="security" title="8. Data Security">
@@ -208,14 +209,28 @@ export default function PrivacyPolicy() {
               <P>To exercise any of these rights, contact us at the details in Section 12. For localStorage data, you can clear it directly in your browser settings (Settings → Privacy → Clear Site Data).</P>
             </Section>
 
-            <Section id="changes" title="11. Changes to This Policy">
+            <Section id="do-not-sell" title="11. Do Not Sell My Personal Information (CCPA)">
+              <P>Calculators Point does <strong>not sell personal information</strong> to third parties. We do not receive money or other consideration in exchange for your personal data.</P>
+              <P>However, if you are a California resident, you may have rights under the California Consumer Privacy Act (CCPA), including the right to opt out of certain data sharing with advertising platforms:</P>
+              <Ul>
+                <Li><strong>Google Analytics:</strong> Click "Necessary Only" in the cookie banner, or install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brand)' }}>Google Analytics Opt-Out Browser Add-on</a>.</Li>
+                <Li><strong>Google AdSense (future):</strong> Visit <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--brand)' }}>Google Ad Settings</a> to opt out of personalized advertising.</Li>
+                <Li><strong>Firebase:</strong> Rating data (thumbs up/down) is stored anonymously without any identifier. No personal data is associated.</Li>
+              </Ul>
+              <P>To exercise your rights or for any CCPA-related requests, contact us at <a href="mailto:contact@calculatorspoint.com" style={{ color: 'var(--brand)' }}>contact@calculatorspoint.com</a> with the subject line "CCPA Request".</P>
+            </Section>
+
+            <Section id="changes" title="12. Changes to This Policy">
               <P>We may update this Privacy Policy periodically. We will notify you of significant changes by updating the "Last Updated" date at the top of this page. We encourage you to review this policy regularly.</P>
               <P>Continued use of Calculators Point after changes are posted constitutes your acceptance of the revised policy.</P>
             </Section>
 
             <Section id="contact-pp" title="12. Contact Us">
-              <P>If you have questions, concerns, or requests regarding this Privacy Policy, please contact us via our <Link href="/contact" style={{ color:"var(--brand)" }}>Contact Page</Link>.</P>
-              <P>For GDPR-related inquiries, please include "GDPR Request" in your subject line.</P>
+              <P>If you have questions, concerns, or requests regarding this Privacy Policy, please contact us:</P>
+              <P><strong>Email:</strong> <a href="mailto:contact@calculatorspoint.com" style={{ color:"var(--brand)" }}>contact@calculatorspoint.com</a></P>
+              <P><strong>Website:</strong> <Link href="/contact" style={{ color:"var(--brand)" }}>calculatorspoint.com/contact</Link></P>
+              <P><strong>Operator:</strong> Calculators Point, Pakistan</P>
+              <P>For GDPR-related inquiries, please include "GDPR Request" in your subject line. We aim to respond within 48 business hours.</P>
             </Section>
           </div>
         </div>

@@ -1,6 +1,12 @@
-﻿/* ══════════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════
    ALL CALCULATORS - PREMIUM REDESIGN
 ══════════════════════════════════════════════════════════════ */
+
+/* ── Page wrapper — always dark, independent of theme toggle ── */
+.all-calcs-page {
+  background-color: #0a0e25;
+  min-height: 100vh;
+}
 
 /* ── Hero Section ── */
 .hero-premium {

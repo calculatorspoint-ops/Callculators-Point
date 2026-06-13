@@ -114,7 +114,7 @@ export default function Disclaimer() {
         </S>
 
         <S title="Advertising Disclosure" icon="📢" color="#64748b" bg="#f1f5f9">
-          <P>Calculators Point is funded through non-intrusive advertising via Google AdSense. In accordance with FTC guidelines and applicable advertising regulations:</P>
+          <P>Calculators Point may be supported through advertising partnerships, including Google AdSense or similar platforms, after approval. In accordance with FTC guidelines and applicable advertising regulations:</P>
           <Ul>
             <Li>All advertisements are clearly labeled with "Advertisement"</Li>
             <Li>Advertisers have no influence over our calculator formulas, results, or editorial content</Li>
@@ -126,7 +126,7 @@ export default function Disclaimer() {
         {/* Final */}
         <div style={{ padding:"20px 22px", background:"var(--surf2)", border:"1px solid var(--border)", borderRadius:"var(--r-xl)", marginTop:8 }}>
           <P>By using Calculators Point, you acknowledge that you have read and understood this disclaimer and agree to use the calculator results as one input among many in your decision-making process — not as a sole determinant.</P>
-          <P>If you believe any calculator result is inaccurate, please <Link href="/contact" style={{ color:"var(--brand)" }}>contact us</Link> with details. We are committed to maintaining accuracy and will investigate all reported issues promptly.</P>
+          <P>If you believe any calculator result is inaccurate, please <Link href="/contact" style={{ color:"var(--brand)" }}>contact us</Link> with details, or email <a href="mailto:contact@calculatorspoint.com" style={{ color:"var(--brand)" }}>contact@calculatorspoint.com</a> (Pakistan). We are committed to maintaining accuracy and will investigate all reported issues promptly.</P>
         </div>
 
         <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:28, paddingTop:24, borderTop:"1px solid var(--border)" }}>

@@ -1,6 +1,6 @@
 export const BASE_FAQS: { q: string; a: string }[] = [
   { q:"Is this calculator free to use?", a:"Yes, all Calculators Point tools are 100% free with no registration, no login, and no hidden fees — free permanently, not just for a trial period." },
-  { q:"How accurate are the results?", a:"Our calculators use industry-standard formulas verified against academic sources and professional tools (e.g., Mifflin-St Jeor for BMR, FBR/RBI official slabs for tax). Results are for informational purposes — always verify important financial or health decisions with a qualified professional." },
+  { q:"How accurate are the results?", a:"Our calculators use industry-standard formulas verified against academic sources and professional tools. Results are for informational and educational purposes — always verify important financial, health, or technical decisions with a qualified professional." },
   { q:"Can I share my calculation?", a:"Yes. Click the Share button on any result to copy a shareable link with your exact inputs pre-filled, so others can see precisely what you calculated." },
   { q:"Does Calculators Point store my data?", a:"No. All calculations happen locally in your browser. Your inputs are never transmitted to any server, ensuring complete privacy." },
   { q:"Can I use this on mobile?", a:"Yes. Calculators Point is mobile-first — all sliders, inputs, and charts are optimized for touch screens and work on any device." },
@@ -13,6 +13,36 @@ export const CALC_FAQS: Record<string, { q: string; a: string }[]> = {
     { q:"What happens if I pay extra every month?", a:"Extra prepayments reduce the outstanding principal faster, significantly cutting total interest paid and the effective loan tenure. Even ₹500 extra/month on a ₹5L loan at 12% saves ~₹12,000 in interest." },
     { q:"What is an amortization schedule?", a:"An amortization schedule is a month-by-month table showing how each EMI splits between interest and principal repayment. Early months are mostly interest; final months are mostly principal." },
     { q:"What EMI-to-income ratio is healthy?", a:"Financial experts recommend keeping total EMIs (all loans combined) below 40–50% of monthly take-home pay. Above 50% is considered financially stretched." },
+  ],
+  "concrete-calculator": [
+    { q:"How do I calculate concrete volume for a slab?", a:"Concrete volume = Length × Width × Depth. For example, a 4 m × 3 m slab at 100 mm (0.1 m) thick = 4 × 3 × 0.1 = 1.2 m³. Always add a 10% waste factor, giving 1.32 m³ for this slab." },
+    { q:"How many bags of concrete do I need per cubic metre?", a:"A 60 lb (27 kg) bag covers approximately 0.45 cu ft (0.0127 m³). For 1 m³ you need roughly 79 bags of 60 lb, or 59 bags of 80 lb. The exact number depends on the bag yield specified by the manufacturer." },
+    { q:"What is the difference between a slab, footing, and column concrete calculation?", a:"Slabs and walls use cuboid volume (L × W × D). Round footings and columns use cylindrical volume (π × radius² × depth). The calculator handles each shape separately so you always get the correct formula for your pour type." },
+    { q:"Should I use pre-mixed bags or ready-mix concrete?", a:"Pre-mixed bags are economical for small pours under 0.5 m³ (around 40 bags). For larger pours, a ready-mix truck is faster and cheaper per m³. The threshold is typically 1–2 cubic yards — consult your local supplier for quotes." },
+    { q:"What is a typical concrete mix ratio?", a:"A standard general-purpose mix is 1:2:4 (cement:sand:aggregate by volume). For higher-strength structural work, use 1:1.5:3. The calculator assumes a standard mix; use the Cement Calculator for custom mix ratios." },
+    { q:"Why do I need a waste allowance for concrete?", a:"Concrete pours always lose some material to spillage, uneven forms, and over-filling. A 10% waste factor is standard for slabs and walls. Footings and columns in unstable soil may need 15–20% more." },
+  ],
+  "cement-calculator": [
+    { q:"How is the cement quantity calculated for a given mix ratio?", a:"For a 1:2:4 mix (cement:sand:aggregate), the total parts = 7. Cement proportion = 1/7. For 1 m³ of concrete, you need 1/7 = 0.143 m³ of cement, which equals approximately 4.4 bags of 50 kg cement (since 1 bag ≈ 0.033 m³)." },
+    { q:"What is the difference between cement and concrete?", a:"Cement is a binding agent (powder) made from limestone and clay. Concrete is cement mixed with sand, aggregate, and water. Mortar is cement mixed with sand only (no aggregate). You need cement to make concrete, but cement alone is not concrete." },
+    { q:"How many bags of cement per cubic metre of concrete?", a:"For a standard 1:2:4 mix: approximately 6–7 bags of 50 kg cement per m³. For a richer 1:1.5:3 mix: approximately 8–9 bags per m³. The exact quantity depends on your mix design and allowance for bulking of sand." },
+  ],
+  "sand-calculator": [
+    { q:"How much sand do I need for a given area?", a:"Sand volume = Area × Depth. For example, a 10 m² patio at 50 mm (0.05 m) depth needs 10 × 0.05 = 0.5 m³ of sand. Convert to tonnes: 0.5 m³ × 1.6 t/m³ (dry sand density) = 0.8 tonnes." },
+    { q:"What is the density of sand?", a:"Dry sand weighs approximately 1,600 kg/m³ (1.6 tonnes/m³). Wet sand is heavier at around 1,920 kg/m³. Bulk bags (1 tonne) contain about 0.625 m³ of dry sand. Always order by volume when mixing concrete for consistency." },
+    { q:"How much sand do I need to mix with cement?", a:"For mortar (no aggregate): a 1:3 mix uses 3 parts sand to 1 part cement by volume. For concrete (with aggregate): a 1:2:4 mix uses 2 parts sand. Use the Cement Calculator to get precise material quantities for your specific mix and volume." },
+  ],
+  "gravel-calculator": [
+    { q:"How do I calculate how much gravel I need?", a:"Gravel volume = Length × Width × Depth. For a 5 m × 3 m path at 75 mm (0.075 m) depth: 5 × 3 × 0.075 = 1.125 m³. Add 10% for compaction loss: 1.125 × 1.1 = 1.24 m³ (approximately 2 tonnes at 1.6 t/m³)." },
+    { q:"What depth of gravel should I use for a driveway?", a:"A gravel driveway typically needs 100–150 mm (4–6 inches) of compacted gravel in two layers: 75–100 mm of base gravel, then 50 mm of decorative top gravel. Light foot traffic paths need only 50–75 mm total." },
+    { q:"How much does a tonne of gravel cover?", a:"One tonne of gravel covers approximately 10–14 m² at 50 mm depth, or 7–9 m² at 75 mm depth, depending on the gravel type and density. Limestone tends to be lighter; basalt and granite are denser." },
+  ],
+  "inventory-turnover-calculator": [
+    { q:"How is inventory turnover ratio calculated?", a:"Inventory Turnover = Cost of Goods Sold (COGS) ÷ Average Inventory. Average Inventory = (Beginning Inventory + Ending Inventory) ÷ 2. For example, COGS of $500,000 with average inventory of $100,000 gives a turnover ratio of 5, meaning inventory was replenished 5 times that year." },
+    { q:"What is a good inventory turnover ratio?", a:"It depends on the industry. Grocery and food retail: 15–25× (high volume, perishable). General retail: 5–10×. Manufacturing: 4–8×. A ratio below 3× often signals slow-moving stock or over-purchasing. A ratio above 20× in non-food industries may indicate stock-outs and lost sales." },
+    { q:"What is Days Sales of Inventory (DSI)?", a:"DSI = 365 ÷ Inventory Turnover Ratio. It shows how many days, on average, inventory sits before being sold. An inventory turnover of 5 equals a DSI of 73 days. Lower DSI means faster-selling inventory, which is generally better for cash flow." },
+    { q:"What is the difference between FIFO and LIFO in inventory?", a:"FIFO (First In, First Out) assumes oldest inventory is sold first, resulting in lower COGS when prices rise. LIFO (Last In, First Out) assumes newest inventory is sold first, resulting in higher COGS and lower tax in rising price environments. LIFO is not permitted under IFRS (used outside the US)." },
+    { q:"Why is a high inventory turnover not always good?", a:"Excessively high turnover can mean you're frequently running out of stock (stockouts), leading to lost sales and unhappy customers. The optimal turnover rate balances holding costs (storage, spoilage, capital tied up) against stockout risk. The right ratio depends on your reorder lead time and demand variability." },
   ],
   "compound-interest-calculator": [
     { q:"What is compound interest?", a:"Compound interest earns 'interest on interest' — your returns are reinvested and generate further returns, causing wealth to grow exponentially over time. Einstein reportedly called it the 'eighth wonder of the world'." },
