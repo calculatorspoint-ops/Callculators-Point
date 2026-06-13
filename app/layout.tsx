@@ -113,6 +113,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Inline theme script: sets dark/light class BEFORE paint — eliminates FOUC */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
 
+        {/* ── Google Analytics Consent Mode v2 — MUST run before gtag.js loads ────
+            Setting consent defaults BEFORE the gtag.js script fires ensures
+            GA4 never collects data before the user has made a choice.
+            This is required for Consent Mode v2 (Google's enforcement from 2024).
+        ──────────────────────────────────────────────────────────────────────── */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('consent', 'default', {
+            analytics_storage: 'denied',
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            wait_for_update: 500
+          });
+        ` }} />
+
         {/* ── AdSense site ownership verification ─────────────────────────────────
             Required by Google for AdSense review. Must be in <head> on every page.
         ─────────────────────────────────────────────────────────────────── */}
@@ -163,9 +180,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
 
         {/* ── Google Analytics — Consent Mode v2 (GDPR/PECR compliant) ────────────────
-            1. gtag.js loads after page is interactive (afterInteractive — no render blocking)
-            2. We initialize with analytics_storage + ad_storage DENIED by default
-            3. CookieConsent component calls gtag('consent','update',{...}) on Accept
+            1. Consent defaults are set in <head> BEFORE this script loads (above)
+            2. gtag.js loads after page is interactive (afterInteractive — no render blocking)
+            3. CookieConsent component calls window.gtag('consent','update',{...}) on Accept
             4. This is fully compliant with EU ePrivacy Directive (PECR) and GDPR
         ─────────────────────────────────────────────────────────────────────── */}
         <Script
@@ -176,16 +193,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
-            // Consent Mode v2: deny by default until user accepts cookie banner
-            gtag('consent', 'default', {
-              analytics_storage: 'denied',
-              ad_storage: 'denied',
-              ad_user_data: 'denied',
-              ad_personalization: 'denied',
-              wait_for_update: 500,
-            });
+            window.gtag = gtag;
             gtag('js', new Date());
-            gtag('config', 'G-RZ1T9JVXMV');
+            gtag('config', 'G-RZ1T9JVXMV', { send_page_view: true });
           `}
         </Script>
 

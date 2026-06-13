@@ -1,8 +1,9 @@
 'use client';
-// Extend Window type so TypeScript recognises window.dataLayer (Google Tag Manager)
+// Extend Window type so TypeScript recognises window.dataLayer and window.gtag
 declare global {
   interface Window {
     dataLayer: unknown[];
+    gtag: (...args: unknown[]) => void;
   }
 }
 
@@ -36,17 +37,35 @@ export function CookieConsent() {
 
   // Declared before the useEffect that calls it — avoids "accessed before declaration" lint error
   function enableAnalytics() {
-    // Fire GA consent update — gtag may not be available yet on first render,
-    // so we queue it via dataLayer push for when gtag.js loads.
+    // Use window.gtag() — the correct Consent Mode v2 API.
+    // window.gtag is defined by the inline <script> in layout.tsx <head> BEFORE gtag.js loads.
+    // dataLayer.push(['consent',...]) is WRONG — gtag() uses arguments object, not arrays.
     try {
-      if (typeof window !== 'undefined') {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push(['consent', 'update', {
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
           analytics_storage: 'granted',
           ad_storage: 'granted',
           ad_user_data: 'granted',
           ad_personalization: 'granted',
-        }]);
+        });
+        // Fire a page_view immediately so this session is counted in GA realtime
+        window.gtag('event', 'page_view', {
+          page_title: document.title,
+          page_location: window.location.href,
+          page_path: window.location.pathname,
+        });
+      } else {
+        // gtag not ready yet — queue in dataLayer using the correct object format
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'consent_update',
+          consent: {
+            analytics_storage: 'granted',
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted',
+          },
+        });
       }
     } catch {
       // Silent fail — analytics is non-critical
@@ -61,16 +80,15 @@ export function CookieConsent() {
 
   function handleDecline() {
     try { localStorage.setItem(CONSENT_KEY, CONSENT_DECLINED); } catch { /* ignore */ }
-    // Push explicit consent denial to dataLayer for Google Consent Mode v2
+    // Push explicit consent denial via window.gtag (correct Consent Mode v2 API)
     try {
-      if (typeof window !== 'undefined') {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push(['consent', 'update', {
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
           analytics_storage: 'denied',
           ad_storage: 'denied',
           ad_user_data: 'denied',
           ad_personalization: 'denied',
-        }]);
+        });
       }
     } catch { /* silent fail */ }
     setVisible(false);
