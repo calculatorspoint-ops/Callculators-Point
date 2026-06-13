@@ -130,7 +130,7 @@ export default function Calculator() {
                 )}
                 <CalculatorWidget calc={calc} />
               </div>
-              <ExportToolbar targetSelector=".calculator-result-zone" filenamePrefix={calc.name.replace(/\s+/g, '_')} />
+              <ExportToolbar filenamePrefix={calc.name.replace(/\s+/g, '_')} />
               <FeedbackWidget calcName={calc.name} calcSlug={calc.slug} />
               {/* Trust signals bar */}
               <div className="calc-trust-bar">
