@@ -377,41 +377,175 @@ export function OneRMForm(){
 
 // ── Pregnancy Due Date ────────────────────────────────────────────────
 export function PregnancyForm(){
-  // Default LMP to ~8 weeks ago (realistic starting point)
-  const defaultLMP = (() => { const d = new Date(); d.setDate(d.getDate()-56); return d.toISOString().split('T')[0]; })();
+  const defaultLMP = (()=>{ const d=new Date(); d.setDate(d.getDate()-56); return d.toISOString().split('T')[0]; })();
   const [lmp,setLmp]=useState(defaultLMP);
   const [cycleLength,setCycleLength]=useState(28);
-  const [res,setRes]=useState(null);
+  const [res,setRes]=useState<any>(null);
+
   useEffect(()=>{
     const t=setTimeout(()=>{
-      const d=calcPregnancy({lmp, cycleLength});
+      const d=calcPregnancy({lmp,cycleLength});
       if(!d){setRes(null);return;}
       setRes({
-        ...buildResult("Due Date",d.edd,
-          [{label:"Weeks Pregnant",value:d.weeksPregnant+"wks"},{label:"Trimester",value:d.trimester},{label:"Days Left",value:d.daysLeft},{label:"Cycle Length",value:d.cycleLength+" days"}],
-          d.insights,null,d.breakdowns),
-        milestones: d.milestones
+        edd:d.edd, weeksPregnant:d.weeksPregnant, daysLeft:d.daysLeft,
+        trimester:d.trimester, cycleLen:d.cycleLength, insights:d.insights,
       });
     },80);
     return()=>clearTimeout(t);
-  },[lmp, cycleLength]);
+  },[lmp,cycleLength]);
+
+  const triColor = !res?'#6366f1': res.trimester==='1st'?'#8b5cf6': res.trimester==='2nd'?'#06b6d4':'#f59e0b';
+  const progressPct = !res?0: Math.min(100,Math.round((res.weeksPregnant/40)*100));
+  const milestones = [
+    {week:8,  label:'First ultrasound possible'},
+    {week:12, label:'End of 1st trimester'},
+    {week:20, label:'Anatomy scan (Level 2)'},
+    {week:28, label:'3rd trimester begins'},
+    {week:37, label:'Full term 🌟'},
+    {week:40, label:'Due date 🎉'},
+  ];
+
   return (
-    <div>
-      <N label="First Day of Last Menstrual Period (LMP)" id="lmp" value={lmp} onChange={setLmp} type="date" hint="Used to calculate Naegele's Rule due date"/>
-      <N label="Menstrual Cycle Length (days)" id="preg-cycle" value={String(cycleLength)} onChange={v=>setCycleLength(Math.max(21,Math.min(45,+v||28)))} unit="days" hint="Default 28 days (range 21–45). Adjusts EDD from standard Naegele's Rule."/>
+    <div style={{maxWidth:660,margin:'0 auto',padding:'4px 0',fontFamily:'var(--font)'}}>
+
+      {/* ─── INPUTS ─── */}
+      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
+        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>
+          📋 Your Details
+        </p>
+        {/* LMP */}
+        <div style={{marginBottom:18}}>
+          <label htmlFor="pg-lmp" style={{display:'block',fontSize:13,fontWeight:700,color:'var(--text2)',marginBottom:8}}>
+            First Day of Last Menstrual Period (LMP)
+          </label>
+          <input id="pg-lmp" type="date" value={lmp} onChange={e=>setLmp(e.target.value)}
+            style={{display:'block',width:'100%',height:50,padding:'0 16px',border:'1.5px solid var(--border)',
+              borderRadius:12,background:'var(--surface2)',color:'var(--text)',fontSize:15,
+              fontWeight:600,fontFamily:'var(--font)',outline:'none',boxSizing:'border-box',cursor:'pointer'}}
+            onFocus={e=>{e.currentTarget.style.borderColor='var(--brand)';e.currentTarget.style.boxShadow='0 0 0 4px rgba(67,97,238,.1)';}}
+            onBlur={e=>{e.currentTarget.style.borderColor='var(--border)';e.currentTarget.style.boxShadow='none';}}
+          />
+          <p style={{fontSize:11.5,color:'var(--text3)',margin:'6px 0 0'}}>Used to calculate Naegele&apos;s Rule due date</p>
+        </div>
+        {/* Cycle slider */}
+        <div>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+            <label htmlFor="pg-cycle" style={{fontSize:13,fontWeight:700,color:'var(--text2)'}}>Menstrual Cycle Length</label>
+            <span style={{background:'var(--brand)',color:'#fff',borderRadius:8,padding:'3px 12px',fontSize:14,fontWeight:700}}>{cycleLength} days</span>
+          </div>
+          <input id="pg-cycle" type="range" min={21} max={45} step={1} value={cycleLength}
+            onChange={e=>setCycleLength(+e.target.value)}
+            style={{width:'100%',accentColor:'var(--brand)',cursor:'pointer',display:'block'}}
+          />
+          <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'var(--text3)',marginTop:5,fontWeight:600}}>
+            <span>21 days</span><span>45 days</span>
+          </div>
+          <p style={{fontSize:11.5,color:'var(--text3)',margin:'6px 0 0'}}>Default 28 days (range 21–45). Adjusts EDD using Naegele&apos;s Rule.</p>
+        </div>
+      </div>
+
+      {/* ─── RESULTS ─── */}
       {res&&(
-        <>
-          <ResultBox label={res.primary.label} value={res.primary.value}/>
-          <StatsGrid items={res.stats}/>
-          <InsightBox insights={res.insights}/>
-          <L t="Pregnancy Milestones"/>
-          {res.milestones?.map(m=>(
-            <div key={m.week} style={{display:"flex",justifyContent:"space-between",padding:"8px 14px",borderBottom:"1px solid var(--border2)",fontSize:13}}>
-              <span style={{color:"var(--text2)"}}>{`Week ${m.week}`}</span>
-              <span style={{color:"var(--text)"}}>{m.label}</span>
+        <div style={{display:'flex',flexDirection:'column',gap:16}}>
+
+          {/* Hero due date */}
+          <div style={{background:`linear-gradient(135deg,${triColor}18,${triColor}06)`,border:`2px solid ${triColor}30`,
+            borderRadius:20,padding:'30px 24px',textAlign:'center',position:'relative',overflow:'hidden'}}>
+            <div style={{position:'absolute',top:-50,left:'50%',transform:'translateX(-50%)',width:220,height:220,
+              background:`radial-gradient(circle,${triColor}20,transparent 70%)`,pointerEvents:'none'}}/>
+            <div style={{position:'relative',zIndex:1}}>
+              <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:triColor,marginBottom:8}}>🎯 Estimated Due Date</p>
+              <p style={{fontSize:'clamp(26px,6vw,44px)',fontWeight:900,color:'var(--text)',lineHeight:1.1,margin:'0 0 12px',fontFamily:'var(--font-hd,var(--font))'}}>
+                {res.edd}
+              </p>
+              <span style={{display:'inline-block',background:triColor,color:'#fff',borderRadius:100,padding:'5px 18px',fontSize:13,fontWeight:700}}>
+                {res.trimester} Trimester
+              </span>
             </div>
-          ))}
-        </>
+          </div>
+
+          {/* Metrics */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+            {[
+              {icon:'🤰',label:'Weeks Pregnant',val:`${res.weeksPregnant} wks`},
+              {icon:'📅',label:'Days Until Due', val:`${res.daysLeft}`},
+              {icon:'🔁',label:'Cycle Length',   val:`${res.cycleLen} days`},
+            ].map(m=>(
+              <div key={m.label} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'16px 10px',textAlign:'center'}}>
+                <div style={{fontSize:24,marginBottom:8}}>{m.icon}</div>
+                <div style={{fontSize:'clamp(16px,3.5vw,24px)',fontWeight:900,color:'var(--text)',lineHeight:1}}>{m.val}</div>
+                <div style={{fontSize:11,color:'var(--text3)',marginTop:6,fontWeight:600,lineHeight:1.3}}>{m.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Progress */}
+          <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'18px 22px'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+              <span style={{fontSize:13,fontWeight:700,color:'var(--text2)'}}>Pregnancy Progress</span>
+              <span style={{fontSize:13,fontWeight:800,color:triColor}}>{progressPct}% complete</span>
+            </div>
+            <div style={{height:12,background:'var(--surf2)',borderRadius:100,overflow:'hidden'}}>
+              <div style={{height:'100%',width:`${progressPct}%`,background:`linear-gradient(90deg,${triColor}88,${triColor})`,
+                borderRadius:100,transition:'width .6s cubic-bezier(.4,0,.2,1)'}}/>
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:'var(--text3)',marginTop:7,fontWeight:600}}>
+              <span>Week 0</span><span>Week 40</span>
+            </div>
+          </div>
+
+          {/* Milestones */}
+          <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,overflow:'hidden'}}>
+            <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',background:'var(--surf2)'}}>
+              <p style={{fontSize:13,fontWeight:800,color:'var(--text)',margin:0}}>🗓️ Pregnancy Milestones</p>
+            </div>
+            {milestones.map((m,i)=>{
+              const done=res.weeksPregnant>=m.week;
+              const active=done&&(i===milestones.length-1||res.weeksPregnant<milestones[i+1].week);
+              return (
+                <div key={m.week} style={{display:'flex',alignItems:'center',gap:14,padding:'13px 20px',
+                  borderBottom:i<milestones.length-1?'1px solid var(--border)':'none',
+                  background:active?`${triColor}0a`:'transparent'}}>
+                  <div style={{width:32,height:32,borderRadius:'50%',flexShrink:0,display:'flex',
+                    alignItems:'center',justifyContent:'center',fontSize:14,color:'#fff',fontWeight:800,
+                    background:done?triColor:'var(--surf2)',border:`2px solid ${done?triColor:'var(--border)'}`,
+                    boxShadow:done?`0 2px 8px ${triColor}40`:'none'}}>
+                    {done?'✓':''}
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <span style={{fontSize:13,fontWeight:700,color:done?'var(--text)':'var(--text3)'}}>{m.label}</span>
+                    {active&&<span style={{marginLeft:8,fontSize:11,color:triColor,fontWeight:800}}>← You are here</span>}
+                  </div>
+                  <span style={{fontSize:11,fontWeight:700,padding:'3px 10px',borderRadius:100,flexShrink:0,
+                    background:done?`${triColor}18`:'var(--surf2)',color:done?triColor:'var(--text3)',
+                    border:`1px solid ${done?triColor+'30':'var(--border)'}`}}>
+                    Wk {m.week}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Insights */}
+          {res.insights?.filter(Boolean).length>0&&(
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {res.insights.filter(Boolean).map((ins:any,i:number)=>(
+                <div key={i} style={{display:'flex',alignItems:'flex-start',gap:12,padding:'12px 16px',borderRadius:12,
+                  background:ins.type==='good'?'rgba(16,185,129,.08)':'rgba(67,97,238,.07)',
+                  border:`1px solid ${ins.type==='good'?'rgba(16,185,129,.25)':'rgba(67,97,238,.2)'}`}}>
+                  <span style={{fontSize:16,flexShrink:0,marginTop:1}}>{ins.type==='good'?'✅':'ℹ️'}</span>
+                  <p style={{fontSize:13,color:'var(--text2)',margin:0,lineHeight:1.6}}>{ins.msg}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Disclaimer */}
+          <p style={{fontSize:11.5,color:'var(--text3)',lineHeight:1.7,padding:'12px 16px',
+            background:'var(--surf2)',borderRadius:12,border:'1px solid var(--border)',margin:0}}>
+            ⚕️ <strong>Medical Disclaimer:</strong> This calculator uses Naegele&apos;s Rule and is for informational purposes only. Due dates are estimates — only ~5% of babies arrive on their exact due date. Always consult your healthcare provider for personalised advice.
+          </p>
+        </div>
       )}
     </div>
   );
