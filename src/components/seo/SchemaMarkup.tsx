@@ -88,6 +88,7 @@ export function SchemaMarkup({ calc, cat, faqs }: SchemaMarkupProps) {
   return (
     <JsonLd
       data={[breadcrumb, webApp, faqSchema, howToSchema, webPageSchema]}
+      idPrefix={calc.slug}
     />
   );
 }
