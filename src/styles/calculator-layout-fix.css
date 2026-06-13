@@ -425,10 +425,6 @@
     gap: 12px !important;
   }
 
-  .calc-card-body {
-    padding: 16px 14px 14px !important;
-  }
-
   /* Single column stat cards on small screens */
   .stats-grid {
     grid-template-columns: 1fr 1fr;
@@ -442,6 +438,8 @@
     max-width: 100%;
     overflow-x: hidden;
   }
+
+  .calc-card-body { padding: 20px 22px 18px !important; }
 
   /* Row helpers collapse to single column */
   .sc-row2,
@@ -474,7 +472,7 @@
   }
 
   .calc-card-body {
-    padding: 14px 12px 12px !important;
+    padding: 16px 18px 14px !important;
   }
 
   .stats-grid {
@@ -626,22 +624,34 @@
 /* ────────────────────────────────────────────────────────────────
    1. CALCULATOR CARD BODY — generous desktop padding
    Labels and inputs must never touch the card border edge.
-   Desktop: 32px sides, Mobile: 20px sides
+   The calc-card has border-radius: var(--r-2xl) = 24px with overflow:hidden.
+   Minimum safe padding from card edge = border-radius + 12px buffer = 36px.
+   Desktop: 36px sides, Mobile: 22px sides
 ──────────────────────────────────────────────────────────────── */
 .calc-card-body {
-  padding: 32px 30px 28px !important;
+  padding: 32px 36px 28px !important;
 }
 
 @media (max-width: 1024px) {
-  .calc-card-body { padding: 26px 24px 22px !important; }
+  .calc-card-body { padding: 26px 30px 22px !important; }
 }
 
 @media (max-width: 767px) {
-  .calc-card-body { padding: 20px 18px 18px !important; }
+  .calc-card-body { padding: 20px 22px 18px !important; }
 }
 
 @media (max-width: 480px) {
-  .calc-card-body { padding: 16px 14px 14px !important; }
+  .calc-card-body { padding: 16px 18px 14px !important; }
+}
+
+/* Safety net: labels in calc-card-body must never be at x=0 of the card.
+   Even if nested containers have zero padding, this forces a minimum
+   breathing room so the 24px border-radius doesn't clip the first character. */
+.calc-card-body label,
+.calc-card-body .f-label {
+  /* No negative margins — keep as block so labels stack above inputs */
+  display: block;
+  min-width: 0;
 }
 
 /* ────────────────────────────────────────────────────────────────
