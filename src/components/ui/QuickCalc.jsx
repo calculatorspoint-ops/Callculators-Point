@@ -38,6 +38,7 @@ function evalExpr(expr, isDeg) {
     const toRad = isDeg ? (x) => x * Math.PI / 180 : (x) => x;
     const safe = expr
       .replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-")
+      .replace(/\^/g, "**")
       .replace(/π/g, String(Math.PI))
       .replace(/\be\b/g, String(Math.E))
       .replace(/sin\(/g,  isDeg ? `(x=>Math.sin(x*${Math.PI}/180))(` : "Math.sin(")
@@ -149,6 +150,14 @@ export function QuickCalc() {
         setExpr(display + label);
         setDisplay("0"); setFresh(true); setJustCalc(false); return;
       }
+      // If we are fresh and already have an operator at the end, replace it
+      if (fresh && display === "0" && expr.length > 0) {
+        const last = expr.slice(-1);
+        if (["+","−","×","÷","^"].includes(last) && ["+","−","×","÷","^"].includes(label)) {
+          setExpr(e => e.slice(0, -1) + label);
+          return;
+        }
+      }
       setExpr(e => e + display + label);
       setDisplay("0"); setFresh(true); return;
     }
@@ -162,6 +171,10 @@ export function QuickCalc() {
     if (fresh || display === "0") { setDisplay(label); setFresh(false); }
     else { if (display.length < 16) setDisplay(d => d + label); }
   }, [display, expr, fresh, memory, isDeg, justCalc]);
+
+  // Keep a stable ref to press to prevent re-binding the observer on every keystroke
+  const pressRef = useRef(press);
+  useEffect(() => { pressRef.current = press; }, [press]);
 
   // ── Keyboard support (scoped by visibility) ────────────────────────────
   // INP FIX: Only register the global keydown listener when the widget is
@@ -190,14 +203,14 @@ export function QuickCalc() {
         "s":"sin","c":"cos","t":"tan","l":"log","q":"√",
       };
       const action = map[e.key];
-      if (action) { e.preventDefault(); press(action); }
+      if (action) { e.preventDefault(); pressRef.current(action); }
     };
     window.addEventListener("keydown", handler);
     return () => {
       window.removeEventListener("keydown", handler);
       observer.disconnect();
     };
-  }, [press]);
+  }, []);
 
   // ── Display formatting ────────────────────────────────────────
   const displayFontSize = display.length > 14 ? 14 : display.length > 10 ? 18 : display.length > 7 ? 22 : 28;
