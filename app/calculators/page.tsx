@@ -91,7 +91,7 @@ export default function AllCalculatorsPage() {
         JSON-LD Structured Data — server-rendered at build time.
         JsonLd safely escapes `<` as `\u003c` preventing HTML-parser breakage.
       */}
-      <JsonLd data={[breadcrumb, collectionPage]} />
+      <JsonLd data={[breadcrumb, collectionPage]} idPrefix="all-calcs" />
 
       {/*
         AllCalculatorsClient handles search/filter interactivity.

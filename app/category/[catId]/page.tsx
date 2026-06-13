@@ -129,7 +129,7 @@ export default async function CategoryPage({
         Uses JsonLd which escapes `<` as `\u003c` preventing the HTML parser
         from truncating the JSON if any schema value contains `</script>`.
       */}
-      <JsonLd data={[breadcrumb, itemList, webPage]} />
+      <JsonLd data={[breadcrumb, itemList, webPage]} idPrefix={`cat-${catId}`} />
 
       {/* Category page content */}
       <CategoryPageClient catId={catId} />

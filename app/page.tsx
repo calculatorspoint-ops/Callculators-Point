@@ -509,7 +509,7 @@ export default function HomePage() {
         Uses JsonLd component which safely escapes `<` as `\u003c` to prevent
         the browser HTML parser from closing the <script> tag early.
       */}
-      <JsonLd data={[siteSchema, popularItemListSchema, homeFaqSchema]} />
+      <JsonLd data={[siteSchema, popularItemListSchema, homeFaqSchema]} idPrefix="home" />
 
       {/* ── SERVER-RENDERED HERO (LCP element) ──
           This HTML is in the initial response — browser paints it before any JS loads.

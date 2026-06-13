@@ -121,7 +121,7 @@ export default async function ToolsLandingPage({
         - FAQPage:         emitted when the page has FAQ data → FAQ rich results
         - WebApplication:  emitted when the embedded calculator resolves
       */}
-      <JsonLd data={[breadcrumb, webApp, faqSchema]} />
+      <JsonLd data={[breadcrumb, webApp, faqSchema]} idPrefix={`tools-${slug}`} />
 
       <SEOLandingPage slug={slug} />
     </>

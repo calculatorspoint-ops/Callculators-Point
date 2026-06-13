@@ -57,12 +57,18 @@ export function JsonLd({ data, idPrefix = 'jsonld' }: JsonLdProps) {
       {schemas.map((schema, i) => {
         // Derive a stable, human-readable id from the schema @type.
         // e.g. "FAQPage" → "jsonld-faqpage-0", "BreadcrumbList" → "jsonld-breadcrumblist-0"
-        const schemaType =
-          (schema as Record<string, unknown>)['@type'];
+        // For @graph schemas (no root @type), fall back to the first graph item's @type.
+        const raw = schema as Record<string, unknown>;
+        const rootType = raw['@type'];
+        const graphType =
+          !rootType && Array.isArray(raw['@graph'])
+            ? ((raw['@graph'] as Record<string, unknown>[])[0]?.['@type'])
+            : undefined;
+        const resolvedType = rootType ?? graphType;
         const typeSlug =
-          typeof schemaType === 'string'
-            ? schemaType.toLowerCase()
-            : String(i);
+          typeof resolvedType === 'string'
+            ? resolvedType.toLowerCase()
+            : `schema${i}`;
         const scriptId = `${idPrefix}-${typeSlug}-${i}`;
 
         return (

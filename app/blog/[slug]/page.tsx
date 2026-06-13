@@ -146,7 +146,7 @@ export default async function BlogPostPage({
         JsonLd escapes `<` as `\u003c` preventing HTML-parser from
         prematurely closing the <script> block.
       */}
-      <JsonLd data={[breadcrumbSchema, articleSchema].filter(Boolean) as object[]} />
+      <JsonLd data={[breadcrumbSchema, articleSchema].filter(Boolean) as object[]} idPrefix={`blog-${post.slug}`} />
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: 'clamp(24px, 5vw, 60px) clamp(16px, 4vw, 32px)' }}>
 

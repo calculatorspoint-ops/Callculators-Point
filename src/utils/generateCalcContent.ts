@@ -133,13 +133,55 @@ function generateExamples(calc: CalculatorConfig): { scenario: string; result: s
   
   if (calc.cat === 'finance') {
     return [
-      { scenario: 'Comparing multiple scenarios before making a final decision.', result: 'Identify the most cost-effective long-term option.' },
-      { scenario: 'Adjusting parameters to meet a specific budget target.', result: 'Find exactly what rate or term is required to fit your constraints.' }
+      { 
+        scenario: `Using the ${calc.name} with real loan or investment figures to model a specific financial decision.`,
+        result: `Enter your exact principal, rate, and term above — the calculator shows the precise figures, not estimates, so you can confidently move forward.`
+      },
+      { 
+        scenario: `Comparing two scenarios side-by-side: one with a higher rate and shorter term vs a lower rate over a longer period.`,
+        result: `The ${calc.name} reveals the true cost difference so you can choose the option that saves the most money over the full term.`
+      }
+    ];
+  }
+
+  if (calc.cat === 'health') {
+    return [
+      { 
+        scenario: `Entering your current measurements into the ${calc.name} to establish a personal baseline.`,
+        result: `The result gives you a starting number to track over time — even a small improvement each month adds up to significant progress over a year.`
+      }
+    ];
+  }
+
+  if (calc.cat === 'math') {
+    return [
+      { 
+        scenario: `Applying the ${calc.name} to a textbook problem or real-world measurement scenario.`,
+        result: `Enter your values above to get the answer and the step-by-step formula breakdown — useful for double-checking manual calculations.`
+      }
+    ];
+  }
+
+  if (calc.cat === 'construction') {
+    return [
+      { 
+        scenario: `Calculating materials needed for a standard room or project using the ${calc.name}.`,
+        result: `The calculator outputs both the quantity needed and a waste buffer (typically 10%), so you don't run short mid-project.`
+      }
+    ];
+  }
+
+  if (calc.cat === 'business') {
+    return [
+      { 
+        scenario: `Running the ${calc.name} before a pricing or investment decision to see the numbers before committing.`,
+        result: `Even a 1–2% change in the key input variable can shift the outcome significantly — enter your specific figures to see the exact impact.`
+      }
     ];
   }
   
   return [
-    { scenario: `Using the ${calc.name} for a real-world project`, result: 'Enter your specific values above to see your personalized result instantly.' },
+    { scenario: `Using the ${calc.name} for a real-world calculation`, result: 'Enter your specific values above to see your personalized result instantly.' },
   ];
 }
 

@@ -201,7 +201,7 @@ export default async function CalculatorPage({
   ];
 
   return (
-    <>
+    <article id="calculator-content" aria-label={`${calc.name} — free online calculator`}>
       {/* JSON-LD Schema — server-rendered, zero JS cost */}
       <SchemaMarkup calc={calc} cat={cat} faqs={faqs} />
 
@@ -218,6 +218,6 @@ export default async function CalculatorPage({
       <div className="seo-content-wrapper">
         <SEOContentSection calc={calc} />
       </div>
-    </>
+    </article>
   );
 }

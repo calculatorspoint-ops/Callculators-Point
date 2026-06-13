@@ -199,7 +199,7 @@ export function CookieConsent() {
               lineHeight: 1.6,
               margin: '0 0 10px',
             }}>
-              We use <strong style={{ color: '#fff' }}>Google Analytics</strong> for anonymous traffic insights and <strong style={{ color: '#fff' }}>Firebase</strong> for calculator ratings. We may display ads in the future via Google AdSense.
+              We use <strong style={{ color: '#fff' }}>Google Analytics</strong> for anonymous traffic insights and <strong style={{ color: '#fff' }}>Firebase</strong> for calculator ratings. Calculators Point may display clearly labeled ads through Google AdSense after approval. Ads never affect calculator results or editorial content.
               Your calculation data is never sent to our servers.{' '}
               <Link href="/cookie-policy" style={{ color: '#60a5fa', textDecoration: 'underline', fontWeight: 600 }}>
                 Cookie Policy

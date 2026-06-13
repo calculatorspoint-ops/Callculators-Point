@@ -202,8 +202,8 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
 
       {/* ── Main layout ── */}
       <div className="calc-layout">
-        {/* Left column: calculator */}
-        <div style={{ minWidth: 0 }}>
+        {/* Left column: calculator — primary content, labeled for screen readers & crawlers */}
+        <div role="region" aria-label="Calculator tool" style={{ minWidth: 0 }}>
           {/* Currency banner for finance calculators */}
           {calc.cat === 'finance' && (
             <Suspense fallback={null}>
@@ -237,8 +237,8 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
           {faqs.length > 0 && <FAQSection faqs={faqs} />}
         </div>
 
-        {/* Right sidebar */}
-        <aside style={{ minWidth: 0 }}>
+        {/* Right sidebar — related tools, hidden on mobile */}
+        <aside aria-label="Related calculators" style={{ minWidth: 0 }}>
           {/* Cross-recommendations */}
           <CrossCalcRecommendations slug={slug} />
 
