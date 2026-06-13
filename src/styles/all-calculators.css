@@ -234,6 +234,8 @@
   background: radial-gradient(circle at 10% 0%, rgba(67, 97, 238, 0.12) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
+  /* CRITICAL: prevent this pseudo-element from intercepting right-clicks on the link */
+  pointer-events: none;
 }
 
 .calc-card-premium:hover {

@@ -1573,20 +1573,31 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 /* ══════════════════════════════════════════════════════════════
    PERFORMANCE OPTIMIZATIONS
 ══════════════════════════════════════════════════════════════ */
+/* NOTE: content-visibility:auto removed from link-containing blocks.
+   Chromium bug: content-visibility:auto creates a paint containment boundary
+   that suppresses right-click context menus on <a> tags inside those elements.
+   Use will-change:auto or nothing for perf on these sections instead. */
 .home-cat-block,
-.home-why,
-.content-card,
-.sidebar-card {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 400px;
+.home-why {
+  /* content-visibility:auto removed — breaks right-click on links inside */
+  /* Lightweight alternative: let browser handle paint naturally */
 }
 
+/* sidebar-card and content-card: also remove content-visibility to fix right-click */
+.content-card,
+.sidebar-card {
+  /* content-visibility:auto removed — these contain <a> links */
+}
+
+/* contain:layout removed — layout containment changes stacking context which
+   can affect pointer-event hit-testing and right-click context menu detection.
+   contain:style is safe (only affects CSS custom properties scope). */
 .calc-card,
 .result-card,
 .stat-card,
 .insight-card,
 .search-drop {
-  contain: layout style;
+  contain: style;
 }
 
 .navbar { will-change: transform; }
@@ -1598,10 +1609,14 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 }
 img { content-visibility: auto; }
 
+/* content-visibility:auto removed from .calc-card-premium.
+   Root cause of right-click breaking on calculator listing pages:
+   Chromium skips compositing for off-screen content-visibility:auto elements,
+   and the context menu hit-test treats these as non-interactive, silently
+   swallowing the right-click on any <a> inside them.
+   The animation + lazy render was a nice-to-have; correct right-click is required. */
 .calc-card-premium {
-  contain: layout style;
-  content-visibility: auto;
-  contain-intrinsic-size: 0 80px;
+  contain: style;
 }
 
 /* ══════════════════════════════════════════════════════════════
