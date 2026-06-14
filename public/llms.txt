@@ -1,4 +1,4 @@
-﻿# Calculators Point — llms.txt
+# Calculators Point — llms.txt
 # https://llmstxt.org/
 # This file helps AI assistants understand the structure and purpose of this site.
 
@@ -11,7 +11,8 @@
 
 - Homepage: https://calculatorspoint.com
 - All Calculators: https://calculatorspoint.com/calculators
-- Sitemap: https://calculatorspoint.com/sitemap
+- XML Sitemap: https://calculatorspoint.com/sitemap.xml
+- HTML Sitemap: https://calculatorspoint.com/sitemap
 
 ## Calculator Categories
 

@@ -91,21 +91,40 @@ const GENERIC_FAQ = (calc: CalculatorConfig): { q: string; a: string }[] => {
 };
 
 function generateAbout(calc: CalculatorConfig): string {
+  // If a manually-written about paragraph is provided in the calculator config,
+  // always use it — these are the unique, authoritative descriptions for each tool.
   if (calc.about) {
     return calc.about;
   }
 
-  const catCtx = CATEGORY_CONTEXT[calc.cat] ?? 'complex calculations';
+  // Fallback: auto-generate from the calc's own fields so at minimum every
+  // page's opening sentence is unique (it comes from calc.desc, which is unique per tool).
+  // This avoids the previous "designed to help [audience] with [category context]"
+  // template that sounded identical across hundreds of pages.
   const audience = CATEGORY_AUDIENCE[calc.cat] ?? 'users';
+  const catCtx   = CATEGORY_CONTEXT[calc.cat] ?? 'solving calculations quickly and accurately';
 
-  // Use the unique calculator description to ensure the first paragraph is distinct for every page
+  // Paragraph 1: unique lead from the calculator's own description + formula signal
   const uniqueDesc = calc.desc.charAt(0).toUpperCase() + calc.desc.slice(1);
-  const intro = uniqueDesc.endsWith('.') ? uniqueDesc : `${uniqueDesc}.`;
+  const leadSentence = uniqueDesc.endsWith('.') ? uniqueDesc : `${uniqueDesc}.`;
 
-  return `${intro} The ${calc.name} is designed to help ${audience} with ${catCtx}.\n\n` +
-    `Instead of complex manual computation, you can use this tool to get instant, accurate results. ` +
-    `Simply enter your values to see a step-by-step breakdown of how the answer was reached.\n\n` +
-    `This utility works directly in your browser without any sign-ups or downloads.`;
+  // If a formula is defined, name it explicitly — signals that the implementation
+  // is based on a real mathematical method, not an arbitrary approximation.
+  const formulaSignal = calc.formula
+    ? ` The underlying formula is displayed on this page so you can verify every calculation.`
+    : '';
+
+  // Paragraph 2: practical use context derived from category + tags
+  const tagContext = calc.tags && calc.tags.length > 0
+    ? `Commonly used by ${audience} for ${calc.tags.slice(0, 3).join(', ').toLowerCase()}.`
+    : `Useful for ${audience} working on ${catCtx}.`;
+
+  // Paragraph 3: trust/accessibility signal (only when there's no formula to discuss)
+  const accessSignal = calc.formula
+    ? `Results are instant and include a step-by-step breakdown so you can follow the calculation from input to answer.`
+    : `Works directly in your browser — no download, no signup, and no ads blocking the tool. Results are shown instantly.`;
+
+  return `${leadSentence}${formulaSignal}\n\n${tagContext}\n\n${accessSignal}`;
 }
 
 function generateFormulaExplained(calc: CalculatorConfig): string | null {

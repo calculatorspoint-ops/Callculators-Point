@@ -20,6 +20,17 @@
 import type { CalculatorConfig, CalculatorCategory } from '@/data/calculatorConfigs';
 import { SITE_URL, SITE_NAME } from '@/config/site';
 
+// ── Shared Author Reference ───────────────────────────────────────────────────
+// Links every calculator page's structured data back to the Person entity
+// established on /about — strengthening E-E-A-T signals across the entire site.
+// Update this if the LinkedIn URL or name changes on the About page.
+export const AUTHOR_REF = {
+  '@type': 'Person' as const,
+  name: 'M. Khurram',
+  url: `${SITE_URL}/about`,
+  sameAs: 'https://linkedin.com/in/m-khurram',
+} as const;
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface BreadcrumbItem {
@@ -208,6 +219,9 @@ export function generateWebApplicationSchema(
       price: '0',
       priceCurrency: 'USD',
     },
+    // author links this tool to M. Khurram's Person entity on /about
+    // — strengthens E-E-A-T for Google's YMYL (finance/health) quality assessment
+    author: AUTHOR_REF,
     provider: organizationRef,
     creator: organizationRef,
   };
@@ -340,9 +354,14 @@ export function generateWebPageSchema(
     url: pageUrl,
     name: `Free ${calcDisplayName} Online`,
     description: sanitizeText(calc.desc),
+    // datePublished: use a fixed baseline — calculatorspoint.com launched 2024.
+    // This tells Google the page has existed since the site launched.
+    datePublished: '2024-01-01',
     // dateModified: freshness signal — Google uses this to assess content currency.
     // For financial/health tools, keeping this date current is an E-E-A-T signal.
     dateModified: resolvedDate,
+    // author: links each calculator page back to M. Khurram's Person entity on /about
+    author: AUTHOR_REF,
     isPartOf: {
       '@id': `${SITE_URL}/#website`,
     },
@@ -362,5 +381,47 @@ export function generateWebPageSchema(
       '@type': 'ReadAction',
       target: [pageUrl],
     },
+  };
+}
+
+// ── 6. @graph bundle ─────────────────────────────────────────────────────────
+
+/**
+ * Wrap multiple schema objects into a single @context + @graph block.
+ *
+ * WHY @graph IS BETTER THAN SEPARATE SCRIPTS:
+ *   - @id cross-references (e.g. WebPage breadcrumb → #breadcrumb) resolve
+ *     correctly because all entities share one document context.
+ *   - Google's Structured Data Testing Tool validates @graph bundles as a
+ *     coherent knowledge graph rather than disconnected fragments.
+ *   - One <script> tag instead of 5 means less HTML parse overhead.
+ *   - Entities can reference each other via @id without repeating data.
+ *
+ * Null/undefined items are filtered out so callers can pass conditional schemas.
+ *
+ * @example
+ *   const graph = generateGraphSchema([
+ *     breadcrumbSchema,
+ *     webAppSchema,
+ *     faqSchema,     // may be null if no FAQs
+ *     howToSchema,   // may be null if no steps
+ *     webPageSchema,
+ *   ]);
+ */
+export function generateGraphSchema(
+  schemas: (object | null | undefined)[],
+): object {
+  // Filter nulls, strip individual @context from each item (they'll be
+  // inherited from the top-level @context on the @graph wrapper)
+  const nodes = schemas
+    .filter((s): s is object => s != null)
+    .map(s => {
+      const { '@context': _ctx, ...rest } = s as Record<string, unknown>;
+      return rest;
+    });
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': nodes,
   };
 }

@@ -140,63 +140,60 @@ export function N({ label, id, value, onChange, unit, placeholder = "0", min, ma
 // ── Slider ─────────────────────────────────────────────────────────────
 export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn }) {
   const isRestored = useRef(false);
+  const [focused, setFocused] = useState(false);
+
   useEffect(() => {
     if (!id || isRestored.current) return;
     const saved = localStorage.getItem(`calc_input_${id}`);
     if (saved !== null && !isNaN(Number(saved))) {
       isRestored.current = true;
-      if (Number(saved) !== value) {
-        onChange(Number(saved));
-      }
+      if (Number(saved) !== value) onChange(Number(saved));
     }
   }, [id, value, onChange]);
 
   const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100)) || 0;
-  const unitStr = fmtFn ? fmtFn(1).toString().replace(/[0-9.]/g, '').trim() : "";
+  // Extract unit string from the formatter (e.g. "%", "yr", "$")
+  const unitStr = fmtFn ? fmtFn(1).toString().replace(/[0-9.,\s]/g, '').trim() : "";
+  // Format the displayed value using the formatter (strip unit for the editable input)
+  const displayVal = value === '' ? '' : value;
 
   return (
-    <div style={{ marginBottom: 28 }} className="mobile-premium-slider">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-        {label && (
-          <label htmlFor={id} style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", letterSpacing: ".01em" }}>
-            {label}
-          </label>
-        )}
-        <div className="glass-panel" style={{
-          display: "flex", alignItems: "center", flexShrink: 0,
-          borderRadius: "var(--r-md)", border: "1.5px solid var(--border)", overflow: "hidden",
-          padding: "2px 10px 2px 2px", boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-          background: "var(--surface2)",
-        }}>
+    <div className="sl-row" aria-label={label}>
+      {/* ── Row header: label left, big value right ── */}
+      <div className="sl-header">
+        <div className="sl-label-group">
+          {label && (
+            <label htmlFor={id} className="sl-label">{label}</label>
+          )}
+          <span className="sl-hint">Slide or type</span>
+        </div>
+        <div className={`sl-value-pill${focused ? ' sl-value-pill--focused' : ''}`}>
           <input
             type="number"
-            value={value}
+            id={id}
+            value={displayVal}
+            onFocus={() => setFocused(true)}
+            onBlur={() => {
+              setFocused(false);
+              if (value === '' || isNaN(value)) onChange(min);
+              else if (+value < min) onChange(min);
+              else if (+value > max) onChange(max);
+            }}
             onChange={e => {
               const v = e.target.value === '' ? '' : Number(e.target.value);
               if (id) localStorage.setItem(`calc_input_${id}`, v);
               onChange(v);
             }}
-            onBlur={() => {
-              if (value === '' || isNaN(value)) onChange(min);
-              else if (value < min) onChange(min);
-              else if (value > max) onChange(max);
-            }}
-            aria-label={label + " input"}
-            style={{
-              width: 120, background: "transparent", border: "none", outline: "none",
-              textAlign: "right", fontSize: 15, fontWeight: 800, color: "var(--brand)",
-              padding: "6px 4px 6px 10px", minWidth: 80,
-              appearance: "none", MozAppearance: "textfield"
-            }}
+            aria-label={label}
+            className="sl-input"
           />
-          {unitStr && <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text3)", marginLeft: 2, pointerEvents: "none", whiteSpace: "nowrap" }}>{unitStr}</span>}
+          {unitStr && <span className="sl-unit">{unitStr}</span>}
         </div>
       </div>
-      
-      {/* PREMIUM SLEEK SLIDER */}
+
+      {/* ── Gradient slider track ── */}
       <input
         type="range"
-        id={id}
         min={min}
         max={max}
         step={step}
@@ -208,12 +205,16 @@ export function Sl({ label, id, min, max, step = 1, value, onChange, fmt: fmtFn 
         }}
         className="premium-slider"
         style={{ '--slider-val': `${pct}%` }}
-        aria-label={label}
+        aria-label={label + ' slider'}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
       />
-      
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, padding: "0 4px" }}>
-        <span style={{ fontSize: 11, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(min) : min}</span>
-        <span style={{ fontSize: 11, color: "var(--text3)", fontWeight: 700 }}>{fmtFn ? fmtFn(max) : max}</span>
+
+      {/* ── Min / Max ticks ── */}
+      <div className="sl-ticks">
+        <span>{fmtFn ? fmtFn(min) : min}</span>
+        <span>{fmtFn ? fmtFn(max) : max}</span>
       </div>
     </div>
   );
@@ -340,6 +341,9 @@ export function CalcInputCard({ title, icon, children, accentColor = "var(--bran
 }
 
 // ── Input Section ──────────────────────────────────────────────────────
+// Redesigned: no colored gradient header bar.
+// Each section is a clean card with a minimal label row at the top.
+// Category colors flow through CSS variables via the accent class.
 export function InputSection({ title, icon, gradient, accentClass, children }) {
   const gradToAccent: Record<string, string> = {
     "#4361ee": "accent-finance", "#3451c7": "accent-finance",
@@ -359,11 +363,14 @@ export function InputSection({ title, icon, gradient, accentClass, children }) {
   }
   const accent = accentClass || detectedAccent;
   return (
-    <div className="input-section-wrap">
-      <div className={`input-section-head ${accent}`}>
-        {icon && <span className="input-section-icon" aria-hidden="true">{icon}</span>}
-        <span className="input-section-title">{title}</span>
-      </div>
+    <div className={`input-section-wrap ${accent}`}>
+      {/* Minimal section label — no gradient header bar */}
+      {(title || icon) && (
+        <div className="input-section-label-row" aria-hidden="true">
+          {icon && <span className="input-section-label-icon">{icon}</span>}
+          {title && <span className="input-section-label-text">{title}</span>}
+        </div>
+      )}
       <div className="input-section-body">
         {children}
       </div>

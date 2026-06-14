@@ -43,7 +43,7 @@ export default function TermsOfService() {
 
         <S id="description" n="2" title="Description of Service">
           <P>Calculators Point provides a free, browser-based calculation platform offering hundreds of calculators across multiple categories including finance, health, mathematics, education, unit conversions, and everyday utilities.</P>
-          <P>The Service is provided free of charge. It may be supported by advertising in the future. We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.</P>
+          <P>The Service is provided free of charge and is supported by advertising via Google AdSense. Ads are clearly labelled and never influence our calculator results or editorial content. We reserve the right to modify, suspend, or discontinue any part of the Service at any time without notice.</P>
         </S>
 
         <S id="permitted" n="3" title="Permitted Use">

@@ -5,11 +5,30 @@ import { redirect } from "next/navigation";
 import { ArrowRight, BarChart2, Zap, BookOpen, TrendingUp, Star } from "lucide-react";
 import { CATEGORIES, BY_CATEGORY, POPULAR, ALL_CALCULATORS } from "@/data/calculatorConfigs";
 
+/**
+ * IDs that have a real /ecosystem/[id] page built.
+ * Add to this list whenever a new EcosystemHub page is created.
+ * If an ID is NOT here the category button falls back to /category/[catId].
+ */
+const VALID_ECOSYSTEM_IDS = new Set(["finance", "fitness", "education"]);
+
+/** Returns the safest href for an ecosystem button. */
+function ecosystemHref(ecosystemId, categoryId) {
+  return VALID_ECOSYSTEM_IDS.has(ecosystemId)
+    ? `/ecosystem/${ecosystemId}`
+    : `/category/${categoryId}`;
+}
+
 /* ─── Per-category rich content ─────────────────────────── */
 const CAT_CONTENT = {
   finance: {
     heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a2554 50%, #2f4cb5 100%)",
     intro: "Whether you're planning a home loan, growing your savings through SIP, or understanding your tax liability — our finance calculators are designed to give you complete clarity on your money.",
+    bodyIntro: `Whether you're comparing home loan offers from two different banks, planning your SIP investment for retirement at 60, or trying to understand why your credit card debt isn't going down despite monthly payments — these finance calculators give you the exact answer in seconds.
+
+Start with the EMI Calculator if you have any active or upcoming loan — it shows your full amortization schedule and the true cost of borrowing. Use the Compound Interest Calculator to see how your savings grow over time, or the SIP Calculator to plan a mutual fund investment with realistic return projections.
+
+Unlike generic calculators, every tool here uses the same reducing-balance and compound-interest formulas that banks and financial institutions actually use. The tax calculator auto-detects your country and applies the correct GST, VAT, or Sales Tax rules. All charts are interactive — drag the sliders and watch every number update instantly, so you can compare scenarios without typing the same values repeatedly. No ads interrupting your calculation, no mandatory sign-up, and your data never leaves your browser.`,
     ecosystemId: "finance",
     ecosystemLabel: "Open Finance Suite →",
     features: [
@@ -23,6 +42,11 @@ const CAT_CONTENT = {
   health: {
     heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1230 50%, #8b1a4a 100%)",
     intro: "Your health deserves precision. Our health and fitness calculators use medically validated formulas to help you understand your body, plan your nutrition, and achieve your fitness goals.",
+    bodyIntro: `Whether you're a gym-goer tracking body fat percentage, a runner calculating your optimal heart rate training zones, or someone who just wants to know their healthy weight range before a doctor's appointment — these health calculators use the same clinically validated formulas that healthcare professionals rely on.
+
+Start with the BMI Calculator for a quick health screening, or go deeper with the Body Fat Calculator (Navy circumference method) if you want to separate fat mass from muscle. The Calorie & TDEE Calculator is the right starting point for any weight loss or muscle gain plan — it calculates your exact daily calorie needs based on your activity level.
+
+Every formula is sourced from peer-reviewed medical research: Mifflin-St Jeor for BMR (the most accurate equation for non-athletes), WHO-adjusted thresholds for South and East Asian BMI classification, and the Karvonen method for heart rate zones. The women's health tools — period tracker, ovulation calculator, and fertility window predictor — run entirely offline. Not one byte of your health data is ever transmitted to any server.`,
     ecosystemId: "fitness",
     ecosystemLabel: "Open Fitness Suite →",
     features: [
@@ -36,6 +60,11 @@ const CAT_CONTENT = {
   math: {
     heroBg: "linear-gradient(150deg, #0a0e25 0%, #160e3a 50%, #4c2a8a 100%)",
     intro: "From quick percentage calculations to solving quadratic equations — our math tools provide step-by-step solutions with visual graphs, making complex calculations understandable for everyone.",
+    bodyIntro: `Whether you're a student checking your homework, a teacher preparing examples, an engineer verifying a quick calculation, or a business analyst working with percentages — these math tools are built to handle everything from the trivially simple to the genuinely complex.
+
+Start with the Percentage Calculator if you need to find X% of a number, calculate what percentage one number is of another, or work out a percentage increase or decrease — it solves all six common percentage problems simultaneously. The Scientific Calculator handles full mathematical expressions including trigonometry, logarithms, and exponent operations with a running history of your calculations.
+
+What makes these implementations stand out: the Percentage Calculator shows all six calculation modes at once rather than forcing you to select a mode first. The Statistics Calculator produces a complete analysis — mean, median, mode, standard deviation, IQR, and quartile distribution — from a pasted list of numbers in under a second. Every algebraic calculator shows the step-by-step working, not just the final answer — which makes them genuinely useful for students learning the underlying method.`,
     ecosystemId: null,
     ecosystemLabel: null,
     features: [
@@ -49,6 +78,11 @@ const CAT_CONTENT = {
   education: {
     heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1510 50%, #7a3010 100%)",
     intro: "From calculating your current semester GPA to planning what you need on your final exam — our education tools are designed to help students at every stage of their academic journey.",
+    bodyIntro: `Whether you're a university student trying to figure out if you can afford to miss another class, a high school senior calculating what IELTS band score you need for your target university, or a graduate student simulating how a retaken exam will affect your cumulative GPA — these tools give you the precise academic answer without guesswork.
+
+Start with the GPA Calculator if you're tracking your academic standing — it calculates your current GPA, lets you simulate future courses, and shows exactly what grades you need across remaining subjects to reach your target. The Attendance Calculator is indispensable at universities with an 85% or 75% minimum attendance rule: enter your total classes and absences and it tells you how many more you can miss before you're barred from exams.
+
+The IELTS Band Calculator uses the official IELTS rounding rules to produce the same score that appears on your real result — most online tools get this wrong by using simple averages. The ACT and SAT score calculators show your percentile ranking and map your score to university admission chances, giving you a realistic picture before you apply.`,
     ecosystemId: "education",
     ecosystemLabel: "Open Education Suite →",
     features: [
@@ -62,6 +96,11 @@ const CAT_CONTENT = {
   converters: {
     heroBg: "linear-gradient(150deg, #0a0e25 0%, #0a2820 50%, #065f46 100%)",
     intro: "Instant unit conversion across all common measurement systems. All converters update in real-time — type in any field and all others update instantly.",
+    bodyIntro: `Whether you're a student converting between metric and imperial for a physics assignment, an engineer checking tolerance specs across measurement systems, a chef scaling a recipe between grams and ounces, or a traveler quickly converting kilometres to miles — these converters handle every common unit system with real-time bidirectional updates.
+
+Start with the Length Converter for the most common need: centimetres to inches, metres to feet, or kilometres to miles. The Temperature Converter is the fastest way to check Celsius vs Fahrenheit — type in either field and the other updates immediately. The Weight Converter is essential for fitness and nutrition use cases where recipes and nutrition labels mix metric and imperial units.
+
+What makes these converters different from a basic Google unit search: every field updates simultaneously as you type, so you can see all equivalent values at once rather than one at a time. The Data Storage Converter correctly handles both binary units (GiB, MiB — used by operating systems) and decimal units (GB, MB — used by storage manufacturers), which are different values that most basic converters conflate. All conversions happen locally with no round-trips to any server.`,
     ecosystemId: null,
     ecosystemLabel: null,
     features: [
@@ -75,6 +114,11 @@ const CAT_CONTENT = {
   everyday: {
     heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1200 50%, #7a4210 100%)",
     intro: "The everyday tools you need, built with precision. Age calculation, date differences, fuel costs, password generation — all fast, free, and private.",
+    bodyIntro: `Whether you need to know your exact age in days for a legal document, calculate how many working days are left before a project deadline, figure out the fuel cost for an upcoming road trip, or generate a strong password that won't get cracked — these everyday tools solve practical daily problems with more precision and detail than a simple Google search can.
+
+Start with the Age Calculator if you've ever needed your exact age in years, months, and days — it also shows your zodiac sign, next birthday countdown, and how many days you've been alive. The Date Difference Calculator handles the surprisingly tricky problem of counting business days between two dates, accounting for weekends (and optionally public holidays). The Fuel Cost Calculator is essential for road trips — split costs among passengers and compare petrol vs diesel vs EV running costs.
+
+The Password Generator uses cryptographically secure random generation (window.crypto.getRandomValues) — not the weak Math.random() that most simple password tools use — and shows an entropy score and estimated crack time for the generated password. All tools run entirely in your browser; no data is stored, logged, or transmitted anywhere.`,
     ecosystemId: null,
     ecosystemLabel: null,
     features: [
@@ -84,6 +128,60 @@ const CAT_CONTENT = {
       { icon: "📝", title: "Text & Data Tools", desc: "Word counter, Base64 encoder/decoder, Roman numeral converter and more." },
     ],
     seoContent: `Everyday calculators serve a wide range of daily needs. Our age calculator goes beyond simple birth date math — it shows zodiac sign, exact days/hours/minutes alive, and a live countdown to your next birthday.`,
+  },
+  business: {
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #0a1f0a 50%, #14532d 100%)",
+    intro: "From pricing your products to calculating break-even points — our business calculators help entrepreneurs, freelancers, and managers make smarter financial decisions.",
+    bodyIntro: `Whether you're a freelancer setting your hourly rate, a small business owner calculating the break-even units for a new product, an e-commerce seller figuring out the maximum discount you can offer without going below your target margin, or a startup founder modeling customer lifetime value — these business calculators replace hours of spreadsheet work with instant answers.
+
+Start with the Profit Margin Calculator if you sell any product or service — it shows the difference between margin and markup (a distinction that trips up even experienced business owners) and lets you reverse-calculate the selling price needed to hit a target margin. The Break-Even Calculator shows exactly how many units you must sell before profitability — with a visual chart mapping revenue vs cost curves.
+
+What sets these tools apart: the Discount Calculator correctly handles stacked discounts (30% off + 20% off ≠ 50% off) and shows how tax interacts with discounted prices. The Customer Lifetime Value calculator uses a cohort-based model rather than a simple average, giving a more realistic CLV for businesses with churn. Every result includes a plain-language explanation of what the number means for your specific business context.`,
+    ecosystemId: null,
+    ecosystemLabel: null,
+    features: [
+      { icon: "💰", title: "Pricing & Margins", desc: "Profit margin, markup, break-even — know your numbers before you set a price." },
+      { icon: "📊", title: "Business Analytics", desc: "ROI, CLV, inventory turnover — the metrics that actually predict business health." },
+      { icon: "🧾", title: "Tax & Invoicing", desc: "GST, VAT, and sales tax calculations with reverse-tax extraction." },
+      { icon: "⏱️", title: "Productivity & HR", desc: "Hourly rate calculator, overtime pay, and time-billing tools for freelancers." },
+    ],
+    seoContent: `Business calculators are used daily by entrepreneurs, accountants, and managers worldwide. Our suite covers the complete financial lifecycle of a small business — from pricing and margins through to customer retention analytics.`,
+  },
+  construction: {
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #1a1000 50%, #92400e 100%)",
+    intro: "Accurate construction calculators for concrete, flooring, roofing, paint, and more — built for contractors, engineers, and confident DIY homeowners.",
+    bodyIntro: `Whether you're a contractor estimating concrete for a slab foundation, a homeowner calculating how many tiles to order for a bathroom renovation, a roofer working out shingle quantities for a new build, or a painter estimating paint coverage for a commercial project — these construction calculators give you accurate material quantities with the waste factor already built in, so you order right the first time.
+
+Start with the Concrete Calculator for any slab, column, or footing pour — it calculates volume in cubic metres and cubic yards, adds the recommended 10% waste factor, and estimates bags of premix concrete needed. The Flooring Calculator handles all tile shapes (square, rectangular, hexagonal, herringbone pattern) and adds pattern-specific waste factors automatically.
+
+What makes these tools more useful than a basic area calculator: every result includes a material list with quantities, a cost estimate field where you enter your local price per unit, and a total project cost. The Roof Pitch Calculator outputs both the pitch ratio and the angle in degrees, which is what most roofing material spec sheets require. All calculators use both metric and imperial units — switch between the two without re-entering your measurements.`,
+    ecosystemId: null,
+    ecosystemLabel: null,
+    features: [
+      { icon: "🏗️", title: "Concrete & Masonry", desc: "Concrete volume, mix ratios, and bag count for slabs, columns, and footings." },
+      { icon: "🪵", title: "Flooring & Tiling", desc: "Area, waste factor, and material cost for all tile shapes and patterns." },
+      { icon: "🏠", title: "Roofing", desc: "Shingle quantity, roof pitch, and rafter length calculations." },
+      { icon: "🎨", title: "Paint & Finishing", desc: "Paint coverage calculator with primer, undercoat, and top-coat layers." },
+    ],
+    seoContent: `Construction calculators are used by professionals and DIY homeowners for material estimation. Our suite covers concrete, flooring, roofing, and paint — all with built-in waste factors and dual metric/imperial support.`,
+  },
+  technology: {
+    heroBg: "linear-gradient(150deg, #0a0e25 0%, #0a1020 50%, #0c4a6e 100%)",
+    intro: "Developer and tech tools for binary conversion, bandwidth calculation, IP subnetting, and more — precise, fast, and no-nonsense.",
+    bodyIntro: `Whether you're a developer debugging a binary data format, a network engineer subnetting a CIDR block, a sysadmin calculating how long a file transfer will take over a given bandwidth, or a computer science student converting between number bases for an assignment — these technology calculators handle the precision tasks that generic online tools get wrong.
+
+Start with the Number Base Converter if you work with binary, hexadecimal, or octal — it converts between all four bases simultaneously and handles both unsigned integers and signed two's complement representation. The IP Subnet Calculator takes any IP address and CIDR notation and returns the network address, broadcast address, usable host range, and subnet mask — essential for network configuration.
+
+What differentiates these tools: the Bandwidth Calculator correctly distinguishes between megabits per second (network speed) and megabytes per second (file size transfer rate) — the source of the most common confusion in data transfer estimation. The Binary Converter shows the step-by-step positional calculation, making it genuinely educational for students learning digital systems. All tools operate entirely client-side — no data is sent to any server, which matters when working with sensitive network configurations.`,
+    ecosystemId: null,
+    ecosystemLabel: null,
+    features: [
+      { icon: "🔢", title: "Number Systems", desc: "Binary, octal, decimal, hex — convert between all bases simultaneously." },
+      { icon: "🌐", title: "Networking", desc: "IP subnet calculator with CIDR notation, host range, and subnet mask output." },
+      { icon: "📡", title: "Bandwidth & Storage", desc: "File transfer time, bandwidth needs, and data storage cost estimators." },
+      { icon: "⚙️", title: "Developer Utilities", desc: "Hash generators, Base64 encoder/decoder, color code converter." },
+    ],
+    seoContent: `Technology calculators serve developers, network engineers, and CS students. Our tools are precision-built for technical use cases — correct unit handling, step-by-step working, and full offline operation.`,
   },
 };
 
@@ -222,7 +320,7 @@ export default function Category() {
               </p>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {content.ecosystemId && (
-                  <Link href={`/ecosystem/${content.ecosystemId}`} className="btn-ghost" style={{ fontSize: 13 }}>
+                  <Link href={ecosystemHref(content.ecosystemId, catId)} className="btn-ghost" style={{ fontSize: 13 }}>
                     <TrendingUp size={14} /> {content.ecosystemLabel}
                   </Link>
                 )}
@@ -251,6 +349,40 @@ export default function Category() {
           </div>
         ))}
       </div>
+
+      {/* ── Category intro — 200-word SEO prose block ── */}
+      {/* Rendered above the calculator grid, below H1 + stats strip.          */}
+      {/* Paragraphs split on \n\n so the text stays readable in the data file. */}
+      {content.bodyIntro && (
+        <div style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}>
+          <article
+            style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 20px 24px" }}
+            aria-label={`About ${cat.name} calculators`}
+          >
+            <h2 style={{
+              fontSize: "1rem", fontWeight: 800, color: "var(--text)",
+              marginBottom: 12, display: "flex", alignItems: "center", gap: 8,
+            }}>
+              <span style={{
+                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                width: 26, height: 26, borderRadius: 8, fontSize: 14,
+                background: `${cat.color}18`, border: `1.5px solid ${cat.color}30`,
+              }}>{cat.icon}</span>
+              About {cat.name} Calculators
+            </h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {content.bodyIntro.split("\n\n").map((para, i) => (
+                <p key={i} style={{
+                  fontSize: 14, color: "var(--text2)", lineHeight: 1.85,
+                  margin: 0, maxWidth: 780,
+                }}>
+                  {para}
+                </p>
+              ))}
+            </div>
+          </article>
+        </div>
+      )}
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 20px 64px" }}>
         <div className="category-page-layout">
@@ -323,7 +455,7 @@ export default function Category() {
           {/* Sidebar */}
           <aside style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {content.ecosystemId && (
-              <Link href={`/ecosystem/${content.ecosystemId}`} style={{
+              <Link href={ecosystemHref(content.ecosystemId, catId)} style={{
                 display: "block", padding: 20, textDecoration: "none",
                 background: `linear-gradient(135deg, ${cat.color}, ${cat.color}cc)`,
                 borderRadius: "var(--r-xl)", boxShadow: `0 4px 20px ${cat.color}40`,

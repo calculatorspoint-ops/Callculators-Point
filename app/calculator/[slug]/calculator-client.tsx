@@ -3,6 +3,22 @@
  *
  * Client component that renders the existing Calculator.tsx page logic.
  * We keep the calculator engine client-side (as designed by the migration plan).
+ *
+ * DOM ORDER FIX: CalculatorWidget is imported STATICALLY (not lazy) so it renders
+ * in the client component's first paint. Individual calculator forms (BMICalculator,
+ * etc.) remain lazy-loaded inside CalculatorWidget via their own lazy() calls in
+ * the registry files (healthForms.ts, financeForms.ts, etc.).
+ *
+ * WHY: A lazy() wrapper here created a double-lazy chain:
+ *   lazy(CalculatorWidget) → lazy(BMICalculator)
+ * This meant <input> elements only appeared after TWO async chunk loads, landing
+ * them after the server-rendered <SEOContentSection> in the DOM — the reported
+ * "inputs after footer" bug. With CalculatorWidget static, the widget shell
+ * (including its StaticFormPlaceholder + correct DOM position) is present on first paint.
+ *
+ * SSR SEO FIX: The Suspense fallback inside CalculatorWidget is now StaticFormPlaceholder,
+ * which renders the calculator name + description as real semantic HTML. Google crawls
+ * this instead of empty shimmer divs. The interactive form lazy-hydrates on top.
  */
 'use client';
 
@@ -11,56 +27,23 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 // The Firebase SDK is ~200KB and would block the main thread on every calculator page.
 // It's dynamically imported inside useEffect after the page is interactive.
 import { useAppStore } from '@/store/useAppStore';
-import { getCalcBySlug, getRelated, getRelatedCalcs, CATEGORIES, ALL_CALCULATORS } from '@/data/calculatorConfigs';
+import { getCalcBySlug, getRelatedCalcs, CATEGORIES } from '@/data/calculatorConfigs';
 import { BASE_FAQS, CALC_FAQS } from '@/data/faqData';
 import { getLandingsByCalc } from '@/data/seoLandingData';
 import { Share2, Bookmark, BookmarkCheck } from 'lucide-react';
 import Link from 'next/link';
-import { CrossCalcRecommendations } from '@/components/calculator-core/CrossRecommendations';
 import { FAQSection } from '@/components/calculator-core/FAQSection';
 import { FeedbackWidget } from '@/components/calculator-core/FeedbackWidget';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+// STATIC import — fixes the double-lazy DOM order bug (see file comment above).
+// CalculatorWidget is only 92 lines; its per-form children remain lazy via registry files.
+import { CalculatorWidget } from '@/components/calculator-core/CalculatorWidget';
 
-const CalculatorWidget = lazy(() =>
-  import('@/components/calculator-core/CalculatorWidget').then(m => ({ default: m.CalculatorWidget }))
-);
 const CurrencyBanner = lazy(() => import('@/components/ui/CurrencyBanner'));
 const ExportToolbar = lazy(() =>
   import('@/core/export-engine/ExportToolbar').then(m => ({ default: m.ExportToolbar }))
 );
 
-function FormFallback() {
-  return (
-    <div
-      aria-hidden="true"
-      style={{ minHeight: 360, padding: '22px' }}
-    >
-      {/* Skeleton header row */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
-        <div className="skeleton" style={{ width: 80, height: 32, borderRadius: 8 }} />
-        <div className="skeleton" style={{ width: 120, height: 32, borderRadius: 8 }} />
-        <div className="skeleton" style={{ width: 100, height: 32, borderRadius: 8, marginLeft: 'auto' }} />
-      </div>
-
-      {/* Skeleton input rows × 3 */}
-      {[1, 2, 3].map(i => (
-        <div key={i} style={{ marginBottom: 20 }}>
-          <div className="skeleton" style={{ width: `${55 + i * 8}%`, height: 14, borderRadius: 4, marginBottom: 8 }} />
-          <div className="skeleton" style={{ width: '100%', height: 50, borderRadius: 12 }} />
-        </div>
-      ))}
-
-      {/* Skeleton calculate button */}
-      <div className="skeleton" style={{ width: '100%', height: 48, borderRadius: 12, marginTop: 8 }} />
-
-      {/* Skeleton result area */}
-      <div style={{ marginTop: 24, background: 'var(--surf2)', borderRadius: 16, padding: 20 }}>
-        <div className="skeleton" style={{ width: 110, height: 14, borderRadius: 4, margin: '0 auto 14px' }} />
-        <div className="skeleton" style={{ width: 180, height: 48, borderRadius: 8, margin: '0 auto' }} />
-      </div>
-    </div>
-  );
-}
 
 export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { slug: string; headerAlreadyRendered?: boolean }) {
   const calc = getCalcBySlug(slug);
@@ -84,10 +67,8 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
 
   // Use false on server/pre-mount so SSR and client initial render match
   const isFav = mounted && favorites.includes(calc.id);
-  const related = getRelated(calc, 7);
   const cat     = CATEGORIES.find(c => c.id === calc.cat);
   const faqs    = [...((CALC_FAQS as Record<string, { q: string; a: string }[]>)[slug] ?? []), ...BASE_FAQS];
-  const popular = ALL_CALCULATORS.filter(c => c.cat === calc.cat && c.id !== calc.id && c.popular).slice(0, 6);
   // Issue 7: get /tools/ deep-dive landing pages linked to this calculator
   const toolGuides = getLandingsByCalc(calc.slug);
 
@@ -217,11 +198,12 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
           )}
 
           {/* Calculator form — min-height reserves space to prevent CLS while skeleton is shown */}
+          {/* Suspense here catches the lazy-loaded individual calculator form (e.g. BMICalculator).
+              CalculatorWidget itself is now static so the shell + FormFallback placeholder
+              render synchronously — inputs are correctly in the DOM before SEO content. */}
           <div id="calc-export-target" className="calc-card" style={{ marginBottom: 16, minHeight: 360 }}>
             <ErrorBoundary>
-              <Suspense fallback={<FormFallback />}>
-                <CalculatorWidget calc={calc} />
-              </Suspense>
+              <CalculatorWidget calc={calc} />
             </ErrorBoundary>
           </div>
 
@@ -239,36 +221,10 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
 
         {/* Right sidebar — related tools, hidden on mobile */}
         <aside aria-label="Related calculators" style={{ minWidth: 0 }}>
-          {/* Cross-recommendations */}
-          <CrossCalcRecommendations slug={slug} />
-
-          {/* Popular in category */}
-          {popular.length > 0 && (
-            <div className="side-card" style={{ marginTop: 16 }}>
-              <div className="sec-head" style={{ background: 'var(--surf2)' }}>
-                <span>🔥</span>
-                <span>Popular in {cat?.name}</span>
-              </div>
-              {popular.map(c => (
-                <Link
-                  key={c.id}
-                  href={`/calculator/${c.slug}`}
-                  className="calc-row"
-                >
-                  <span className="calc-row-icon">{c.icon}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {c.name}
-                  </span>
-                  <span className="calc-row-arrow">›</span>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Issue 7: Deep Dive Guides — contextual internal links to /tools/ landing pages.
+          {/* In-Depth Guides — contextual internal links to /tools/ landing pages.
               These pass PageRank from the high-traffic calculator page to the long-tail /tools/ pages. */}
           {toolGuides.length > 0 && (
-            <div className="side-card" style={{ marginTop: 16 }}>
+            <div className="side-card">
               <div className="sec-head" style={{ background: 'var(--surf2)' }}>
                 <span>📖</span>
                 <span>In-Depth Guides</span>
@@ -289,11 +245,11 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
             </div>
           )}
 
-          {/* Related calculators — uses cross-category links if calc.relatedCalculators is set */}
+          {/* Related calculators — curated via calc.relatedCalculators (cross-category) */}
           {(() => {
             const sidebarRelated = getRelatedCalcs(calc, 7);
             return sidebarRelated.length > 0 ? (
-              <div className="side-card" style={{ marginTop: 16 }}>
+              <div className="side-card" style={{ marginTop: toolGuides.length > 0 ? 16 : 0 }}>
                 <div className="sec-head" style={{ background: 'var(--surf2)' }}>
                   <span>🔗</span>
                   <span>Related Tools</span>

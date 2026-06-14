@@ -23,12 +23,12 @@
  *  ├── 1    Homepage              (/)
  *  ├── 1    Calculator index      (/calculators)
  *  ├── 9    Category pages        (/category/[id])       ← from CATEGORIES array
- *  ├── 180+ Calculator pages      (/calculator/[slug])   ← from ALL_CALCULATORS array
+ *  ├── 195+ Calculator pages      (/calculator/[slug])   ← auto-counted from INDEXABLE_CALCULATORS
  *  ├── 12   SEO landing pages     (/tools/[slug])        ← from SEO_LANDING_PAGES array
  *  ├── 3    Ecosystem hubs        (/ecosystem/[id])
  *  ├── 9    Name Generator pages  (/name-generators/*)
  *  ├── 1    Cheat Sheets          (/cheat-sheets)
- *  └── 6    Static / Legal        (/about /contact /privacy-policy /terms /disclaimer /sitemap)
+ *  └── 7    Static / Legal        (/about /contact /privacy-policy /terms /disclaimer /cookie-policy /sitemap)
  *
  * Total: ~220+ URLs — all submitted to Google via /sitemap.xml
  */

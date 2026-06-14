@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ALL_CALCULATORS, CATEGORIES, LIVE_CALC_COUNT, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
-import { Shield, Zap, BarChart2, Globe, Lock, Heart, Star, Award, Users, Code } from "lucide-react";
+import { Shield, Zap, BarChart2, Globe, Lock, Heart, Star, Award, Users, Code, Linkedin, Mail, ExternalLink } from "lucide-react";
 
 const STATS = [
   { icon:"🧮", num:`${CALC_COUNT_LABEL}`, label:"Free Calculators" },
@@ -136,6 +136,147 @@ export default function About() {
               <a href="mailto:contact@calculatorspoint.com" style={{ fontSize:13, color:"var(--brand)", textDecoration:"none" }}>contact@calculatorspoint.com</a>
               <span style={{ fontSize:12, color:"var(--text3)", marginLeft:8 }}>· Pakistan</span>
             </div>
+          </div>
+        </div>
+
+        {/* ═══ WHO BUILDS THIS — E-E-A-T Author Section ══════════════ */}
+        <div
+          className="content-card"
+          style={{ borderLeft: '4px solid var(--brand)', position: 'relative', overflow: 'hidden' }}
+          itemScope
+          itemType="https://schema.org/Person"
+        >
+          {/* Subtle background accent */}
+          <div aria-hidden="true" style={{
+            position: 'absolute', top: 0, right: 0,
+            width: 180, height: 180,
+            background: 'radial-gradient(circle at 100% 0%, var(--brand-l) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }} />
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20, flexWrap: 'wrap', position: 'relative' }}>
+            {/* Avatar */}
+            <div style={{
+              width: 72, height: 72, borderRadius: '50%',
+              background: 'linear-gradient(135deg, var(--brand), var(--brand-d))',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 30, flexShrink: 0,
+              boxShadow: '0 4px 16px rgba(67,97,238,.25)',
+            }}>
+              👨‍💻
+            </div>
+
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 4 }}>
+                <h2
+                  style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: 'var(--text)', letterSpacing: '-.02em' }}
+                  itemProp="name"
+                >
+                  M. Khurram
+                </h2>
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  padding: '2px 10px', borderRadius: 100,
+                  background: 'var(--brand-l)', border: '1px solid var(--brand-ll)',
+                  fontSize: 11, fontWeight: 700, color: 'var(--brand)',
+                  textTransform: 'uppercase', letterSpacing: '.06em',
+                }}>
+                  Founder &amp; Developer
+                </span>
+              </div>
+
+              <p
+                style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 14, fontWeight: 500 }}
+                itemProp="jobTitle"
+              >
+                Software Engineer · Fintech &amp; Web Development
+              </p>
+
+              <p
+                style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.75, marginBottom: 16 }}
+                itemProp="description"
+              >
+                I built Calculators Point out of a frustration I shared with millions of people: every time 
+                I needed a reliable EMI, tax, or health calculator online, I'd land on pages cluttered with 
+                ads, paywalls, or formulas that were just plain wrong. As a software engineer with experience 
+                in fintech systems, I knew the right formulas — so I built the tools myself and made them free.
+              </p>
+
+              <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.75, marginBottom: 20 }}>
+                Every calculator on this platform has been personally researched, formula-verified against 
+                academic and regulatory sources (WHO, FBR, RBI, Mifflin-St Jeor, Naegele's Rule), and tested 
+                for accuracy before launch. The goal is simple: give everyone access to the same quality of 
+                financial and health tools that professionals use — at zero cost.
+              </p>
+
+              {/* Credential tags */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+                {[
+                  '💰 Fintech Systems',
+                  '🧮 Financial Modelling',
+                  '🌐 Full-Stack Development',
+                  '📊 Data Visualisation',
+                  '🏥 Health Calculators',
+                ].map(tag => (
+                  <span key={tag} style={{
+                    padding: '4px 12px', borderRadius: 100,
+                    background: 'var(--surf2)', border: '1px solid var(--bord2)',
+                    fontSize: 12, fontWeight: 600, color: 'var(--text2)',
+                  }}>{tag}</span>
+                ))}
+              </div>
+
+              {/* Contact links */}
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <a
+                  href="mailto:contact@calculatorspoint.com"
+                  itemProp="email"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    padding: '7px 14px', borderRadius: 'var(--r-lg)',
+                    background: 'var(--surf2)', border: '1px solid var(--bord2)',
+                    fontSize: 12, fontWeight: 700, color: 'var(--text2)',
+                    textDecoration: 'none', transition: 'all .15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--brand)'; e.currentTarget.style.color = 'var(--brand)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--bord2)'; e.currentTarget.style.color = 'var(--text2)'; }}
+                >
+                  <Mail size={13} /> contact@calculatorspoint.com
+                </a>
+                <a
+                  href="https://linkedin.com/in/m-khurram"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  itemProp="sameAs"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    padding: '7px 14px', borderRadius: 'var(--r-lg)',
+                    background: 'var(--surf2)', border: '1px solid var(--bord2)',
+                    fontSize: 12, fontWeight: 700, color: 'var(--text2)',
+                    textDecoration: 'none', transition: 'all .15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#0077b5'; e.currentTarget.style.color = '#0077b5'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--bord2)'; e.currentTarget.style.color = 'var(--text2)'; }}
+                >
+                  <Linkedin size={13} /> LinkedIn
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* E-E-A-T trust note */}
+          <div style={{
+            marginTop: 24, paddingTop: 18,
+            borderTop: '1px solid var(--bord2)',
+            display: 'flex', gap: 10, alignItems: 'flex-start',
+          }}>
+            <span style={{ fontSize: 18, flexShrink: 0 }}>✅</span>
+            <p style={{ fontSize: 12, color: 'var(--text3)', lineHeight: 1.7, margin: 0 }}>
+              <strong style={{ color: 'var(--text2)' }}>Editorial standards:</strong> All formulas are
+              cross-referenced against primary sources before publication. Health calculators cite
+              WHO and peer-reviewed medical guidelines. Financial calculators follow RBI, FBR, and
+              international actuarial standards. A disclaimer is shown on every calculator page.
+            </p>
           </div>
         </div>
 

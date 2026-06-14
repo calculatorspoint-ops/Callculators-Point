@@ -9,9 +9,13 @@
  *      viewport (or after results render), so users on mobile never download it unless
  *      they scroll to the chart area.
  *   3. Animated skeleton → stable reserved height prevents CLS while chart loads.
+ *   4. useDeferredValue (React 18) → chart re-renders are deferred to browser-idle time
+ *      after slider/input interactions. The input updates at normal priority; the heavy
+ *      Recharts re-render runs only after the browser has processed all pending events.
+ *      This is the primary fix for high Interaction to Next Paint (INP) on chart pages.
  */
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useDeferredValue } from 'react';
 
 /* ── Dynamic import: SSR disabled, Recharts is never in the server bundle ── */
 const CalcChartInner = dynamic(
@@ -85,12 +89,27 @@ function ChartSkeleton() {
  * This means Recharts is only downloaded when the user can actually see the chart
  * — or is about to. Calculator inputs/results above the chart remain fast.
  *
+ * INP FIX: useDeferredValue wraps chartData so that slider/input interactions
+ * always complete at normal priority. The chart re-render is scheduled as a
+ * low-priority background update — after the browser finishes handling the
+ * user's input event. While the deferred value is stale (isStale = true),
+ * the chart fades to 70% opacity to signal it's updating without a layout shift.
+ *
  * @param {object} chartData  — same shape as CalcChart expects
  * @param {boolean} [eager]   — set true to skip the IntersectionObserver and load immediately
  */
 export function LazyCalcChart({ chartData, eager = false }) {
   const containerRef = useRef(null);
   const [visible, setVisible] = useState(eager);
+
+  // ── React 18 INP fix: defer chart data behind user interactions ──────────
+  // chartData (urgent) updates synchronously when sliders move.
+  // deferredChartData (non-urgent) updates only when the browser is idle,
+  // so the slider thumb and input values paint before the heavy chart re-renders.
+  const deferredChartData = useDeferredValue(chartData);
+
+  // While the deferred value hasn't caught up yet, show a subtle stale indicator
+  const isStale = deferredChartData !== chartData;
 
   useEffect(() => {
     if (eager || !chartData) return;
@@ -121,9 +140,19 @@ export function LazyCalcChart({ chartData, eager = false }) {
   if (!chartData) return null;
 
   return (
-    <div ref={containerRef}>
+    <div
+      ref={containerRef}
+      style={{
+        // Smooth opacity transition signals stale chart without layout shift.
+        // opacity goes to 0.7 while the deferred render is pending, then back to 1.
+        opacity: isStale ? 0.7 : 1,
+        transition: 'opacity 0.15s ease',
+        willChange: isStale ? 'opacity' : 'auto',
+      }}
+      aria-busy={isStale}
+    >
       {visible ? (
-        <CalcChartInner chartData={chartData} />
+        <CalcChartInner chartData={deferredChartData} />
       ) : (
         <ChartSkeleton />
       )}
@@ -134,3 +163,4 @@ export function LazyCalcChart({ chartData, eager = false }) {
 // Backward-compatible alias — existing code that does `import { CalcChart } from './LazyCalcChart'`
 // continues to work without any changes.
 export const CalcChart = LazyCalcChart;
+

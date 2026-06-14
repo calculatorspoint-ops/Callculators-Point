@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CATEGORIES, POPULAR, ALL_CALCULATORS } from "@/data/calculatorConfigs";
+import { CATEGORIES, POPULAR, ALL_CALCULATORS, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { Calculator } from "lucide-react";
 
 export function Footer() {
@@ -16,11 +16,17 @@ export function Footer() {
               <div>Calculators <span style={{ color:"#34d399" }}>Point</span></div>
             </div>
             <p style={{ fontSize:13, lineHeight:1.7, color:"var(--footer-text)", marginBottom:16 }}>
-              {ALL_CALCULATORS.length}+ free online calculators for finance, health, math, education and daily life.
+              {CALC_COUNT_LABEL} free online calculators for finance, health, math, education and daily life.
               Fast, accurate, and 100% free — always.
             </p>
+            {/* Legal quick-links — full names match the Legal section below */}
             <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-              {[["Privacy","/privacy-policy"],["Terms","/terms-of-service"],["Disclaimer","/disclaimer"],["Cookies","/cookie-policy"]].map(([l,h])=>(
+              {[
+                ["Privacy Policy",  "/privacy-policy"],
+                ["Terms of Service","/terms-of-service"],
+                ["Disclaimer",      "/disclaimer"],
+                ["Cookie Policy",   "/cookie-policy"],
+              ].map(([l,h])=>(
                 <Link key={h} href={h} style={{ padding:"4px 10px", borderRadius:6, fontSize:11, fontWeight:600, background:"var(--footer-bg-surface)", border:"1px solid var(--footer-bg-border)", color:"var(--footer-text)", transition:"color .15s" }}
                   onMouseEnter={e=>e.currentTarget.style.color="var(--footer-link-hover)"}
                   onMouseLeave={e=>e.currentTarget.style.color="var(--footer-text)"}>
@@ -82,11 +88,11 @@ export function Footer() {
           </nav>
         </div>
 
-        {/* Ad disclosure */}
+        {/* Ad disclosure — must be accurate and present-tense; FTC / Google policy require this */}
         <div className="footer-disc">
           <strong style={{ color:"#94a3b8" }}>Advertising Disclosure:</strong>{" "}
-          Calculators Point is free to use and may be supported by advertising in the future.
-          All results are provided for informational and educational purposes only and are never influenced by advertising.
+          Calculators Point is free to use and supported by advertising via Google AdSense.
+          Ads never influence our results — all outputs are calculated independently of any advertiser.
           See our{" "}
           <Link href="/privacy-policy" style={{ color:"var(--footer-link-hover)" }}>Privacy Policy</Link> and{" "}
           <Link href="/disclaimer" style={{ color:"var(--footer-link-hover)" }}>Disclaimer</Link> for details.

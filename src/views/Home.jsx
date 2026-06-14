@@ -3,7 +3,7 @@ import { useState, useEffect, Suspense, lazy } from "react";
 import Link from "next/link";
 import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Calculator, Sparkles, BookOpen } from "lucide-react";
 
-import { CATEGORIES, BY_CATEGORY, POPULAR, NEW_CALCS, ALL_CALCULATORS } from "@/data/calculatorConfigs";
+import { CATEGORIES, BY_CATEGORY, POPULAR, NEW_CALCS, ALL_CALCULATORS, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { useAppStore } from "@/store/useAppStore";
 
 // Lazy-load the heavy QuickCalc widget — it's below the fold on mobile
@@ -142,7 +142,7 @@ export default function Home({ skipHero } = {}) {
             <div className="hero-content">
               <div className="hero-badge">
                 <Sparkles size={12} />
-                {ALL_CALCULATORS.length}+ Free Tools · No Signup · Instant Results
+                {CALC_COUNT_LABEL} Free Tools · No Signup · Instant Results
               </div>
 
               <h1 className="hero-title">
@@ -208,7 +208,7 @@ export default function Home({ skipHero } = {}) {
       {/* aria-label so screen readers understand the stats purpose */}
       <div className="stat-strip" role="complementary" aria-label="Site statistics">
         {[
-          { n: `${ALL_CALCULATORS.length}+`, l: "Calculators", icon: "🧮" },
+          { n: CALC_COUNT_LABEL, l: "Calculators", icon: "🧮" },
           { n: `${CATEGORIES.length}`,    l: "Categories",  icon: "📂" },
           { n: "∞",    l: "Free Always", icon: "🆓" },
           { n: "0",    l: "Data Stored", icon: "🔒" },
@@ -471,7 +471,7 @@ export default function Home({ skipHero } = {}) {
             {/* Browse All CTA */}
             <div className="sidebar-cta">
               <div style={{ fontSize: 32, marginBottom: 10 }}>🔢</div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 4 }}>{ALL_CALCULATORS.length}+ Calculators</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 4 }}>{CALC_COUNT_LABEL} Calculators</div>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,.65)", marginBottom: 16, lineHeight: 1.5 }}>
                 Finance, health, math & more. All free, all instant.
               </p>

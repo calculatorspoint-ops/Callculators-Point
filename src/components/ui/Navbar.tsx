@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig } from "@/data/calculatorConfigs";
+import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { CurrencySelector } from './CurrencySelector';
 import { SettingsModal } from './SettingsModal';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
@@ -189,7 +189,7 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
             value={q}
             onChange={e => setQ(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={`Search ${ALL_CALCULATORS.length}+ calculators…`}
+            placeholder={`Search ${CALC_COUNT_LABEL} calculators…`}
             className="navbar-search-input"
             aria-label="Search calculators"
             aria-expanded={open}
@@ -408,7 +408,7 @@ export function Navbar() {
           <p className="mob-menu-section-title">Quick Links</p>
           <Link href="/calculators" className="mob-menu-link mob-menu-link--featured">
             <span aria-hidden="true">📊</span>
-            <span>All {ALL_CALCULATORS.length}+ Tools</span>
+            <span>All {CALC_COUNT_LABEL} Tools</span>
             <ChevronRight size={14} style={{ marginLeft: "auto" }} />
           </Link>
           <Link href="/name-generators" className="mob-menu-link mob-menu-link--featured">
