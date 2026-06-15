@@ -3,17 +3,8 @@ import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Tabs, Row2, Presets,
   Panel, buildResult, useCurrency,
-  InputSection, SEOSection
+  InputSection, SEOSection, FinanceLayout
 } from './SharedComponents';
-
-function CalcLayout({ inputs, result, label }) {
-  return (
-    <div className="calc-form-stack">
-      <div>{inputs}</div>
-      <Panel result={result} loading={null} label={label} />
-    </div>
-  );
-}
 
 // ─── Mortgage Calculator ────────────────────────────────────────────────────
 export function MortgageForm() {
@@ -307,7 +298,14 @@ export function HouseAffordabilityForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="House Affordability" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="House Affordability"
+        inputIcon="🏠"
+        inputContent={inputs}
+        result={res}
+        label="House Affordability"
+      />
       <SEOSection title="How Much House Can You Afford?">
         <p>Banks use the 28/36 rule: housing costs ≤ 28% of gross income (front-end), total debt ≤ 36% (back-end). Some lenders allow up to 43% DTI. This calculator gives you the maximum — but buy at 80–90% of the max to keep financial breathing room.</p>
       </SEOSection>
@@ -417,7 +415,14 @@ export function RentVsBuyForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Rent vs Buy" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Rent vs Buy"
+        inputIcon="🏡"
+        inputContent={inputs}
+        result={res}
+        label="Rent vs Buy"
+      />
       <SEOSection title="Rent vs Buy — Which Makes More Financial Sense?">
         <p>The answer depends on your timeline, city, and interest rates. Buying wins when you plan to stay 7+ years and the mortgage payment is close to rent. Renting wins short-term due to the opportunity cost of the down payment. This calculator accounts for rent inflation, home appreciation (~5%/yr assumed), equity buildup, and total buy costs to give you the full picture.</p>
       </SEOSection>

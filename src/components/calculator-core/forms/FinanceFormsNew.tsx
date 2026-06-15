@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney } from './SharedComponents';
+import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney , FinanceLayout } from './SharedComponents';
 import { ScenarioCompare } from '@/components/calculator-core/ScenarioCompare';
 import { useAmortizationWorker } from '@/hooks/useAmortizationWorker';
 
@@ -53,8 +53,11 @@ export function MortgagePayoffForm() {
   }, [balance, rate, term, extra, lump]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Mortgage Payoff"
+      inputIcon="🏠"
+      inputContent={<>
         <Sl label="Remaining Balance" id="mpb" min={10000} max={2000000} step={5000} value={balance} onChange={setBalance} fmt={v => fmSlider(v)} />
         <Sl label="Interest Rate (% p.a.)" id="mpr" min={1} max={20} step={0.1} value={rate} onChange={setRate} fmt={v => `${v}%`} />
         <Sl label="Remaining Term (Years)" id="mpt" min={1} max={30} value={term} onChange={setTerm} fmt={v => `${v} yrs`} />
@@ -62,9 +65,10 @@ export function MortgagePayoffForm() {
           <N label="Extra Monthly Payment" id="mpex" value={extra} onChange={setExtra} unit={sym} placeholder="0" hint="Reduces principal faster" />
           <N label="Lump Sum Payment" id="mplump" value={lump} onChange={setLump} unit={sym} placeholder="0" hint="One-time extra payment" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="Mortgage Payoff" />
-    </div>
+      </>}
+      result={res}
+      label="Mortgage Payoff"
+    />
   );
 }
 
@@ -106,16 +110,20 @@ export function HouseAffordabilityForm() {
   }, [income, debts, down, rate, term]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="House Affordability"
+      inputIcon="🏡"
+      inputContent={<>
         <N label="Gross Monthly Income" id="hai" value={income} onChange={setIncome} unit={sym} />
         <N label="Existing Monthly Debts" id="had" value={debts} onChange={setDebts} unit={sym} hint="Car loan, student loan, credit cards etc." />
         <Sl label="Down Payment (%)" id="hadp" min={3} max={40} step={0.5} value={+down} onChange={v => setDown(String(v))} fmt={v => `${v}%`} />
         <Sl label="Interest Rate (% p.a.)" id="har" min={2} max={15} step={0.1} value={rate} onChange={setRate} fmt={v => `${v}%`} />
         <Sel label="Loan Term" id="hat" value={String(term)} onChange={v => setTerm(+v)} opts={[{ v: "15", l: "15 Years" }, { v: "20", l: "20 Years" }, { v: "25", l: "25 Years" }, { v: "30", l: "30 Years" }]} />
-      </div>
-      <Panel result={res} loading={null} label="House Affordability" />
-    </div>
+      </>}
+      result={res}
+      label="House Affordability"
+    />
   );
 }
 
@@ -177,8 +185,11 @@ export function RentVsBuyForm() {
   }, [rent, homePrice, down, rate, years, appreciation, rentIncrease]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Rent vs Buy"
+      inputIcon="🏘️"
+      inputContent={<>
         <Presets items={[
           { label: "🏙️ Urban Renter", v: { rent: 3000, homePrice: 600000, down: 20, rate: 6.5, years: 7 } },
           { label: "🏡 Suburban Buyer", v: { rent: 1800, homePrice: 350000, down: 10, rate: 6.5, years: 10 } },
@@ -194,9 +205,10 @@ export function RentVsBuyForm() {
           <N label="Home Appreciation (%)" id="rvba" value={String(appreciation)} onChange={v => setAppreciation(+v)} unit="% /yr" />
           <N label="Rent Increase (%)" id="rvbri" value={String(rentIncrease)} onChange={v => setRentIncrease(+v)} unit="% /yr" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="Rent vs Buy" />
-    </div>
+      </>}
+      result={res}
+      label="Rent vs Buy"
+    />
   );
 }
 
@@ -241,8 +253,11 @@ export function APRForm() {
   }, [loan, rate, term, fees, points]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="APR"
+      inputIcon="📊"
+      inputContent={<>
         <N label="Loan Amount" id="aprl" value={loan} onChange={setLoan} unit={sym} />
         <Row2>
           <N label="Interest Rate (%)" id="aprr" value={rate} onChange={setRate} unit="%" />
@@ -252,9 +267,10 @@ export function APRForm() {
           <N label="Total Fees" id="aprf" value={fees} onChange={setFees} unit={sym} hint="Origination, closing, etc." />
           <N label="Discount Points" id="aprp" value={points} onChange={setPoints} unit="pts" hint="1 point = 1% of loan" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="APR" />
-    </div>
+      </>}
+      result={res}
+      label="APR"
+    />
   );
 }
 
@@ -296,8 +312,11 @@ export function AutoLoanForm() {
   }, [price, down, rate, term, tradeIn]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Auto Loan"
+      inputIcon="🚗"
+      inputContent={<>
         <Presets items={[
           { label: "🚗 Budget Car", v: { price: 20000, down: 3000, rate: 8, term: 60 } },
           { label: "🚙 Mid-range", v: { price: 40000, down: 8000, rate: 6.5, term: 60 } },
@@ -311,9 +330,10 @@ export function AutoLoanForm() {
           { v: "60", l: "60 Months" }, { v: "72", l: "72 Months" }, { v: "84", l: "84 Months" },
         ]} />
         <N label="Trade-In Value" id="alti" value={tradeIn} onChange={setTradeIn} unit={sym} placeholder="0" />
-      </div>
-      <Panel result={res} loading={null} label="Auto Loan" />
-    </div>
+      </>}
+      result={res}
+      label="Auto Loan"
+    />
   );
 }
 
@@ -345,17 +365,21 @@ export function PersonalLoanForm() {
   }, [amount, rate, term]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Personal Loan"
+      inputIcon="💳"
+      inputContent={<>
         <Sl label="Loan Amount" id="pla" min={1000} max={500000} step={1000} value={amount} onChange={setAmount} fmt={v => fmSlider(v)} />
         <Sl label="Interest Rate (% p.a.)" id="plr" min={1} max={40} step={0.5} value={rate} onChange={setRate} fmt={v => `${v}%`} />
         <Sel label="Loan Term" id="plt" value={String(term)} onChange={v => setTerm(+v)} opts={[
           { v: "12", l: "12 Months" }, { v: "24", l: "24 Months" }, { v: "36", l: "36 Months" },
           { v: "48", l: "48 Months" }, { v: "60", l: "60 Months" }, { v: "84", l: "7 Years" },
         ]} />
-      </div>
-      <Panel result={res} loading={null} label="Personal Loan" />
-    </div>
+      </>}
+      result={res}
+      label="Personal Loan"
+    />
   );
 }
 
@@ -397,8 +421,11 @@ export function StudentLoanForm() {
   }, [balance, rate, term, income, mode]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Student Loan"
+      inputIcon="🎓"
+      inputContent={<>
         <Tabs tabs={["Standard", "Income-Based"]} active={mode} onChange={setMode} />
         <Sl label="Loan Balance" id="slb" min={1000} max={200000} step={1000} value={balance} onChange={setBalance} fmt={v => fmSlider(v)} />
         <Sl label="Interest Rate (%)" id="slr" min={1} max={15} step={0.1} value={rate} onChange={setRate} fmt={v => `${v}%`} />
@@ -407,9 +434,10 @@ export function StudentLoanForm() {
           { v: "180", l: "15 Years" }, { v: "240", l: "20 Years" },
         ]} />
         {mode === "Income-Based" && <N label="Annual Income" id="sli" value={income} onChange={setIncome} unit={sym} />}
-      </div>
-      <Panel result={res} loading={null} label="Student Loan" />
-    </div>
+      </>}
+      result={res}
+      label="Student Loan"
+    />
   );
 }
 
@@ -480,8 +508,11 @@ export function CreditCardForm() {
   }, [balance, apr, payment]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Credit Card Payoff"
+      inputIcon="💳"
+      inputContent={<>
         <Presets items={[
           { label: "Low Balance", v: { b: 2000, a: 18, p: "75" } },
           { label: "Medium Balance", v: { b: 8000, a: 22, p: "200" } },
@@ -494,9 +525,10 @@ export function CreditCardForm() {
           <p style={{ fontSize: 12, fontWeight: 700, color: "#dc2626" }}>⚠️ Minimum Payment Trap</p>
           <p style={{ fontSize: 12, color: "var(--text3)", marginTop: 4 }}>Credit card companies set minimums low (~2%) to maximize interest. The chart compares your payment vs minimum-only payoff.</p>
         </div>
-      </div>
-      <Panel result={res} loading={null} label="Credit Card Payoff" />
-    </div>
+      </>}
+      result={res}
+      label="Credit Card Payoff"
+    />
   );
 }
 
@@ -573,8 +605,11 @@ export function DebtPayoffForm() {
   }, [debts, extra, strategy]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Debt Payoff"
+      inputIcon="💸"
+      inputContent={<>
         <Tabs tabs={["Compare Both", "Avalanche", "Snowball"]} active={strategy} onChange={setStrategy} />
         <p style={{ fontSize: 12, color: "var(--text3)", marginBottom: 14 }}>
           {strategy === "Avalanche" ? "⚡ Highest interest rate first — mathematically optimal, saves the most money."
@@ -599,9 +634,10 @@ export function DebtPayoffForm() {
           + Add Another Debt
         </button>
         <N label="Extra Monthly Payment" id="dpex" value={extra} onChange={setExtra} unit={sym} hint="Extra cash applied to focus debt each month" />
-      </div>
-      <Panel result={res} loading={null} label="Debt Payoff" />
-    </div>
+      </>}
+      result={res}
+      label="Debt Payoff"
+    />
   );
 }
 
@@ -648,8 +684,11 @@ export function Calculator401kForm() {
   }, [salary, contrib, match, matchPct, rate, years, current]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="401(k) Balance"
+      inputIcon="💰"
+      inputContent={<>
         <Sl label="Annual Salary" id="401s" min={20000} max={500000} step={1000} value={salary} onChange={setSalary} fmt={v => fmSlider(v)} />
         <Sl label="Your Contribution (%)" id="401c" min={1} max={50} step={0.5} value={contrib} onChange={setContrib} fmt={v => `${v}%`} />
         <Row2>
@@ -659,9 +698,10 @@ export function Calculator401kForm() {
         <Sl label="Expected Annual Return (%)" id="401r" min={1} max={15} step={0.5} value={rate} onChange={setRate} fmt={v => `${v}%`} />
         <Sl label="Years to Retirement" id="401y" min={1} max={45} value={years} onChange={setYears} fmt={v => `${v} yrs`} />
         <N label="Current Balance" id="401cur" value={current} onChange={setCurrent} unit={sym} placeholder="0" />
-      </div>
-      <Panel result={res} loading={null} label="401(k) Balance" />
-    </div>
+      </>}
+      result={res}
+      label="401(k) Balance"
+    />
   );
 }
 
@@ -691,14 +731,18 @@ export function CommissionForm() {
   }, [sales, rate, base, mode]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Commission"
+      inputIcon="💼"
+      inputContent={<>
         <N label="Total Sales Amount" id="cms" value={sales} onChange={setSales} unit={sym} />
         <N label="Commission Rate (%)" id="cmr" value={rate} onChange={setRate} unit="%" />
         <N label="Base Salary (Monthly)" id="cmb" value={base} onChange={setBase} unit={sym} placeholder="0" hint="Optional fixed salary" />
-      </div>
-      <Panel result={res} loading={null} label="Commission" />
-    </div>
+      </>}
+      result={res}
+      label="Commission"
+    />
   );
 }
 
@@ -744,8 +788,11 @@ export function DepreciationForm() {
   }, [cost, salvage, life, method]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Depreciation"
+      inputIcon="📉"
+      inputContent={<>
         <Sel label="Depreciation Method" id="dpm" value={method} onChange={setMethod} opts={[
           { v: "SL", l: "Straight-Line (SL)" },
           { v: "DB", l: "Double Declining Balance (DDB)" },
@@ -754,9 +801,10 @@ export function DepreciationForm() {
         <Sl label="Asset Cost" id="dpc" min={1000} max={1000000} step={1000} value={cost} onChange={setCost} fmt={v => fmSlider(v)} />
         <Sl label="Salvage Value" id="dps" min={0} max={500000} step={500} value={salvage} onChange={setSalvage} fmt={v => fmSlider(v)} />
         <Sl label="Useful Life (Years)" id="dpl" min={1} max={40} value={life} onChange={setLife} fmt={v => `${v} yrs`} />
-      </div>
-      <Panel result={res} loading={null} label="Depreciation" />
-    </div>
+      </>}
+      result={res}
+      label="Depreciation"
+    />
   );
 }
 
@@ -863,15 +911,19 @@ export function PresentValueForm() {
   }, [fv, rate, years, pmt]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Present Value"
+      inputIcon="💹"
+      inputContent={<>
         <N label="Future Value" id="pvfv" value={fv} onChange={setFv} unit={sym} />
         <N label="Discount Rate (% p.a.)" id="pvr" value={rate} onChange={setRate} unit="%" />
         <N label="Number of Years" id="pvn" value={years} onChange={setYears} unit="yrs" />
         <N label="Annual Payment (Optional)" id="pvpmt" value={pmt} onChange={setPmt} unit={sym} placeholder="0" hint="For annuity streams" />
-      </div>
-      <Panel result={res} loading={null} label="Present Value" />
-    </div>
+      </>}
+      result={res}
+      label="Present Value"
+    />
   );
 }
 
@@ -959,8 +1011,11 @@ export function IRRForm() {
   }, [initial, cashflows, hurdleRate]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="IRR"
+      inputIcon="📈"
+      inputContent={<>
         <N label="Initial Investment (negative)" id="irrinit" value={initial} onChange={setInitial} unit={sym} hint="Enter as negative number e.g. -50000" />
         <N label="Hurdle Rate (%)" id="irrhurdle" value={hurdleRate} onChange={setHurdleRate} unit="%" hint="Your minimum required return (used for NPV & IRR comparison)" />
         <div style={{ marginBottom: 16 }}>
@@ -969,9 +1024,10 @@ export function IRRForm() {
             rows={6} style={{ width: "100%", padding: "12px 14px", background: "var(--surface2)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)", resize: "vertical", outline: "none" }} />
           <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 4 }}>One cash flow per line. Positive = inflow, negative = outflow.</p>
         </div>
-      </div>
-      <Panel result={res} loading={null} label="IRR" />
-    </div>
+      </>}
+      result={res}
+      label="IRR"
+    />
   );
 }
 
@@ -1004,8 +1060,11 @@ export function DownPaymentForm() {
   }, [price, pct, savings, rate]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Down Payment"
+      inputIcon="🏦"
+      inputContent={<>
         <Sl label="Home Price" id="dphp" min={50000} max={2000000} step={5000} value={price} onChange={setPrice} fmt={v => fmSlider(v)} />
         <Sl label="Down Payment (%)" id="dppct" min={3} max={40} step={0.5} value={pct} onChange={setPct} fmt={v => `${v}%`} />
         <Row2>
@@ -1017,9 +1076,10 @@ export function DownPaymentForm() {
             ⚠️ Below 20% down payment requires PMI (Private Mortgage Insurance).
           </div>
         )}
-      </div>
-      <Panel result={res} loading={null} label="Down Payment" />
-    </div>
+      </>}
+      result={res}
+      label="Down Payment"
+    />
   );
 }
 
@@ -1056,8 +1116,11 @@ export function CollegeCostForm() {
   }, [annual, years, inflation, yrsAway, savings, returnRate]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="College Cost"
+      inputIcon="🎓"
+      inputContent={<>
         <Sl label="Current Annual Cost" id="cca" min={5000} max={100000} step={1000} value={annual} onChange={setAnnual} fmt={v => fmSlider(v)} />
         <Sel label="College Duration" id="ccyrs" value={String(years)} onChange={v => setYears(+v)} opts={[{ v: "2", l: "2 Years" }, { v: "4", l: "4 Years" }, { v: "6", l: "6 Years" }]} />
         <Row2>
@@ -1068,9 +1131,10 @@ export function CollegeCostForm() {
           <N label="Monthly Savings" id="ccms" value={savings} onChange={setSavings} unit={sym} />
           <N label="Return Rate (%)" id="ccr" value={returnRate} onChange={setReturnRate} unit="% /yr" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="College Cost" />
-    </div>
+      </>}
+      result={res}
+      label="College Cost"
+    />
   );
 }
 
@@ -1111,8 +1175,11 @@ export function HELOCForm() {
   }, [homeValue, mortgage, creditPct, drawYears, repayYears, rate]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="HELOC"
+      inputIcon="🏠"
+      inputContent={<>
         <Presets items={[
           { label: "Starter Home", v: { hv: 300000, m: 150000, r: 8.5 } },
           { label: "Mid-Range", v: { hv: 500000, m: 200000, r: 8 } },
@@ -1126,9 +1193,10 @@ export function HELOCForm() {
           <N label="Draw Period (yrs)" id="heldy" value={String(drawYears)} onChange={v => setDrawYears(+v)} unit="yrs" />
           <N label="Repayment (yrs)" id="helry" value={String(repayYears)} onChange={v => setRepayYears(+v)} unit="yrs" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="HELOC" />
-    </div>
+      </>}
+      result={res}
+      label="HELOC"
+    />
   );
 }
 
@@ -1169,8 +1237,11 @@ export function AutoLeaseForm() {
   }, [msrp, negotiated, residualPct, moneyFactor, term, down, fees]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Auto Lease"
+      inputIcon="🚘"
+      inputContent={<>
         <Presets items={[
           { label: "Budget", v: { msrp: 25000, neg: 23500, res: 55, mf: "0.00200", t: 36, dn: 0 } },
           { label: "Mid-range", v: { msrp: 45000, neg: 43000, res: 52, mf: "0.00150", t: 36, dn: 2000 } },
@@ -1187,9 +1258,10 @@ export function AutoLeaseForm() {
           <N label="Down Payment" id="aldown" value={String(down)} onChange={v => setDown(+v)} unit={sym} />
           <N label="Fees" id="alfees" value={fees} onChange={setFees} unit={sym} placeholder="800" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="Auto Lease" />
-    </div>
+      </>}
+      result={res}
+      label="Auto Lease"
+    />
   );
 }
 
@@ -1239,8 +1311,11 @@ export function BondForm() {
   }, [faceValue, couponRate, ytm, years, freq, dayCount]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Bond Price"
+      inputIcon="📜"
+      inputContent={<>
         <N label="Face Value" id="bfv" value={faceValue} onChange={setFaceValue} unit={sym} />
         <Row2>
           <N label="Coupon Rate (%)" id="bcr" value={couponRate} onChange={setCouponRate} unit="%" />
@@ -1256,9 +1331,10 @@ export function BondForm() {
           { v: "Act/365", l: "Act/365 (UK Gilts, AUD bonds)" },
           { v: "Act/Act", l: "Act/Act (US Treasuries, Eurozone govts)" },
         ]} />
-      </div>
-      <Panel result={res} loading={null} label="Bond Price" />
-    </div>
+      </>}
+      result={res}
+      label="Bond Price"
+    />
   );
 }
 
@@ -1291,14 +1367,18 @@ export function CDForm() {
   }, [principal, apy, term]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="CD Calculator"
+      inputIcon="🏦"
+      inputContent={<>
         <Sl label="Principal" id="cdp" min={1000} max={500000} step={1000} value={principal} onChange={setPrincipal} fmt={v => fmSlider(v)} />
         <Sl label="APY (%)" id="cdapy" min={0.5} max={8} step={0.05} value={apy} onChange={setApy} fmt={v => v + "%"} />
         <Sel label="Term" id="cdterm" value={String(term)} onChange={v => setTerm(+v)} opts={[{v:"3",l:"3 Months"},{v:"6",l:"6 Months"},{v:"12",l:"12 Months"},{v:"24",l:"24 Months"},{v:"36",l:"36 Months"},{v:"60",l:"5 Years"}]} />
-      </div>
-      <Panel result={res} loading={null} label="CD Calculator" />
-    </div>
+      </>}
+      result={res}
+      label="CD Calculator"
+    />
   );
 }
 
@@ -1342,8 +1422,11 @@ export function RothIRAForm() {
   }, [contribution, currentAge, retireAge, rate, currentBalance]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Roth IRA"
+      inputIcon="💰"
+      inputContent={<>
         <Sl label="Annual Contribution" id="rira_c" min={500} max={7000} step={500} value={contribution} onChange={setContribution} fmt={v => fmSlider(v)} />
         <Row2>
           <N label="Current Age" id="rira_ca" value={String(currentAge)} onChange={v => setCurrentAge(+v)} unit="yrs" />
@@ -1351,9 +1434,10 @@ export function RothIRAForm() {
         </Row2>
         <Sl label="Expected Annual Return (%)" id="rira_r" min={1} max={15} step={0.5} value={rate} onChange={setRate} fmt={v => v + "%"} />
         <N label="Current Balance" id="rira_bal" value={currentBalance} onChange={setCurrentBalance} unit={sym} placeholder="0" />
-      </div>
-      <Panel result={res} loading={null} label="Roth IRA" />
-    </div>
+      </>}
+      result={res}
+      label="Roth IRA"
+    />
   );
 }
 
@@ -1392,16 +1476,20 @@ export function AnnuityForm() {
   }, [payment, rate, periods]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Annuity"
+      inputIcon="📅"
+      inputContent={<>
         <N label="Annual Payment" id="ann_pmt" value={payment} onChange={setPayment} unit={sym} />
         <Row2>
           <N label="Annual Rate (%)" id="ann_r" value={rate} onChange={setRate} unit="%" />
           <N label="Periods (Years)" id="ann_n" value={periods} onChange={setPeriods} unit="yrs" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="Annuity" />
-    </div>
+      </>}
+      result={res}
+      label="Annuity"
+    />
   );
 }
 
@@ -1435,14 +1523,18 @@ export function PensionForm() {
   }, [yearsService, finalSalary, multiplier]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Pension"
+      inputIcon="🏛️"
+      inputContent={<>
         <Sl label="Years of Service" id="pen_y" min={1} max={40} value={yearsService} onChange={setYearsService} fmt={v => v + " yrs"} />
         <Sl label="Final Salary" id="pen_s" min={20000} max={500000} step={5000} value={finalSalary} onChange={setFinalSalary} fmt={v => fmSlider(v)} />
         <Sl label="Benefit Multiplier (% per year)" id="pen_m" min={1} max={3} step={0.1} value={multiplier} onChange={setMultiplier} fmt={v => v + "%/yr"} />
-      </div>
-      <Panel result={res} loading={null} label="Pension" />
-    </div>
+      </>}
+      result={res}
+      label="Pension"
+    />
   );
 }
 
@@ -1476,16 +1568,17 @@ export function SocialSecurityForm() {
   }, [benefitAt67, claimAge]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Social Security"
+      inputIcon="🏛️"
+      inputContent={<>
         <Sl label="Estimated Benefit at Age 67" id="ss_b" min={500} max={4000} step={50} value={benefitAt67} onChange={setBenefitAt67} fmt={v => "$" + v + "/mo"} />
         <Sl label="Claiming Age" id="ss_age" min={62} max={70} step={1} value={claimAge} onChange={setClaimAge} fmt={v => "Age " + v} />
-      </div>
-      <Panel result={res} loading={null} label="Social Security" />
-      <p style={{ fontSize: 11, color: 'var(--text3)', marginTop: 0, padding: '10px 14px', background: 'var(--surface2)', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', lineHeight: 1.6 }}>
-          🏛️ <strong>Disclaimer:</strong> This is a simplified estimate. Actual Social Security benefits depend on your full earnings history, AIME (Average Indexed Monthly Earnings), and prevailing SSA benefit formulas. For your official benefit projection, visit <strong>ssa.gov/myaccount</strong> or call SSA at 1-800-772-1213.
-        </p>
-    </div>
+      </>}
+      result={res}
+      label="Social Security"
+    />
   );
 }
 
@@ -1525,14 +1618,18 @@ export function RMDForm() {
   }, [balance, age, growthRate]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="RMD Calculator"
+      inputIcon="💰"
+      inputContent={<>
         <Sl label="Account Balance" id="rmd_b" min={10000} max={5000000} step={10000} value={balance} onChange={setBalance} fmt={v => fmSlider(v)} />
         <Sl label="Your Age" id="rmd_age" min={73} max={90} value={age} onChange={setAge} fmt={v => "Age " + v} />
         <Sl label="Expected Growth Rate (%)" id="rmd_g" min={0} max={12} step={0.5} value={growthRate} onChange={setGrowthRate} fmt={v => v + "%"} />
-      </div>
-      <Panel result={res} loading={null} label="RMD Calculator" />
-    </div>
+      </>}
+      result={res}
+      label="RMD Calculator"
+    />
   );
 }
 
@@ -1568,17 +1665,21 @@ export function EstateTaxForm() {
   }, [grossEstate, debts, charitable, marital]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-tax"
+      inputTitle="Estate Tax"
+      inputIcon="⚖️"
+      inputContent={<>
         <Sl label="Gross Estate Value" id="et_ge" min={100000} max={50000000} step={100000} value={grossEstate} onChange={setGrossEstate} fmt={v => fmSlider(v)} />
         <N label="Debts and Mortgages" id="et_d" value={debts} onChange={setDebts} unit="$" placeholder="0" />
         <Row2>
           <N label="Charitable Deductions" id="et_c" value={charitable} onChange={setCharitable} unit="$" placeholder="0" />
           <N label="Marital Deduction" id="et_m" value={marital} onChange={setMarital} unit="$" placeholder="0" />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="Estate Tax" />
-    </div>
+      </>}
+      result={res}
+      label="Estate Tax"
+    />
   );
 }
 
@@ -1628,16 +1729,20 @@ export function MarriageTaxForm() {
   }, [income1, income2]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-tax"
+      inputTitle="Marriage Tax"
+      inputIcon="💍"
+      inputContent={<>
         <N label="Person 1 Annual Income" id="mt1" value={income1} onChange={setIncome1} unit="$" />
         <N label="Person 2 Annual Income" id="mt2" value={income2} onChange={setIncome2} unit="$" />
         <div style={{padding:"12px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)",marginTop:12,fontSize:12,color:"var(--text3)"}}>
           Based on 2024 US Federal Tax Brackets. State taxes not included.
         </div>
-      </div>
-      <Panel result={res} loading={null} label="Marriage Tax" />
-    </div>
+      </>}
+      result={res}
+      label="Marriage Tax"
+    />
   );
 }
 
@@ -1674,8 +1779,11 @@ export function BoatLoanForm() {
   }, [price, down, rate, term]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Boat Loan"
+      inputIcon="⛵"
+      inputContent={<>
         <Presets items={[
           { label: "Starter Boat", v: { p: 25000, d: 5000, r: 9, t: 84 } },
           { label: "Cruiser", v: { p: 100000, d: 20000, r: 8, t: 120 } },
@@ -1685,9 +1793,10 @@ export function BoatLoanForm() {
         <Sl label="Down Payment" id="bl_d" min={0} max={500000} step={1000} value={down} onChange={setDown} fmt={v => fmSlider(v)} />
         <Sl label="Interest Rate (%)" id="bl_r" min={4} max={18} step={0.25} value={rate} onChange={setRate} fmt={v => v + "%"} />
         <Sel label="Loan Term" id="bl_t" value={String(term)} onChange={v => setTerm(+v)} opts={[{v:"60",l:"5 Years"},{v:"84",l:"7 Years"},{v:"120",l:"10 Years"},{v:"180",l:"15 Years"},{v:"240",l:"20 Years"}]} />
-      </div>
-      <Panel result={res} loading={null} label="Boat Loan" />
-    </div>
+      </>}
+      result={res}
+      label="Boat Loan"
+    />
   );
 }
 
@@ -1731,8 +1840,11 @@ export function DebtConsolidationForm() {
   }, [debts, newRate, newTerm]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Debt Consolidation"
+      inputIcon="💸"
+      inputContent={<>
         {debts.map((d,i) => (
           <div key={i} style={{marginBottom:10,padding:12,background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)"}}>
             <input value={d.name} onChange={e=>updateDebt(i,"name",e.target.value)} style={{fontSize:13,fontWeight:700,color:"var(--text)",background:"transparent",border:"none",outline:"none",width:"100%",marginBottom:6}} />
@@ -1751,9 +1863,10 @@ export function DebtConsolidationForm() {
           <N label="Consolidation Rate (%)" id="dc_nr" value={newRate} onChange={setNewRate} unit="%" />
           <Sel label="New Term" id="dc_nt" value={newTerm} onChange={setNewTerm} opts={[{v:"36",l:"3 Yrs"},{v:"48",l:"4 Yrs"},{v:"60",l:"5 Yrs"},{v:"84",l:"7 Yrs"},{v:"120",l:"10 Yrs"}]} />
         </Row2>
-      </div>
-      <Panel result={res} loading={null} label="Debt Consolidation" />
-    </div>
+      </>}
+      result={res}
+      label="Debt Consolidation"
+    />
   );
 }
 
@@ -1795,8 +1908,11 @@ export function FutureValueForm() {
   }, [initial, monthly, rate, years]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Future Value"
+      inputIcon="💹"
+      inputContent={<>
         <Presets items={[
           { label: "Emergency Fund", v: { i: 1000, m: 300, r: 5, y: 3 } },
           { label: "House Down Payment", v: { i: 5000, m: 1000, r: 6, y: 5 } },
@@ -1806,9 +1922,10 @@ export function FutureValueForm() {
         <Sl label="Monthly Contribution" id="fv_m" min={0} max={10000} step={50} value={monthly} onChange={setMonthly} fmt={v => fmSlider(v)} />
         <Sl label="Annual Return (%)" id="fv_r" min={1} max={20} step={0.5} value={rate} onChange={setRate} fmt={v => v + "%"} />
         <Sl label="Time Horizon" id="fv_y" min={1} max={50} value={years} onChange={setYears} fmt={v => v + " yrs"} />
-      </div>
-      <Panel result={res} loading={null} label="Future Value" />
-    </div>
+      </>}
+      result={res}
+      label="Future Value"
+    />
   );
 }
 
@@ -1847,16 +1964,20 @@ export function AverageReturnForm() {
   }, [startVal, endVal, years]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="CAGR"
+      inputIcon="💰"
+      inputContent={<>
         <Row2>
           <N label="Start Value" id="cr_sv" value={startVal} onChange={setStartVal} unit="$" />
           <N label="End Value" id="cr_ev" value={endVal} onChange={setEndVal} unit="$" />
         </Row2>
         <N label="Number of Years" id="cr_y" value={years} onChange={setYears} unit="yrs" />
-      </div>
-      <Panel result={res} loading={null} label="CAGR" />
-    </div>
+      </>}
+      result={res}
+      label="CAGR"
+    />
   );
 }
 
@@ -2045,7 +2166,8 @@ export function AmortizationForm() {
           )}
         </div>
 
-        <Panel result={res} loading={null} label="Amortization" />
+        <Panel result={res} loading={null} label="Amortization" />
+
       </div>
 
       {displayRows.length > 0 && (
@@ -2287,8 +2409,11 @@ export function TVMForm() {
   };
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="TVM Calculator"
+      inputIcon="⏱️"
+      inputContent={<>
         <div style={{ marginBottom: 16 }}>
           <p style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", marginBottom: 8 }}>Solve For</p>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -2310,9 +2435,10 @@ export function TVMForm() {
           { label: "Savings (Solve FV)", v: { sf: "FV", p: "10000", f: "", pm: "500", r: "7", n: "20" } },
           { label: "Retirement (Solve N)", v: { sf: "N", p: "50000", f: "1000000", pm: "1000", r: "8", n: "25" } },
         ]} onApply={p => { setSolveFor(p.v.sf); setPV(p.v.p); setFV(p.v.f); setPMT(p.v.pm); setRateVal(p.v.r); setNper(p.v.n); }} />
-      </div>
-      <Panel result={res} loading={null} label="TVM Calculator" />
-    </div>
+      </>}
+      result={res}
+      label="TVM Calculator"
+    />
   );
 }
 
@@ -2379,8 +2505,11 @@ export function InvestmentCalcForm() {
   }, [initial, monthly, rate, years, stepUp, inflation, taxRate]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Investment Calculator"
+      inputIcon="💰"
+      inputContent={<>
         <Presets items={[
           { label: "Conservative", v: { i: 10000, m: 300, r: 5, y: 20, s: 2, inf: 3, t: 15 } },
           { label: "Moderate", v: { i: 10000, m: 500, r: 8, y: 20, s: 3, inf: 3, t: 20 } },
@@ -2395,9 +2524,10 @@ export function InvestmentCalcForm() {
           <Sl label="Inflation Rate (%)" id="ic_inf" min={0} max={10} step={0.5} value={inflation} onChange={setInflation} fmt={v => v + "%"} />
         </Row2>
         <Sl label="Tax Rate on Gains (%)" id="ic_tax" min={0} max={40} step={1} value={taxRate} onChange={setTaxRate} fmt={v => v + "%"} />
-      </div>
-      <Panel result={res} loading={null} label="Investment Calculator" />
-    </div>
+      </>}
+      result={res}
+      label="Investment Calculator"
+    />
   );
 }
 
@@ -2446,8 +2576,11 @@ export function GenericLoanForm() {
   }, [principal, rate, term, loanType]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Loan Calculator"
+      inputIcon="💰"
+      inputContent={<>
         <div style={{ marginBottom: 14 }}>
           <p style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", marginBottom: 8 }}>Loan Type</p>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -2470,9 +2603,10 @@ export function GenericLoanForm() {
           {v:"84",l:"84 months (7 yr)"},{v:"120",l:"120 months (10 yr)"},{v:"180",l:"180 months (15 yr)"},
           {v:"240",l:"240 months (20 yr)"},{v:"360",l:"360 months (30 yr)"},
         ]} />
-      </div>
-      <Panel result={res} loading={null} label="Loan Calculator" />
-    </div>
+      </>}
+      result={res}
+      label="Loan Calculator"
+    />
   );
 }
 

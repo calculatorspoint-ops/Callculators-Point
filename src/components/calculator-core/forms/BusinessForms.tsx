@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect, useRef } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney } from './SharedComponents';
+import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney , FinanceLayout } from './SharedComponents';
 import { ScenarioCompare } from '@/components/calculator-core/ScenarioCompare';
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -655,3 +655,92 @@ export function ComingSoon({ name }) {
     </div>
   );
 }
+
+// ── Privacy Banner ─────────────────────────────────────────────────────
+// The green "100% Private" strip shown at the top of every calculator.
+export function PrivacyBanner() {
+  return (
+    <div className="calc-privacy-banner" role="note" aria-label="Privacy notice">
+      <span className="calc-privacy-banner__icon" aria-hidden="true">✅</span>
+      <span className="calc-privacy-banner__lock" aria-hidden="true">🔒</span>
+      <span className="calc-privacy-banner__text">
+        <strong>100% Private</strong> — All data stays in your browser. Never stored or shared.
+      </span>
+    </div>
+  );
+}
+
+// ── FinanceLayout ──────────────────────────────────────────────────────
+// Two-column layout used by ALL finance calculators.
+// Left column  → InputSection card (inputs, sliders, presets)
+// Right column → Live result panel (result box, stats, chart, breakdown)
+// On tablet/mobile the columns stack vertically automatically via CSS.
+//
+// Props:
+//   accentClass  – e.g. "accent-finance", "accent-invest", "accent-loan"
+//   inputTitle   – section heading (e.g. "Loan Details")
+//   inputIcon    – emoji or string (e.g. "🏦")
+//   inputContent – JSX for the left column (sliders, fields, tabs)
+//   result       – the result object from buildResult()
+//   label        – calculator name string for Panel/CSV export
+//   shareParams  – optional object passed to Panel for shareable link
+//   loading      – boolean loading state
+//   children     – optional extra content rendered below the two columns
+export function FinanceLayout({
+  accentClass = "accent-finance",
+  inputTitle,
+  inputIcon,
+  inputContent,
+  result,
+  label,
+  shareParams,
+  loading = null,
+  children,
+}: {
+  accentClass?: string;
+  inputTitle?: string;
+  inputIcon?: string;
+  inputContent: React.ReactNode;
+  result: any;
+  label?: string;
+  shareParams?: Record<string, any>;
+  loading?: boolean | null;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="finance-calc-shell">
+      {/* ── Privacy banner ── */}
+      <PrivacyBanner />
+
+      {/* ── Two-column body ── */}
+      <div className="finance-calc-body">
+        {/* Left: Input Section */}
+        <div className="finance-calc-inputs">
+          <div className={`input-section-wrap ${accentClass}`}>
+            {(inputTitle || inputIcon) && (
+              <div className="input-section-label-row" aria-hidden="true">
+                {inputIcon && <span className="input-section-label-icon">{inputIcon}</span>}
+                {inputTitle && <span className="input-section-label-text">{inputTitle}</span>}
+              </div>
+            )}
+            <div className="input-section-body">
+              {inputContent}
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Result Panel */}
+        <div className="finance-calc-result">
+          <Panel result={result} loading={loading} label={label} shareParams={shareParams} />
+        </div>
+      </div>
+
+      {/* ── Optional extra content below (e.g. amortization table, scenario compare) ── */}
+      {children && (
+        <div className="finance-calc-extra">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}

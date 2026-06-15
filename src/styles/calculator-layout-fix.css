@@ -1209,3 +1209,170 @@ button[type="submit"].f-btn,
   width: 100%;
   min-width: 0;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FINANCE CALCULATOR UNIFIED LAYOUT
+   Two-column premium layout: inputs left, live results right.
+   Applied via <FinanceLayout> in SharedComponents.tsx.
+   Used by ALL finance category calculators.
+══════════════════════════════════════════════════════════════ */
+
+/* ── Shell wrapper ── */
+.finance-calc-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+/* ── Privacy Banner ── */
+.calc-privacy-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #047857;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.calc-privacy-banner__icon,
+.calc-privacy-banner__lock {
+  font-size: 14px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.calc-privacy-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+.calc-privacy-banner strong {
+  font-weight: 800;
+  color: #065f46;
+}
+.dark .calc-privacy-banner {
+  background: rgba(16, 185, 129, 0.10);
+  border-color: rgba(16, 185, 129, 0.22);
+  color: #34d399;
+}
+.dark .calc-privacy-banner strong {
+  color: #6ee7b7;
+}
+
+/* ── Two-column body grid ── */
+.finance-calc-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  min-width: 0;
+}
+
+/* ── Left column: inputs ── */
+.finance-calc-inputs {
+  min-width: 0;
+  /* Stick to top while result panel scrolls */
+  position: sticky;
+  top: calc(var(--nav-h, 68px) + 12px);
+  /* Remove sticky when panel is taller than viewport */
+  align-self: start;
+}
+/* Input section inside FinanceLayout gets slightly tighter padding */
+.finance-calc-inputs .input-section-body {
+  padding: 16px 18px 12px;
+}
+
+/* ── Right column: result panel ── */
+.finance-calc-result {
+  min-width: 0;
+}
+.finance-calc-result .result-live-region {
+  width: 100%;
+}
+/* Empty state inside result column */
+.finance-calc-result .empty-state {
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  background: var(--surf2);
+  gap: 8px;
+  padding: 32px 20px;
+}
+
+/* ── Extra content below the two columns (amortization tables etc.) ── */
+.finance-calc-extra {
+  margin-top: 20px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Tablet (≤1024px): stack columns ── */
+@media (max-width: 1024px) {
+  .finance-calc-body {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .finance-calc-inputs {
+    position: static; /* remove sticky on tablet so form comes first */
+  }
+}
+
+/* ── Mobile (≤767px): tighten spacing ── */
+@media (max-width: 767px) {
+  .finance-calc-shell {
+    gap: 0;
+  }
+  .calc-privacy-banner {
+    padding: 8px 12px;
+    font-size: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+  .finance-calc-body {
+    gap: 12px;
+  }
+  .finance-calc-inputs .input-section-body {
+    padding: 14px 14px 10px;
+  }
+  .finance-calc-extra {
+    margin-top: 14px;
+    gap: 12px;
+  }
+}
+
+/* ── Small mobile (≤480px) ── */
+@media (max-width: 480px) {
+  .calc-privacy-banner {
+    padding: 7px 10px;
+    font-size: 11px;
+    gap: 6px;
+  }
+  .finance-calc-body {
+    gap: 10px;
+  }
+}
+
+/* ── Entrance animation for the result panel ── */
+@keyframes financeResultIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.finance-calc-result .result-live-region {
+  animation: financeResultIn 0.22s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .finance-calc-result .result-live-region {
+    animation: none;
+  }
+}
+

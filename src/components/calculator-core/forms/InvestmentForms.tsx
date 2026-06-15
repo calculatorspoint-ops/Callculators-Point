@@ -3,17 +3,8 @@ import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
-  InputSection, SEOSection
+  InputSection, SEOSection, FinanceLayout
 } from './SharedComponents';
-
-function CalcLayout({ inputs, result, label }) {
-  return (
-    <div className="calc-form-stack">
-      <div>{inputs}</div>
-      <Panel result={result} loading={null} label={label} />
-    </div>
-  );
-}
 
 // ─── Stock Return ────────────────────────────────────────────────────────────
 export function StockReturnForm() {
@@ -71,7 +62,14 @@ export function StockReturnForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Stock Return" />
+      <FinanceLayout
+        accentClass="accent-invest"
+        inputTitle="Stock Return"
+        inputIcon="📈"
+        inputContent={inputs}
+        result={res}
+        label="Stock Return"
+      />
       <SEOSection title="Stock Return Calculator — CAGR, STCG & LTCG">
         <p>Equity STCG (Short Term Capital Gains, held &lt;12 months) is taxed at 15%. LTCG (Long Term, &gt;12 months) above ₹1L is taxed at 10% without indexation. Brokerage, STT, GST, and exchange fees eat into returns — always calculate net returns. Compare your CAGR vs Nifty 50 to assess if stock picking is adding value.</p>
       </SEOSection>
@@ -163,7 +161,14 @@ export function NPVForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="NPV / IRR" />
+      <FinanceLayout
+        accentClass="accent-invest"
+        inputTitle="NPV / IRR"
+        inputIcon="💰"
+        inputContent={inputs}
+        result={res}
+        label="NPV / IRR"
+      />
       <SEOSection title="NPV & IRR — Capital Budgeting for Investment Decisions">
         <p>NPV (Net Present Value) discounts future cash flows to today's value. A positive NPV means the project earns more than the cost of capital — accept it. IRR is the rate that makes NPV = 0; if IRR &gt; your hurdle rate, the project is viable. Profitability Index &gt; 1 means the project creates value per rupee invested.</p>
       </SEOSection>
@@ -232,7 +237,14 @@ export function PortfolioRebalanceForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Portfolio Rebalance" />
+      <FinanceLayout
+        accentClass="accent-invest"
+        inputTitle="Portfolio Rebalance"
+        inputIcon="🥧"
+        inputContent={inputs}
+        result={res}
+        label="Portfolio Rebalance"
+      />
       <SEOSection title="Portfolio Rebalancing — When and How">
         <p>Rebalance annually or when any asset class drifts more than 5% from target. In a rising equity market, equities often overshoot — selling them to buy debt/gold locks in gains and reduces risk. Tax-efficient rebalancing: use new contributions to buy underweight assets first, then sell overweight assets if needed.</p>
       </SEOSection>
@@ -301,7 +313,14 @@ export function DividendYieldForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Dividend Yield" />
+      <FinanceLayout
+        accentClass="accent-invest"
+        inputTitle="Dividend Yield"
+        inputIcon="📊"
+        inputContent={inputs}
+        result={res}
+        label="Dividend Yield"
+      />
       <SEOSection title="Dividend Investing — Building Passive Income">
         <p>Dividend yield = Annual Dividend ÷ Stock Price × 100. Indian stocks yield 1–4% typically; high-yield stocks (PSU banks, coal, metals) yield 5–8%. Dividend growth investing means buying companies that consistently raise dividends — a 10% annual dividend growth doubles your income in 7 years. DDT (Dividend Distribution Tax) was abolished; dividends are now taxed at your slab rate.</p>
       </SEOSection>

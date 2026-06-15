@@ -3,18 +3,9 @@ import { useState, useEffect } from "react";
 import {
   L, N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
-  InputSection, Toggle, SEOSection
+  InputSection, Toggle, SEOSection,
+  FinanceLayout
 } from './SharedComponents';
-
-// ── Shared layout wrapper: inputs above, result full-width below ──
-function CalcLayout({ inputs, result, label }) {
-  return (
-    <div className="calc-form-stack">
-      <div>{inputs}</div>
-      <Panel result={result} loading={null} label={label} />
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────────────────────────
 // EMI Calculator
@@ -82,17 +73,13 @@ export function EMIForm() {
     ));
   }, [loanAmount, rate, tenure, extraPayment, mode]);
 
-  // ── derived display values ──────────────────────────────────────
+  // derived display values for the amortization table
   const safeAmount  = Math.max(10000, +loanAmount || 0);
   const safeRate    = Math.max(0.01,  +rate || 0);
   const safeTenure  = Math.max(1, Math.round(+tenure) || 1);
   const r0          = safeRate / 100 / 12;
   const emiDisp     = r0 > 0 ? (safeAmount * r0 * Math.pow(1 + r0, safeTenure)) / (Math.pow(1 + r0, safeTenure) - 1) : safeAmount / safeTenure;
-  const totalPayDisp   = isFinite(emiDisp) ? Math.max(safeAmount, emiDisp * safeTenure) : safeAmount;
-  const totalIntDisp   = Math.max(0, totalPayDisp - safeAmount);
-  const interestPct    = totalPayDisp > 0 ? Math.round((totalIntDisp / totalPayDisp) * 100) : 0;
 
-  // amortization rows (first 12) for table
   const amRows = [];
   let bDisp = safeAmount;
   for (let i = 1; i <= Math.min(safeTenure, 12); i++) {
@@ -105,14 +92,11 @@ export function EMIForm() {
   const accent = '#4361ee';
 
   return (
-    <div style={{maxWidth:680, margin:'0 auto', padding:'4px 0', fontFamily:'var(--font)'}}>
-
-      {/* INPUT CARD */}
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
-        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
-          🏦 Loan Details
-        </p>
-
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Loan Details"
+      inputIcon="&#x1F3E6;"
+      inputContent={<>
         <Presets items={[
           { label: "Home Loan 20yr", v: { a: 3000000, r: 8.5, t: 240, ep: "0" } },
           { label: "Car Loan 5yr",   v: { a: 800000,  r: 9.5, t: 60,  ep: "0" } },
@@ -124,7 +108,7 @@ export function EMIForm() {
         <Sl label="Tenure (months)" id="emi_t" min={1} max={360} step={1} value={tenure} onChange={setTenureSafe} fmt={v => v + " mo (" + (v / 12).toFixed(1) + " yr)"} />
 
         <div style={{marginTop:16, paddingTop:16, borderTop:'1px solid var(--border)'}}>
-          <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 14px'}}>⚡ Advanced Options</p>
+          <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 14px'}}>Advanced Options</p>
           <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
             <div>
               <label htmlFor="emi_ep" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:6}}>Extra Monthly Payment</label>
@@ -136,94 +120,33 @@ export function EMIForm() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* RESULT SECTION */}
-      {res && (
-        <div style={{display:'flex', flexDirection:'column', gap:16}}>
-
-          {/* HERO RESULT */}
-          <div style={{background:`linear-gradient(135deg,${accent}18,${accent}06)`, border:`2px solid ${accent}30`, borderRadius:20, padding:'28px 24px', textAlign:'center', position:'relative', overflow:'hidden'}}>
-            <div style={{position:'absolute', top:-50, left:'50%', transform:'translateX(-50%)', width:220, height:220, background:`radial-gradient(circle,${accent}20,transparent 70%)`, pointerEvents:'none'}} />
-            <div style={{position:'relative', zIndex:1}}>
-              <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.1em', color:accent, marginBottom:8}}>💳 MONTHLY EMI</p>
-              <p style={{fontSize:'clamp(26px,6vw,44px)', fontWeight:900, color:'var(--text)', lineHeight:1.1, margin:0}}>
-                {isFinite(emiDisp) && emiDisp > 0 ? fm(Math.round(emiDisp)) : '—'}
-              </p>
-            </div>
+      </>}
+      result={res}
+      label="EMI Calculator"
+      shareParams={{ a: loanAmount, r: rate, t: tenure }}
+    >
+      {amRows.length > 0 && (
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, overflow:'hidden', marginTop:16}}>
+          <div style={{padding:'14px 20px', borderBottom:'1px solid var(--border)', background:'var(--surf2)'}}>
+            <p style={{fontSize:13, fontWeight:800, color:'var(--text)', margin:0}}>Amortization Schedule (First 12 Months)</p>
           </div>
-
-          {/* 3-METRIC GRID */}
-          <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
-            {[
-              { icon:'💰', label:'Total Payment',    val: fm(Math.round(totalPayDisp)) },
-              { icon:'📈', label:'Total Interest',   val: fm(Math.round(totalIntDisp)) },
-              { icon:'🏦', label:'Principal Amount', val: fm(safeAmount) },
-            ].map(m => (
-              <div key={m.label} style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'16px 10px', textAlign:'center'}}>
-                <div style={{fontSize:22, marginBottom:8}}>{m.icon}</div>
-                <div style={{fontSize:'clamp(14px,3vw,20px)', fontWeight:900, color:'var(--text)', lineHeight:1}}>{m.val}</div>
-                <div style={{fontSize:11, color:'var(--text3)', marginTop:6, fontWeight:600}}>{m.label}</div>
-              </div>
+          <div style={{display:'grid', gridTemplateColumns:'60px 1fr 1fr 1fr 1fr', gap:0, padding:'8px 20px', background:'var(--surf2)', borderBottom:'1px solid var(--border)'}}>
+            {['Mo', 'EMI', 'Principal', 'Interest', 'Balance'].map(h => (
+              <span key={h} style={{fontSize:11, fontWeight:800, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'.06em'}}>{h}</span>
             ))}
           </div>
-
-          {/* PROGRESS BAR — Interest vs Principal */}
-          <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'18px 22px'}}>
-            <div style={{display:'flex', justifyContent:'space-between', marginBottom:10}}>
-              <span style={{fontSize:13, fontWeight:700, color:'var(--text2)'}}>Interest vs Principal</span>
-              <span style={{fontSize:13, fontWeight:800, color:accent}}>{interestPct}% interest</span>
-            </div>
-            <div style={{height:10, background:'var(--surf2)', borderRadius:100, overflow:'hidden'}}>
-              <div style={{height:'100%', width:`${interestPct}%`, background:`linear-gradient(90deg,${accent}88,${accent})`, borderRadius:100, transition:'width .6s'}} />
-            </div>
-            <div style={{display:'flex', justifyContent:'space-between', marginTop:8}}>
-              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Principal {100 - interestPct}%</span>
-              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Interest {interestPct}%</span>
-            </div>
-          </div>
-
-          {/* AMORTIZATION TABLE (first 12 months) */}
-          {amRows.length > 0 && (
-            <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, overflow:'hidden'}}>
-              <div style={{padding:'14px 20px', borderBottom:'1px solid var(--border)', background:'var(--surf2)'}}>
-                <p style={{fontSize:13, fontWeight:800, color:'var(--text)', margin:0}}>📋 Amortization Schedule (First 12 Months)</p>
-              </div>
-              {/* header */}
-              <div style={{display:'grid', gridTemplateColumns:'60px 1fr 1fr 1fr 1fr', gap:0, padding:'8px 20px', background:'var(--surf2)', borderBottom:'1px solid var(--border)'}}>
-                {['Mo', 'EMI', 'Principal', 'Interest', 'Balance'].map(h => (
-                  <span key={h} style={{fontSize:11, fontWeight:800, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'.06em'}}>{h}</span>
-                ))}
-              </div>
-              {amRows.map((row, i) => (
-                <div key={i} style={{display:'grid', gridTemplateColumns:'60px 1fr 1fr 1fr 1fr', gap:0, padding:'10px 20px', borderBottom: i < amRows.length - 1 ? '1px solid var(--border)' : 'none', background: i % 2 === 0 ? 'transparent' : 'var(--surf2)'}}>
-                  <span style={{fontSize:12, color:'var(--text3)', fontWeight:700}}>{row.month}</span>
-                  <span style={{fontSize:12, color:'var(--text)', fontWeight:600}}>{fm(row.emi)}</span>
-                  <span style={{fontSize:12, color:'#059669', fontWeight:700}}>{fm(row.principal)}</span>
-                  <span style={{fontSize:12, color:accent, fontWeight:600}}>{fm(row.interest)}</span>
-                  <span style={{fontSize:12, color:'var(--text2)', fontWeight:600}}>{fm(row.balance)}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* INSIGHTS */}
-          {res.insights?.filter(Boolean).map((ins, i) => (
-            <div key={i} style={{display:'flex', gap:12, padding:'12px 16px', borderRadius:12,
-              background: ins.type === 'warn' ? 'rgba(239,68,68,.08)' : `${accent}0f`,
-              border: `1px solid ${ins.type === 'warn' ? 'rgba(239,68,68,.25)' : `${accent}30`}`}}>
-              <span>{ins.type === 'warn' ? '⚠️' : 'ℹ️'}</span>
-              <p style={{fontSize:13, color:'var(--text2)', margin:0, lineHeight:1.6}}>{ins.msg}</p>
+          {amRows.map((row, i) => (
+            <div key={i} style={{display:'grid', gridTemplateColumns:'60px 1fr 1fr 1fr 1fr', gap:0, padding:'10px 20px', borderBottom: i < amRows.length - 1 ? '1px solid var(--border)' : 'none', background: i % 2 === 0 ? 'transparent' : 'var(--surf2)'}}>
+              <span style={{fontSize:12, color:'var(--text3)', fontWeight:700}}>{row.month}</span>
+              <span style={{fontSize:12, color:'var(--text)', fontWeight:600}}>{fm(row.emi)}</span>
+              <span style={{fontSize:12, color:'#059669', fontWeight:700}}>{fm(row.principal)}</span>
+              <span style={{fontSize:12, color:accent, fontWeight:600}}>{fm(row.interest)}</span>
+              <span style={{fontSize:12, color:'var(--text2)', fontWeight:600}}>{fm(row.balance)}</span>
             </div>
           ))}
-
-          {/* DISCLAIMER */}
-          <p style={{fontSize:11.5, color:'var(--text3)', lineHeight:1.7, padding:'12px 16px', background:'var(--surf2)', borderRadius:12, border:'1px solid var(--border)', margin:0}}>
-            🏦 <strong>Disclaimer:</strong> EMI figures are indicative only. Actual repayment amounts may vary based on bank policies, processing fees, and GST charges. Please consult your lender for exact figures.
-          </p>
         </div>
       )}
-    </div>
+    </FinanceLayout>
   );
 }
 
@@ -288,31 +211,35 @@ export function CompoundForm() {
     ));
   }, [principal, rate, years, freq, monthlyContrib, inflationRate]);
 
-  const inputs = (
-    <>
-      <Presets items={[
-        { label: "Aggressive 15yr", v: { p: 500000, r: 15, y: 15, f: "12", mc: "0", inf: "6" } },
-        { label: "FD @ 7% 5yr", v: { p: 100000, r: 7, y: 5, f: "4", mc: "0", inf: "6" } },
-        { label: "SIP Mode 20yr", v: { p: 100000, r: 12, y: 20, f: "12", mc: "10000", inf: "6" } },
-      ]} onApply={pr => { setPrincipal(pr.v.p); setRate(pr.v.r); setYears(pr.v.y); setFreq(pr.v.f); setMonthlyContrib(pr.v.mc); setInflationRate(pr.v.inf); }} />
-
-      <div className="calc-inputs-grid">
-        <InputSection title="Investment Details" icon="📈" gradient="linear-gradient(135deg,#059669,#047857)">
-          <Sl label="Principal Amount" id="ci_p" min={1000} max={10000000} step={1000} value={principal} onChange={setPrincipal} fmt={v => fmSlider(v)} />
-          <Sl label="Annual Interest Rate (%)" id="ci_r" min={1} max={30} step={0.25} value={rate} onChange={setRate} fmt={v => v + "%"} />
-          <Sl label="Time Period (Years)" id="ci_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
-          <Sel label="Compounding Frequency" id="ci_f" value={freq} onChange={setFreq} opts={freqOpts} />
-        </InputSection>
-        <InputSection title="Extra Options" icon="⚙️" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
-          <N label="Monthly Contribution (SIP)" id="ci_mc" value={monthlyContrib} onChange={setMonthlyContrib} unit={sym} placeholder="0" hint="Add recurring monthly investment" />
-          <N label="Expected Inflation (%)" id="ci_inf" value={inflationRate} onChange={setInflationRate} unit="%" placeholder="6" hint="For calculating real (inflation-adjusted) returns" />
-        </InputSection>
-      </div>
-    </>
-  );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Compound Interest" />
+      <FinanceLayout
+        accentClass="accent-finance"
+        inputTitle="Investment Details"
+        inputIcon="&#x1F4C8;"
+        inputContent={<>
+          <Presets items={[
+            { label: "Aggressive 15yr", v: { p: 500000, r: 15, y: 15, f: "12", mc: "0", inf: "6" } },
+            { label: "FD @ 7% 5yr", v: { p: 100000, r: 7, y: 5, f: "4", mc: "0", inf: "6" } },
+            { label: "SIP Mode 20yr", v: { p: 100000, r: 12, y: 20, f: "12", mc: "10000", inf: "6" } },
+          ]} onApply={pr => { setPrincipal(pr.v.p); setRate(pr.v.r); setYears(pr.v.y); setFreq(pr.v.f); setMonthlyContrib(pr.v.mc); setInflationRate(pr.v.inf); }} />
+
+          <div className="calc-inputs-grid">
+            <InputSection title="Investment Details" icon="&#x1F4C8;" gradient="linear-gradient(135deg,#059669,#047857)">
+              <Sl label="Principal Amount" id="ci_p" min={1000} max={10000000} step={1000} value={principal} onChange={setPrincipal} fmt={v => fmSlider(v)} />
+              <Sl label="Annual Interest Rate (%)" id="ci_r" min={1} max={30} step={0.25} value={rate} onChange={setRate} fmt={v => v + "%"} />
+              <Sl label="Time Period (Years)" id="ci_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
+              <Sel label="Compounding Frequency" id="ci_f" value={freq} onChange={setFreq} opts={freqOpts} />
+            </InputSection>
+            <InputSection title="Extra Options" icon="&#x2699;&#xFE0F;" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
+              <N label="Monthly Contribution (SIP)" id="ci_mc" value={monthlyContrib} onChange={setMonthlyContrib} unit={sym} placeholder="0" hint="Add recurring monthly investment" />
+              <N label="Expected Inflation (%)" id="ci_inf" value={inflationRate} onChange={setInflationRate} unit="%" placeholder="6" hint="For calculating real (inflation-adjusted) returns" />
+            </InputSection>
+          </div>
+        </>}
+        result={res}
+        label="Compound Interest"
+      />
       <SEOSection title="The Magic of Compounding">
         <p>Compound interest earns interest on both the principal AND previously earned interest. Albert Einstein reportedly called it "the eighth wonder of the world." Even a 1% difference in return rate compounds dramatically over decades — start early and invest regularly.</p>
       </SEOSection>
@@ -389,134 +316,48 @@ export function SIPForm() {
     ));
   }, [sipAmount, rate, years, stepUpRate, mode, targetAmount]);
 
-  // ── derived display values ──────────────────────────────────────
-  const r0           = rate / 100 / 12;
-  const n0           = years * 12;
-  const fvDisp       = mode !== 'Reverse' ? sipAmount * ((Math.pow(1 + r0, n0) - 1) / r0) * (1 + r0) : 0;
-  const investedDisp = mode !== 'Reverse' ? sipAmount * n0 : 0;
-  const returnsDisp  = Math.max(0, fvDisp - investedDisp);
-  const wealthGainPct = investedDisp > 0 ? ((returnsDisp / investedDisp) * 100).toFixed(1) : '0';
-  const investedPct   = fvDisp > 0 ? Math.round((investedDisp / fvDisp) * 100) : 0;
-
-  const accent = '#059669';
-
   return (
-    <div style={{maxWidth:680, margin:'0 auto', padding:'4px 0', fontFamily:'var(--font)'}}>
+    <>
+      <FinanceLayout
+        accentClass="accent-finance"
+        inputTitle="SIP Investment Details"
+        inputIcon="&#x1F4B9;"
+        inputContent={<>
+          <Tabs tabs={["SIP", "Reverse SIP"]} active={mode} onChange={setMode} />
 
-      {/* INPUT CARD */}
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
-        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
-          💹 SIP Investment Details
-        </p>
-
-        <Tabs tabs={["SIP", "Reverse SIP"]} active={mode} onChange={setMode} />
-
-        <div style={{marginTop:14}}>
-          <Presets items={[
-            { label: "Crorepati 20yr",    v: { s: 15000, r: 12, y: 20, su: "10" } },
-            { label: "Conservative 10yr", v: { s: 5000,  r: 8,  y: 10, su: "0"  } },
-            { label: "Aggressive 25yr",   v: { s: 20000, r: 15, y: 25, su: "15" } },
-          ]} onApply={pr => { setSipAmount(pr.v.s); setRate(pr.v.r); setYears(pr.v.y); setStepUpRate(pr.v.su); setMode("SIP"); }} />
-        </div>
-
-        {mode === "Reverse" ? (
-          <div style={{marginBottom:18}}>
-            <label htmlFor="sip_ta" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:8}}>Target Maturity Amount</label>
-            <N label="" id="sip_ta" value={targetAmount} onChange={setTargetAmount} unit={sym} placeholder="10000000" hint="How much you want to accumulate" />
-          </div>
-        ) : (
-          <Sl label="Monthly SIP Amount" id="sip_s" min={500} max={200000} step={500} value={sipAmount} onChange={setSipAmount} fmt={v => fmSlider(v)} />
-        )}
-        <Sl label="Expected Return (% p.a.)" id="sip_r" min={4} max={30} step={0.5} value={rate} onChange={setRate} fmt={v => v + "%"} />
-        <Sl label="Investment Duration (Years)" id="sip_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
-
-        <div style={{marginTop:16, paddingTop:16, borderTop:'1px solid var(--border)'}}>
-          <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 10px'}}>📶 Step-Up SIP</p>
-          <label htmlFor="sip_su" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:6}}>Annual Step-Up Rate (%)</label>
-          <N label="" id="sip_su" value={stepUpRate} onChange={setStepUpRate} unit="%" placeholder="0" hint="Increase SIP by this % each year (e.g. annual appraisal)" />
-        </div>
-      </div>
-
-      {/* RESULT SECTION */}
-      {res && mode !== 'Reverse' && (
-        <div style={{display:'flex', flexDirection:'column', gap:16}}>
-
-          {/* HERO RESULT */}
-          <div style={{background:`linear-gradient(135deg,${accent}18,${accent}06)`, border:`2px solid ${accent}30`, borderRadius:20, padding:'28px 24px', textAlign:'center', position:'relative', overflow:'hidden'}}>
-            <div style={{position:'absolute', top:-50, left:'50%', transform:'translateX(-50%)', width:220, height:220, background:`radial-gradient(circle,${accent}20,transparent 70%)`, pointerEvents:'none'}} />
-            <div style={{position:'relative', zIndex:1}}>
-              <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.1em', color:accent, marginBottom:8}}>🌱 MATURITY AMOUNT</p>
-              <p style={{fontSize:'clamp(26px,6vw,44px)', fontWeight:900, color:'var(--text)', lineHeight:1.1, margin:0}}>
-                {isFinite(fvDisp) && fvDisp > 0 ? fm(Math.round(fvDisp)) : '—'}
-              </p>
-            </div>
+          <div style={{marginTop:14}}>
+            <Presets items={[
+              { label: "Crorepati 20yr",    v: { s: 15000, r: 12, y: 20, su: "10" } },
+              { label: "Conservative 10yr", v: { s: 5000,  r: 8,  y: 10, su: "0"  } },
+              { label: "Aggressive 25yr",   v: { s: 20000, r: 15, y: 25, su: "15" } },
+            ]} onApply={pr => { setSipAmount(pr.v.s); setRate(pr.v.r); setYears(pr.v.y); setStepUpRate(pr.v.su); setMode("SIP"); }} />
           </div>
 
-          {/* 3-METRIC GRID */}
-          <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
-            {[
-              { icon:'💰', label:'Invested Amount',  val: fm(investedDisp) },
-              { icon:'📈', label:'Est. Returns',      val: fm(Math.round(returnsDisp)) },
-              { icon:'🚀', label:'Wealth Gained',     val: wealthGainPct + '%' },
-            ].map(m => (
-              <div key={m.label} style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'16px 10px', textAlign:'center'}}>
-                <div style={{fontSize:22, marginBottom:8}}>{m.icon}</div>
-                <div style={{fontSize:'clamp(14px,3vw,20px)', fontWeight:900, color:'var(--text)', lineHeight:1}}>{m.val}</div>
-                <div style={{fontSize:11, color:'var(--text3)', marginTop:6, fontWeight:600}}>{m.label}</div>
-              </div>
-            ))}
+          {mode === "Reverse" ? (
+            <div style={{marginBottom:18}}>
+              <label htmlFor="sip_ta" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:8}}>Target Maturity Amount</label>
+              <N label="" id="sip_ta" value={targetAmount} onChange={setTargetAmount} unit={sym} placeholder="10000000" hint="How much you want to accumulate" />
+            </div>
+          ) : (
+            <Sl label="Monthly SIP Amount" id="sip_s" min={500} max={200000} step={500} value={sipAmount} onChange={setSipAmount} fmt={v => fmSlider(v)} />
+          )}
+          <Sl label="Expected Return (% p.a.)" id="sip_r" min={4} max={30} step={0.5} value={rate} onChange={setRate} fmt={v => v + "%"} />
+          <Sl label="Investment Duration (Years)" id="sip_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
+
+          <div style={{marginTop:16, paddingTop:16, borderTop:'1px solid var(--border)'}}>
+            <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 10px'}}>Step-Up SIP</p>
+            <label htmlFor="sip_su" style={{display:'block', fontSize:13, fontWeight:700, color:'var(--text2)', marginBottom:6}}>Annual Step-Up Rate (%)</label>
+            <N label="" id="sip_su" value={stepUpRate} onChange={setStepUpRate} unit="%" placeholder="0" hint="Increase SIP by this % each year (e.g. annual appraisal)" />
           </div>
-
-          {/* PROGRESS BAR — Invested vs Returns */}
-          <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:14, padding:'18px 22px'}}>
-            <div style={{display:'flex', justifyContent:'space-between', marginBottom:10}}>
-              <span style={{fontSize:13, fontWeight:700, color:'var(--text2)'}}>Invested vs Returns</span>
-              <span style={{fontSize:13, fontWeight:800, color:accent}}>{100 - investedPct}% returns</span>
-            </div>
-            <div style={{height:10, background:'var(--surf2)', borderRadius:100, overflow:'hidden'}}>
-              <div style={{height:'100%', width:`${investedPct}%`, background:`linear-gradient(90deg,${accent}55,${accent}88)`, borderRadius:100, transition:'width .6s'}} />
-            </div>
-            <div style={{display:'flex', justifyContent:'space-between', marginTop:8}}>
-              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Invested {investedPct}%</span>
-              <span style={{fontSize:11, color:'var(--text3)', fontWeight:600}}>Returns {100 - investedPct}%</span>
-            </div>
-          </div>
-
-          {/* INSIGHTS */}
-          {res.insights?.filter(Boolean).map((ins, i) => (
-            <div key={i} style={{display:'flex', gap:12, padding:'12px 16px', borderRadius:12,
-              background:`${accent}0d`,
-              border:`1px solid ${accent}30`}}>
-              <span>✅</span>
-              <p style={{fontSize:13, color:'var(--text2)', margin:0, lineHeight:1.6}}>{ins.msg}</p>
-            </div>
-          ))}
-
-          {/* DISCLAIMER */}
-          <p style={{fontSize:11.5, color:'var(--text3)', lineHeight:1.7, padding:'12px 16px', background:'var(--surf2)', borderRadius:12, border:'1px solid var(--border)', margin:0}}>
-            📊 <strong>Disclaimer:</strong> SIP returns are subject to market risks. Past performance does not guarantee future results. Please read all scheme related documents carefully before investing.
-          </p>
-        </div>
-      )}
-
-      {/* REVERSE SIP result fallback — still uses Panel */}
-      {res && mode === 'Reverse' && (
-        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px'}}>
-          <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>🎯 Required Monthly SIP</p>
-          <p style={{fontSize:'clamp(28px,6vw,44px)', fontWeight:900, color:accent, margin:'0 0 16px'}}>{res.primary}</p>
-          {res.rows?.map((row, i) => (
-            <div key={i} style={{display:'flex', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid var(--border)'}}>
-              <span style={{fontSize:13, color:'var(--text3)', fontWeight:600}}>{row.label}</span>
-              <span style={{fontSize:13, color:'var(--text)', fontWeight:700}}>{row.value}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
+        </>}
+        result={res}
+        label="SIP Calculator"
+        shareParams={{ s: sipAmount, r: rate, y: years }}
+      />
       <SEOSection title="SIP — Systematic Investment Plan">
-        <p>SIP investing uses Rupee Cost Averaging — you buy more units when prices fall and fewer when prices rise, reducing average cost over time. Consistency beats timing. Starting a SIP of ₹10,000/month at 25 vs. 35 years of age can mean the difference of ₹3-4 crore in final corpus.</p>
+        <p>SIP investing uses Rupee Cost Averaging — you buy more units when prices fall and fewer when prices rise, reducing average cost over time. Consistency beats timing. Starting a SIP of Rs.10,000/month at 25 vs. 35 years of age can mean the difference of Rs.3-4 crore in final corpus.</p>
       </SEOSection>
-    </div>
+    </>
   );
 }
 
@@ -546,16 +387,24 @@ export function SimpleInterestForm() {
     ));
   }, [principal, rate, years]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="Investment Details" icon="💰" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
-        <Sl label="Principal Amount" id="si_p" min={1000} max={10000000} step={1000} value={principal} onChange={setPrincipal} fmt={v => fmSlider(v)} />
-        <Sl label="Interest Rate (% p.a.)" id="si_r" min={1} max={30} step={0.25} value={rate} onChange={setRate} fmt={v => v + "%"} />
-        <Sl label="Time Period (Years)" id="si_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Investment Details"
+      inputIcon="&#x1F4B0;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="Investment Details" icon="&#x1F4B0;" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
+            <Sl label="Principal Amount" id="si_p" min={1000} max={10000000} step={1000} value={principal} onChange={setPrincipal} fmt={v => fmSlider(v)} />
+            <Sl label="Interest Rate (% p.a.)" id="si_r" min={1} max={30} step={0.25} value={rate} onChange={setRate} fmt={v => v + "%"} />
+            <Sl label="Time Period (Years)" id="si_y" min={1} max={40} value={years} onChange={setYears} fmt={v => v + " years"} />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="Simple Interest"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="Simple Interest" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -586,16 +435,24 @@ export function ROIForm() {
     ));
   }, [invested, currentValue, years]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="Investment Values" icon="📊" gradient="linear-gradient(135deg,#059669,#047857)">
-        <Sl label="Amount Invested" id="roi_inv" min={1000} max={50000000} step={1000} value={invested} onChange={setInvested} fmt={v => fmSlider(v)} />
-        <Sl label="Current / Final Value" id="roi_cv" min={1000} max={50000000} step={1000} value={currentValue} onChange={setCurrentValue} fmt={v => fmSlider(v)} />
-        <Sl label="Investment Period (Years)" id="roi_y" min={1} max={30} value={years} onChange={setYears} fmt={v => v + " years"} />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Investment Values"
+      inputIcon="&#x1F4CA;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="Investment Values" icon="&#x1F4CA;" gradient="linear-gradient(135deg,#059669,#047857)">
+            <Sl label="Amount Invested" id="roi_inv" min={1000} max={50000000} step={1000} value={invested} onChange={setInvested} fmt={v => fmSlider(v)} />
+            <Sl label="Current / Final Value" id="roi_cv" min={1000} max={50000000} step={1000} value={currentValue} onChange={setCurrentValue} fmt={v => fmSlider(v)} />
+            <Sl label="Investment Period (Years)" id="roi_y" min={1} max={30} value={years} onChange={setYears} fmt={v => v + " years"} />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="ROI"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="ROI" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -658,7 +515,7 @@ export function TaxForm() {
         { label: "Effective Tax Rate", value: (totalTax / income * 100).toFixed(2) + "%" },
         { label: "New vs Old Regime", value: newTax < oldTax ? "New saves " + fm(Math.round(oldTax - newTax)) : "Old saves " + fm(Math.round(newTax - oldTax)) },
       ],
-      [{ type: newTax < oldTax ? "tip" : "tip", msg: (newTax < oldTax ? "New Regime saves you " + fm(Math.round(oldTax - newTax)) + " in taxes." : "Old Regime saves " + fm(Math.round(newTax - oldTax)) + " vs New Regime.") + " Effective rate: " + (totalTax / income * 100).toFixed(1) + "%." }],
+      [{ type: "tip", msg: (newTax < oldTax ? "New Regime saves you " + fm(Math.round(oldTax - newTax)) + " in taxes." : "Old Regime saves " + fm(Math.round(newTax - oldTax)) + " vs New Regime.") + " Effective rate: " + (totalTax / income * 100).toFixed(1) + "%." }],
       { type: "donut", data: [{ name: "Take-Home", value: Math.round(takeHome) }, { name: "Income Tax", value: Math.round(totalTax) }], keys: ["value"] },
       [
         { label: "New Regime Tax", value: fm(Math.round(newTax + newTax * surcharge + newTax * (1 + surcharge) * 0.04)), bold: regime === "new" },
@@ -667,25 +524,29 @@ export function TaxForm() {
     ));
   }, [income, regime, ageGroup, deductions]);
 
-  const inputs = (
-    <>
-      <div className="calc-inputs-grid">
-        <InputSection title="Income & Profile" icon="💼" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
-          <Sl label="Annual Gross Income" id="tax_inc" min={100000} max={10000000} step={50000} value={income} onChange={setIncome} fmt={v => fmSlider(v)} />
-          <Sel label="Tax Regime" id="tax_reg" value={regime} onChange={setRegime} opts={[{ v: "new", l: "New Tax Regime (FY 2025-26)" }, { v: "old", l: "Old Tax Regime" }]} />
-          <Sel label="Age Group" id="tax_age" value={ageGroup} onChange={setAgeGroup} opts={[{ v: "below60", l: "Below 60 years" }, { v: "60to80", l: "60–80 years (Senior)" }, { v: "above80", l: "Above 80 (Super Senior)" }]} />
-        </InputSection>
-        <InputSection title="Deductions (Old Regime)" icon="🧾" gradient="linear-gradient(135deg,#d97706,#b45309)">
-          <N label="80C Deductions" id="tax_ded" value={deductions} onChange={setDeductions} unit={sym} placeholder="150000" hint="ELSS, LIC, PF, PPF, etc. Max ₹1.5L" />
-        </InputSection>
-      </div>
-    </>
-  );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Income Tax" />
+      <FinanceLayout
+        accentClass="accent-tax"
+        inputTitle="Income & Profile"
+        inputIcon="&#x1F4BC;"
+        inputContent={
+          <div className="calc-inputs-grid">
+            <InputSection title="Income &amp; Profile" icon="&#x1F4BC;" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
+              <Sl label="Annual Gross Income" id="tax_inc" min={100000} max={10000000} step={50000} value={income} onChange={setIncome} fmt={v => fmSlider(v)} />
+              <Sel label="Tax Regime" id="tax_reg" value={regime} onChange={setRegime} opts={[{ v: "new", l: "New Tax Regime (FY 2025-26)" }, { v: "old", l: "Old Tax Regime" }]} />
+              <Sel label="Age Group" id="tax_age" value={ageGroup} onChange={setAgeGroup} opts={[{ v: "below60", l: "Below 60 years" }, { v: "60to80", l: "60-80 years (Senior)" }, { v: "above80", l: "Above 80 (Super Senior)" }]} />
+            </InputSection>
+            <InputSection title="Deductions (Old Regime)" icon="&#x1F9FE;" gradient="linear-gradient(135deg,#d97706,#b45309)">
+              <N label="80C Deductions" id="tax_ded" value={deductions} onChange={setDeductions} unit={sym} placeholder="150000" hint="ELSS, LIC, PF, PPF, etc. Max Rs.1.5L" />
+            </InputSection>
+          </div>
+        }
+        result={res}
+        label="Income Tax"
+      />
       <SEOSection title="New vs Old Tax Regime (FY 2025-26)">
-        <p>New Regime (FY 2025-26): No deductions but lower slabs. Better for those with few investments. Old Regime: Allows 80C, HRA, home loan deductions. Better for those maxing all deductions. If your deductions exceed ₹3.5L, Old Regime is usually better. <em>Tax slabs verified for FY 2025-26. Consult a CA for individual advice.</em></p>
+        <p>New Regime (FY 2025-26): No deductions but lower slabs. Better for those with few investments. Old Regime: Allows 80C, HRA, home loan deductions. Better for those maxing all deductions. If your deductions exceed Rs.3.5L, Old Regime is usually better. <em>Tax slabs verified for FY 2025-26. Consult a CA for individual advice.</em></p>
       </SEOSection>
     </>
   );
@@ -723,16 +584,24 @@ export function GSTForm() {
     ));
   }, [amount, gstRate, mode]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="GST Details" icon="🧾" gradient="linear-gradient(135deg,#dc2626,#b91c1c)">
-        <Tabs tabs={["Add GST", "Remove GST"]} active={mode} onChange={setMode} />
-        <N label={mode === "Add GST" ? "Base Amount (excl. GST)" : "Total Amount (incl. GST)"} id="gst_a" value={String(amount)} onChange={v => setAmount(+v)} unit={sym} placeholder="10000" hint="" />
-        <Sel label="GST Rate" id="gst_r" value={gstRate} onChange={setGstRate} opts={[{ v: "5", l: "5% (Essential goods)" }, { v: "12", l: "12% (Standard)" }, { v: "18", l: "18% (Standard services)" }, { v: "28", l: "28% (Luxury / Sin)" }]} />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tax"
+      inputTitle="GST Details"
+      inputIcon="&#x1F9FE;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="GST Details" icon="&#x1F9FE;" gradient="linear-gradient(135deg,#dc2626,#b91c1c)">
+            <Tabs tabs={["Add GST", "Remove GST"]} active={mode} onChange={setMode} />
+            <N label={mode === "Add GST" ? "Base Amount (excl. GST)" : "Total Amount (incl. GST)"} id="gst_a" value={String(amount)} onChange={v => setAmount(+v)} unit={sym} placeholder="10000" hint="" />
+            <Sel label="GST Rate" id="gst_r" value={gstRate} onChange={setGstRate} opts={[{ v: "5", l: "5% (Essential goods)" }, { v: "12", l: "12% (Standard)" }, { v: "18", l: "18% (Standard services)" }, { v: "28", l: "28% (Luxury / Sin)" }]} />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="GST"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="GST" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -755,21 +624,29 @@ export function DiscountForm() {
         { label: "Final Price", value: fm(Math.round(finalPrice)), highlight: true },
         { label: "You Save", value: fm(Math.round(savings)) },
       ],
-      [{ type: "tip", msg: "You save " + fm(Math.round(savings)) + " (" + discountPct + "%) on this purchase. Price: " + fm(originalPrice) + " → " + fm(Math.round(finalPrice)) + "." }],
+      [{ type: "tip", msg: "You save " + fm(Math.round(savings)) + " (" + discountPct + "%) on this purchase. Price: " + fm(originalPrice) + " to " + fm(Math.round(finalPrice)) + "." }],
       { type: "donut", data: [{ name: "You Pay", value: Math.round(finalPrice) }, { name: "Discount", value: Math.round(discountAmt) }], keys: ["value"] },
       []
     ));
   }, [originalPrice, discountPct]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="Pricing Details" icon="🏷️" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
-        <Sl label="Original Price" id="disc_p" min={100} max={1000000} step={100} value={originalPrice} onChange={setOriginalPrice} fmt={v => fm(v)} />
-        <Sl label="Discount Percentage" id="disc_d" min={1} max={99} value={discountPct} onChange={setDiscountPct} fmt={v => v + "% off"} />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Pricing Details"
+      inputIcon="&#x1F3F7;&#xFE0F;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="Pricing Details" icon="&#x1F3F7;&#xFE0F;" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
+            <Sl label="Original Price" id="disc_p" min={100} max={1000000} step={100} value={originalPrice} onChange={setOriginalPrice} fmt={v => fm(v)} />
+            <Sl label="Discount Percentage" id="disc_d" min={1} max={99} value={discountPct} onChange={setDiscountPct} fmt={v => v + "% off"} />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="Discount"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="Discount" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -785,7 +662,6 @@ export function ProfitMarginForm() {
     const profit = revenue - cost;
     const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
     const markup = cost > 0 ? (profit / cost) * 100 : 0;
-    const breakEven = profit < 0 ? "Loss — increase revenue or cut costs" : "Profitable";
     setRes(buildResult("Profit Margin", margin.toFixed(2) + "%",
       [
         { label: "Revenue", value: fm(revenue) },
@@ -801,15 +677,23 @@ export function ProfitMarginForm() {
     ));
   }, [revenue, cost]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="Revenue & Costs" icon="💹" gradient="linear-gradient(135deg,#059669,#047857)">
-        <Sl label="Revenue / Selling Price" id="pm_rev" min={1000} max={10000000} step={1000} value={revenue} onChange={setRevenue} fmt={v => fm(v)} />
-        <Sl label="Total Cost / COGS" id="pm_cost" min={100} max={10000000} step={1000} value={cost} onChange={setCost} fmt={v => fm(v)} />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tax"
+      inputTitle="Revenue &amp; Costs"
+      inputIcon="&#x1F4B9;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="Revenue &amp; Costs" icon="&#x1F4B9;" gradient="linear-gradient(135deg,#059669,#047857)">
+            <Sl label="Revenue / Selling Price" id="pm_rev" min={1000} max={10000000} step={1000} value={revenue} onChange={setRevenue} fmt={v => fm(v)} />
+            <Sl label="Total Cost / COGS" id="pm_cost" min={100} max={10000000} step={1000} value={cost} onChange={setCost} fmt={v => fm(v)} />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="Profit Margin"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="Profit Margin" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -829,7 +713,6 @@ export function BreakEvenForm() {
     const beu = fixedCosts / cm;
     const beRevenue = beu * pricePerUnit;
     const targetUnits = cm > 0 ? (fixedCosts + (+targetProfit || 0)) / cm : Infinity;
-    const marginOfSafety = beu > 0 ? ((targetUnits - beu) / targetUnits * 100) : 0;
     setRes(buildResult("Break-Even Units", Math.ceil(beu) + " units",
       [
         { label: "Fixed Costs", value: fm(fixedCosts) },
@@ -844,19 +727,27 @@ export function BreakEvenForm() {
     ));
   }, [fixedCosts, pricePerUnit, variableCostPerUnit, targetProfit]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="Cost Structure" icon="🏭" gradient="linear-gradient(135deg,#dc2626,#b91c1c)">
-        <Sl label="Total Fixed Costs" id="be_fc" min={10000} max={10000000} step={10000} value={fixedCosts} onChange={setFixedCosts} fmt={v => fm(v)} />
-        <Sl label="Selling Price per Unit" id="be_p" min={100} max={100000} step={100} value={pricePerUnit} onChange={setPricePerUnit} fmt={v => fm(v)} />
-        <Sl label="Variable Cost per Unit" id="be_vc" min={10} max={100000} step={10} value={variableCostPerUnit} onChange={setVariableCostPerUnit} fmt={v => fm(v)} />
-      </InputSection>
-      <InputSection title="Profit Target" icon="🎯" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
-        <N label="Target Profit Amount" id="be_tp" value={targetProfit} onChange={setTargetProfit} unit={sym} placeholder="0" hint="How much profit do you want to make?" />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tax"
+      inputTitle="Cost Structure"
+      inputIcon="&#x1F3ED;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="Cost Structure" icon="&#x1F3ED;" gradient="linear-gradient(135deg,#dc2626,#b91c1c)">
+            <Sl label="Total Fixed Costs" id="be_fc" min={10000} max={10000000} step={10000} value={fixedCosts} onChange={setFixedCosts} fmt={v => fm(v)} />
+            <Sl label="Selling Price per Unit" id="be_p" min={100} max={100000} step={100} value={pricePerUnit} onChange={setPricePerUnit} fmt={v => fm(v)} />
+            <Sl label="Variable Cost per Unit" id="be_vc" min={10} max={100000} step={10} value={variableCostPerUnit} onChange={setVariableCostPerUnit} fmt={v => fm(v)} />
+          </InputSection>
+          <InputSection title="Profit Target" icon="&#x1F3AF;" gradient="linear-gradient(135deg,#7c3aed,#5b21b6)">
+            <N label="Target Profit Amount" id="be_tp" value={targetProfit} onChange={setTargetProfit} unit={sym} placeholder="0" hint="How much profit do you want to make?" />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="Break-Even"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="Break-Even" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -883,21 +774,29 @@ export function TipForm() {
         { label: "Each Pays (tip+bill)", value: fm(Math.round(perPerson)) },
         { label: "Tip per Person", value: fm(Math.round(tipPerPerson)) },
       ],
-      [{ type: "tip", msg: people + " people → each pays " + fm(Math.round(perPerson)) + " (including " + fm(Math.round(tipPerPerson)) + " tip)." }],
+      [{ type: "tip", msg: people + " people — each pays " + fm(Math.round(perPerson)) + " (including " + fm(Math.round(tipPerPerson)) + " tip)." }],
       null, []
     ));
   }, [billAmount, tipPct, people]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="Bill Details" icon="🍽️" gradient="linear-gradient(135deg,#d97706,#b45309)">
-        <Sl label="Bill Amount" id="tip_b" min={100} max={100000} step={100} value={billAmount} onChange={setBillAmount} fmt={v => fm(v)} />
-        <Sl label="Tip Percentage" id="tip_p" min={0} max={30} value={tipPct} onChange={setTipPct} fmt={v => v + "%"} />
-        <Sl label="Number of People" id="tip_n" min={1} max={20} value={people} onChange={setPeople} fmt={v => v + " people"} />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Bill Details"
+      inputIcon="&#x1F37D;&#xFE0F;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="Bill Details" icon="&#x1F37D;&#xFE0F;" gradient="linear-gradient(135deg,#d97706,#b45309)">
+            <Sl label="Bill Amount" id="tip_b" min={100} max={100000} step={100} value={billAmount} onChange={setBillAmount} fmt={v => fm(v)} />
+            <Sl label="Tip Percentage" id="tip_p" min={0} max={30} value={tipPct} onChange={setTipPct} fmt={v => v + "%"} />
+            <Sl label="Number of People" id="tip_n" min={1} max={20} value={people} onChange={setPeople} fmt={v => v + " people"} />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="Tip"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="Tip" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -935,20 +834,26 @@ export function PPFForm() {
     ));
   }, [yearlyDeposit, rate, years]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="PPF Details" icon="🏛️" gradient="linear-gradient(135deg,#d97706,#b45309)">
-        <Sl label="Yearly Deposit Amount" id="ppf_d" min={500} max={150000} step={500} value={yearlyDeposit} onChange={setYearlyDeposit} fmt={v => fmSlider(v)} />
-        <Sl label="Interest Rate (% p.a.)" id="ppf_r" min={6} max={9} step={0.1} value={rate} onChange={setRate} fmt={v => v + "%"} />
-        <Sl label="Investment Period (Years)" id="ppf_y" min={15} max={50} value={years} onChange={setYears} fmt={v => v + " years"} />
-      </InputSection>
-    </div>
-  );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="PPF" />
+      <FinanceLayout
+        accentClass="accent-finance"
+        inputTitle="PPF Details"
+        inputIcon="&#x1F3DB;&#xFE0F;"
+        inputContent={
+          <div className="calc-inputs-grid">
+            <InputSection title="PPF Details" icon="&#x1F3DB;&#xFE0F;" gradient="linear-gradient(135deg,#d97706,#b45309)">
+              <Sl label="Yearly Deposit Amount" id="ppf_d" min={500} max={150000} step={500} value={yearlyDeposit} onChange={setYearlyDeposit} fmt={v => fmSlider(v)} />
+              <Sl label="Interest Rate (% p.a.)" id="ppf_r" min={6} max={9} step={0.1} value={rate} onChange={setRate} fmt={v => v + "%"} />
+              <Sl label="Investment Period (Years)" id="ppf_y" min={15} max={50} value={years} onChange={setYears} fmt={v => v + " years"} />
+            </InputSection>
+          </div>
+        }
+        result={res}
+        label="PPF"
+      />
       <SEOSection title="PPF — Public Provident Fund">
-        <p>PPF is a government-backed, 15-year lock-in savings scheme with EEE tax status (Exempt-Exempt-Exempt). Current interest rate: 7.1% p.a. Maximum deposit: ₹1.5L/year. It qualifies for 80C deduction. Partial withdrawals allowed from Year 7. After maturity, can be extended in 5-year blocks.</p>
+        <p>PPF is a government-backed, 15-year lock-in savings scheme with EEE tax status (Exempt-Exempt-Exempt). Current interest rate: 7.1% p.a. Maximum deposit: Rs.1.5L/year. It qualifies for 80C deduction. Partial withdrawals allowed from Year 7. After maturity, can be extended in 5-year blocks.</p>
       </SEOSection>
     </>
   );
@@ -974,7 +879,6 @@ export function FDForm() {
     const tds = rate > 4 ? interest * 0.1 : 0;
     const netInterest = interest - tds;
 
-    // Bank comparison
     const banks = [
       { name: "SBI", rate: 6.8 }, { name: "HDFC", rate: 7.0 },
       { name: "ICICI", rate: 7.1 }, { name: "Current", rate },
@@ -999,17 +903,25 @@ export function FDForm() {
     ));
   }, [principal, rate, months, compFreq]);
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="FD Parameters" icon="🏦" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
-        <Sl label="Principal Amount" id="fd_p" min={10000} max={10000000} step={10000} value={principal} onChange={setPrincipal} fmt={v => fmSlider(v)} />
-        <Sl label="Interest Rate (% p.a.)" id="fd_r" min={4} max={9.5} step={0.05} value={rate} onChange={setRate} fmt={v => v + "%"} />
-        <Sl label="Tenure (Months)" id="fd_m" min={3} max={120} step={3} value={months} onChange={setMonths} fmt={v => v + " months"} />
-        <Sel label="Compounding Frequency" id="fd_cf" value={compFreq} onChange={setCompFreq} opts={[{ v: "4", l: "Quarterly" }, { v: "12", l: "Monthly" }, { v: "2", l: "Half-Yearly" }, { v: "1", l: "Annually" }]} />
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="FD Parameters"
+      inputIcon="&#x1F3E6;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="FD Parameters" icon="&#x1F3E6;" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
+            <Sl label="Principal Amount" id="fd_p" min={10000} max={10000000} step={10000} value={principal} onChange={setPrincipal} fmt={v => fmSlider(v)} />
+            <Sl label="Interest Rate (% p.a.)" id="fd_r" min={4} max={9.5} step={0.05} value={rate} onChange={setRate} fmt={v => v + "%"} />
+            <Sl label="Tenure (Months)" id="fd_m" min={3} max={120} step={3} value={months} onChange={setMonths} fmt={v => v + " months"} />
+            <Sel label="Compounding Frequency" id="fd_cf" value={compFreq} onChange={setCompFreq} opts={[{ v: "4", l: "Quarterly" }, { v: "12", l: "Monthly" }, { v: "2", l: "Half-Yearly" }, { v: "1", l: "Annually" }]} />
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="FD"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="FD" />;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -1051,24 +963,32 @@ export function LoanCompareForm() {
   const updateLoan = (id, field, value) =>
     setLoans(prev => prev.map(l => l.id === id ? { ...l, [field]: field === "name" ? value : +value } : l));
 
-  const inputs = (
-    <div className="calc-inputs-grid">
-      <InputSection title="Loan Amount" icon="🏦" gradient="linear-gradient(135deg,#dc2626,#b91c1c)">
-        <Sl label="Compare for Loan Amount" id="lc_amt" min={100000} max={10000000} step={50000} value={loanAmount} onChange={setLoanAmount} fmt={v => fmSlider(v)} />
-      </InputSection>
-      <InputSection title="Lender Options" icon="🏛️" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
-        {loans.map(loan => (
-          <div key={loan.id} style={{ marginBottom: 12, padding: "10px 12px", background: "var(--surface2)", borderRadius: "var(--r-md)", border: "1.5px solid var(--border)" }}>
-            <input value={loan.name} onChange={e => updateLoan(loan.id, "name", e.target.value)}
-              style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", background: "transparent", border: "none", outline: "none", width: "100%", marginBottom: 8 }} />
-            <Row2>
-              <N label="Rate %" id={"lc_r" + loan.id} value={String(loan.rate)} onChange={v => updateLoan(loan.id, "rate", v)} unit="%" placeholder="8.5" hint="" />
-              <N label="Term (yr)" id={"lc_t" + loan.id} value={String(loan.term)} onChange={v => updateLoan(loan.id, "term", v)} unit="yr" placeholder="20" hint="" />
-            </Row2>
-          </div>
-        ))}
-      </InputSection>
-    </div>
+  return (
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Loan Comparison"
+      inputIcon="&#x1F3E6;"
+      inputContent={
+        <div className="calc-inputs-grid">
+          <InputSection title="Loan Amount" icon="&#x1F3E6;" gradient="linear-gradient(135deg,#dc2626,#b91c1c)">
+            <Sl label="Compare for Loan Amount" id="lc_amt" min={100000} max={10000000} step={50000} value={loanAmount} onChange={setLoanAmount} fmt={v => fmSlider(v)} />
+          </InputSection>
+          <InputSection title="Lender Options" icon="&#x1F3DB;&#xFE0F;" gradient="linear-gradient(135deg,#4361ee,#3451c7)">
+            {loans.map(loan => (
+              <div key={loan.id} style={{ marginBottom: 12, padding: "10px 12px", background: "var(--surface2)", borderRadius: "var(--r-md)", border: "1.5px solid var(--border)" }}>
+                <input value={loan.name} onChange={e => updateLoan(loan.id, "name", e.target.value)}
+                  style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", background: "transparent", border: "none", outline: "none", width: "100%", marginBottom: 8 }} />
+                <Row2>
+                  <N label="Rate %" id={"lc_r" + loan.id} value={String(loan.rate)} onChange={v => updateLoan(loan.id, "rate", v)} unit="%" placeholder="8.5" hint="" />
+                  <N label="Term (yr)" id={"lc_t" + loan.id} value={String(loan.term)} onChange={v => updateLoan(loan.id, "term", v)} unit="yr" placeholder="20" hint="" />
+                </Row2>
+              </div>
+            ))}
+          </InputSection>
+        </div>
+      }
+      result={res}
+      label="Loan Comparison"
+    />
   );
-  return <CalcLayout inputs={inputs} result={res} label="Loan Comparison" />;
 }

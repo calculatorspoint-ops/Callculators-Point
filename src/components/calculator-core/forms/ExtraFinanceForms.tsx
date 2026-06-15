@@ -3,17 +3,8 @@ import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
-  InputSection, SEOSection
+  InputSection, SEOSection, FinanceLayout
 } from './SharedComponents';
-
-function CalcLayout({ inputs, result, label }) {
-  return (
-    <div className="calc-form-stack">
-      <div>{inputs}</div>
-      <Panel result={result} loading={null} label={label} />
-    </div>
-  );
-}
 
 // ─── APR Calculator ─────────────────────────────────────────────────────────
 export function APRForm() {
@@ -77,7 +68,14 @@ export function APRForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="APR" />
+      <FinanceLayout
+        accentClass="accent-finance"
+        inputTitle="APR"
+        inputIcon="📊"
+        inputContent={inputs}
+        result={res}
+        label="APR"
+      />
       <SEOSection title="APR vs Interest Rate — What's the Real Cost?">
         <p>APR (Annual Percentage Rate) includes all costs — interest AND fees. A loan advertised at 10% with ₹10,000 in fees on a ₹5L, 3-year loan actually costs ~12% APR. Always demand the APR figure when comparing loans. RBI mandates lenders disclose APR on retail loans. The difference can amount to lakhs on large loans.</p>
       </SEOSection>
@@ -161,7 +159,14 @@ export function BudgetForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Budget Planner" />
+      <FinanceLayout
+        accentClass="accent-finance"
+        inputTitle="Budget Planner"
+        inputIcon="📋"
+        inputContent={inputs}
+        result={res}
+        label="Budget Planner"
+      />
       <SEOSection title="Personal Budget Calculator — 50/30/20 Rule">
         <p>The 50/30/20 rule: 50% on needs (housing, utilities, food), 30% on wants (entertainment, dining, subscriptions), 20% on savings and debt payoff. If you're in debt, temporarily shift to 50/30/20 but apply the "wants" money to debt payoff. Track expenses for 3 months to find categories where you overspend.</p>
       </SEOSection>
@@ -242,7 +247,14 @@ export function MortgagePayoffForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Mortgage Payoff" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Mortgage Payoff"
+        inputIcon="🏠"
+        inputContent={inputs}
+        result={res}
+        label="Mortgage Payoff"
+      />
       <SEOSection title="Pay Off Your Home Loan Early — How Much Do You Save?">
         <p>Prepaying a home loan is one of the best guaranteed returns — you save interest at your loan rate (8–9%), which is better than FD rates. Banks cannot charge prepayment penalties on floating-rate home loans (RBI rule). Strategy: apply every bonus and windfall to principal prepayment. Even ₹5,000/month extra can save 3–5 years and ₹3–5L on a ₹30L loan.</p>
       </SEOSection>
@@ -296,7 +308,14 @@ export function PresentValueForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Present Value" />
+      <FinanceLayout
+        accentClass="accent-finance"
+        inputTitle="Present Value"
+        inputIcon="💹"
+        inputContent={inputs}
+        result={res}
+        label="Present Value"
+      />
       <SEOSection title="Time Value of Money — Present Value Calculator">
         <p>A rupee today is worth more than a rupee tomorrow because it can be invested and grow. PV = FV ÷ (1 + r)^n. The Rule of 72: divide 72 by the interest rate to find how many years to double your money. At 12%, money doubles every 6 years. At 6% inflation, prices double every 12 years — so your savings must outpace inflation to preserve real wealth.</p>
       </SEOSection>
@@ -378,7 +397,14 @@ export function DownPaymentForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Down Payment" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Down Payment"
+        inputIcon="🏦"
+        inputContent={inputs}
+        result={res}
+        label="Down Payment"
+      />
       <SEOSection title="Home Down Payment Savings Calculator">
         <p>A 20% down payment eliminates PMI, reduces your EMI, and gives you instant equity. A 10% down payment is the minimum for most home loans. For PMAY (Pradhan Mantri Awas Yojana) beneficiaries, subsidized interest reduces effective rates. Park your down payment savings in a liquid mutual fund or FD — never in equity, as the timeframe is short.</p>
       </SEOSection>
@@ -467,7 +493,14 @@ export function CommissionForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Commission" />
+      <FinanceLayout
+        accentClass="accent-finance"
+        inputTitle="Commission"
+        inputIcon="💼"
+        inputContent={inputs}
+        result={res}
+        label="Commission"
+      />
       <SEOSection title="Sales Commission Calculator — Flat, Percentage & Tiered">
         <p>Commission structures vary widely. Flat commission is simple but doesn't incentivize larger sales. Percentage commission scales with performance. Tiered commission (accelerators) rewards high performers most — once reps cross thresholds, each extra rupee in sales pays a higher rate, creating strong motivation to exceed quota.</p>
       </SEOSection>

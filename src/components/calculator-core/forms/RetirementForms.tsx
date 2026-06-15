@@ -3,17 +3,8 @@ import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Row2, Presets,
   Panel, buildResult, useCurrency,
-  InputSection, SEOSection
+  InputSection, SEOSection, FinanceLayout
 } from './SharedComponents';
-
-function CalcLayout({ inputs, result, label }) {
-  return (
-    <div className="calc-form-stack">
-      <div>{inputs}</div>
-      <Panel result={result} loading={null} label={label} />
-    </div>
-  );
-}
 
 // ─── Retirement Plan ─────────────────────────────────────────────────────────
 export function RetirementPlanForm() {
@@ -271,7 +262,14 @@ export function NPSForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="NPS" />
+      <FinanceLayout
+        accentClass="accent-invest"
+        inputTitle="NPS"
+        inputIcon="🏛️"
+        inputContent={inputs}
+        result={res}
+        label="NPS"
+      />
       <SEOSection title="National Pension System (NPS) — Tax Benefits & Maturity">
         <p>NPS is a government-regulated pension scheme with three tax advantages: 80C (up to ₹1.5L), 80CCD(1B) (extra ₹50K — exclusive to NPS), and 80CCD(2) (employer contribution). At retirement (60), 60% can be withdrawn tax-free as lump sum; 40% must buy an annuity. NPS returns have historically been 9–12% in equity-heavy schemes (E tier). Ideal for those in the 30% tax bracket.</p>
       </SEOSection>
@@ -343,7 +341,14 @@ export function EPFForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="EPF" />
+      <FinanceLayout
+        accentClass="accent-invest"
+        inputTitle="EPF"
+        inputIcon="🏦"
+        inputContent={inputs}
+        result={res}
+        label="EPF"
+      />
       <SEOSection title="EPF — Employee Provident Fund Calculator">
         <p>EPF deducts 12% of Basic+DA from your salary (employee share) and employer matches it. Of the employer's 12%, 8.33% (capped at ₹1,250) goes to EPS (pension fund) and the rest to EPF. Current EPF interest rate: 8.15% p.a. — fully tax-exempt under EEE status. Voluntary contributions (VPF) can be up to 100% of Basic+DA for higher returns.</p>
       </SEOSection>

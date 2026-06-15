@@ -3,17 +3,8 @@ import { useState, useEffect } from "react";
 import {
   N, Sl, Sel, Tabs, Row2, Row3, Presets,
   Panel, buildResult, useCurrency,
-  InputSection, SEOSection, Toggle
+  InputSection, SEOSection, FinanceLayout, Toggle
 } from './SharedComponents';
-
-function CalcLayout({ inputs, result, label }) {
-  return (
-    <div className="calc-form-stack">
-      <div>{inputs}</div>
-      <Panel result={result} loading={null} label={label} />
-    </div>
-  );
-}
 
 // ─── Auto Loan ───────────────────────────────────────────────────────────────
 export function AutoLoanForm() {
@@ -78,7 +69,14 @@ export function AutoLoanForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Auto Loan" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Auto Loan"
+        inputIcon="🚗"
+        inputContent={inputs}
+        result={res}
+        label="Auto Loan"
+      />
       <SEOSection title="Car Loan Calculator — EMI, Total Cost & Depreciation">
         <p>Car loans in India range from 9–12% interest. A shorter tenure means higher EMI but lower total interest. A longer tenure is more affordable monthly but costs significantly more overall. Also factor in: cars depreciate ~50% in 5 years, so your asset value drops faster than your loan balance. A down payment of 20–30% keeps you above water.</p>
       </SEOSection>
@@ -144,7 +142,14 @@ export function PersonalLoanForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Personal Loan" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Personal Loan"
+        inputIcon="💳"
+        inputContent={inputs}
+        result={res}
+        label="Personal Loan"
+      />
       <SEOSection title="Personal Loan EMI Calculator">
         <p>Personal loans are unsecured (no collateral) so rates are higher (11–24%). Keep EMI below 40% of take-home pay. Banks check CIBIL score (750+ recommended), income stability, and existing obligations. Prepayment can save significantly — most banks allow it after 6–12 months with a 2–4% foreclosure charge.</p>
       </SEOSection>
@@ -207,7 +212,14 @@ export function StudentLoanForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Student Loan" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Student Loan"
+        inputIcon="🎓"
+        inputContent={inputs}
+        result={res}
+        label="Student Loan"
+      />
       <SEOSection title="Education Loan — Moratorium, EMI & Repayment Planning">
         <p>Education loans in India carry 10.5–12% interest. The moratorium period (course duration + 6 months) defers repayment but interest accrues and capitalizes — increasing your principal significantly. Paying at least the interest during moratorium saves tens of thousands. Loans up to ₹4L need no collateral; above ₹7.5L requires collateral. 80E tax deduction on interest is available for 8 years.</p>
       </SEOSection>
@@ -277,7 +289,14 @@ export function CreditCardForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Credit Card" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Credit Card"
+        inputIcon="💳"
+        inputContent={inputs}
+        result={res}
+        label="Credit Card"
+      />
       <SEOSection title="Credit Card Debt Payoff Calculator">
         <p>Credit cards in India charge 36–42% APR — among the highest interest rates available. Paying minimum only on ₹1L balance at 36% takes 6+ years and costs ₹1.8L extra in interest! Always pay more than minimum. The debt avalanche (highest rate first) saves the most money; snowball (smallest balance first) gives psychological wins. Consider a balance transfer at 0% introductory APR.</p>
       </SEOSection>
@@ -379,7 +398,14 @@ export function DebtPayoffForm() {
   );
   return (
     <>
-      <CalcLayout inputs={inputs} result={res} label="Debt Payoff" />
+      <FinanceLayout
+        accentClass="accent-loan"
+        inputTitle="Debt Payoff"
+        inputIcon="💸"
+        inputContent={inputs}
+        result={res}
+        label="Debt Payoff"
+      />
       <SEOSection title="Debt Snowball vs Avalanche — Which Strategy Wins?">
         <p>Avalanche (highest rate first) minimizes total interest paid — mathematically optimal. Snowball (smallest balance first) gives quick psychological wins that keep you motivated. Research shows many people succeed more with Snowball despite the higher cost. This calculator shows both strategies so you can choose what works for you.</p>
       </SEOSection>
