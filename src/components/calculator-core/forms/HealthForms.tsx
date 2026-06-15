@@ -7,7 +7,7 @@ import {
   calcCaloriesBurned, calcSleep, MET_ACTIVITIES, round, fmtC, fmt 
 } from "@/core/calculationEngine";
 import { 
-  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
+  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, FinanceLayout 
 } from './SharedComponents';
 import { ResultBox } from '@/components/ui/ResultBox';
 import { StatsGrid } from '@/components/ui/StatsGrid';
@@ -187,11 +187,14 @@ export function CalorieForm(){
   const AC='#db2777';
 
   return (
-    <div style={{maxWidth:680,margin:'0 auto',padding:'4px 0',fontFamily:'var(--font)'}}>
-
-      {/* INPUT CARD */}
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
-        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>🔥 Your Details</p>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      result={res}
+      loading={load}
+      label="Daily Calories"
+      shareParams={{w,h,a,sex,act,goal}}
+      inputContent={<>
         <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
         <Row2><Sl label="Weight (kg)" id="cw" min={30} max={200} step={0.5} value={w} onChange={setW} fmt={v=>`${v}kg`}/><Sl label="Height (cm)" id="ch" min={100} max={250} step={0.5} value={h} onChange={setH} fmt={v=>`${v}cm`}/></Row2>
         <Sl label="Age" id="ca" min={10} max={100} value={a} onChange={setA} fmt={v=>`${v} years`}/>
@@ -200,60 +203,35 @@ export function CalorieForm(){
           <Sel label="Goal" id="cg" value={goal} onChange={setGoal} opts={[{v:"loseFast",l:"Lose Fast (−1kg/wk)"},{v:"lose",l:"Lose (−0.5kg/wk)"},{v:"maintain",l:"Maintain Weight"},{v:"lean",l:"Lean Bulk"},{v:"bulk",l:"Bulk (+500kcal)"}]}/>
           <Sel label="Formula" id="cf2" value={formula} onChange={setFormula} opts={[{v:"mifflin",l:"Mifflin-St Jeor"},{v:"harris",l:"Harris-Benedict"}]}/>
         </Row2>
-      </div>
-
-      {/* RESULTS */}
+      </>}
+    >
+      {/* Extra: Detailed calorie breakdown below the two columns */}
       {calData && (
         <div style={{display:'flex',flexDirection:'column',gap:16}}>
-
-          {/* HERO */}
-          <div style={{background:`linear-gradient(135deg,${AC}18,${AC}06)`,border:`2px solid ${AC}30`,borderRadius:20,padding:'28px 24px',textAlign:'center',position:'relative',overflow:'hidden'}}>
-            <div style={{position:'absolute',top:-50,left:'50%',transform:'translateX(-50%)',width:220,height:220,background:`radial-gradient(circle,${AC}20,transparent 70%)`,pointerEvents:'none'}}/>
-            <div style={{position:'relative',zIndex:1}}>
-              <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:AC,marginBottom:8}}>🔥 DAILY CALORIES (TDEE)</p>
-              <p style={{fontSize:'clamp(26px,6vw,44px)',fontWeight:900,color:'var(--text)',lineHeight:1.1,margin:'0 0 4px'}}>{calData.tdee} <span style={{fontSize:'clamp(14px,2.5vw,18px)',fontWeight:600,color:'var(--text3)'}}>kcal/day</span></p>
-            </div>
-          </div>
-
-          {/* 3-METRIC GRID */}
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
             {[
               {icon:'💓',label:'BMR',val:calData.bmr+' kcal'},
               {icon:'🎯',label:'Goal Calories',val:calData.goalCal+' kcal',highlight:true},
               {icon:'🥩',label:'Protein',val:calData.macros?.protein+'g'},
             ].map(m=>(
-              <div key={m.label} style={{background:m.highlight?`${AC}12`:'var(--surface)',border:`1.5px solid ${m.highlight?AC+'44':'var(--border)'}`,borderRadius:14,padding:'16px 10px',textAlign:'center'}}>
+              <div key={m.label} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'16px 10px',textAlign:'center'}}>
                 <div style={{fontSize:22,marginBottom:8}}>{m.icon}</div>
-                <div style={{fontSize:'clamp(14px,3vw,20px)',fontWeight:900,color:m.highlight?AC:'var(--text)',lineHeight:1}}>{m.val}</div>
+                <div style={{fontSize:'clamp(14px,3vw,20px)',fontWeight:900,color:'var(--text)',lineHeight:1}}>{m.val}</div>
                 <div style={{fontSize:11,color:'var(--text3)',marginTop:6,fontWeight:600}}>{m.label}</div>
               </div>
             ))}
           </div>
-
-          {/* BAR CHART via Panel (handles chart rendering) */}
-          <Panel result={res} loading={load} label="Daily Calories" shareParams={{w,h,a,sex,act,goal}}/>
-
-          {/* INSIGHTS */}
-          {res?.insights?.filter(Boolean).map((ins,i)=>(
-            <div key={i} style={{display:'flex',gap:12,padding:'12px 16px',borderRadius:12,
-              background:ins.type==='good'?'rgba(16,185,129,.08)':'rgba(219,39,119,.07)',
-              border:`1px solid ${ins.type==='good'?'rgba(16,185,129,.25)':'rgba(219,39,119,.2)'}`}}>
-              <span>{ins.type==='good'?'✅':'ℹ️'}</span>
-              <p style={{fontSize:13,color:'var(--text2)',margin:0,lineHeight:1.6}}>{ins.msg}</p>
-            </div>
-          ))}
-
-          {/* DISCLAIMER */}
           <p style={{fontSize:11.5,color:'var(--text3)',lineHeight:1.7,padding:'12px 16px',background:'var(--surf2,var(--surface))',borderRadius:12,border:'1px solid var(--border)',margin:0}}>
-            📊 <strong>Note:</strong> Weight change projections use ~7,700 kcal/kg (range: 7,000–8,000 kcal/kg by individual). Results are estimates. Actual results depend on metabolism, hormones, exercise type, and adherence. Consult a registered dietitian for personalized plans.
+            Note: Weight change projections use ~7,700 kcal/kg. Results are estimates. Consult a registered dietitian for personalized plans.
           </p>
         </div>
       )}
-    </div>
+    </FinanceLayout>
   );
 }
 
 // ── BMR ──────────────────────────────────────────────────────────────
+
 export function BMRForm(){
   const [sex,setSex]=useState("male"),[w,setW]=useState(70),[h,setH]=useState(170),[a,setA]=useState(30);
   const [res,setRes]=useState(null);
@@ -324,19 +302,21 @@ export function BodyFatForm(){
   },[sex,h,neck,waist,hip]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
-          <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>📐 Your Measurements</p>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Measurements"
+      result={res}
+      loading={null}
+      label="Body Fat %"
+      inputContent={<>
+        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>📐 Your Measurements</p>
           <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
           <Sl label="Height" id="bfh" min={120} max={220} step={1} value={h} onChange={setH} fmt={v=>`${v} cm`}/>
           <Sl label="Neck Circumference" id="bfn" min={25} max={60} step={0.5} value={neck} onChange={setNeck} fmt={v=>`${v} cm`}/>
           <Sl label="Waist Circumference" id="bfw" min={50} max={150} step={0.5} value={waist} onChange={setWaist} fmt={v=>`${v} cm`}/>
           {sex==="female"&&<Sl label="Hip Circumference" id="bfhip" min={60} max={160} step={0.5} value={hip} onChange={setHip} fmt={v=>`${v} cm`}/>}
-        </div>
-      </div>
-      <Panel result={res} loading={null} label="Body Fat %"/>
-    </div>
+      </>}
+    />
   );
 }
 
@@ -362,16 +342,18 @@ export function IdealWeightForm(){
     return()=>clearTimeout(t);
   },[sex,h]);
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
-          <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>⚖️ Your Details</p>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      result={res}
+      loading={null}
+      label="Ideal Weight"
+      inputContent={<>
+        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>⚖️ Your Details</p>
           <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
           <Sl label="Height" id="iwh" min={100} max={250} step={0.5} value={h} onChange={setH} fmt={v=>`${v} cm`}/>
-        </div>
-      </div>
-      <Panel result={res} loading={null} label="Ideal Weight"/>
-    </div>
+      </>}
+    />
   );
 }
 
@@ -390,17 +372,20 @@ export function MacroForm(){
     return()=>clearTimeout(t);
   },[cal,goal,bw]);
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
-          <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>🥗 Your Nutrition Goals</p>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Goals"
+      result={res}
+      loading={null}
+      label="Macros"
+      shareParams={{cal,goal,bw}}
+      inputContent={<>
+        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>🥗 Your Nutrition Goals</p>
           <N label="Daily Calorie Target" id="mc2" value={cal} onChange={setCal} unit="kcal"/>
           <N label="Body Weight" id="mbw" value={bw} onChange={setBw} unit="kg"/>
           <Sel label="Goal" id="mg" value={goal} onChange={setGoal} opts={[{v:"lose",l:"Lose Weight (−500)"},{v:"maintain",l:"Maintain Weight"},{v:"gain",l:"Lean Gain (+300)"},{v:"aggressive",l:"Aggressive Bulk (+500)"}]}/>
-        </div>
-      </div>
-      <Panel result={res} loading={null} label="Macros" shareParams={{cal,goal,bw}}/>
-    </div>
+      </>}
+    />
   );
 }
 
@@ -421,36 +406,21 @@ export function WaterForm(){
     return()=>clearTimeout(t);
   },[w,act,climate]);
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
-          <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>💧 Your Details</p>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      result={res}
+      loading={null}
+      label="Water Intake"
+      inputContent={<>
+        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>💧 Your Details</p>
           <Sl label="Body Weight" id="ww" min={30} max={150} value={w} onChange={setW} fmt={v=>`${v} kg`}/>
           <Row2>
             <Sel label="Activity Level" id="wact" value={act} onChange={setAct} opts={[{v:"sedentary",l:"Sedentary"},{v:"light",l:"Light"},{v:"moderate",l:"Moderate"},{v:"active",l:"Active"},{v:"veryActive",l:"Very Active"}]}/>
             <Sel label="Climate" id="wclimate" value={climate} onChange={setClimate} opts={[{v:"cool",l:"Cool"},{v:"moderate",l:"Moderate"},{v:"warm",l:"Warm"},{v:"hot",l:"Hot"}]}/>
           </Row2>
-        </div>
-        {/* Hydration visual */}
-        {res?.raw && (
-          <div style={{marginTop:16,padding:"16px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-              <span style={{fontSize:12,fontWeight:700,color:"var(--text3)",textTransform:"uppercase",letterSpacing:".05em"}}>💧 Daily Hydration Goal</span>
-              <span style={{fontSize:13,fontWeight:800,color:"#2563eb"}}>{res.raw.total}L</span>
-            </div>
-            <div style={{display:"flex",gap:4,flexWrap:"wrap",justifyContent:"center"}}>
-              {Array.from({length: Math.min(+res.raw.glasses || 8, 16)}).map((_,i) => (
-                <div key={i} style={{width:28,height:36,borderRadius:"0 0 6px 6px",border:"2px solid #93c5fd",background:"linear-gradient(to top, #3b82f6 80%, transparent 80%)",display:"flex",alignItems:"flex-end",justifyContent:"center",fontSize:8,color:"#fff",fontWeight:700,paddingBottom:2}}>
-                  {i+1}
-                </div>
-              ))}
-            </div>
-            <p style={{textAlign:"center",fontSize:11,color:"var(--text3)",marginTop:8}}>{res.raw.glasses} glasses of 250ml each</p>
-          </div>
-        )}
-      </div>
-      <Panel result={res} loading={null} label="Water Intake"/>
-    </div>
+      </>}
+    />
   );
 }
 
@@ -728,8 +698,13 @@ export function CaloriesBurnedForm(){
     return()=>clearTimeout(t);
   },[weight,duration,actIdx]);
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Activity Details"
+      result={res}
+      loading={null}
+      label="Calories Burned"
+      inputContent={<>
         <Row2>
           <Sl label="Body Weight" id="cbw" min={30} max={200} step={0.5} value={weight} onChange={setWeight} fmt={v=>`${v} kg`}/>
           <Sl label="Duration" id="cbd" min={5} max={180} step={5} value={duration} onChange={setDuration} fmt={v=>`${v} min`}/>
@@ -745,9 +720,8 @@ export function CaloriesBurnedForm(){
         <div style={{marginTop:12,padding:"10px 14px",background:"var(--surface2)",borderRadius:"var(--r-md)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
           MET Value: <strong style={{color:"var(--brand)"}}>{activity.met}</strong> - {activity.label}
         </div>
-      </div>
-      <Panel result={res} loading={null} label="Calories Burned"/>
-    </div>
+      </>}
+    />
   );
 }
 
@@ -868,26 +842,26 @@ export function BSAForm() {
   ];
 
   return (
-    <div>
-      <Presets items={presets} onApply={p => { setWeight(p.v.weight); setHeight(p.v.height); setUnit(p.v.unit); }} />
-      <Tabs
-        tabs={["Metric (kg/cm)", "Imperial (lb/in)"]}
-        active={unit === "metric" ? "Metric (kg/cm)" : "Imperial (lb/in)"}
-        onChange={v => setUnit(v.includes("Metric") ? "metric" : "imperial")}
-      />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        {/* Left — Inputs */}
-        <div>
-          <Row2>
-            <N label={unit === "metric" ? "Weight (kg)" : "Weight (lb)"} id="bsaw" value={weight} onChange={setWeight} unit={unit === "metric" ? "kg" : "lb"} />
-            <N label={unit === "metric" ? "Height (cm)" : "Height (in)"} id="bsah" value={height} onChange={setHeight} unit={unit === "metric" ? "cm" : "in"} />
-          </Row2>
-          <N label="Carboplatin AUC Target" id="bsaauc" value={auc} onChange={setAuc} unit="AUC" hint="Typical range: 4–6. Used to compute Carboplatin dose = BSA × AUC" />
-        </div>
-        {/* Right — Result */}
-        <Panel result={res} loading={null} label="BSA" />
-      </div>
-    </div>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Measurements"
+      result={res}
+      loading={null}
+      label="BSA"
+      inputContent={<>
+        <Presets items={presets} onApply={p => { setWeight(p.v.weight); setHeight(p.v.height); setUnit(p.v.unit); }} />
+        <Tabs
+          tabs={["Metric (kg/cm)", "Imperial (lb/in)"]}
+          active={unit === "metric" ? "Metric (kg/cm)" : "Imperial (lb/in)"}
+          onChange={v => setUnit(v.includes("Metric") ? "metric" : "imperial")}
+        />
+        <Row2>
+          <N label={unit === "metric" ? "Weight (kg)" : "Weight (lb)"} id="bsaw" value={weight} onChange={setWeight} unit={unit === "metric" ? "kg" : "lb"} />
+          <N label={unit === "metric" ? "Height (cm)" : "Height (in)"} id="bsah" value={height} onChange={setHeight} unit={unit === "metric" ? "cm" : "in"} />
+        </Row2>
+        <N label="Carboplatin AUC Target" id="bsaauc" value={auc} onChange={setAuc} unit="AUC" hint="Typical range: 4–6. Used to compute Carboplatin dose = BSA × AUC" />
+      </>}
+    />
   );
 }
 
@@ -998,9 +972,14 @@ export function BACForm() {
       }} />
       <Tabs tabs={["Male", "Female"]} active={gender === "male" ? "Male" : "Female"} onChange={v => setGender(v.toLowerCase())} />
       <Tabs tabs={["Metric (kg)", "Imperial (lb)"]} active={unit === "metric" ? "Metric (kg)" : "Imperial (lb)"} onChange={v => setUnit(v.includes("Metric") ? "metric" : "imperial")} />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <N label={unit === "metric" ? "Body Weight (kg)" : "Body Weight (lb)"} id="bacw" value={weight} onChange={setWeight} unit={unit === "metric" ? "kg" : "lb"} />
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Details"
+      result={res}
+      loading={null}
+      label="BAC"
+      inputContent={<>
+        <N label={unit === "metric" ? "Body Weight (kg)" : "Body Weight (lb)"} id="bacw" value={weight} onChange={setWeight} unit={unit === "metric" ? "kg" : "lb"} />
           <Sel label="Drink Type" id="bacdt" value={drinkType} onChange={setDrinkType} opts={[
             { v: "beer",  l: "🍺 Beer (5% ABV, 12 oz)" },
             { v: "wine",  l: "🍷 Wine (12% ABV, 5 oz)"  },
@@ -1011,9 +990,8 @@ export function BACForm() {
             <N label="Number of Drinks" id="bacd"  value={drinks} onChange={setDrinks} unit="drinks" />
             <N label="Hours Since Drinking" id="bach" value={hours}  onChange={setHours}  unit="hrs"    hint="Time elapsed since first drink" />
           </Row2>
-        </div>
-        <Panel result={res} loading={null} label="BAC" />
-      </div>
+      </>}
+    />
     </div>
   );
 }
@@ -1114,17 +1092,21 @@ export function LeanBodyMassForm() {
       }} />
       <Tabs tabs={["Male", "Female"]} active={gender === "male" ? "Male" : "Female"} onChange={v => setGender(v.toLowerCase())} />
       <Tabs tabs={["Metric", "Imperial"]} active={unit === "metric" ? "Metric" : "Imperial"} onChange={v => setUnit(v.toLowerCase())} />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <Row2>
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Measurements"
+      result={res}
+      loading={null}
+      label="Lean Body Mass"
+      inputContent={<>
+        <Row2>
             <N label={unit === "metric" ? "Weight (kg)" : "Weight (lb)"} id="lbmw" value={weight} onChange={setWeight} unit={unit === "metric" ? "kg" : "lb"} />
             <N label={unit === "metric" ? "Height (cm)" : "Height (in)"} id="lbmh" value={height} onChange={setHeight} unit={unit === "metric" ? "cm" : "in"} />
           </Row2>
           <Sl label="Body Fat %" id="lbmbf" min={3} max={50} step={0.5} value={bodyFat} onChange={setBodyFat} fmt={v => v + "%"} />
           <N label="Goal LBM (kg)" id="lbmgoal" value={goalLBM} onChange={setGoalLBM} unit="kg" hint="Target lean body mass you want to achieve" />
-        </div>
-        <Panel result={res} loading={null} label="Lean Body Mass" />
-      </div>
+      </>}
+    />
     </div>
   );
 }
@@ -1220,9 +1202,14 @@ export function ProteinForm() {
     <div>
       <Presets items={presets} onApply={p => { setWeight(p.v.weight); setActivity(p.v.activity); setGoal(p.v.goal); }} />
       <Tabs tabs={["Metric (kg)", "Imperial (lb)"]} active={unit === "metric" ? "Metric (kg)" : "Imperial (lb)"} onChange={v => setUnit(v.includes("Metric") ? "metric" : "imperial")} />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <N label={unit === "metric" ? "Body Weight (kg)" : "Body Weight (lb)"} id="protw" value={weight} onChange={setWeight} unit={unit === "metric" ? "kg" : "lb"} />
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      result={res}
+      loading={null}
+      label="Protein Calculator"
+      inputContent={<>
+        <N label={unit === "metric" ? "Body Weight (kg)" : "Body Weight (lb)"} id="protw" value={weight} onChange={setWeight} unit={unit === "metric" ? "kg" : "lb"} />
           <Sel label="Activity Level" id="prota" value={activity} onChange={setActivity} opts={[
             { v: "sedentary", l: "Sedentary — desk job, no exercise (0.8g/kg)" },
             { v: "light",     l: "Light Active — 1–2 days/week (1.2g/kg)"      },
@@ -1236,9 +1223,8 @@ export function ProteinForm() {
             { v: "muscle",   l: "Build Muscle — lean bulk"                  },
             { v: "bulk",     l: "Aggressive Bulk — maximize mass gain"      },
           ]} />
-        </div>
-        <Panel result={res} loading={null} label="Protein Calculator" />
-      </div>
+      </>}
+    />
     </div>
   );
 }
@@ -1351,9 +1337,14 @@ export function HealthyWeightForm() {
       }} />
       <Tabs tabs={["Male", "Female"]} active={gender === "male" ? "Male" : "Female"} onChange={v => setGender(v.toLowerCase())} />
       <Tabs tabs={["Metric (cm)", "Imperial (in)"]} active={unit === "metric" ? "Metric (cm)" : "Imperial (in)"} onChange={v => setUnit(v.includes("Metric") ? "metric" : "imperial")} />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <Row2>
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      result={res}
+      loading={null}
+      label="Healthy Weight"
+      inputContent={<>
+        <Row2>
             <N label={unit === "metric" ? "Height (cm)" : "Height (inches)"} id="hwh" value={height} onChange={setHeight} unit={unit === "metric" ? "cm" : "in"} />
             <N label={unit === "metric" ? "Current Weight (kg)" : "Current Weight (lb)"} id="hwcw" value={currentWeight} onChange={setCurrentWeight} unit={unit === "metric" ? "kg" : "lb"} hint="Optional — used to calculate your current BMI" />
           </Row2>
@@ -1362,9 +1353,8 @@ export function HealthyWeightForm() {
             { v: "medium", l: "Medium Frame (no adjustment)"   },
             { v: "large",  l: "Large Frame  (+10% adjustment)" },
           ]} />
-        </div>
-        <Panel result={res} loading={null} label="Healthy Weight" />
-      </div>
+      </>}
+    />
     </div>
   );
 }
@@ -1454,9 +1444,14 @@ export function FatIntakeForm() {
       <Presets items={presets} onApply={p => {
         setCalories(p.v.calories); setGoal(p.v.goal); setProtein(p.v.protein); setCarbs(p.v.carbs);
       }} />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <N label="Daily Calorie Intake" id="fical" value={calories} onChange={setCalories} unit="kcal" hint="Total target calories per day" />
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      result={res}
+      loading={null}
+      label="Fat Intake"
+      inputContent={<>
+        <N label="Daily Calorie Intake" id="fical" value={calories} onChange={setCalories} unit="kcal" hint="Total target calories per day" />
           <Sel label="Diet Goal" id="figoal" value={goal} onChange={setGoal} opts={[
             { v: "low",      l: "Low Fat Diet (20%) — Heart health" },
             { v: "balanced", l: "Balanced Diet (30%) — Standard"   },
@@ -1467,9 +1462,8 @@ export function FatIntakeForm() {
             <N label="Protein (g)" id="fiprot" value={protein} onChange={setProtein} unit="g" hint="For macro split chart" />
             <N label="Carbs (g)"   id="ficarb" value={carbs}   onChange={setCarbs}   unit="g" hint="For macro split chart" />
           </Row2>
-        </div>
-        <Panel result={res} loading={null} label="Fat Intake" />
-      </div>
+      </>}
+    />
     </div>
   );
 }
@@ -1584,9 +1578,14 @@ export function ArmyBodyFatForm() {
         All measurements in <strong>inches</strong>. Measure neck at narrowest point; waist at navel level.
         {' '}<span style={{ fontSize: 11, color: 'var(--brand)', fontWeight: 700 }}>Per US Army Regulation AR 600-9.</span>
       </p>
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <Row2>
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Measurements"
+      result={res}
+      loading={null}
+      label="Army Body Fat"
+      inputContent={<>
+        <Row2>
             <N label="Height (in)"  id="abfh"   value={height} onChange={setHeight} unit='in' />
             <N label="Age (years)"  id="abfage"  value={age}    onChange={setAge}    unit="yrs" />
           </Row2>
@@ -1597,9 +1596,8 @@ export function ArmyBodyFatForm() {
           {gender === "female" && (
             <N label="Hip Circumference (in)" id="abfhip" value={hip} onChange={setHip} unit='in' hint="Widest point of hips/buttocks" />
           )}
-        </div>
-        <Panel result={res} loading={null} label="Army Body Fat" />
-      </div>
+      </>}
+    />
     </div>
   );
 }
@@ -1733,9 +1731,14 @@ export function ConceptionForm() {
         active={mode === "lmp" ? "From LMP Date" : "From Due Date"}
         onChange={v => setMode(v.includes("LMP") ? "lmp" : "due")}
       />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          {mode === "lmp" ? (
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Cycle"
+      result={res}
+      loading={null}
+      label="Conception"
+      inputContent={<>
+        {mode === "lmp" ? (
             <N label="First Day of Last Period (LMP)" id="conlmp" value={lmpDate} onChange={setLmpDate} type="number" placeholder="YYYY-MM-DD" hint="Enter date in YYYY-MM-DD format" />
           ) : (
             <N label="Estimated Due Date" id="condue" value={dueDate} onChange={setDueDate} type="number" placeholder="YYYY-MM-DD" hint="Enter your due date in YYYY-MM-DD format" />
@@ -1745,9 +1748,8 @@ export function ConceptionForm() {
             <strong style={{ color: "var(--text2)" }}>How it works:</strong><br />
             Ovulation occurs ~14 days before your next period. The fertile window is 5 days before ovulation + ovulation day. Implantation happens 6–12 days after ovulation.
           </div>
-        </div>
-        <Panel result={res} loading={null} label="Conception" />
-      </div>
+      </>}
+    />
     </div>
   );
 }
@@ -1827,18 +1829,17 @@ export function GFRForm() {
       </div>
       <Tabs tabs={['Male', 'Female']} active={sex === 'male' ? 'Male' : 'Female'} onChange={v => setSex(v.toLowerCase())} />
       <Tabs tabs={['mg/dL', 'μmol/L']} active={unit} onChange={setUnit} />
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <N label={unit === 'mg/dL' ? 'Serum Creatinine (mg/dL)' : 'Serum Creatinine (μmol/L)'} id="gfr-scr" value={creatinine} onChange={setCreatinine} unit={unit} hint={unit === 'mg/dL' ? 'Normal: 0.6–1.2 (male), 0.5–1.1 (female) mg/dL' : 'Normal: 53–106 (male), 44–97 (female) μmol/L'} />
+      <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      result={res}
+      loading={null}
+      label="eGFR"
+      inputContent={<>
+        <N label={unit === 'mg/dL' ? 'Serum Creatinine (mg/dL)' : 'Serum Creatinine (μmol/L)'} id="gfr-scr" value={creatinine} onChange={setCreatinine} unit={unit} hint={unit === 'mg/dL' ? 'Normal: 0.6–1.2 (male), 0.5–1.1 (female) mg/dL' : 'Normal: 53–106 (male), 44–97 (female) μmol/L'} />
           <N label="Age (years)" id="gfr-age" value={age} onChange={setAge} unit="yrs" hint="Must be ≥ 18 years" />
-        </div>
-        <Panel result={res} loading={null} label="eGFR" />
-        {res && (
-          <p style={{ fontSize: 11, color: 'var(--text3)', marginTop: 0, lineHeight: 1.6 }}>
-            Based on <strong>2021 CKD-EPI race-free equation</strong> (Inker et al., NEJM 2021). Does not require race as an input.
-          </p>
-        )}
-      </div>
+      </>}
+    />
     </div>
   );
 }

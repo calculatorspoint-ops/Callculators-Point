@@ -1376,3 +1376,10 @@ button[type="submit"].f-btn,
   }
 }
 
+/* ── Health accent ── */
+/* Used by HealthForms.tsx calculators */
+.finance-calc-inputs .input-section-wrap.accent-health {
+  border-left: 3px solid #0d9488;
+}
+
+

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney , FinanceLayout } from './SharedComponents';
+import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, FinanceLayout } from './SharedComponents';
 import { ScenarioCompare } from '@/components/calculator-core/ScenarioCompare';
 import { useAmortizationWorker } from '@/hooks/useAmortizationWorker';
 
@@ -853,8 +853,11 @@ export function BudgetForm() {
   }, [income, categories]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-finance"
+      inputTitle="Budget Planner"
+      inputIcon="📋"
+      inputContent={<>
         <N label="Monthly Income" id="budi" value={income} onChange={setIncome} unit={sym} />
         <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)", marginBottom: 10 }}>Expense Categories</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -878,9 +881,10 @@ export function BudgetForm() {
             + Add Category
           </button>
         </div>
-      </div>
-      <Panel result={res} loading={null} label="Budget Planner" />
-    </div>
+      </>}
+      result={res}
+      label="Budget Planner"
+    />
   );
 }
 
@@ -2104,72 +2108,73 @@ export function AmortizationForm() {
   const pct = summary && summary.extraPmt > 0 ? (summary.totalInterest / summary.originalInterest * 100).toFixed(0) : 0;
 
   return (
-    <div className="space-y-6">
-      <div style={{display:"flex",flexDirection:"column",gap:20}}>
-        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
-          <Presets items={[
-            { label: "Home 30yr", v: { p: 350000, r: 6.75, y: 30, e: 0 } },
-            { label: "Home 15yr", v: { p: 350000, r: 6.25, y: 15, e: 0 } },
-            { label: "Car Loan", v: { p: 35000, r: 7.5, y: 5, e: 0 } },
-            { label: "Personal", v: { p: 15000, r: 10.5, y: 3, e: 100 } },
-          ]} onApply={p => { setPrincipal(p.v.p); setRate(p.v.r); setTerm(p.v.y); setExtra(String(p.v.e)); setShowAll(false); }} />
-          <Sl label="Loan Amount" id="am_p" min={5000} max={2000000} step={5000} value={principal} onChange={v => { setPrincipal(v); setShowAll(false); }} fmt={v => fmSlider(v)} />
-          <Sl label="Annual Interest Rate" id="am_r" min={1} max={20} step={0.05} value={rate} onChange={v => { setRate(v); setShowAll(false); }} fmt={v => v + "%"} />
-          <Sl label="Loan Term" id="am_t" min={1} max={40} value={term} onChange={v => { setTerm(v); setShowAll(false); }} fmt={v => v + " yr" + (v > 1 ? "s" : "")} />
-          <N label="Extra Monthly Payment" id="am_ex" value={extra} onChange={v => { setExtra(v); setShowAll(false); }} unit={sym} placeholder="0" hint="Every extra dollar goes 100% to principal" />
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Loan Details"
+      inputIcon="🏦"
+      result={res}
+      label="Amortization"
+      inputContent={<>
+        <Presets items={[
+          { label: "Home 30yr", v: { p: 350000, r: 6.75, y: 30, e: 0 } },
+          { label: "Home 15yr", v: { p: 350000, r: 6.25, y: 15, e: 0 } },
+          { label: "Car Loan", v: { p: 35000, r: 7.5, y: 5, e: 0 } },
+          { label: "Personal", v: { p: 15000, r: 10.5, y: 3, e: 100 } },
+        ]} onApply={p => { setPrincipal(p.v.p); setRate(p.v.r); setTerm(p.v.y); setExtra(String(p.v.e)); setShowAll(false); }} />
+        <Sl label="Loan Amount" id="am_p" min={5000} max={2000000} step={5000} value={principal} onChange={v => { setPrincipal(v); setShowAll(false); }} fmt={v => fmSlider(v)} />
+        <Sl label="Annual Interest Rate" id="am_r" min={1} max={20} step={0.05} value={rate} onChange={v => { setRate(v); setShowAll(false); }} fmt={v => v + "%"} />
+        <Sl label="Loan Term" id="am_t" min={1} max={40} value={term} onChange={v => { setTerm(v); setShowAll(false); }} fmt={v => v + " yr" + (v > 1 ? "s" : "")} />
+        <N label="Extra Monthly Payment" id="am_ex" value={extra} onChange={v => { setExtra(v); setShowAll(false); }} unit={sym} placeholder="0" hint="Every extra dollar goes 100% to principal" />
 
-          {summary && summary.extraPmt > 0 && (
-            <div style={{ marginTop: 14, padding: "12px 14px", background: "linear-gradient(135deg,rgba(34,197,94,0.08),rgba(16,185,129,0.05))", borderRadius: "var(--r-lg)", border: "1px solid rgba(34,197,94,0.25)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--success)" }}>Extra Payment Impact</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--success)" }}>{pct}% of original interest</span>
-              </div>
-              <div style={{ height: 6, borderRadius: 99, background: "var(--border)", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: pct + "%", background: "linear-gradient(90deg,var(--success),var(--brand))", borderRadius: 99, transition: "width .4s" }} />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 12, color: "var(--text3)" }}>
-                <span>Saved: <strong style={{ color: "var(--success)" }}>{fm(Math.round(summary.interestSaved))}</strong></span>
-                <span>Payoff {(summary.monthsSaved / 12).toFixed(1)} yrs early</span>
-              </div>
+        {summary && summary.extraPmt > 0 && (
+          <div style={{ marginTop: 14, padding: "12px 14px", background: "linear-gradient(135deg,rgba(34,197,94,0.08),rgba(16,185,129,0.05))", borderRadius: "var(--r-lg)", border: "1px solid rgba(34,197,94,0.25)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "var(--success)" }}>Extra Payment Impact</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "var(--success)" }}>{pct}% of original interest</span>
             </div>
-          )}
-
-          <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
-            <button onClick={saveScenario} style={{ flex: 1, padding: "9px 14px", borderRadius: "var(--r-md)", background: "var(--surface2)", border: "1.5px solid var(--border)", fontSize: 12, fontWeight: 700, color: "var(--brand)", cursor: "pointer" }}>
-              Save Scenario
-            </button>
-            {scenarios.length > 0 && (
-              <button onClick={() => setScenarios([])} style={{ padding: "9px 14px", borderRadius: "var(--r-md)", background: "var(--surface2)", border: "1.5px solid var(--border)", fontSize: 12, fontWeight: 700, color: "var(--text3)", cursor: "pointer" }}>
-                Clear
-              </button>
-            )}
+            <div style={{ height: 6, borderRadius: 99, background: "var(--border)", overflow: "hidden" }}>
+              <div style={{ height: "100%", width: pct + "%", background: "linear-gradient(90deg,var(--success),var(--brand))", borderRadius: 99, transition: "width .4s" }} />
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 12, color: "var(--text3)" }}>
+              <span>Saved: <strong style={{ color: "var(--success)" }}>{fm(Math.round(summary.interestSaved))}</strong></span>
+              <span>Payoff {(summary.monthsSaved / 12).toFixed(1)} yrs early</span>
+            </div>
           </div>
+        )}
 
+        <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+          <button onClick={saveScenario} style={{ flex: 1, padding: "9px 14px", borderRadius: "var(--r-md)", background: "var(--surface2)", border: "1.5px solid var(--border)", fontSize: 12, fontWeight: 700, color: "var(--brand)", cursor: "pointer" }}>
+            Save Scenario
+          </button>
           {scenarios.length > 0 && (
-            <div style={{ marginTop: 10, borderRadius: "var(--r-lg)", border: "1.5px solid var(--border)", overflow: "hidden" }}>
-              <div style={{ padding: "9px 14px", background: "var(--surface2)", borderBottom: "1px solid var(--border)", fontSize: 12, fontWeight: 700, color: "var(--text2)" }}>
-                Saved Scenarios ({scenarios.length}/3)
-              </div>
-              {scenarios.map((s, i) => (
-                <div key={s.id} style={{ padding: "10px 14px", borderBottom: i < scenarios.length - 1 ? "1px solid var(--border)" : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <p style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{s.label}</p>
-                    <p style={{ fontSize: 11, color: "var(--text3)" }}>{sym}{s.emi}/mo · Interest: {fm(s.totalInterest)} · {s.months} months</p>
-                  </div>
-                  <button onClick={() => { setPrincipal(s.principal); setRate(s.rate); setTerm(s.term); setExtra(String(s.extra)); }}
-                    style={{ fontSize: 11, padding: "4px 10px", borderRadius: "var(--r-md)", border: "1px solid var(--border)", background: "var(--surface)", color: "var(--brand)", cursor: "pointer", fontWeight: 700 }}>
-                    Load
-                  </button>
-                </div>
-              ))}
-            </div>
+            <button onClick={() => setScenarios([])} style={{ padding: "9px 14px", borderRadius: "var(--r-md)", background: "var(--surface2)", border: "1.5px solid var(--border)", fontSize: 12, fontWeight: 700, color: "var(--text3)", cursor: "pointer" }}>
+              Clear
+            </button>
           )}
         </div>
 
-        <Panel result={res} loading={null} label="Amortization" />
-
-      </div>
-
+        {scenarios.length > 0 && (
+          <div style={{ marginTop: 10, borderRadius: "var(--r-lg)", border: "1.5px solid var(--border)", overflow: "hidden" }}>
+            <div style={{ padding: "9px 14px", background: "var(--surface2)", borderBottom: "1px solid var(--border)", fontSize: 12, fontWeight: 700, color: "var(--text2)" }}>
+              Saved Scenarios ({scenarios.length}/3)
+            </div>
+            {scenarios.map((s, i) => (
+              <div key={s.id} style={{ padding: "10px 14px", borderBottom: i < scenarios.length - 1 ? "1px solid var(--border)" : "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{s.label}</p>
+                  <p style={{ fontSize: 11, color: "var(--text3)" }}>{sym}{s.emi}/mo · Interest: {fm(s.totalInterest)} · {s.months} months</p>
+                </div>
+                <button onClick={() => { setPrincipal(s.principal); setRate(s.rate); setTerm(s.term); setExtra(String(s.extra)); }}
+                  style={{ fontSize: 11, padding: "4px 10px", borderRadius: "var(--r-md)", border: "1px solid var(--border)", background: "var(--surface)", color: "var(--brand)", cursor: "pointer", fontWeight: 700 }}>
+                  Load
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </>}
+    >
+      {/* Amortization schedule table — below the two columns */}
       {displayRows.length > 0 && (
         <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: "var(--r-xl)", overflow: "hidden" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", borderBottom: "1px solid var(--border)", background: "var(--surface2)", flexWrap: "wrap", gap: 10 }}>
@@ -2196,7 +2201,6 @@ export function AmortizationForm() {
               </button>
             </div>
           </div>
-
           {summary && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", borderBottom: "1px solid var(--border)" }}>
               {[
@@ -2212,7 +2216,6 @@ export function AmortizationForm() {
               ))}
             </div>
           )}
-
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
@@ -2262,7 +2265,6 @@ export function AmortizationForm() {
               </tbody>
             </table>
           </div>
-
           {displayRows.length > (viewMode === "yearly" ? 10 : 12) && (
             <div style={{ padding: "14px", textAlign: "center", borderTop: "1px solid var(--border)", background: "var(--surface2)" }}>
               <button onClick={() => setShowAll(!showAll)} style={{ fontSize: 13, fontWeight: 700, color: "var(--brand)", background: "transparent", border: "1.5px solid var(--brand)", borderRadius: "var(--r-md)", padding: "8px 22px", cursor: "pointer" }}>
@@ -2272,44 +2274,12 @@ export function AmortizationForm() {
           )}
         </div>
       )}
-
-      <div style={{ background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "28px 24px" }}>
-        <h2 style={{ fontSize: 18, fontWeight: 800, color: "var(--text)", marginBottom: 16 }}>What Is an Amortization Schedule?</h2>
-        <p style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.75, marginBottom: 18 }}>
-          An <strong>amortization schedule</strong> is a complete table showing each loan payment broken down into principal and interest portions. While your monthly payment stays constant, the split shifts dramatically over time — early payments are mostly interest, while late payments are mostly principal.
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 20 }}>
-          {[
-            { icon: "📐", title: "The EMI Formula", desc: "EMI = P x r x (1+r)^n / [(1+r)^n - 1] — where P = principal, r = monthly rate, n = total payments." },
-            { icon: "💡", title: "Early vs Late", desc: "In year 1 of a 30-year mortgage, ~80% of each payment is interest. By year 25, ~80% goes to principal." },
-            { icon: "⚡", title: "Extra Payment Power", desc: "Extra payments go 100% to principal. $200/mo extra on a $300K loan saves $60,000+ in interest." },
-            { icon: "📅", title: "Yearly vs Monthly", desc: "Use yearly view for a big-picture overview. Switch to monthly to see the exact breakdown of every payment." },
-          ].map((item, i) => (
-            <div key={i} style={{ padding: "14px 16px", background: "var(--surface)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
-              <div style={{ fontSize: 22, marginBottom: 8 }}>{item.icon}</div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>{item.title}</p>
-              <p style={{ fontSize: 12, color: "var(--text3)", lineHeight: 1.6 }}>{item.desc}</p>
-            </div>
-          ))}
-        </div>
-        <div style={{ padding: "14px 18px", background: "rgba(99,102,241,0.06)", borderRadius: "var(--r-lg)", border: "1px solid rgba(99,102,241,0.2)" }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "var(--brand)", marginBottom: 8 }}>Pro Tips to Save on Your Loan</p>
-          <ul style={{ paddingLeft: 18, margin: 0 }}>
-            {["Bi-weekly payments (26/year instead of 12) add one extra monthly payment per year — shaving years off your loan.",
-              "Round up your payment to the nearest $50 or $100 — a tiny change with massive long-term savings.",
-              "Apply tax refunds or bonuses as lump-sum principal payments for the fastest interest reduction.",
-              "Refinancing to a lower rate when rates drop can save thousands — compare with our Mortgage Payoff calculator."
-            ].map((tip, i) => (
-              <li key={i} style={{ fontSize: 12, color: "var(--text2)", lineHeight: 1.7, marginBottom: 4 }}>{tip}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+    </FinanceLayout>
   );
 }
 
-// ── TVM Finance Calculator ────────────────────────────────────────────
+
+
 export function TVMForm() {
   const { fm, sym } = useCurrency();
   const [solveFor, setSolveFor] = useState("FV");
