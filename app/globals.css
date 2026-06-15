@@ -15,6 +15,7 @@
 /* ── Critical: Prevent invisible text while fonts load ── */
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+img, video { max-width: 100%; height: auto; display: block; }
 body {
   margin: 0;
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
@@ -139,7 +140,7 @@ body {
    Visually mirrors the real QuickCalc widget with zero JS.
    Replaced by the real interactive widget after hydration. */
 .hero-calc-placeholder {
-  width: 300px;
+  width: min(300px, 100%);
   background: rgba(15,23,42,.94);
   border: 1.5px solid rgba(255,255,255,.12);
   border-radius: 20px;

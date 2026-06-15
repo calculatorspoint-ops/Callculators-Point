@@ -225,7 +225,7 @@ body{
 a{color:inherit;text-decoration:none;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
 input,select,textarea{font-family:inherit;}
-img,svg{display:block;max-width:100%;}
+img,svg{display:block;max-width:100%;height:auto;}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px;}
 
 /* Scrollbar */
@@ -234,6 +234,21 @@ img,svg{display:block;max-width:100%;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--text3);}
 ::selection{background:var(--brand-ll);color:var(--brand-d);}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE CONTAINER UTILITY
+   Use class="container" for any full-width section that needs
+   a centred max-width with fluid side padding.
+   Follows the min(100% - 2*gap, maxWidth) pattern — no JS needed.
+══════════════════════════════════════════════════════════════ */
+.container {
+  width: min(100% - 32px, 1200px);
+  margin-inline: auto;
+}
+
+/* ── Base responsive typography — fluid with clamp() ── */
+h1 { font-size: clamp(1.75rem, 5vw, 3.5rem); }
+p  { font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.6; }
 
 /* ══════════════════════════════════════════════════════════════
    CLS PREVENTION — explicit dimensions prevent layout shifts

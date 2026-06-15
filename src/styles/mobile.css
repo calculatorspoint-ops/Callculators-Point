@@ -33,6 +33,26 @@ html.mob-menu-open body { overflow: hidden; }
 #home-sidebar   { content-visibility: auto; contain-intrinsic-size: 0 600px; }
 
 /* ══════════════════════════════════════════════════════════════
+   MOBILE (≤480px) — container narrower gutter + full-width buttons
+   Follows the CSS-first responsive approach: no JS device detection.
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  /* Tighten container side padding from 16px → 10px on small phones */
+  .container {
+    width: min(100% - 20px, 1200px);
+  }
+
+  /* Primary action buttons go full-width below 480px */
+  .button,
+  .btn-primary,
+  .btn-ghost {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    LARGE DESKTOP (≤1440px)
 ══════════════════════════════════════════════════════════════ */
 @media (max-width: 1440px) {
