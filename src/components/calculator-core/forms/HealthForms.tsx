@@ -1755,7 +1755,76 @@ export function ConceptionForm() {
 }
 
 export function BodyTypeForm() {
-  return null;
+  const [shoulders, setShoulders] = useState("42");
+  const [bust, setBust] = useState("38");
+  const [waist, setWaist] = useState("30");
+  const [hips, setHips] = useState("40");
+  const [unit, setUnit] = useState("in");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const s = +shoulders || 0;
+    const b = +bust || 0;
+    const w = +waist || 0;
+    const h = +hips || 0;
+    if (!s || !b || !w || !h) { setRes(null); return; }
+
+    const upper = Math.max(s, b);
+    const waistToHip = w / h;
+    const hipVsUpper = (h - upper) / upper;
+    const upperVsHip = (upper - h) / h;
+    let bodyType = "Rectangle";
+    let guidance = "Shoulders, bust, and hips are relatively balanced with moderate waist definition.";
+
+    if (upperVsHip > 0.05 && w / upper < 0.75) {
+      bodyType = "Inverted Triangle";
+      guidance = "Upper body measurements are wider than hips. Balance often comes from adding visual volume near the lower body.";
+    } else if (hipVsUpper > 0.05 && waistToHip < 0.8) {
+      bodyType = "Triangle / Pear";
+      guidance = "Hips measure wider than the upper body with a defined waist.";
+    } else if (w / upper < 0.75 && w / h < 0.75) {
+      bodyType = "Hourglass";
+      guidance = "Upper body and hips are balanced with strong waist definition.";
+    } else if (w / upper > 0.85 && w / h > 0.85) {
+      bodyType = "Round / Apple";
+      guidance = "Waist measurement is close to upper body and hip measurements.";
+    }
+
+    setRes(buildResult("Estimated Body Type", bodyType,
+      [
+        { label: "Body Type", value: bodyType, highlight: true },
+        { label: "Waist-to-Hip Ratio", value: waistToHip.toFixed(2) },
+        { label: "Upper vs Hips", value: `${((upperVsHip) * 100).toFixed(1)}%` },
+        { label: "Units", value: unit },
+      ],
+      [
+        { type: "info", msg: guidance },
+        { type: "tip", msg: "This is a shape estimate for clothing fit, not a medical or fitness diagnosis." },
+      ],
+      null,
+      [
+        { label: "Shoulders", value: `${s} ${unit}` },
+        { label: "Bust / Chest", value: `${b} ${unit}` },
+        { label: "Waist", value: `${w} ${unit}` },
+        { label: "Hips", value: `${h} ${unit}` },
+      ]
+    ));
+  }, [shoulders, bust, waist, hips, unit]);
+
+  return (
+    <div>
+      <Tabs tabs={["Inches", "Centimeters"]} active={unit === "in" ? "Inches" : "Centimeters"} onChange={v => setUnit(v === "Inches" ? "in" : "cm")} />
+      <Row2>
+        <N label="Shoulders" id="btshoulders" value={shoulders} onChange={setShoulders} unit={unit} />
+        <N label="Bust / Chest" id="btbust" value={bust} onChange={setBust} unit={unit} />
+      </Row2>
+      <Row2>
+        <N label="Waist" id="btwaist" value={waist} onChange={setWaist} unit={unit} />
+        <N label="Hips" id="bthips" value={hips} onChange={setHips} unit={unit} />
+      </Row2>
+      {res && <Panel result={res} loading={null} label="Body Type" />}
+    </div>
+  );
 }
 
 export function GFRForm() {

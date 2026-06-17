@@ -10,6 +10,7 @@ const Education = {
   RequiredGrade: lazy(() => import("../../../modules/education/required-grade/RequiredGradeCalculator").then((m: any) => ({ default: m.RequiredGradeCalculator || (() => null) }))),
   FinalGrade: lazy(() => import("../../../modules/education/required-grade/RequiredGradeCalculator").then((m: any) => ({ default: m.RequiredGradeCalculator || (() => null) }))),
   GPA: lazy(() => import("../../../modules/education/gpa/GPACalculator").then((m: any) => ({ default: m.GPACalculator || (() => null) }))),
+  CGPA: lazy(() => import('../forms/MathForms').then((m: any) => ({ default: m.CGPAForm || (() => null) }))),
 
   // ── HIGH PRIORITY (New) ───────────────────────────────────────────────────
   WeightedGrade: lazy(() => import("../../../modules/education/weighted-grade/WeightedGradeCalculator").then((m: any) => ({ default: m.WeightedGradeCalculator || (() => null) }))),
@@ -44,6 +45,7 @@ export const educationForms = {
   "target-gpa-calculator":             Education.TargetGPA,
   "required-grade-calculator":         Education.RequiredGrade,
   "gpa-calculator":                    Education.GPA,
+  "cgpa-percentage-calculator":        Education.CGPA,
 
   // ── High Priority (New) ───────────────────────────────────────────────────
   "weighted-grade-calculator":         Education.WeightedGrade,

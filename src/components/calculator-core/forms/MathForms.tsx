@@ -1117,5 +1117,405 @@ export function DistanceForm() {
   );
 }
 
-// Default export
+export function SurfaceAreaForm() {
+  const [shape, setShape] = useState("sphere");
+  const [r, setR] = useState("6");
+  const [h, setH] = useState("10");
+  const [l, setL] = useState("8");
+  const [w, setW] = useState("5");
+  const [res, setRes] = useState(null);
 
+  useEffect(() => {
+    const rv = +r || 0, hv = +h || 0, lv = +l || 0, wv = +w || 0;
+    let area = 0, formula = "", label = "";
+    if (shape === "sphere") { area = 4 * Math.PI * rv ** 2; formula = "4 x pi x r^2"; label = "Sphere"; }
+    if (shape === "cylinder") { area = 2 * Math.PI * rv * (rv + hv); formula = "2 x pi x r x (r + h)"; label = "Cylinder"; }
+    if (shape === "cone") { const s = Math.sqrt(rv ** 2 + hv ** 2); area = Math.PI * rv * (rv + s); formula = "pi x r x (r + slant height)"; label = "Cone"; }
+    if (shape === "cube") { area = 6 * lv ** 2; formula = "6 x side^2"; label = "Cube"; }
+    if (shape === "cuboid") { area = 2 * (lv * wv + lv * hv + wv * hv); formula = "2 x (lw + lh + wh)"; label = "Rectangular Prism"; }
+    if (!area) { setRes(null); return; }
+    setRes(buildResult(`${label} Surface Area`, area.toFixed(4) + " sq units",
+      [
+        { label: "Surface Area", value: area.toFixed(4), highlight: true },
+        { label: "Shape", value: label },
+        { label: "Formula", value: formula },
+      ],
+      [{ type: "info", msg: `Formula used: ${formula}.` }],
+      null,
+      [{ label: "Rounded Result", value: area.toFixed(4) + " square units" }]
+    ));
+  }, [shape, r, h, l, w]);
+
+  return (
+    <div>
+      <Sel label="Shape" id="sashape" value={shape} onChange={setShape} opts={[
+        { v: "sphere", l: "Sphere" }, { v: "cylinder", l: "Cylinder" }, { v: "cone", l: "Cone" },
+        { v: "cube", l: "Cube" }, { v: "cuboid", l: "Rectangular Prism" },
+      ]} />
+      {["sphere", "cylinder", "cone"].includes(shape) && <N label="Radius" id="sar" value={r} onChange={setR} unit="u" />}
+      {["cylinder", "cone", "cuboid"].includes(shape) && <N label="Height" id="sah" value={h} onChange={setH} unit="u" />}
+      {["cube", "cuboid"].includes(shape) && <Row2><N label="Length / Side" id="sal" value={l} onChange={setL} unit="u" /><N label="Width" id="saw" value={w} onChange={setW} unit="u" /></Row2>}
+      {res && <Panel result={res} loading={null} label="Surface Area" />}
+    </div>
+  );
+}
+
+export function ExponentForm() {
+  const [base, setBase] = useState("2");
+  const [power, setPower] = useState("10");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const b = +base, p = +power;
+    if (!isFinite(b) || !isFinite(p)) { setRes(null); return; }
+    const value = b ** p;
+    setRes(buildResult("Result", value.toLocaleString(undefined, { maximumFractionDigits: 8 }),
+      [
+        { label: "Expression", value: `${b}^${p}` },
+        { label: "Scientific Notation", value: value.toExponential(6) },
+        { label: "Reciprocal", value: value ? (1 / value).toExponential(6) : "Undefined" },
+      ],
+      [{ type: "tip", msg: p >= 0 ? "Positive exponents multiply the base repeatedly." : "Negative exponents return the reciprocal power." }],
+      null,
+      [{ label: "Formula", value: `${b}^${p} = ${value}` }]
+    ));
+  }, [base, power]);
+
+  return (
+    <div>
+      <Row2>
+        <N label="Base" id="expbase" value={base} onChange={setBase} />
+        <N label="Exponent" id="exppower" value={power} onChange={setPower} />
+      </Row2>
+      {res && <Panel result={res} loading={null} label="Exponent" />}
+    </div>
+  );
+}
+
+export function RootForm() {
+  const [value, setValue] = useState("81");
+  const [degree, setDegree] = useState("2");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const v = +value, n = +degree;
+    if (!n || !isFinite(v) || !isFinite(n)) { setRes(null); return; }
+    const root = v < 0 && Math.round(n) % 2 === 1 ? -((-v) ** (1 / n)) : v ** (1 / n);
+    if (!isFinite(root)) { setRes(null); return; }
+    setRes(buildResult(`${n}th Root`, root.toFixed(8).replace(/\.?0+$/, ""),
+      [
+        { label: "Root", value: root.toFixed(8).replace(/\.?0+$/, ""), highlight: true },
+        { label: "Check", value: `${root.toFixed(4)}^${n} = ${(root ** n).toFixed(4)}` },
+        { label: "As Power", value: `${v}^(1/${n})` },
+      ],
+      [{ type: "info", msg: "For negative values, odd integer roots are supported." }],
+      null,
+      [{ label: "Formula", value: `root = ${v}^(1/${n})` }]
+    ));
+  }, [value, degree]);
+
+  return (
+    <div>
+      <Row2>
+        <N label="Number" id="rootvalue" value={value} onChange={setValue} />
+        <N label="Root Degree" id="rootdegree" value={degree} onChange={setDegree} hint="2 = square root, 3 = cube root" />
+      </Row2>
+      {res && <Panel result={res} loading={null} label="Root" />}
+    </div>
+  );
+}
+
+export function BinaryForm() {
+  const [mode, setMode] = useState("convert");
+  const [value, setValue] = useState("101010");
+  const [a, setA] = useState("1010");
+  const [b, setB] = useState("11");
+  const [op, setOp] = useState("+");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    if (mode === "convert") {
+      const normalized = String(value).trim();
+      const decimal = /^[01]+$/.test(normalized) ? parseInt(normalized, 2) : Number(normalized);
+      if (!isFinite(decimal)) { setRes(null); return; }
+      setRes(buildResult("Decimal", String(decimal),
+        [
+          { label: "Binary", value: decimal.toString(2), highlight: true },
+          { label: "Decimal", value: decimal.toString(10) },
+          { label: "Hex", value: decimal.toString(16).toUpperCase() },
+          { label: "Octal", value: decimal.toString(8) },
+        ],
+        [], null, [{ label: "Input", value: normalized }]
+      ));
+      return;
+    }
+    const av = parseInt(a, 2), bv = parseInt(b, 2);
+    if (isNaN(av) || isNaN(bv)) { setRes(null); return; }
+    const result = op === "+" ? av + bv : op === "-" ? av - bv : op === "x" ? av * bv : Math.trunc(av / bv);
+    setRes(buildResult("Binary Result", result.toString(2),
+      [
+        { label: "Binary", value: result.toString(2), highlight: true },
+        { label: "Decimal", value: result },
+        { label: "Hex", value: result.toString(16).toUpperCase() },
+      ],
+      [], null, [{ label: "Operation", value: `${a} ${op} ${b}` }]
+    ));
+  }, [mode, value, a, b, op]);
+
+  return (
+    <div>
+      <Tabs tabs={["Convert", "Arithmetic"]} active={mode === "convert" ? "Convert" : "Arithmetic"} onChange={v => setMode(v === "Convert" ? "convert" : "arithmetic")} />
+      {mode === "convert" ? (
+        <N label="Binary or Decimal Value" id="binvalue" value={value} onChange={setValue} />
+      ) : (
+        <>
+          <Row2><N label="Binary A" id="bina" value={a} onChange={setA} /><N label="Binary B" id="binb" value={b} onChange={setB} /></Row2>
+          <Sel label="Operation" id="binop" value={op} onChange={setOp} opts={[{ v: "+", l: "Add" }, { v: "-", l: "Subtract" }, { v: "x", l: "Multiply" }, { v: "/", l: "Divide" }]} />
+        </>
+      )}
+      {res && <Panel result={res} loading={null} label="Binary" />}
+    </div>
+  );
+}
+
+export function NumberSequenceForm() {
+  const [seq, setSeq] = useState("2, 4, 6, 8");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const nums = String(seq).split(/[,\s]+/).map(Number).filter(n => !isNaN(n));
+    if (nums.length < 3) { setRes(null); return; }
+    const diffs = nums.slice(1).map((n, i) => n - nums[i]);
+    const ratios = nums.slice(1).map((n, i) => nums[i] ? n / nums[i] : NaN);
+    const arithmetic = diffs.every(d => Math.abs(d - diffs[0]) < 1e-9);
+    const geometric = ratios.every(r => isFinite(r) && Math.abs(r - ratios[0]) < 1e-9);
+    const next = arithmetic ? nums[nums.length - 1] + diffs[0] : geometric ? nums[nums.length - 1] * ratios[0] : null;
+    setRes(buildResult("Sequence Type", arithmetic ? "Arithmetic" : geometric ? "Geometric" : "Custom / Mixed",
+      [
+        { label: "Next Term", value: next == null ? "No simple pattern" : Number(next.toFixed(8)), highlight: next != null },
+        { label: "Common Difference", value: arithmetic ? diffs[0] : "Varies" },
+        { label: "Common Ratio", value: geometric ? ratios[0].toFixed(6) : "Varies" },
+        { label: "Terms", value: nums.length },
+      ],
+      [{ type: next == null ? "warn" : "tip", msg: next == null ? "This sequence does not follow a simple arithmetic or geometric pattern." : `Predicted next term is ${next}.` }],
+      null,
+      nums.map((n, i) => ({ label: `Term ${i + 1}`, value: n }))
+    ));
+  }, [seq]);
+
+  return (
+    <div>
+      <L t="Sequence Terms" id="seqterms" />
+      <textarea id="seqterms" value={seq} onChange={e => setSeq(e.target.value)} rows={4}
+        style={{ width: "100%", padding: "12px 14px", background: "var(--surface2)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)", resize: "vertical", outline: "none", marginBottom: 14 }} />
+      {res && <Panel result={res} loading={null} label="Number Sequence" />}
+    </div>
+  );
+}
+
+export function ProbabilityForm() {
+  const [favorable, setFavorable] = useState("3");
+  const [total, setTotal] = useState("10");
+  const [events, setEvents] = useState("2");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const f = +favorable, t = +total, e = +events;
+    if (!t || f < 0 || f > t) { setRes(null); return; }
+    const p = f / t;
+    const complement = 1 - p;
+    const atLeastOnce = 1 - complement ** Math.max(1, e || 1);
+    setRes(buildResult("Probability", (p * 100).toFixed(4) + "%",
+      [
+        { label: "Probability", value: (p * 100).toFixed(4) + "%", highlight: true },
+        { label: "Decimal", value: p.toFixed(6) },
+        { label: "Odds For", value: `${f}:${t - f}` },
+        { label: `At Least Once in ${e} Trials`, value: (atLeastOnce * 100).toFixed(4) + "%" },
+      ],
+      [{ type: "info", msg: `P(event) = favorable outcomes / total outcomes = ${f}/${t}.` }],
+      null,
+      [{ label: "Complement", value: (complement * 100).toFixed(4) + "%" }]
+    ));
+  }, [favorable, total, events]);
+
+  return (
+    <div>
+      <Row2>
+        <N label="Favorable Outcomes" id="probfav" value={favorable} onChange={setFavorable} />
+        <N label="Total Outcomes" id="probtotal" value={total} onChange={setTotal} />
+      </Row2>
+      <N label="Repeated Trials" id="probtrials" value={events} onChange={setEvents} hint="Used for at-least-once probability" />
+      {res && <Panel result={res} loading={null} label="Probability" />}
+    </div>
+  );
+}
+
+export function ConfidenceIntervalForm() {
+  const [mean, setMean] = useState("50");
+  const [std, setStd] = useState("12");
+  const [n, setN] = useState("100");
+  const [level, setLevel] = useState("95");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const m = +mean, s = +std, sample = +n;
+    const z = level === "99" ? 2.576 : level === "90" ? 1.645 : 1.96;
+    if (!sample || !s) { setRes(null); return; }
+    const margin = z * s / Math.sqrt(sample);
+    setRes(buildResult(`${level}% Confidence Interval`, `${(m - margin).toFixed(4)} to ${(m + margin).toFixed(4)}`,
+      [
+        { label: "Lower Bound", value: (m - margin).toFixed(4) },
+        { label: "Upper Bound", value: (m + margin).toFixed(4) },
+        { label: "Margin of Error", value: margin.toFixed(4), highlight: true },
+        { label: "Z Critical", value: z },
+      ],
+      [{ type: "info", msg: `CI = mean +/- z x (standard deviation / sqrt(n)).` }],
+      null,
+      [{ label: "Standard Error", value: (s / Math.sqrt(sample)).toFixed(4) }]
+    ));
+  }, [mean, std, n, level]);
+
+  return (
+    <div>
+      <Row3>
+        <N label="Sample Mean" id="cimean" value={mean} onChange={setMean} />
+        <N label="Standard Deviation" id="cistd" value={std} onChange={setStd} />
+        <N label="Sample Size" id="cin" value={n} onChange={setN} />
+      </Row3>
+      <Sel label="Confidence Level" id="cilevel" value={level} onChange={setLevel} opts={[{ v: "90", l: "90%" }, { v: "95", l: "95%" }, { v: "99", l: "99%" }]} />
+      {res && <Panel result={res} loading={null} label="Confidence Interval" />}
+    </div>
+  );
+}
+
+export function SampleSizeForm() {
+  const [confidence, setConfidence] = useState("95");
+  const [margin, setMargin] = useState("5");
+  const [population, setPopulation] = useState("");
+  const [proportion, setProportion] = useState("50");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const z = confidence === "99" ? 2.576 : confidence === "90" ? 1.645 : 1.96;
+    const e = (+margin || 0) / 100;
+    const p = (+proportion || 50) / 100;
+    const pop = +population || 0;
+    if (!e || !p) { setRes(null); return; }
+    const raw = (z ** 2 * p * (1 - p)) / (e ** 2);
+    const adjusted = pop > 0 ? raw / (1 + (raw - 1) / pop) : raw;
+    setRes(buildResult("Required Sample Size", Math.ceil(adjusted).toLocaleString(),
+      [
+        { label: "Sample Size", value: Math.ceil(adjusted).toLocaleString(), highlight: true },
+        { label: "Unlimited Population", value: Math.ceil(raw).toLocaleString() },
+        { label: "Confidence", value: confidence + "%" },
+        { label: "Margin of Error", value: margin + "%" },
+      ],
+      [{ type: "tip", msg: "Use 50% expected proportion when unsure; it produces the most conservative sample size." }],
+      null,
+      [{ label: "Formula", value: "n = z^2 x p(1-p) / e^2" }]
+    ));
+  }, [confidence, margin, population, proportion]);
+
+  return (
+    <div>
+      <Row2>
+        <Sel label="Confidence Level" id="ssconf" value={confidence} onChange={setConfidence} opts={[{ v: "90", l: "90%" }, { v: "95", l: "95%" }, { v: "99", l: "99%" }]} />
+        <N label="Margin of Error" id="ssmoe" value={margin} onChange={setMargin} unit="%" />
+      </Row2>
+      <Row2>
+        <N label="Expected Proportion" id="ssprop" value={proportion} onChange={setProportion} unit="%" />
+        <N label="Population Size (optional)" id="sspop" value={population} onChange={setPopulation} />
+      </Row2>
+      {res && <Panel result={res} loading={null} label="Sample Size" />}
+    </div>
+  );
+}
+
+export function MatrixForm() {
+  const [a, setA] = useState("1,2;3,4");
+  const [b, setB] = useState("5,6;7,8");
+  const [op, setOp] = useState("add");
+  const [res, setRes] = useState(null);
+
+  const parseMatrix = (text) => String(text).split(";").map(row => row.split(/[,\s]+/).filter(Boolean).map(Number));
+  const formatMatrix = (m) => m.map(row => row.map(v => Number(v.toFixed(4))).join(", ")).join(" ; ");
+
+  useEffect(() => {
+    try {
+      const A = parseMatrix(a), B = parseMatrix(b);
+      const rows = A.length, cols = A[0].length;
+      let out;
+      if (op === "add" || op === "subtract") {
+        out = A.map((row, i) => row.map((v, j) => op === "add" ? v + B[i][j] : v - B[i][j]));
+      } else if (op === "multiply") {
+        out = A.map((row) => B[0].map((_, j) => row.reduce((sum, v, k) => sum + v * B[k][j], 0)));
+      } else {
+        out = [[A[0][0] * A[1][1] - A[0][1] * A[1][0]]];
+      }
+      setRes(buildResult("Matrix Result", formatMatrix(out),
+        [
+          { label: "Rows", value: rows },
+          { label: "Columns", value: cols },
+          { label: "Operation", value: op },
+        ],
+        [{ type: "info", msg: "Enter rows separated by semicolons, values separated by commas." }],
+        null,
+        out.map((row, i) => ({ label: `Row ${i + 1}`, value: row.join(", ") }))
+      ));
+    } catch {
+      setRes(null);
+    }
+  }, [a, b, op]);
+
+  return (
+    <div>
+      <Sel label="Operation" id="matrixop" value={op} onChange={setOp} opts={[{ v: "add", l: "A + B" }, { v: "subtract", l: "A - B" }, { v: "multiply", l: "A x B" }, { v: "determinant", l: "det(A) 2x2" }]} />
+      <L t="Matrix A" id="matrixa" />
+      <textarea id="matrixa" value={a} onChange={e => setA(e.target.value)} rows={3}
+        style={{ width: "100%", padding: "12px 14px", background: "var(--surface2)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)", resize: "vertical", outline: "none", marginBottom: 14 }} />
+      {op !== "determinant" && <>
+        <L t="Matrix B" id="matrixb" />
+        <textarea id="matrixb" value={b} onChange={e => setB(e.target.value)} rows={3}
+          style={{ width: "100%", padding: "12px 14px", background: "var(--surface2)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)", resize: "vertical", outline: "none", marginBottom: 14 }} />
+      </>}
+      {res && <Panel result={res} loading={null} label="Matrix" />}
+    </div>
+  );
+}
+
+export function RandomNumberForm() {
+  const [min, setMin] = useState("1");
+  const [max, setMax] = useState("100");
+  const [count, setCount] = useState("5");
+  const [decimals, setDecimals] = useState("0");
+  const [res, setRes] = useState(null);
+
+  const generate = useCallback(() => {
+    const lo = +min, hi = +max, c = Math.max(1, Math.min(100, Math.round(+count || 1))), d = Math.max(0, Math.min(8, Math.round(+decimals || 0)));
+    const nums = Array.from({ length: c }, () => +(lo + Math.random() * (hi - lo)).toFixed(d));
+    setRes(buildResult("Random Numbers", nums.join(", "),
+      [
+        { label: "Count", value: c },
+        { label: "Minimum", value: Math.min(...nums) },
+        { label: "Maximum", value: Math.max(...nums) },
+        { label: "Decimals", value: d },
+      ],
+      [{ type: "info", msg: "Generated locally in your browser using JavaScript randomness." }],
+      null,
+      nums.map((n, i) => ({ label: `#${i + 1}`, value: n }))
+    ));
+  }, [min, max, count, decimals]);
+
+  useEffect(() => { generate(); }, [generate]);
+
+  return (
+    <div>
+      <Row2><N label="Minimum" id="rngmin" value={min} onChange={setMin} /><N label="Maximum" id="rngmax" value={max} onChange={setMax} /></Row2>
+      <Row2><N label="How Many Numbers" id="rngcount" value={count} onChange={setCount} /><N label="Decimal Places" id="rngdecimals" value={decimals} onChange={setDecimals} /></Row2>
+      <button type="button" onClick={generate} className="calculate-btn" style={{ width: "100%", marginBottom: 16 }}>Generate Numbers</button>
+      {res && <Panel result={res} loading={null} label="Random Number" />}
+    </div>
+  );
+}
+
+// Default export

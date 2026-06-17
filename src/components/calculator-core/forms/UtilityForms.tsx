@@ -677,5 +677,98 @@ export function RandomForm(){
 
 // ── Time Zone ─────────────────────────────────────────────────────────
 export function TimeZoneForm() {
-  return null;
+  const zones = [
+    { id: "America/New_York", label: "New York (ET)" },
+    { id: "America/Chicago", label: "Chicago (CT)" },
+    { id: "America/Denver", label: "Denver (MT)" },
+    { id: "America/Los_Angeles", label: "Los Angeles (PT)" },
+    { id: "Europe/London", label: "London" },
+    { id: "Europe/Berlin", label: "Berlin" },
+    { id: "Asia/Dubai", label: "Dubai" },
+    { id: "Asia/Karachi", label: "Karachi" },
+    { id: "Asia/Kolkata", label: "India" },
+    { id: "Asia/Singapore", label: "Singapore" },
+    { id: "Asia/Tokyo", label: "Tokyo" },
+    { id: "Australia/Sydney", label: "Sydney" },
+  ];
+  const today = new Date().toISOString().slice(0, 10);
+  const [date, setDate] = useState(today);
+  const [time, setTime] = useState("09:00");
+  const [fromZone, setFromZone] = useState("America/New_York");
+  const [toZone, setToZone] = useState("Asia/Karachi");
+  const [res, setRes] = useState(null);
+
+  const formatInZone = (dateObj, zone) => new Intl.DateTimeFormat("en-US", {
+    timeZone: zone,
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZoneName: "short",
+  }).format(dateObj);
+
+  const offsetMinutes = (dateObj, zone) => {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: zone,
+      hour12: false,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }).formatToParts(dateObj).reduce((acc, part) => {
+      acc[part.type] = part.value;
+      return acc;
+    }, {});
+    const asUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
+    return Math.round((asUtc - dateObj.getTime()) / 60000);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const [year, month, day] = date.split("-").map(Number);
+      const [hour, minute] = time.split(":").map(Number);
+      if (!year || !month || !day || isNaN(hour) || isNaN(minute)) { setRes(null); return; }
+
+      const approxUtc = new Date(Date.UTC(year, month - 1, day, hour, minute));
+      const fromOffset = offsetMinutes(approxUtc, fromZone);
+      const utc = new Date(approxUtc.getTime() - fromOffset * 60000);
+      const toOffset = offsetMinutes(utc, toZone);
+      const diffHours = (toOffset - fromOffset) / 60;
+
+      setRes(buildResult("Converted Time", formatInZone(utc, toZone),
+        [
+          { label: "From", value: formatInZone(utc, fromZone) },
+          { label: "To", value: formatInZone(utc, toZone), highlight: true },
+          { label: "Time Difference", value: `${diffHours >= 0 ? "+" : ""}${diffHours} hours` },
+          { label: "UTC Time", value: formatInZone(utc, "UTC") },
+        ],
+        [{ type: "info", msg: "Uses browser Intl time zone data, including daylight saving time where supported." }],
+        null,
+        [{ label: "IANA From Zone", value: fromZone }, { label: "IANA To Zone", value: toZone }]
+      ));
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [date, time, fromZone, toZone]);
+
+  return (
+    <div>
+      <Row2>
+        <N label="Date" id="tzdate" value={date} onChange={setDate} type="date" />
+        <N label="Time" id="tztime" value={time} onChange={setTime} type="time" />
+      </Row2>
+      <Row2>
+        <Sel label="From Time Zone" id="tzfrom" value={fromZone} onChange={setFromZone} opts={zones.map(z => ({ v: z.id, l: z.label }))} />
+        <Sel label="To Time Zone" id="tzto" value={toZone} onChange={setToZone} opts={zones.map(z => ({ v: z.id, l: z.label }))} />
+      </Row2>
+      <button type="button" onClick={() => { setFromZone(toZone); setToZone(fromZone); }} className="calculate-btn" style={{ width: "100%", marginBottom: 16 }}>
+        Swap Time Zones
+      </button>
+      {res && <Panel result={res} loading={null} label="Time Zone" />}
+    </div>
+  );
 }

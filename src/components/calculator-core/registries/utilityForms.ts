@@ -21,6 +21,7 @@ const Utility = {
   DataUnitForm:   lazy(() => import('../forms/UtilityForms').then((m: any) => ({ default: () => m.UnitForm({ type: "data" }) }))),
   AreaUnitForm:   lazy(() => import('../forms/UtilityForms').then((m: any) => ({ default: () => m.UnitForm({ type: "area" }) }))),
   TimeZoneForm: lazy(() => import('../forms/UtilityForms').then((m: any) => ({ default: m.TimeZoneForm || (() => null) }))),
+  ReadingTimeForm: lazy(() => import('../forms/MathForms').then((m: any) => ({ default: m.ReadingTimeForm || (() => null) }))),
 };
 
 export const utilityForms = {
@@ -43,4 +44,5 @@ export const utilityForms = {
   "base64-encoder":                    Utility.Base64Form,
   "time-zone-converter":               Utility.TimeZoneForm,
   "ev-charging-calculator":            Utility.EVChargingForm,
+  "reading-time-calculator":           Utility.ReadingTimeForm,
 };
