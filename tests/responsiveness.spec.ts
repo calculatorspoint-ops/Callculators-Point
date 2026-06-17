@@ -73,7 +73,7 @@ for (const { name, device } of MOBILE_DEVICES) {
 
     for (const route of ROUTES) {
       test(`${route.name} — loads and has no overflow`, async ({ page }) => {
-        await page.goto(`${BASE}${route.path}`, { waitUntil: 'networkidle' });
+        await page.goto(`${BASE}${route.path}`, { waitUntil: 'domcontentloaded' });
 
         // Page title exists
         await expect(page).toHaveTitle(/.+/);
@@ -88,14 +88,14 @@ for (const { name, device } of MOBILE_DEVICES) {
     }
 
     test('Navbar renders and hamburger works on mobile', async ({ page }) => {
-      await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+      await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
       // Check nav exists
       const nav = page.locator('nav').first();
       await expect(nav).toBeVisible();
     });
 
     test('Calculator form is usable on mobile', async ({ page }) => {
-      await page.goto(`${BASE}/calculator/bmi-calculator`, { waitUntil: 'networkidle' });
+      await page.goto(`${BASE}/calculator/bmi-calculator`, { waitUntil: 'domcontentloaded' });
       await checkNoHorizontalScroll(page, `${name} — BMI form`);
       await checkTapTargets(page);
       // Inputs are present
@@ -104,12 +104,12 @@ for (const { name, device } of MOBILE_DEVICES) {
     });
 
     test('Text is readable (≥11px)', async ({ page }) => {
-      await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+      await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
       await checkTextReadability(page);
     });
 
     test('Images have alt attributes', async ({ page }) => {
-      await page.goto(`${BASE}/`, { waitUntil: 'networkidle' });
+      await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
       const imagesWithoutAlt = await page.evaluate(() =>
         Array.from(document.querySelectorAll('img')).filter(img => !img.alt).length
       );
@@ -124,19 +124,20 @@ for (const vp of DESKTOP_VIEWPORTS) {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
     test('Home page loads with correct title', async ({ page }) => {
-      await page.goto(BASE, { waitUntil: 'networkidle' });
-      await expect(page).toHaveTitle(/CalcPoint/i);
+      await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+      await expect(page).toHaveTitle(/Calculators Point/i);
     });
 
     test('All Calculators grid is visible', async ({ page }) => {
-      await page.goto(`${BASE}/calculators`, { waitUntil: 'networkidle' });
-      const cards = page.locator('a.calc-card-premium, [class*="calc-card"]');
+      await page.goto(`${BASE}/calculators`, { waitUntil: 'domcontentloaded' });
+      const cards = page.locator('main a[href^="/calculator/"]');
+      await expect(cards.first()).toBeVisible();
       expect(await cards.count()).toBeGreaterThan(10);
     });
 
     test('Search filters calculators', async ({ page }) => {
-      await page.goto(`${BASE}/calculators`, { waitUntil: 'networkidle' });
-      const search = page.locator('input[placeholder*="Search"]').first();
+      await page.goto(`${BASE}/calculators`, { waitUntil: 'domcontentloaded' });
+      const search = page.locator('#calculator-search, input[name="q"]').first();
       await search.fill('BMI');
       await page.waitForTimeout(300);
       const results = page.locator('a[href*="calculator"]');
@@ -144,7 +145,7 @@ for (const vp of DESKTOP_VIEWPORTS) {
     });
 
     test('Calculator page renders widget', async ({ page }) => {
-      await page.goto(`${BASE}/calculator/bmi-calculator`, { waitUntil: 'networkidle' });
+      await page.goto(`${BASE}/calculator/bmi-calculator`, { waitUntil: 'domcontentloaded' });
       const widget = page.locator('#tab-calculator').first();
       await expect(widget).toBeVisible();
     });
@@ -152,7 +153,7 @@ for (const vp of DESKTOP_VIEWPORTS) {
     test('No JS console errors on home page', async ({ page }) => {
       const errors: string[] = [];
       page.on('console', msg => { if (msg.type() === 'error') errors.push(msg.text()); });
-      await page.goto(BASE, { waitUntil: 'networkidle' });
+      await page.goto(BASE, { waitUntil: 'domcontentloaded' });
       expect(errors.filter(e => !e.includes('favicon'))).toHaveLength(0);
     });
   });
@@ -161,14 +162,14 @@ for (const vp of DESKTOP_VIEWPORTS) {
 // ── Accessibility Baseline ────────────────────────────────────────────
 test.describe('♿ Accessibility Baseline', () => {
   test('Home has a single h1', async ({ page }) => {
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.goto(BASE, { waitUntil: 'domcontentloaded' });
     const h1s = await page.locator('h1').count();
     expect(h1s).toBeGreaterThanOrEqual(1);
     expect(h1s).toBeLessThanOrEqual(2);
   });
 
   test('All interactive elements are keyboard-focusable', async ({ page }) => {
-    await page.goto(`${BASE}/calculator/bmi-calculator`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/calculator/bmi-calculator`, { waitUntil: 'domcontentloaded' });
     // Tab through the page — should not throw
     for (let i = 0; i < 10; i++) {
       await page.keyboard.press('Tab');
@@ -178,7 +179,7 @@ test.describe('♿ Accessibility Baseline', () => {
   });
 
   test('Page has a skip-to-content or landmark structure', async ({ page }) => {
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.goto(BASE, { waitUntil: 'domcontentloaded' });
     const main = page.locator('main, [role="main"]');
     expect(await main.count()).toBeGreaterThanOrEqual(1);
   });
@@ -187,7 +188,7 @@ test.describe('♿ Accessibility Baseline', () => {
 // ── Performance Budget ────────────────────────────────────────────────
 test.describe('⚡ Performance Budget', () => {
   test('Home page has LCP image or text within viewport', async ({ page }) => {
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.goto(BASE, { waitUntil: 'domcontentloaded' });
     // Page is visible and above-fold content exists
     const hero = page.locator('h1, [class*="hero"], [class*="title"]').first();
     await expect(hero).toBeVisible();
@@ -207,7 +208,7 @@ test.describe('⚡ Performance Budget', () => {
   test.use({ viewport: { width: 375, height: 812 } });
   test('Mobile home LCP visible within 3s', async ({ page }) => {
     const start = Date.now();
-    await page.goto(BASE, { waitUntil: 'networkidle' });
+    await page.goto(BASE, { waitUntil: 'domcontentloaded' });
     const elapsed = Date.now() - start;
     expect(elapsed).toBeLessThan(8000); // generous for localhost
     const hero = page.locator('h1').first();

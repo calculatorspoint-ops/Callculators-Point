@@ -59,6 +59,12 @@ html.mob-menu-open body { overflow: hidden; }
   .calc-layout   { max-width: 100%; }
   .home-wrap     { max-width: 100%; }
   .hero-inner    { max-width: 100%; }
+  .navbar-inner  { max-width: calc(100vw - 24px); }
+  .navbar-nav .nav-link { padding-left: 8px; padding-right: 8px; font-size: 12px; }
+  .navbar-nav .nav-link-all { padding-left: 10px; padding-right: 10px; }
+  .navbar-search-box { width: clamp(150px, 14vw, 200px); }
+  .navbar-search-box:focus-within { width: clamp(180px, 18vw, 240px); }
+  .navbar-controls { flex: 0 1 auto; min-width: 0; }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -72,6 +78,11 @@ html.mob-menu-open body { overflow: hidden; }
   .calc-grid-premium   { padding: 32px 16px; }
   .footer-inner        { padding: 0 16px; }
   .navbar-search-box   { width: 180px; }
+  html .navbar-nav           { display: none !important; }
+  html .navbar-hamburger     { display: flex !important; }
+  html .navbar-search-desktop{ display: none !important; }
+  html .mobile-search-btn    { display: flex !important; }
+  html .desktop-only         { display: none !important; }
 }
 
 /* ══════════════════════════════════════════════════════════════

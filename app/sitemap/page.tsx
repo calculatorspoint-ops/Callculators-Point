@@ -162,7 +162,7 @@ export default function SitemapPage() {
   const totalPages = sections.reduce((sum, section) => sum + section.links.length, 0);
 
   return (
-    <main style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', paddingBottom: 64 }}>
+    <main className="sitemap-ssr" style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', paddingBottom: 64 }}>
       <JsonLd data={[breadcrumb, webPage, categoryList]} idPrefix="sitemap" />
 
       <section className="page-hero">
@@ -173,8 +173,8 @@ export default function SitemapPage() {
         </div>
       </section>
 
-      <div className="page-wrap" style={{ maxWidth: 1120 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 24 }}>
+      <div className="page-wrap sitemap-wrap-ssr" style={{ maxWidth: 1120 }}>
+        <div className="sitemap-stats-ssr" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 24 }}>
           {[
             { value: totalPages.toLocaleString(), label: 'Total Pages' },
             { value: INDEXABLE_CALCULATORS.length.toLocaleString(), label: 'Calculators' },
@@ -190,17 +190,18 @@ export default function SitemapPage() {
         </div>
 
         {sections.map((section) => (
-          <section key={section.title} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
+          <section key={section.title} className="sitemap-section-ssr" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
             <header style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', borderBottom: '1px solid var(--border)', background: 'var(--surface2)' }}>
               <span style={{ fontSize: 13, color: 'var(--brand)', fontWeight: 800, minWidth: 64 }}>{section.icon}</span>
               <h2 style={{ margin: 0, fontSize: 16, fontWeight: 850, color: 'var(--text)' }}>{section.title}</h2>
               <span style={{ marginLeft: 'auto', color: 'var(--text3)', fontSize: 12, fontWeight: 700 }}>{section.links.length} pages</span>
             </header>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))' }}>
+            <div className="sitemap-links-grid-ssr" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))' }}>
               {section.links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
+                  className="sitemap-link-ssr"
                   style={{
                     display: 'flex',
                     alignItems: 'center',

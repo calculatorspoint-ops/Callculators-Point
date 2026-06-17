@@ -117,10 +117,10 @@ export default async function AllCalculatorsPage({ searchParams }: { searchParam
   const queryPrefix = q ? `?q=${encodeURIComponent(q)}&` : '?';
 
   return (
-    <main style={pageStyle}>
+    <main className="all-calcs-ssr" style={pageStyle}>
       <JsonLd data={[breadcrumb, collectionPage]} idPrefix="all-calcs" />
 
-      <section style={{ ...wrapStyle, padding: '64px 0 30px' }}>
+      <section className="all-calcs-hero-ssr" style={{ ...wrapStyle, padding: '64px 0 30px' }}>
         <p style={{ color: '#38bdf8', fontSize: 13, fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', margin: '0 0 12px' }}>
           All tools
         </p>
@@ -132,7 +132,7 @@ export default async function AllCalculatorsPage({ searchParams }: { searchParam
         </p>
       </section>
 
-      <section style={{ ...wrapStyle, position: 'sticky', top: 0, zIndex: 4, padding: '14px 0', background: 'rgba(7,17,31,.92)', backdropFilter: 'blur(12px)' }} aria-label="Calculator search and filters">
+      <section className="all-calcs-toolbar-ssr" style={{ ...wrapStyle, position: 'sticky', top: 0, zIndex: 4, padding: '14px 0', background: 'rgba(7,17,31,.92)', backdropFilter: 'blur(12px)' }} aria-label="Calculator search and filters">
         <form action="/calculators" style={{ display: 'grid', gap: 12 }}>
           <label htmlFor="calculator-search" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
             Search calculators
@@ -158,7 +158,7 @@ export default async function AllCalculatorsPage({ searchParams }: { searchParam
           {activeCategory !== 'all' && <input type="hidden" name="category" value={activeCategory} />}
         </form>
 
-        <nav aria-label="Calculator categories" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingTop: 12 }}>
+        <nav className="all-calcs-filters-ssr" aria-label="Calculator categories" style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingTop: 12 }}>
           <Link href={q ? `/calculators?q=${encodeURIComponent(q)}` : '/calculators'} style={filterStyle(activeCategory === 'all')}>
             All
           </Link>
@@ -175,7 +175,7 @@ export default async function AllCalculatorsPage({ searchParams }: { searchParam
         </nav>
       </section>
 
-      <section style={{ ...wrapStyle, padding: '28px 0 80px' }}>
+      <section className="all-calcs-results-ssr" style={{ ...wrapStyle, padding: '28px 0 80px' }}>
         <p style={{ color: 'rgba(226,232,240,.7)', margin: '0 0 20px', fontSize: 14 }}>
           Showing {filtered.length} calculators
         </p>
@@ -196,9 +196,9 @@ export default async function AllCalculatorsPage({ searchParams }: { searchParam
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 14 }}>
+              <div className="calc-grid-premium all-calcs-grid-ssr" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 14 }}>
                 {calcs.map((calc) => (
-                  <Link key={calc.id} href={`/calculator/${calc.slug}`} style={cardStyle}>
+                  <Link key={calc.id} href={`/calculator/${calc.slug}`} className="calc-card-premium all-calcs-card-ssr" style={cardStyle}>
                     <span aria-hidden="true" style={{ fontSize: 28, lineHeight: 1 }}>{calc.icon}</span>
                     <span style={{ minWidth: 0 }}>
                       <strong style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', color: '#fff', fontSize: 16, marginBottom: 6 }}>
