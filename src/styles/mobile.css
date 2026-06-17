@@ -53,6 +53,41 @@ html.mob-menu-open body { overflow: hidden; }
 }
 
 /* ══════════════════════════════════════════════════════════════
+   LAPTOP / COMPACT DESKTOP (≤1540px)
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 1540px) {
+  .navbar-inner {
+    max-width: 100%;
+    padding-left: clamp(24px, 4vw, 60px);
+    padding-right: clamp(24px, 4vw, 60px);
+  }
+
+  .navbar-nav {
+    justify-content: flex-start;
+    gap: 5px;
+  }
+
+  .navbar-nav .nav-link {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 12px;
+  }
+
+  .navbar-nav .nav-link:nth-child(4),
+  .navbar-nav .nav-link:nth-child(5) {
+    display: none;
+  }
+
+  .navbar-search-box {
+    width: clamp(210px, 17vw, 260px);
+  }
+
+  .navbar-search-box:focus-within {
+    width: clamp(230px, 19vw, 280px);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    LARGE DESKTOP (≤1440px)
 ══════════════════════════════════════════════════════════════ */
 @media (max-width: 1440px) {
