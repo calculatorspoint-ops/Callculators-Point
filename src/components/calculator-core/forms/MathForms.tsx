@@ -5,7 +5,7 @@ import {
   calcFraction, calcGPA, calcCGPA, calcScientific, calcLog, calcRatio, calcReadingTime, round, fmtC, fmt 
 } from "@/core/calculationEngine";
 import { 
-  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney 
+  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, FinanceLayout 
 } from './SharedComponents';
 import { ResultBox } from '@/components/ui/ResultBox';
 import { StatsGrid } from '@/components/ui/StatsGrid';
@@ -104,20 +104,20 @@ export function QuadraticForm(){
     return()=>clearTimeout(t);
   },[a,b,c]);
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
-        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>📐 Your Inputs</p>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Equation"
+      result={res}
+      loading={null}
+      label="Quadratic"
+      inputContent={<>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>📐 Your Equation</p>
         <div style={{textAlign:"center",fontFamily:"var(--font-mono)",fontSize:18,fontWeight:700,padding:"14px",background:"var(--surface2)",border:"1px solid var(--border)",borderRadius:"var(--r-md)",color:"var(--text)",marginBottom:18}}>
           {a}x² + ({b})x + ({c}) = 0
         </div>
         <Row3><N label="a (x²)" id="qa" value={a} onChange={setA}/><N label="b (x)" id="qb" value={b} onChange={setB}/><N label="c (constant)" id="qc" value={c} onChange={setC}/></Row3>
-      </div>
-      {res&&(
-        <>
-          <Panel result={res} loading={null} label="Quadratic" />
-        </>
-      )}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -143,14 +143,18 @@ export function PythagoreanForm(){
     return()=>clearTimeout(t);
   },[a,b,solve]);
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Triangle"
+      result={res}
+      loading={null}
+      label="Pythagorean"
+      inputContent={<>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>📐 Your Inputs</p>
         <Tabs tabs={["Find c","Find a","Find b"]} active={`Find ${solve}`} onChange={v=>setSolve(v.split(" ")[1])}/>
         <Row2><N label="Side a" id="pa" value={a} onChange={setA}/><N label="Side b" id="pb" value={b} onChange={setB}/></Row2>
-      </div>
-      {res&&<Panel result={res} loading={null} label="Pythagorean" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -513,8 +517,14 @@ export function LogForm() {
   }, [value, base]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Logarithm Result"
+      inputContent={<>
+        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
         <Tabs
           tabs={["Base 10", "Base 2", "Natural (e)", "Custom"]}
           active={{ "10": "Base 10", "2": "Base 2", "e": "Natural (e)" }[base] || "Custom"}
@@ -539,8 +549,8 @@ export function LogForm() {
           ))}
         </div>
       </div>
-      <Panel result={res} loading={null} label="Logarithm Result" />
-    </div>
+      </>}
+    />
   );
 }
 
@@ -581,8 +591,14 @@ export function RatioForm() {
   }, [a, b, c, mode]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Ratio Result"
+      inputContent={<>
+        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
         <Tabs
           tabs={["Simplify Ratio", "Find Missing Value"]}
           active={mode === "simplify" ? "Simplify Ratio" : "Find Missing Value"}
@@ -611,8 +627,8 @@ export function RatioForm() {
           </>
         )}
       </div>
-      <Panel result={res} loading={null} label="Ratio Result" />
-    </div>
+      </>}
+    />
   );
 }
 
@@ -643,8 +659,14 @@ export function ReadingTimeForm() {
   }, [wordCount, wpm]);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:20}}>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Text"
+      result={res}
+      loading={null}
+      label="Reading Time"
+      inputContent={<>
+        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
         <N label="Word Count" id="rt-words" value={wordCount} onChange={setWordCount} hint="Number of words in your text" placeholder="e.g. 1000"/>
         <Sl label="Your Reading Speed (WPM)" id="rt-wpm" min={50} max={600} step={10} value={wpm} onChange={setWpm} fmt={v => `${v} WPM`}/>
         <div style={{ marginTop: 16, padding: "14px 16px", background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
@@ -662,8 +684,8 @@ export function ReadingTimeForm() {
           ))}
         </div>
       </div>
-      <Panel result={res} loading={null} label="Reading Time" />
-    </div>
+      </>}
+    />
   );
 }
 
@@ -695,13 +717,19 @@ export function LCMGCFForm() {
   }, [a, b]);
 
   return (
-    <div>
-      <Row2>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Numbers"
+      result={res}
+      loading={null}
+      label="LCM & GCF"
+      inputContent={<>
+        <Row2>
         <N label="First Number" id="lcma" value={a} onChange={setA} placeholder="e.g. 12" />
         <N label="Second Number" id="lcmb" value={b} onChange={setB} placeholder="e.g. 18" />
       </Row2>
-      {res && <Panel result={res} loading={null} label="LCM & GCF" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -737,10 +765,16 @@ export function FactorForm() {
   }, [num]);
 
   return (
-    <div>
-      <N label="Enter a Number" id="facnum" value={num} onChange={setNum} placeholder="e.g. 360" hint="Find all factors and prime factorization" />
-      {res && <Panel result={res} loading={null} label="Factor Calculator" />}
-    </div>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Number"
+      result={res}
+      loading={null}
+      label="Factor Calculator"
+      inputContent={<>
+        <N label="Enter a Number" id="facnum" value={num} onChange={setNum} placeholder="e.g. 360" hint="Find all factors and prime factorization" />
+      </>}
+    />
   );
 }
 
@@ -780,15 +814,21 @@ export function TriangleForm() {
   }, [a, b, c, mode]);
 
   return (
-    <div>
-      <Tabs tabs={["SSS (3 Sides)", "SAS", "ASA"]} active={mode === "SSS" ? "SSS (3 Sides)" : mode} onChange={v => setMode(v.split(" ")[0])} />
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Triangle"
+      result={res}
+      loading={null}
+      label="Triangle"
+      inputContent={<>
+        <Tabs tabs={["SSS (3 Sides)", "SAS", "ASA"]} active={mode === "SSS" ? "SSS (3 Sides)" : mode} onChange={v => setMode(v.split(" ")[0])} />
       <Row3>
         <N label="Side a" id="tri_a" value={a} onChange={setA} unit="units" />
         <N label="Side b" id="tri_b" value={b} onChange={setB} unit="units" />
         <N label="Side c" id="tri_c" value={c} onChange={setC} unit="units" />
       </Row3>
-      {res && <Panel result={res} loading={null} label="Triangle" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -820,14 +860,20 @@ export function CircleForm() {
   }, [input, inputType]);
 
   return (
-    <div>
-      <Sel label="Known Value" id="cirinput" value={inputType} onChange={setInputType} opts={[
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Circle"
+      result={res}
+      loading={null}
+      label="Circle"
+      inputContent={<>
+        <Sel label="Known Value" id="cirinput" value={inputType} onChange={setInputType} opts={[
         { v: "radius", l: "Radius" }, { v: "diameter", l: "Diameter" },
         { v: "circumference", l: "Circumference" }, { v: "area", l: "Area" },
       ]} />
       <N label={inputType.charAt(0).toUpperCase() + inputType.slice(1)} id="cirval" value={input} onChange={setInput} unit="units" />
-      {res && <Panel result={res} loading={null} label="Circle" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -865,8 +911,14 @@ export function VolumeForm() {
   const needsWidth = ["cuboid", "pyramid"].includes(shape);
 
   return (
-    <div>
-      <Sel label="Shape" id="vshape" value={shape} onChange={setShape} opts={[
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Shape"
+      result={res}
+      loading={null}
+      label="Volume"
+      inputContent={<>
+        <Sel label="Shape" id="vshape" value={shape} onChange={setShape} opts={[
         { v: "sphere", l: "Sphere" }, { v: "cylinder", l: "Cylinder" }, { v: "cone", l: "Cone" },
         { v: "cube", l: "Cube" }, { v: "cuboid", l: "Rectangular Prism (Cuboid)" }, { v: "pyramid", l: "Pyramid" },
       ]} />
@@ -876,8 +928,8 @@ export function VolumeForm() {
         {needsLength && <N label={shape === "cube" ? "Side (l)" : "Length (l)"} id="vl" value={l} onChange={setL} unit="units" />}
         {needsWidth && <N label="Width (w)" id="vw" value={w} onChange={setW} unit="units" />}
       </Row2>
-      {res && <Panel result={res} loading={null} label="Volume" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -912,14 +964,20 @@ export function ZScoreForm() {
   }, [x, mean, std]);
 
   return (
-    <div>
-      <Row3>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Z-Score"
+      inputContent={<>
+        <Row3>
         <N label="Value (X)" id="zsx" value={x} onChange={setX} />
         <N label="Mean (μ)" id="zsmu" value={mean} onChange={setMean} />
         <N label="Std Dev (σ)" id="zssig" value={std} onChange={setStd} hint="Must be > 0" />
       </Row3>
-      {res && <Panel result={res} loading={null} label="Z-Score" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -951,13 +1009,19 @@ export function PermCombForm() {
   }, [n, r]);
 
   return (
-    <div>
-      <Row2>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Permutation & Combination"
+      inputContent={<>
+        <Row2>
         <N label="n (Total Items)" id="pcn" value={n} onChange={setN} hint="Max 20 (factorial overflow above)" />
         <N label="r (Choose)" id="pcr" value={r} onChange={setR} hint="Must be ≤ n" />
       </Row2>
-      {res && <Panel result={res} loading={null} label="Permutation & Combination" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -993,14 +1057,20 @@ export function AverageForm() {
   }, [data]);
 
   return (
-    <div>
-      <div style={{ marginBottom: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Numbers"
+      result={res}
+      loading={null}
+      label="Average"
+      inputContent={<>
+        <div style={{ marginBottom: 16 }}>
         <L t="Enter Numbers (comma or space separated)" id="avgdata" />
         <textarea id="avgdata" value={data} onChange={e => setData(e.target.value)} rows={4}
           style={{ width: "100%", padding: "12px 14px", background: "var(--surface2)", border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", fontSize: 14, color: "var(--text)", fontFamily: "var(--font-mono)", resize: "vertical", outline: "none" }} />
       </div>
-      {res && <Panel result={res} loading={null} label="Average" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -1032,13 +1102,19 @@ export function PercentErrorForm() {
   }, [experimental, theoretical]);
 
   return (
-    <div>
-      <Row2>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Percent Error"
+      inputContent={<>
+        <Row2>
         <N label="Experimental Value" id="pee" value={experimental} onChange={setExperimental} hint="Your measured result" />
         <N label="Theoretical Value" id="pet" value={theoretical} onChange={setTheoretical} hint="The accepted/expected value" />
       </Row2>
-      {res && <Panel result={res} loading={null} label="Percent Error" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -1066,14 +1142,20 @@ export function LinearEquationForm() {
   }, [a, b]);
 
   return (
-    <div>
-      <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14 }}>Solve for x in: <strong>ax + b = 0</strong></p>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Equation"
+      result={res}
+      loading={null}
+      label="Linear Equation"
+      inputContent={<>
+        <p style={{ fontSize: 13, color: "var(--text2)", marginBottom: 14 }}>Solve for x in: <strong>ax + b = 0</strong></p>
       <Row2>
         <N label="Coefficient a (of x)" id="lea" value={a} onChange={setA} hint="Must not be 0" />
         <N label="Constant b" id="leb" value={b} onChange={setB} />
       </Row2>
-      {res && <Panel result={res} loading={null} label="Linear Equation" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -1102,8 +1184,14 @@ export function DistanceForm() {
   }, [x1, y1, x2, y2]);
 
   return (
-    <div>
-      <p style={{ fontSize: 12, color: "var(--text3)", marginBottom: 14 }}>Enter coordinates of two points to calculate distance, midpoint, and slope.</p>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Points"
+      result={res}
+      loading={null}
+      label="Distance"
+      inputContent={<>
+        <p style={{ fontSize: 12, color: "var(--text3)", marginBottom: 14 }}>Enter coordinates of two points to calculate distance, midpoint, and slope.</p>
       <Row2>
         <N label="Point 1 — X₁" id="dstx1" value={x1} onChange={setX1} />
         <N label="Point 1 — Y₁" id="dsty1" value={y1} onChange={setY1} />
@@ -1112,8 +1200,8 @@ export function DistanceForm() {
         <N label="Point 2 — X₂" id="dstx2" value={x2} onChange={setX2} />
         <N label="Point 2 — Y₂" id="dsty2" value={y2} onChange={setY2} />
       </Row2>
-      {res && <Panel result={res} loading={null} label="Distance" />}
-    </div>
+      </>}
+    />
   );
 }
 

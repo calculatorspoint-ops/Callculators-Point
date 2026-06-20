@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect, useRef } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Panel, buildResult, useCurrency } from './SharedComponents';
+import { L, N, Sl, Sel, Tabs, Row2, Row3, Panel, buildResult, useCurrency, FinanceLayout } from './SharedComponents';
 
 /* ─────────────────────────────────────────────────────────────────────────
    Shared micro-helpers (no TypeScript annotations)
@@ -227,8 +227,15 @@ export function SubnetForm() {
 
   const octetColors = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b"];
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Network Details"
+      result={res}
+      loading={null}
+      label="Subnet"
+      inputContent={<>
+        <div>
       <SectionTitle>Network Configuration</SectionTitle>
       <L t="IP Address" id="snip" />
       <MonoInput id="snip" value={ip} onChange={function(e) { setIp(e.target.value); }}
@@ -308,21 +315,9 @@ export function SubnetForm() {
         </div>
       )}
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="Subnet" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">🌐</div>
-          <p className="empty-state-title">Enter a valid IP address</p>
-          <p className="empty-state-sub">Results appear instantly</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -369,8 +364,15 @@ export function NumberBaseForm() {
     { key: "b36", label: "Base-36",        prefix: "",     value: bases.b36, bit: "Base 36" },
   ] : [];
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Decimal Value"
+      inputContent={<>
+        <div>
       <SectionTitle>Input Configuration</SectionTitle>
       <Sel label="Input Number Base" id="nbbase" value={fromBase} onChange={setFromBase}
         opts={[
@@ -443,31 +445,9 @@ export function NumberBaseForm() {
         </div>
       )}
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {bases ? (
-        <div>
-          <SectionTitle>Result Summary</SectionTitle>
-          <ResultCard label="Decimal Value"      value={bases.dec} accent mono />
-          <ResultCard label="Hexadecimal"        value={bases.hex} mono />
-          <ResultCard label="Binary"             value={bases.bin} mono />
-          <ResultCard label="Octal"              value={bases.oct} mono />
-          <ResultCard label="Base-32"            value={bases.b32} mono />
-          <ResultCard label="Base-36"            value={bases.b36} mono />
-        </div>
-      ) : (
-        <div className="empty-state">
-          <div className="empty-state-icon">🔢</div>
-          <p className="empty-state-title">Enter a number to convert</p>
-          <p className="empty-state-sub">All bases update live</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -538,8 +518,15 @@ export function ASCIIForm() {
     }
   }, [text, mode]);
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Your Input"
+      result={res}
+      loading={null}
+      label="ASCII"
+      inputContent={<>
+        <div>
       <Tabs tabs={["Text → ASCII", "ASCII → Text"]} active={mode} onChange={function(m) {
         setMode(m); setText(""); setChars([]); setRes(null);
       }} />
@@ -593,21 +580,9 @@ export function ASCIIForm() {
         </div>
       )}
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="ASCII" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">🔤</div>
-          <p className="empty-state-title">Enter text to convert</p>
-          <p className="empty-state-sub">Supports full Unicode</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -683,8 +658,15 @@ export function DataTransferForm() {
     ));
   }, [fileSize, fileSizeUnit, speed, speedUnit]);
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Transfer Details"
+      result={res}
+      loading={null}
+      label="Data Transfer"
+      inputContent={<>
+        <div>
       <SectionTitle>File & Speed Settings</SectionTitle>
 
       <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
@@ -728,21 +710,9 @@ export function DataTransferForm() {
         </div>
       </div>
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="Data Transfer" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">⚡</div>
-          <p className="empty-state-title">Enter file size and speed</p>
-          <p className="empty-state-sub">Comparison chart included</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -839,8 +809,15 @@ export function PasswordStrengthForm() {
     ));
   }, [password]);
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Your Password"
+      result={res}
+      loading={null}
+      label="Password Strength"
+      inputContent={<>
+        <div>
       <SectionTitle>Password Analysis</SectionTitle>
       <L t="Enter Password to Test" id="pwd_input" />
       <div style={{ position: "relative", marginBottom: 6 }}>
@@ -944,21 +921,9 @@ export function PasswordStrengthForm() {
         </div>
       )}
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="Password Strength" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">🔐</div>
-          <p className="empty-state-title">Enter a password to analyze</p>
-          <p className="empty-state-sub">Time-to-crack at 5 attack speeds</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -1053,8 +1018,15 @@ export function HashGeneratorForm() {
     ]
   ) : null;
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Your Input"
+      result={res}
+      loading={null}
+      label="Hash Generator"
+      inputContent={<>
+        <div>
       <SectionTitle>Input Text</SectionTitle>
       <textarea value={text} onChange={function(e) { setText(e.target.value); }} rows={5}
         placeholder="Enter any text to hash..."
@@ -1108,21 +1080,9 @@ export function HashGeneratorForm() {
         </div>
       )}
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="Hash Generator" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">🔏</div>
-          <p className="empty-state-title">Enter text to hash</p>
-          <p className="empty-state-sub">MD5, SHA-1, SHA-256, SHA-512</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -1209,8 +1169,15 @@ export function RandomStringForm() {
              (includeDigits ? 10 : 0) + (includeSymbols ? 32 : 0);
   const entropy = pool > 0 ? length * Math.log2(pool) : 0;
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Your Input"
+      result={res}
+      loading={null}
+      label="Calculator"
+      inputContent={<>
+        <div>
       <SectionTitle>Generator Presets</SectionTitle>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
         {PRESETS.map(function(p) {
@@ -1268,62 +1235,9 @@ export function RandomStringForm() {
         🎲 Generate {count} String{count > 1 ? "s" : ""}
       </button>
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {results.length > 0 && (
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between",
-            alignItems: "center", marginBottom: 10 }}>
-            <SectionTitle>Generated Strings</SectionTitle>
-            <button onClick={copyAll}
-              style={{ padding: "5px 14px", borderRadius: 100, fontSize: 11,
-                fontWeight: 700,
-                border: copiedAll ? "1.5px solid var(--brand)" : "1px solid var(--border)",
-                background: copiedAll ? "var(--p50)" : "var(--surface)",
-                color: copiedAll ? "var(--brand)" : "var(--text2)",
-                cursor: "pointer" }}>
-              {copiedAll ? "✅ All Copied!" : "📋 Copy All"}
-            </button>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {results.map(function(s, i) {
-              const isCopied = copiedIdx === i;
-              return (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 8,
-                  padding: "10px 14px", background: "var(--surface2)",
-                  borderRadius: "var(--r-md)", border: "1px solid var(--border)" }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: "var(--text3)",
-                    minWidth: 18 }}>{i + 1}.</span>
-                  <code style={{ flex: 1, fontSize: 12, fontFamily: "var(--font-mono)",
-                    color: "var(--text)", wordBreak: "break-all" }}>{s}</code>
-                  <button onClick={function() { copyOne(s, i); }}
-                    style={{ padding: "3px 10px", borderRadius: 100, fontSize: 10,
-                      fontWeight: 700,
-                      border: isCopied ? "1.5px solid var(--brand)" : "1px solid var(--border)",
-                      background: isCopied ? "var(--p50)" : "var(--surface)",
-                      color: isCopied ? "var(--brand)" : "var(--text3)",
-                      cursor: "pointer", flexShrink: 0 }}>
-                    {isCopied ? "✅" : "📋"}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-      {results.length === 0 && (
-        <div className="empty-state">
-          <div className="empty-state-icon">🎲</div>
-          <p className="empty-state-title">Configure &amp; generate</p>
-          <p className="empty-state-sub">Presets for API keys, UUIDs, PINs &amp; more</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -1398,8 +1312,15 @@ export function BandwidthForm() {
     setConcurrency(p.v.concurrency); setOverheadPct(p.v.overheadPct);
   };
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Network Details"
+      result={res}
+      loading={null}
+      label="Bandwidth"
+      inputContent={<>
+        <div>
       <SectionTitle>Scenario Presets</SectionTitle>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
         {PRESETS.map(function(p) {
@@ -1425,21 +1346,9 @@ export function BandwidthForm() {
         onChange={function(v) { setOverheadPct(String(v)); }}
         fmt={function(v) { return v + "% overhead"; }} />
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="Bandwidth" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">📡</div>
-          <p className="empty-state-title">Enter network parameters</p>
-          <p className="empty-state-sub">Concurrent user chart included</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -1531,8 +1440,15 @@ export function IPRangeForm() {
     ));
   }, [network, mask]);
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Network Details"
+      result={res}
+      loading={null}
+      label="IP Range"
+      inputContent={<>
+        <div>
       <SectionTitle>Network Range Configuration</SectionTitle>
       <L t="Network Address" id="ipr_net" />
       <MonoInput id="ipr_net" value={network}
@@ -1601,21 +1517,9 @@ export function IPRangeForm() {
         </div>
       )}
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="IP Range" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">🗺️</div>
-          <p className="empty-state-title">Enter network &amp; mask</p>
-          <p className="empty-state-sub">CIDR notation calculated automatically</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -1710,8 +1614,15 @@ export function HexForm() {
     ? "#" + cleaned[0] + cleaned[0] + cleaned[1] + cleaned[1] + cleaned[2] + cleaned[2]
     : isColor6 ? "#" + cleaned : null;
 
-  const left = (
-    <div>
+  return (
+    <FinanceLayout
+      accentClass="accent-tech"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Hex Converter"
+      inputContent={<>
+        <div>
       <SectionTitle>Hex Input</SectionTitle>
       <L t="Hexadecimal Value" id="hex_input" />
       <div style={{ position: "relative", marginBottom: 16 }}>
@@ -1845,19 +1756,7 @@ export function HexForm() {
         </div>
       )}
     </div>
+      </>}
+    />
   );
-
-  const right = (
-    <div>
-      {res ? <Panel result={res} loading={null} label="Hex Converter" /> : (
-        <div className="empty-state">
-          <div className="empty-state-icon">🔢</div>
-          <p className="empty-state-title">Enter a hex value</p>
-          <p className="empty-state-sub">Color preview for 3/6 char hex</p>
-        </div>
-      )}
-    </div>
-  );
-
-  return twoColWrap(left, right);
 }
