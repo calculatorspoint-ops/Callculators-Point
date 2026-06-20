@@ -7,12 +7,21 @@ import { Search, ArrowRight } from "lucide-react";
 import { CATEGORIES, ALL_CALCULATORS, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import "@/styles/all-calculators.css";
 
-export default function AllCalculators() {
-  // Seed initial query from ?q= URL param — required for SiteLinksSearchBox schema.
-  // When Google routes users from the SERP sitelinks search to /calculators?q=bmi,
-  // this ensures the search box is pre-populated and results are already filtered.
+import { Suspense, useEffect } from "react";
+
+function SearchQueryReader({ onSearch }) {
   const searchParams = useSearchParams();
-  const [q, setQ] = useState(() => searchParams.get("q") ?? "");
+  useEffect(() => {
+    const query = searchParams.get("q");
+    if (query) {
+      onSearch(query);
+    }
+  }, [searchParams, onSearch]);
+  return null;
+}
+
+export default function AllCalculators() {
+  const [q, setQ] = useState("");
   const [cat, setCat] = useState("all");
 
   const filtered = useMemo(() => ALL_CALCULATORS.filter(c => {
@@ -24,7 +33,9 @@ export default function AllCalculators() {
 
   return (
     <div className="all-calcs-page">
-      
+      <Suspense fallback={null}>
+        <SearchQueryReader onSearch={setQ} />
+      </Suspense>
 
       {/* Hero Section */}
       <section className="hero-premium">

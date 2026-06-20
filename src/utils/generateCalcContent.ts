@@ -204,6 +204,69 @@ function generateExamples(calc: CalculatorConfig): { scenario: string; result: s
   ];
 }
 
+function generateWhenToUse(calc: CalculatorConfig): string {
+  if (calc.whenToUse) return calc.whenToUse;
+  const audience = CATEGORY_AUDIENCE[calc.cat] ?? 'users';
+  const tagList = calc.tags && calc.tags.length > 0 ? calc.tags.join(', ') : 'general calculations';
+  return `The ${calc.name} is ideally suited for ${audience} who need to perform quick, accurate calculations related to ${tagList}. Use this tool when you need to verify figures, compare different scenarios, or get a precise answer without manual computation errors.`;
+}
+
+function generateResultMeaning(calc: CalculatorConfig): string {
+  if (calc.resultMeaning) return calc.resultMeaning;
+  if (calc.cat === 'finance') return `The results displayed represent the exact financial figures based on your inputs. Use these numbers to compare different loan, investment, or tax scenarios, keeping in mind that actual bank rates may vary slightly due to processing fees or compounding differences.`;
+  if (calc.cat === 'health') return `The calculated metrics provide a scientifically validated baseline for your health or fitness goals. While these numbers are highly accurate based on standard medical formulas, they should serve as a guide rather than a replacement for professional medical advice.`;
+  if (calc.cat === 'education') return `Your calculated score or GPA provides a precise estimate of your academic standing based on standard grading scales. Use this result to plan your study targets or check your eligibility for university admissions.`;
+  return `The calculated output provides an instant, accurate resolution to your input parameters. You can use these results directly for your planning, assignments, or professional tasks, knowing they are based on standardized formulas.`;
+}
+
+function generateLimitations(calc: CalculatorConfig): string[] {
+  if (calc.limitations && calc.limitations.length > 0) return calc.limitations;
+  if (calc.cat === 'finance') return [
+    "Does not account for sudden changes in variable interest rates or dynamic market conditions.",
+    "Excludes hidden bank fees, processing charges, or specific regional tax surcharges unless explicitly inputted.",
+    "Calculations assume consistent compounding periods without accounting for leap years or non-standard payment dates."
+  ];
+  if (calc.cat === 'health') return [
+    "Formulas are based on population averages and may not perfectly reflect individuals with extreme muscle mass or atypical body compositions.",
+    "Does not replace a physical examination or clinical diagnosis by a certified medical professional.",
+    "Calculations cannot account for underlying metabolic conditions or genetic factors that influence individual health metrics."
+  ];
+  return [
+    "Results are based purely on the mathematical relationship of the inputs provided.",
+    "Does not account for edge cases or extreme outlier values that fall outside standard formula constraints.",
+    "Calculated outputs should be double-checked against your specific real-world requirements before finalizing important decisions."
+  ];
+}
+
+type WorkedExample = {
+  title: string;
+  inputs: string[];
+  steps: string[];
+  result: string;
+};
+
+function generateWorkedExample(calc: CalculatorConfig): WorkedExample | null {
+  if (calc.workedExample) return calc.workedExample;
+  if (calc.formula) {
+    return {
+      title: `Example Scenario`,
+      inputs: [`To understand how the ${calc.name} processes your data, consider a typical use case.`, `When you enter your specific values into the input fields, the calculator applies the underlying formula (${calc.formula}) step-by-step.`],
+      steps: [
+        `The inputs are first validated to ensure they fall within acceptable ranges.`,
+        `The values are then substituted into the standard formula.`,
+        `Finally, the calculation is executed, instantly displaying the precise output on your screen.`
+      ],
+      result: `This transparent approach ensures that you can always verify the math manually if needed.`
+    };
+  }
+  return {
+    title: `Example Scenario`,
+    inputs: [`Consider a typical situation where you need to use the ${calc.name}. You gather your required data and enter the values into the respective input fields.`],
+    steps: [`Instantly, the calculator processes your inputs using standard algorithms and displays the exact output.`],
+    result: `This saves you from performing tedious manual arithmetic and eliminates the risk of human error, giving you a reliable result you can act upon immediately.`
+  };
+}
+
 export function generateCalcContent(calc: CalculatorConfig): CalcContent {
   return {
     about: generateAbout(calc),
@@ -213,10 +276,10 @@ export function generateCalcContent(calc: CalculatorConfig): CalcContent {
     tips: generateTips(calc),
     faq: GENERIC_FAQ(calc),
     examples: generateExamples(calc),
-    limitations: calc.limitations || [],
-    whenToUse: calc.whenToUse || null,
-    resultMeaning: calc.resultMeaning || null,
-    workedExample: calc.workedExample ?? null,
+    limitations: generateLimitations(calc),
+    whenToUse: generateWhenToUse(calc),
+    resultMeaning: generateResultMeaning(calc),
+    workedExample: generateWorkedExample(calc),
   };
 }
 
