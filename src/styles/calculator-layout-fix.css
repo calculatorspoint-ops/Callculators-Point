@@ -1391,3 +1391,8 @@ button[type="submit"].f-btn,
 .finance-calc-inputs .input-section-wrap.accent-tech {
   border-left: 3px solid #2563eb;
 }
+
+/* ── Construction accent (amber/orange) ── */
+.finance-calc-inputs .input-section-wrap.accent-construction {
+  border-left: 3px solid #d97706;
+}

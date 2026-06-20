@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect } from "react";
-import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency } from './SharedComponents';
+import { L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, FinanceLayout } from './SharedComponents';
 
 // ── Concrete Calculator ───────────────────────────────────────────────
 export function ConcreteForm() {
@@ -41,8 +41,14 @@ export function ConcreteForm() {
   }, [shape, l, w, d, unit, bagSize]);
 
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Your Dimensions"
+      result={res}
+      loading={null}
+      label="Concrete"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           🏗️ Your Inputs
         </p>
@@ -57,8 +63,8 @@ export function ConcreteForm() {
           { v: "80", l: "80 lb bags" }, { v: "60", l: "60 lb bags" }, { v: "40", l: "40 lb bags" },
         ]} />
       </div>
-      {res && <Panel result={res} loading={null} label="Concrete" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -96,8 +102,14 @@ export function PaintForm() {
   }, [rooms, coats, coverage, pricePerGal]);
 
   return (
-    <div style={{display:'flex', flexDirection:'column', gap:20}}>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Room Details"
+      result={res}
+      loading={null}
+      label="Paint Calculator"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           🎨 Your Inputs
         </p>
@@ -129,8 +141,8 @@ export function PaintForm() {
           <N label="Price/Gallon" id="pprice" value={pricePerGal} onChange={setPricePerGal} unit={sym} />
         </Row3>
       </div>
-      <Panel result={res} loading={null} label="Paint Calculator" />
-    </div>
+      </>}
+    />
   );
 }
 
@@ -168,8 +180,14 @@ export function SquareFootageForm() {
   }, [rooms, material, pricePerSqft, waste]);
 
   return (
-    <div style={{display:'flex', flexDirection:'column', gap:20}}>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Your Area"
+      result={res}
+      loading={null}
+      label="Square Footage"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           📐 Your Inputs
         </p>
@@ -205,8 +223,8 @@ export function SquareFootageForm() {
           <N label="Price/sq ft" id="sfprice" value={pricePerSqft} onChange={setPricePerSqft} unit={sym} />
         </Row3>
       </div>
-      <Panel result={res} loading={null} label="Square Footage" />
-    </div>
+      </>}
+    />
   );
 }
 
@@ -252,8 +270,14 @@ export function ConstructionCostForm() {
   }, [area, laborRate, materialRate, contingency, extras]);
 
   return (
-    <div style={{display:'flex', flexDirection:'column', gap:20}}>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Project Details"
+      result={res}
+      loading={null}
+      label="Construction Cost"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           🏠 Your Inputs
         </p>
@@ -280,8 +304,8 @@ export function ConstructionCostForm() {
           + Add Cost Item
         </button>
       </div>
-      <Panel result={res} loading={null} label="Construction Cost" />
-    </div>
+      </>}
+    />
   );
 }
 
@@ -318,8 +342,14 @@ export function ElectricalLoadForm() {
   }, [appliances, voltage]);
 
   return (
-    <div style={{display:'flex', flexDirection:'column', gap:20}}>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Your Circuits"
+      result={res}
+      loading={null}
+      label="Electrical Load"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           ⚡ Your Inputs
         </p>
@@ -345,8 +375,8 @@ export function ElectricalLoadForm() {
           + Add Appliance
         </button>
       </div>
-      <Panel result={res} loading={null} label="Electrical Load" />
-    </div>
+      </>}
+    />
   );
 }
 
@@ -382,8 +412,14 @@ export function DensityForm() {
   }, [solve, mass, volume, density]);
 
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Material Details"
+      result={res}
+      loading={null}
+      label="Density"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           ⚖️ Your Inputs
         </p>
@@ -394,8 +430,8 @@ export function DensityForm() {
           {solve !== "volume" && <N label="Volume (m³)" id="den_v" value={volume} onChange={setVolume} unit="m³" />}
         </div>
       </div>
-      {res && <Panel result={res} loading={null} label="Density" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -422,8 +458,14 @@ export function PressureForm() {
   }, [force, area]);
 
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Pressure"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           🌡️ Your Inputs
         </p>
@@ -432,8 +474,8 @@ export function PressureForm() {
           <N label="Area (m²)" id="prea" value={area} onChange={setArea} unit="m²" />
         </Row2>
       </div>
-      {res && <Panel result={res} loading={null} label="Pressure" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -461,8 +503,14 @@ export function PipeVolumeForm() {
   }, [diameter, length, unit]);
 
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Pipe Dimensions"
+      result={res}
+      loading={null}
+      label="Pipe Volume"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           🔧 Your Inputs
         </p>
@@ -471,8 +519,8 @@ export function PipeVolumeForm() {
           <N label="Length (m)" id="pvl" value={length} onChange={setLength} unit="m" />
         </Row2>
       </div>
-      {res && <Panel result={res} loading={null} label="Pipe Volume" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -510,8 +558,13 @@ export function MaterialForm({ type = "sand" }) {
   const labels = { sand: "Sand", gravel: "Gravel", cement: "Cement/Concrete", asphalt: "Asphalt" };
 
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Material Details"
+      result={res}
+      loading={null}
+      label={labels[type]}
+      inputContent={<>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           🧱 Your Inputs
         </p>
@@ -522,9 +575,8 @@ export function MaterialForm({ type = "sand" }) {
           <N label={`Depth (${unit === "imperial" ? "in" : "m"})`} id={`mat_d`} value={depth} onChange={setDepth} unit={unit === "imperial" ? "in" : "m"} />
         </Row3>
         <N label={`Price per Ton (${sym})`} id={`mat_p`} value={pricePerTon} onChange={setPricePerTon} unit={sym} placeholder="0" hint="Optional: for cost estimate" />
-      </div>
-      {res && <Panel result={res} loading={null} label={labels[type]} />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -553,8 +605,14 @@ export function CubicYardForm() {
   }, [l, w, d, unit]);
 
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Your Dimensions"
+      result={res}
+      loading={null}
+      label="Cubic Yard"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           📦 Your Inputs
         </p>
@@ -565,8 +623,8 @@ export function CubicYardForm() {
           <N label="Depth" id="cyd" value={d} onChange={setD} unit={unit[0]} />
         </Row3>
       </div>
-      {res && <Panel result={res} loading={null} label="Cubic Yard" />}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -602,8 +660,14 @@ export function RoofingForm() {
   }, [length, width, pitch, waste, pricePerBundle]);
 
   return (
-    <div style={{display:'flex', flexDirection:'column', gap:20}}>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
+    <FinanceLayout
+      accentClass="accent-construction"
+      inputTitle="Roof Details"
+      result={res}
+      loading={null}
+      label="Roofing"
+      inputContent={<>
+        <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'22px 24px 20px'}}>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
           🏠 Your Inputs
         </p>
@@ -617,7 +681,7 @@ export function RoofingForm() {
           <N label="Price/Bundle" id="rfprice" value={pricePerBundle} onChange={setPricePerBundle} unit={sym} />
         </Row3>
       </div>
-      <Panel result={res} loading={null} label="Roofing" />
-    </div>
+      </>}
+    />
   );
 }
