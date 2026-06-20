@@ -1396,3 +1396,8 @@ button[type="submit"].f-btn,
 .finance-calc-inputs .input-section-wrap.accent-construction {
   border-left: 3px solid #d97706;
 }
+
+/* ── Utility accent (rose/pink) ── */
+.finance-calc-inputs .input-section-wrap.accent-utility {
+  border-left: 3px solid #e11d48;
+}

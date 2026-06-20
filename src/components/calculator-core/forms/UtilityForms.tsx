@@ -6,7 +6,7 @@ import {
   calcBase64, UNIT_DEFS, round, fmtC, fmt 
 } from "@/core/calculationEngine";
 import { 
-  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, ComingSoon 
+  L, N, Sl, Sel, Tabs, Row2, Row3, Presets, Panel, buildResult, useCurrency, formatMoney, FinanceLayout, ComingSoon 
 } from './SharedComponents';
 import { ResultBox } from '@/components/ui/ResultBox';
 import { StatsGrid } from '@/components/ui/StatsGrid';
@@ -466,16 +466,22 @@ export function FuelForm(){
     return()=>clearTimeout(t);
   },[d,p,e,pax,trips]);
   return (
-    <div>
-      <N label="Distance" id="fd" value={d} onChange={setD} unit="km"/>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Trip Details"
+      result={res}
+      loading={null}
+      label="Trip Cost"
+      inputContent={<>
+        <N label="Distance" id="fd" value={d} onChange={setD} unit="km"/>
       <N label={`Fuel Price per Litre`} id="fp" value={p} onChange={setP} unit={sym+"/L"}/>
       <Sl label="Fuel Efficiency" id="fe" min={4} max={30} value={e} onChange={setE} fmt={v=>`${v} km/L`}/>
       <Row2>
         <Sl label="Passengers" id="fpax" min={1} max={10} value={pax} onChange={setPax} fmt={v=>`${v} people`}/>
         <Sl label="Monthly Trips" id="ftrips" min={1} max={60} value={trips} onChange={setTrips} fmt={v=>`${v} trips`}/>
       </Row2>
-      <Panel result={res} loading={null} label="Trip Cost"/>
-    </div>
+      </>}
+    />
   );
 }
 
