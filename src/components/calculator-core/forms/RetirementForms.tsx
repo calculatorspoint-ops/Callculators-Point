@@ -72,13 +72,10 @@ export function RetirementPlanForm() {
   const investmentGrowth = projectedFromSavings - currentSavings;
 
   return (
-    <div style={{maxWidth:680, margin:'0 auto', padding:'4px 0', fontFamily:'var(--font)'}}>
-
-      {/* INPUT CARD */}
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
-        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>
-          🌿 Your Retirement Details
-        </p>
+    <FinanceLayout
+      accentClass="accent-invest"
+      inputTitle="Your Plan"
+      inputContent={<>
 
         <Presets items={[
           { label: "Early Retire 45", v: { ca: 28, ra: 45, cs: 1000000, ret: 14, inf: 6, me: 80000, wr: 4 } },
@@ -100,10 +97,10 @@ export function RetirementPlanForm() {
           <Sl label="Monthly Expenses Needed (today's value)" id="rp_me" min={10000} max={500000} step={5000} value={monthlyExpenses} onChange={setMonthlyExpenses} fmt={v => fmSlider(v)} />
           <Sl label="Withdrawal Rate (%)" id="rp_wr" min={2} max={6} step={0.5} value={withdrawRate} onChange={setWithdrawRate} fmt={v => v + "%"} />
         </div>
-      </div>
-
-      {/* RESULT SECTION */}
-      {res && (
+      </>
+      }
+      resultContent={<>
+        {res && (
         <div style={{display:'flex', flexDirection:'column', gap:16}}>
 
           {/* HERO CARD */}
@@ -181,12 +178,12 @@ export function RetirementPlanForm() {
             💡 <strong>Disclaimer:</strong> These projections are for illustrative purposes only and assume constant rates of return. Actual returns may vary. Consult a SEBI-registered financial advisor before making investment decisions.
           </p>
         </div>
-      )}
-
-      <SEOSection title="How Much Do You Need to Retire?">
-        <p>The 4% rule: a 4% withdrawal rate from a diversified portfolio is historically sustainable for 30+ years. Multiply your annual expenses by 25 to get your corpus target. Inflation doubles prices every 12 years at 6% — so ₹50,000 today will feel like ₹25,000 in purchasing power 12 years later. Start saving early and increase your SIP annually by your salary hike rate.</p>
-      </SEOSection>
-    </div>
+        )}
+        <SEOSection title="How Much Do You Need to Retire?">
+          <p>The 4% rule: a 4% withdrawal rate from a diversified portfolio is historically sustainable for 30+ years. Multiply your annual expenses by 25 to get your corpus target. Inflation doubles prices every 12 years at 6% — so ₹50,000 today will feel like ₹25,000 in purchasing power 12 years later. Start saving early and increase your SIP annually by your salary hike rate.</p>
+        </SEOSection>
+      </>}
+    />
   );
 }
 

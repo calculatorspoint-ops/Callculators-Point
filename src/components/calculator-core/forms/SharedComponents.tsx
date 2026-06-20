@@ -692,6 +692,7 @@ export function FinanceLayout({
   inputIcon,
   inputContent,
   result,
+  resultContent,
   label,
   shareParams,
   loading = null,
@@ -701,7 +702,8 @@ export function FinanceLayout({
   inputTitle?: string;
   inputIcon?: string;
   inputContent: React.ReactNode;
-  result: any;
+  result?: any;
+  resultContent?: React.ReactNode;
   label?: string;
   shareParams?: Record<string, any>;
   loading?: boolean | null;
@@ -729,9 +731,12 @@ export function FinanceLayout({
           </div>
         </div>
 
-        {/* Right: Result Panel */}
+        {/* Right: Custom resultContent OR standard Panel */}
         <div className="finance-calc-result">
-          <Panel result={result} loading={loading} label={label} shareParams={shareParams} />
+          {resultContent
+            ? <div className="result-live-region">{resultContent}</div>
+            : <Panel result={result} loading={loading} label={label} shareParams={shareParams} />
+          }
         </div>
       </div>
 

@@ -105,8 +105,11 @@ export function MortgageForm() {
   }
 
   return (
-    <>
-      <div style={{ maxWidth: 680, margin: "0 auto", padding: "4px 0", fontFamily: "var(--font)" }}>
+    <FinanceLayout
+      accentClass="accent-loan"
+      inputTitle="Loan Details"
+      inputContent={<>
+        <div style={{ maxWidth: 680, margin: "0 auto", padding: "4px 0", fontFamily: "var(--font)" }}>
 
         {/* INPUT CARD */}
         <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 16, padding: "24px 28px 20px", marginBottom: 20 }}>
@@ -239,7 +242,8 @@ export function MortgageForm() {
       <SEOSection title="How Home Loan EMI is Calculated">
         <p>EMI = P × r × (1+r)^n ÷ ((1+r)^n − 1). A 20-year home loan at 8.5% on ₹50L means EMI of ~₹43,000. Down payment below 20% triggers PMI (Private Mortgage Insurance) — typically 0.5% of loan value per year. Property tax and insurance add 20–35% on top of your P&amp;I payment. Use the amortization table to understand how much goes to principal vs interest each month.</p>
       </SEOSection>
-    </>
+      </>}
+    />
   );
 }
 

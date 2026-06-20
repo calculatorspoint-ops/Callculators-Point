@@ -1,5 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect, useCallback } from "react";
+import { FinanceLayout } from './SharedComponents';
+
 
 // ── Period Calculator Engine ──────────────────────────────────────────
 function calcPeriod({ lastPeriodDate, cycleLength, periodDuration, prevCycles = [] }) {
@@ -166,10 +168,10 @@ export function PeriodForm() {
   ];
 
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto', padding: '4px 0', fontFamily: 'var(--font)' }}>
-
-      {/* ─── INPUT CARD ─── */}
-      <div style={{ background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Cycle Details"
+      inputContent={<>
         {/* Card header */}
         <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--border)', background: 'var(--surf2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -223,10 +225,9 @@ export function PeriodForm() {
             <p style={{ fontSize: 11.5, color: 'var(--text3)', marginTop: 6 }}>Separate with commas. More cycles = higher prediction confidence.</p>
           </div>
         </div>
-      </div>
-
-
-      {/* Results */}
+      </>
+      }
+      resultContent={<>
       {res && (
         <>
           {/* Current Phase Hero */}
@@ -495,6 +496,7 @@ export function PeriodForm() {
           )}
         </>
       )}
-    </div>
+      </>}
+    />
   );
 }

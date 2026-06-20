@@ -20,12 +20,11 @@ export function PercentageForm(){
   const [res,setRes]=useState(null);
   useEffect(()=>{const t=setTimeout(()=>{const d=calcPercentage({x,y});setRes(d);},60);return()=>clearTimeout(t);},[x,y]);
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
-        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>🔢 Your Inputs</p>
-        <Row2><N label="Value X" id="px" value={x} onChange={setX} placeholder="25"/><N label="Value Y" id="py" value={y} onChange={setY} placeholder="200"/></Row2>
-      </div>
-      {res?.results&&(
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      resultContent={<>
+        {res?.results&&(
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
           {res.results.map((r,i)=>(
             <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 16px",background:"var(--surface2)",border:"1px solid var(--border)",borderRadius:"var(--r-lg)"}}>
@@ -53,7 +52,12 @@ export function PercentageForm(){
           )}
         </div>
       )}
-    </div>
+      </>}
+      inputContent={<>
+        <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>🔢 Your Inputs</p>
+        <Row2><N label="Value X" id="px" value={x} onChange={setX} placeholder="25"/><N label="Value Y" id="py" value={y} onChange={setY} placeholder="200"/></Row2>
+      </>}
+    />
   );
 }
 
@@ -73,16 +77,20 @@ export function StatsForm(){
     return()=>clearTimeout(t);
   },[input]);
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Numbers"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><CalcChart chartData={res.chart}/><Breakdown rows={res.breakdowns}/></>}
+      </>}
+      inputContent={<>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>📊 Your Inputs</p>
         <L t="Dataset (comma or space separated)"/>
         <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Enter numbers: 12, 34, 56, 78..."
           style={{width:"100%",minHeight:90,padding:14,background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontSize:14,fontFamily:"var(--font-mono)",color:"var(--text)",outline:"none",resize:"vertical",marginBottom:0}}
           onFocus={e=>{e.target.style.borderColor="var(--brand)";}} onBlur={e=>{e.target.style.borderColor="var(--border)";}}/>
-      </div>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><CalcChart chartData={res.chart}/><Breakdown rows={res.breakdowns}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -171,8 +179,13 @@ export function FractionForm(){
     return()=>clearTimeout(t);
   },[n1,d1,n2,d2,op]);
   return (
-    <div>
-      <div style={{background:'var(--surface)', border:'1.5px solid var(--border)', borderRadius:16, padding:'24px 28px 20px', marginBottom:20}}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Fractions"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><Breakdown rows={res.breakdowns}/></>}
+      </>}
+      inputContent={<>
         <p style={{fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'.09em', color:'var(--text3)', margin:'0 0 18px'}}>½ Your Inputs</p>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:0,flexWrap:"wrap"}}>
           <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
@@ -187,9 +200,8 @@ export function FractionForm(){
             <N label="" id="fd2" value={d2} onChange={setD2} placeholder="3"/>
           </div>
         </div>
-      </div>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><Breakdown rows={res.breakdowns}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -223,113 +235,109 @@ export function GPAForm(){
   const inp = {padding:"7px 10px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:8,fontSize:13,color:"var(--text)",outline:"none",width:"100%",fontFamily:"var(--font)",boxSizing:"border-box"};
 
   return (
-    <div style={{maxWidth:680,margin:"0 auto",padding:"4px 0",fontFamily:"var(--font)"}}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Courses"
+      resultContent={<>
+        {res && (
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
 
-      {/* ─── COURSE TABLE CARD ─── */}
-      <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:16,overflow:"hidden",marginBottom:16}}>
-        <div style={{padding:"12px 20px",borderBottom:"1px solid var(--border)",background:`linear-gradient(135deg,${accent}18,${accent}08)`,display:"flex",alignItems:"center",gap:8}}>
-          <span style={{fontSize:16}}>📚</span>
-          <p style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:".09em",color:accent,margin:0}}>Your Courses</p>
-          <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,color:"var(--text3)"}}>GPA Scale: 0.0 – 4.0</span>
-        </div>
-
-        {/* Column headers */}
-        <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 36px",gap:0,padding:"8px 16px",background:`linear-gradient(135deg,${accent}cc,${accent})`, }}>
-          {["Course Name","Grade (0–4.0)","Credits",""].map(h=>(
-            <span key={h} style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.8)",textTransform:"uppercase",letterSpacing:".06em"}}>{h}</span>
-          ))}
-        </div>
-
-        {courses.map((c,i)=>(
-          <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 36px",gap:8,padding:"10px 16px",borderBottom:"1px solid var(--border)",alignItems:"center",background:i%2===0?"var(--surface)":"var(--surface2)"}}>
-            <input style={inp} value={c.name} onChange={e=>upd(i,"name",e.target.value)} placeholder="Course name"/>
-            <input type="number" style={{...inp,textAlign:"center",color:getGPAColor(+c.grade),fontWeight:700}} value={c.grade} onChange={e=>upd(i,"grade",e.target.value)} step="0.1" min="0" max="4"/>
-            <input type="number" style={{...inp,textAlign:"center"}} value={c.credits} onChange={e=>upd(i,"credits",e.target.value)} min="1"/>
-            <button onClick={()=>setCourses(courses.filter((_,j)=>j!==i))}
-              style={{color:"#ef4444",fontSize:16,padding:"2px 6px",borderRadius:8,background:"rgba(239,68,68,.1)",border:"none",cursor:"pointer",lineHeight:1}}
-              aria-label="Remove course">✕</button>
-          </div>
-        ))}
-
-        <button onClick={()=>setCourses([...courses,{name:"New Course",grade:"3.0",credits:"3"}])}
-          style={{width:"100%",padding:"11px",fontSize:13,fontWeight:700,color:accent,background:"var(--surface2)",border:"none",borderTop:"1px solid var(--border)",cursor:"pointer",fontFamily:"var(--font)"}}>
-          + Add Course
-        </button>
-      </div>
-
-      {/* ─── WHAT-IF CARD ─── */}
-      <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:14,padding:"16px 20px",marginBottom:20}}>
-        <p style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:".06em",color:"var(--text3)",margin:"0 0 14px"}}>🎯 What-If Simulator</p>
-        <Row2>
-          <N label="Target GPA" id="wgpa" value={whatIf} onChange={setWhatIf} placeholder="3.7"/>
-          <N label="Next Course Credits" id="wcr" value={wCr} onChange={setWCr} placeholder="3"/>
-        </Row2>
-      </div>
-
-      {/* ─── RESULTS ─── */}
-      {res && (
-        <div style={{display:"flex",flexDirection:"column",gap:14}}>
-
-          {/* HERO */}
-          <div style={{background:`linear-gradient(135deg,${getGPAColor(gpa)}18,${getGPAColor(gpa)}06)`,border:`2px solid ${getGPAColor(gpa)}35`,borderRadius:20,padding:"28px 24px",textAlign:"center",position:"relative",overflow:"hidden"}}>
-            <div style={{position:"absolute",top:-50,left:"50%",transform:"translateX(-50%)",width:220,height:220,background:`radial-gradient(circle,${getGPAColor(gpa)}20,transparent 70%)`,pointerEvents:"none"}}/>
-            <div style={{position:"relative",zIndex:1}}>
-              <p style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:".1em",color:getGPAColor(gpa),marginBottom:8}}>📊 Your GPA</p>
-              <div style={{display:"flex",alignItems:"baseline",justifyContent:"center",gap:10,marginBottom:10}}>
-                <p style={{fontSize:"clamp(36px,8vw,64px)",fontWeight:900,color:"var(--text)",lineHeight:1,margin:0,letterSpacing:"-.03em"}}>{gpa.toFixed(2)}</p>
-                <span style={{fontSize:18,fontWeight:700,color:"var(--text3)"}}>/ 4.0</span>
-              </div>
-              <div style={{display:"flex",justifyContent:"center",gap:10,flexWrap:"wrap"}}>
-                <span style={{padding:"5px 16px",background:getGPAColor(gpa),color:"#fff",borderRadius:100,fontSize:15,fontWeight:800}}>{getLetter(gpa)}</span>
-                <span style={{padding:"5px 16px",background:`${getGPAColor(gpa)}18`,color:getGPAColor(gpa),borderRadius:100,fontSize:12,fontWeight:700,border:`1px solid ${getGPAColor(gpa)}40`}}>{getStatus(gpa)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* GPA SCALE BAR */}
-          <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:14,padding:"16px 20px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
-              <span style={{fontSize:13,fontWeight:700,color:"var(--text2)"}}>GPA Scale</span>
-              <span style={{fontSize:13,fontWeight:800,color:getGPAColor(gpa)}}>{gpa.toFixed(2)} / 4.0</span>
-            </div>
-            {/* Segmented scale */}
-            <div style={{display:"flex",borderRadius:100,overflow:"hidden",height:12,marginBottom:8}}>
-              {[{label:"F",w:50,c:"#ef4444"},{label:"C",w:12.5,c:"#f59e0b"},{label:"B",w:25,c:"#0891b2"},{label:"A",w:12.5,c:"#059669"}].map(z=>(
-                <div key={z.label} style={{width:`${z.w}%`,background:z.c,opacity:gpa>=(z.label==="F"?0:z.label==="C"?2:z.label==="B"?3:3.7)?1:0.25,transition:"opacity .3s"}}/>
-              ))}
-            </div>
-            {/* Needle */}
-            <div style={{position:"relative",height:8}}>
-              <div style={{position:"absolute",left:`${gpaPct}%`,transform:"translateX(-50%)",width:3,height:16,background:getGPAColor(gpa),borderRadius:100,top:-4,transition:"left .4s"}}/>
-            </div>
-            <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
-              {["0.0","1.0","2.0","3.0","4.0"].map(v=><span key={v} style={{fontSize:10,color:"var(--text3)",fontWeight:600}}>{v}</span>)}
-            </div>
-          </div>
-
-          {/* STATS GRID */}
-          <StatsGrid items={res.stats}/>
-
-          {/* INSIGHTS */}
-          <InsightBox insights={res.insights}/>
-
-          {/* BREAKDOWN */}
-          {res.breakdowns?.length>0&&(
-            <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:14,overflow:"hidden"}}>
-              <div style={{padding:"12px 20px",borderBottom:"1px solid var(--border)",background:"var(--surf2,var(--surface2))"}}>
-                <p style={{fontSize:12,fontWeight:800,textTransform:"uppercase",letterSpacing:".06em",color:"var(--text3)",margin:0}}>📋 Course Breakdown</p>
-              </div>
-              {res.breakdowns.map((r,i)=>(
-                <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 20px",borderBottom:i<res.breakdowns.length-1?"1px solid var(--border)":"none"}}>
-                  <span style={{fontSize:13,color:"var(--text3)",fontWeight:600}}>{r.label}</span>
-                  <span style={{fontSize:13,color:r.bold?"var(--brand)":"var(--text)",fontWeight:r.bold?800:600}}>{r.value}</span>
+            {/* HERO */}
+            <div style={{background:`linear-gradient(135deg,${getGPAColor(gpa)}18,${getGPAColor(gpa)}06)`,border:`2px solid ${getGPAColor(gpa)}35`,borderRadius:20,padding:"28px 24px",textAlign:"center",position:"relative",overflow:"hidden"}}>
+              <div style={{position:"absolute",top:-50,left:"50%",transform:"translateX(-50%)",width:220,height:220,background:`radial-gradient(circle,${getGPAColor(gpa)}20,transparent 70%)`,pointerEvents:"none"}}/>
+              <div style={{position:"relative",zIndex:1}}>
+                <p style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:".1em",color:getGPAColor(gpa),marginBottom:8}}>📊 Your GPA</p>
+                <div style={{display:"flex",alignItems:"baseline",justifyContent:"center",gap:10,marginBottom:10}}>
+                  <p style={{fontSize:"clamp(36px,8vw,64px)",fontWeight:900,color:"var(--text)",lineHeight:1,margin:0,letterSpacing:"-.03em"}}>{gpa.toFixed(2)}</p>
+                  <span style={{fontSize:18,fontWeight:700,color:"var(--text3)"}}>/ 4.0</span>
                 </div>
-              ))}
+                <div style={{display:"flex",justifyContent:"center",gap:10,flexWrap:"wrap"}}>
+                  <span style={{padding:"5px 16px",background:getGPAColor(gpa),color:"#fff",borderRadius:100,fontSize:15,fontWeight:800}}>{getLetter(gpa)}</span>
+                  <span style={{padding:"5px 16px",background:`${getGPAColor(gpa)}18`,color:getGPAColor(gpa),borderRadius:100,fontSize:12,fontWeight:700,border:`1px solid ${getGPAColor(gpa)}40`}}>{getStatus(gpa)}</span>
+                </div>
+              </div>
             </div>
-          )}
+
+            {/* GPA SCALE BAR */}
+            <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:14,padding:"16px 20px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:10}}>
+                <span style={{fontSize:13,fontWeight:700,color:"var(--text2)"}}>GPA Scale</span>
+                <span style={{fontSize:13,fontWeight:800,color:getGPAColor(gpa)}}>{gpa.toFixed(2)} / 4.0</span>
+              </div>
+              <div style={{display:"flex",borderRadius:100,overflow:"hidden",height:12,marginBottom:8}}>
+                {[{label:"F",w:50,c:"#ef4444"},{label:"C",w:12.5,c:"#f59e0b"},{label:"B",w:25,c:"#0891b2"},{label:"A",w:12.5,c:"#059669"}].map(z=>(
+                  <div key={z.label} style={{width:`${z.w}%`,background:z.c,opacity:gpa>=(z.label==="F"?0:z.label==="C"?2:z.label==="B"?3:3.7)?1:0.25,transition:"opacity .3s"}}/>
+                ))}
+              </div>
+              <div style={{position:"relative",height:8}}>
+                <div style={{position:"absolute",left:`${gpaPct}%`,transform:"translateX(-50%)",width:3,height:16,background:getGPAColor(gpa),borderRadius:100,top:-4,transition:"left .4s"}}/>
+              </div>
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
+                {["0.0","1.0","2.0","3.0","4.0"].map(v=><span key={v} style={{fontSize:10,color:"var(--text3)",fontWeight:600}}>{v}</span>)}
+              </div>
+            </div>
+
+            <StatsGrid items={res.stats}/>
+            <InsightBox insights={res.insights}/>
+
+            {res.breakdowns?.length>0&&(
+              <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:14,overflow:"hidden"}}>
+                <div style={{padding:"12px 20px",borderBottom:"1px solid var(--border)",background:"var(--surf2,var(--surface2))"}}>
+                  <p style={{fontSize:12,fontWeight:800,textTransform:"uppercase",letterSpacing:".06em",color:"var(--text3)",margin:0}}>📋 Course Breakdown</p>
+                </div>
+                {res.breakdowns.map((r,i)=>(
+                  <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 20px",borderBottom:i<res.breakdowns.length-1?"1px solid var(--border)":"none"}}>
+                    <span style={{fontSize:13,color:"var(--text3)",fontWeight:600}}>{r.label}</span>
+                    <span style={{fontSize:13,color:r.bold?"var(--brand)":"var(--text)",fontWeight:r.bold?800:600}}>{r.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </>}
+      inputContent={<>
+        {/* ─── COURSE TABLE CARD ─── */}
+        <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:16,overflow:"hidden",marginBottom:16}}>
+          <div style={{padding:"12px 20px",borderBottom:"1px solid var(--border)",background:`linear-gradient(135deg,${accent}18,${accent}08)`,display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:16}}>📚</span>
+            <p style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:".09em",color:accent,margin:0}}>Your Courses</p>
+            <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,color:"var(--text3)"}}>GPA Scale: 0.0 – 4.0</span>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 36px",gap:0,padding:"8px 16px",background:`linear-gradient(135deg,${accent}cc,${accent})`, }}>
+            {["Course Name","Grade (0–4.0)","Credits",""].map(h=>(
+              <span key={h} style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.8)",textTransform:"uppercase",letterSpacing:".06em"}}>{h}</span>
+            ))}
+          </div>
+
+          {courses.map((c,i)=>(
+            <div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 36px",gap:8,padding:"10px 16px",borderBottom:"1px solid var(--border)",alignItems:"center",background:i%2===0?"var(--surface)":"var(--surface2)"}}>
+              <input style={inp} value={c.name} onChange={e=>upd(i,"name",e.target.value)} placeholder="Course name"/>
+              <input type="number" style={{...inp,textAlign:"center",color:getGPAColor(+c.grade),fontWeight:700}} value={c.grade} onChange={e=>upd(i,"grade",e.target.value)} step="0.1" min="0" max="4"/>
+              <input type="number" style={{...inp,textAlign:"center"}} value={c.credits} onChange={e=>upd(i,"credits",e.target.value)} min="1"/>
+              <button onClick={()=>setCourses(courses.filter((_,j)=>j!==i))}
+                style={{color:"#ef4444",fontSize:16,padding:"2px 6px",borderRadius:8,background:"rgba(239,68,68,.1)",border:"none",cursor:"pointer",lineHeight:1}}
+                aria-label="Remove course">✕</button>
+            </div>
+          ))}
+
+          <button onClick={()=>setCourses([...courses,{name:"New Course",grade:"3.0",credits:"3"}])}
+            style={{width:"100%",padding:"11px",fontSize:13,fontWeight:700,color:accent,background:"var(--surface2)",border:"none",borderTop:"1px solid var(--border)",cursor:"pointer",fontFamily:"var(--font)"}}>
+            + Add Course
+          </button>
         </div>
-      )}
-    </div>
+
+        {/* ─── WHAT-IF CARD ─── */}
+        <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:14,padding:"16px 20px"}}>
+          <p style={{fontSize:11,fontWeight:800,textTransform:"uppercase",letterSpacing:".06em",color:"var(--text3)",margin:"0 0 14px"}}>🎯 What-If Simulator</p>
+          <Row2>
+            <N label="Target GPA" id="wgpa" value={whatIf} onChange={setWhatIf} placeholder="3.7"/>
+            <N label="Next Course Credits" id="wcr" value={wCr} onChange={setWCr} placeholder="3"/>
+          </Row2>
+        </div>
+      </>}
+    />
   );
 }
 
@@ -364,8 +372,14 @@ export function CGPAForm(){
   },[semesters,university]);
 
   return (
-    <div>
-      <Sel label="University Formula" id="cuniv" value={university} onChange={setUniversity} opts={[
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Semesters"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><Breakdown rows={res.breakdowns}/></>}
+      </>}
+      inputContent={<>
+        <Sel label="University Formula" id="cuniv" value={university} onChange={setUniversity} opts={[
         {v:"standard",l:"Standard (CGPA × 9.5)"},{v:"vtu",l:"VTU (×10 − 5)"},{v:"anna",l:"Anna University (×10)"},{v:"hec",l:"HEC Pakistan (×10)"},{v:"mu",l:"Mumbai University"}
       ]}/>
       {semesters.map((s,i)=>(
@@ -376,60 +390,76 @@ export function CGPAForm(){
           </div>
           <Row2>
             <N label="SGPA (0–4.0)" id={`sgpa-${s.id}`} value={s.sgpa} onChange={v=>upd(s.id,"sgpa",v)} placeholder="3.5"/>
-            <N label="Credits" id={`scr-${s.id}`} value={s.credits} onChange={v=>upd(s.id,"credits",v)} placeholder="18"/>
+            <N label="Credits" id={`scr-${s.id}`} value={s.credits} onChange={v=>upd(s.id,"credits",v)} placeholder="20"/>
           </Row2>
         </div>
       ))}
-      <button onClick={()=>setSemesters([...semesters,{id:Date.now(),sgpa:"3.0",credits:"18"}])}
-        style={{width:"100%",padding:"12px",borderRadius:"var(--r-lg)",border:"1.5px dashed var(--border)",color:"var(--text2)",fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:16}}>
-        + Add Another Semester
+      <button onClick={()=>setSemesters([...semesters,{id:Date.now(),sgpa:"",credits:""}])}
+        style={{width:"100%",padding:"10px",background:"var(--p50)",border:"1px dashed var(--brand)",borderRadius:"var(--r-md)",color:"var(--brand)",fontWeight:700,fontSize:13,cursor:"pointer",marginTop:4}}>
+        + Add Semester
       </button>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><Breakdown rows={res.breakdowns}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
-// ── Scientific Calculator ───────────────────────────────────────────
+// ── Scientific Calculator ─────────────────────────────────────────────
 export function ScientificForm(){
-  const [expr,setExpr]=useState(""),[deg,setDeg]=useState(true),[history,setHistory]=useState([]);
-  const [res,setRes]=useState(null);
+  const [expr,setExpr]=useState(""),[res,setRes]=useState(null),[deg,setDeg]=useState(true),[history,setHistory]=useState([]);
   const calculate=()=>{
-    const d=calcScientific({expr,degMode:deg});
-    setRes(d);
-    if(d.valid) setHistory(h=>[{expr,result:d.result},...h].slice(0,8));
+    if(!expr.trim()){setRes(null);return;}
+    try{
+      let e=expr.replace(/π/g,"Math.PI").replace(/e(?![a-z])/g,"Math.E")
+        .replace(/sin\(/g,deg?"Math.sin(Math.PI/180*":"Math.sin(")
+        .replace(/cos\(/g,deg?"Math.cos(Math.PI/180*":"Math.cos(")
+        .replace(/tan\(/g,deg?"Math.tan(Math.PI/180*":"Math.tan(")
+        .replace(/log\(/g,"Math.log10(").replace(/ln\(/g,"Math.log(")
+        .replace(/√\(/g,"Math.sqrt(").replace(/x²/g,"**2").replace(/\|([^|]+)\|/g,"Math.abs($1)");
+      // eslint-disable-next-line no-new-func
+      const result=Function('"use strict";return ('+e+')')();
+      const r={valid:true,result:typeof result==="number"?+result.toFixed(10):result,expr};
+      setRes(r);
+      setHistory(h=>[{expr,result:r.result},...h.slice(0,9)]);
+    }catch(err){setRes({valid:false,error:"Invalid expression"});}
   };
   return (
-    <div>
-      <div style={{display:"flex",gap:8,marginBottom:12}}>
-        <input value={expr} onChange={e=>setExpr(e.target.value)} onKeyDown={e=>e.key==="Enter"&&calculate()}
-          placeholder="Type expression or use buttons…"
-          style={{flex:1,padding:"10px 14px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontSize:15,fontFamily:"var(--font-mono)",color:"var(--text)",outline:"none"}}
-          onFocus={e=>e.target.style.borderColor="var(--brand)"} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
-        <Tabs tabs={["DEG","RAD"]} active={deg?"DEG":"RAD"} onChange={v=>setDeg(v==="DEG")}/>
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:5,marginBottom:14}}>
-        {["sin","cos","tan","log","ln","√","x²","1/x","|x|","π","e"].map(fn=>(
-          <button key={fn} onClick={()=>setExpr(e=>e+fn+"(")}
-            style={{padding:"9px 4px",borderRadius:"var(--r-sm)",background:"var(--p50)",border:"1px solid var(--p100)",fontSize:12,fontWeight:700,color:"var(--brand)",cursor:"pointer",fontFamily:"var(--font-mono)"}}>
-            {fn}
-          </button>
-        ))}
-      </div>
-      {res&&(res.valid?<div style={{padding:"14px 18px",background:"linear-gradient(135deg,var(--brand),var(--p800))",borderRadius:"var(--r-lg)",textAlign:"center",marginBottom:12}}>
-        <p style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:4}}>{expr} =</p>
-        <p style={{fontSize:28,fontWeight:800,color:"#fff",fontFamily:"var(--font-mono)"}}>{res.result}</p>
-      </div>:<div style={{padding:"12px 16px",background:"#fef2f2",border:"1px solid #fecaca",borderRadius:"var(--r-md)",color:"#b91c1c",fontSize:13}}>⚠️ {res.error}</div>)}
-      {history.length>0&&(<div style={{marginTop:10}}><L t="History"/>{history.map((h,i)=>(
-        <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"6px 12px",fontSize:12,fontFamily:"var(--font-mono)",borderBottom:"1px solid var(--border2)",cursor:"pointer"}} onClick={()=>setExpr(h.expr)}>
-          <span style={{color:"var(--text2)"}}>{h.expr}</span><span style={{fontWeight:700,color:"var(--brand)"}}>{h.result}</span>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Expression"
+      resultContent={<>
+        {res&&(res.valid?<div style={{padding:"14px 18px",background:"linear-gradient(135deg,var(--brand),var(--p800))",borderRadius:"var(--r-lg)",textAlign:"center",marginBottom:12}}>
+          <p style={{fontSize:11,color:"rgba(255,255,255,.5)",marginBottom:4}}>{expr} =</p>
+          <p style={{fontSize:28,fontWeight:800,color:"#fff",fontFamily:"var(--font-mono)"}}>{res.result}</p>
+        </div>:<div style={{padding:"12px 16px",background:"#fef2f2",border:"1px solid #fecaca",borderRadius:"var(--r-md)",color:"#b91c1c",fontSize:13}}>⚠️ {res.error}</div>)}
+        {history.length>0&&(<div style={{marginTop:10}}><L t="History"/>{history.map((h,i)=>(
+          <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"6px 12px",fontSize:12,fontFamily:"var(--font-mono)",borderBottom:"1px solid var(--border2)",cursor:"pointer"}} onClick={()=>setExpr(h.expr)}>
+            <span style={{color:"var(--text2)"}}>{h.expr}</span><span style={{fontWeight:700,color:"var(--brand)"}}>{h.result}</span>
+          </div>
+        ))}</div>)}
+      </>}
+      inputContent={<>
+        <div style={{display:"flex",gap:8,marginBottom:12}}>
+          <input value={expr} onChange={e=>setExpr(e.target.value)} onKeyDown={e=>e.key==="Enter"&&calculate()}
+            placeholder="Type expression or use buttons…"
+            style={{flex:1,padding:"10px 14px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontSize:15,fontFamily:"var(--font-mono)",color:"var(--text)",outline:"none"}}
+            onFocus={e=>e.target.style.borderColor="var(--brand)"} onBlur={e=>e.target.style.borderColor="var(--border)"}/>          <Tabs tabs={["DEG","RAD"]} active={deg?"DEG":"RAD"} onChange={v=>setDeg(v==="DEG")}/>
         </div>
-      ))}</div>)}
-      <button onClick={calculate} style={{width:"100%",padding:"12px",marginTop:14,background:"var(--brand)",color:"#fff",borderRadius:"var(--r-lg)",fontWeight:700,fontSize:15,cursor:"pointer",fontFamily:"var(--font)"}}>
-        Calculate =
-      </button>
-    </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:5,marginBottom:14}}>
+          {["sin","cos","tan","log","ln","√","x²","1/x","|x|","π","e"].map(fn=>(
+            <button key={fn} onClick={()=>setExpr(e=>e+fn+"(")}
+              style={{padding:"9px 4px",borderRadius:"var(--r-sm)",background:"var(--p50)",border:"1px solid var(--p100)",fontSize:12,fontWeight:700,color:"var(--brand)",cursor:"pointer",fontFamily:"var(--font-mono)"}}>
+              {fn}
+            </button>
+          ))}
+        </div>
+        <button onClick={calculate} style={{width:"100%",padding:"12px",marginTop:14,background:"var(--brand)",color:"#fff",borderRadius:"var(--r-lg)",fontWeight:700,fontSize:15,cursor:"pointer",fontFamily:"var(--font)"}}>
+          Calculate =
+        </button>
+      </>}
+    />
   );
 }
+
 
 // ── Prime Number Checker ─────────────────────────────────────────────
 export function PrimeForm(){
@@ -462,9 +492,11 @@ export function PrimeForm(){
     return()=>clearTimeout(t);
   },[n]);
   return (
-    <div>
-      <N label="Enter a Number" id="pn" value={n} onChange={setN} placeholder="e.g. 97"/>
-      {res&&(
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Number"
+      resultContent={<>
+        {res&&(
         <>
           <div style={{textAlign:"center",padding:"20px",background:res.prime?"linear-gradient(135deg,#16a34a,#15803d)":"linear-gradient(135deg,#dc2626,#b91c1c)",borderRadius:"var(--r-xl)",marginBottom:16}}>
             <div style={{fontSize:11,fontWeight:800,color:"rgba(255,255,255,.6)",textTransform:"uppercase",letterSpacing:".1em",marginBottom:6}}>Is {res.num} Prime?</div>
@@ -487,7 +519,11 @@ export function PrimeForm(){
           </div>
         </>
       )}
-    </div>
+      </>}
+      inputContent={<>
+        <N label="Enter a Number" id="pn" value={n} onChange={setN} placeholder="e.g. 97"/>
+      </>}
+    />
   );
 }
 

@@ -77,89 +77,88 @@ export function BMIForm(){
   ];
 
   return (
-    <div style={{maxWidth:680,margin:'0 auto',padding:'4px 0',fontFamily:'var(--font)'}}>
-
-      {/* INPUT CARD */}
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
-        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>⚖️ Your Details</p>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      inputContent={<>
         <Tabs tabs={["Metric","Imperial"]} active={unit==="metric"?"Metric":"Imperial"} onChange={v=>setUnit(v==="Metric"?"metric":"imperial")}/>
         <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
         <Sl label={unit==="metric"?"Weight (kg)":"Weight (lbs)"} id="bw" min={30} max={unit==="metric"?300:660} step={0.5} value={w} onChange={setW} fmt={v=>`${v} ${unit==="metric"?"kg":"lbs"}`}/>
         <Sl label={unit==="metric"?"Height (cm)":"Height (ft)"} id="bh" min={unit==="metric"?100:3} max={unit==="metric"?250:8} step={unit==="metric"?0.5:0.1} value={h} onChange={setH} fmt={v=>`${v} ${unit==="metric"?"cm":"ft"}`}/>
         <Sl label="Age" id="bage" min={10} max={100} value={age} onChange={setAge} fmt={v=>`${v} years`}/>
-      </div>
+      </>}
+      resultContent={<>
+        {bmiData && (
+          <div style={{display:'flex',flexDirection:'column',gap:16}}>
 
-      {/* RESULTS */}
-      {bmiData && (
-        <div style={{display:'flex',flexDirection:'column',gap:16}}>
-
-          {/* HERO */}
-          <div style={{background:`linear-gradient(135deg,${AC}18,${AC}06)`,border:`2px solid ${AC}30`,borderRadius:20,padding:'28px 24px',textAlign:'center',position:'relative',overflow:'hidden'}}>
-            <div style={{position:'absolute',top:-50,left:'50%',transform:'translateX(-50%)',width:220,height:220,background:`radial-gradient(circle,${AC}20,transparent 70%)`,pointerEvents:'none'}}/>
-            <div style={{position:'relative',zIndex:1}}>
-              <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:AC,marginBottom:8}}>⚖️ YOUR BMI</p>
-              <p style={{fontSize:'clamp(38px,8vw,64px)',fontWeight:900,color:'var(--text)',lineHeight:1,margin:'0 0 12px'}}>{bmi}</p>
-              {/* Category badge */}
-              <span style={{display:'inline-block',background:catC+'22',border:`1.5px solid ${catC}55`,borderRadius:100,padding:'5px 18px',fontSize:13,fontWeight:800,color:catC}}>
-                {bmiData.category}
-              </span>
+            {/* HERO */}
+            <div style={{background:`linear-gradient(135deg,${AC}18,${AC}06)`,border:`2px solid ${AC}30`,borderRadius:20,padding:'28px 24px',textAlign:'center',position:'relative',overflow:'hidden'}}>
+              <div style={{position:'absolute',top:-50,left:'50%',transform:'translateX(-50%)',width:220,height:220,background:`radial-gradient(circle,${AC}20,transparent 70%)`,pointerEvents:'none'}}/>
+              <div style={{position:'relative',zIndex:1}}>
+                <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.1em',color:AC,marginBottom:8}}>⚖️ YOUR BMI</p>
+                <p style={{fontSize:'clamp(38px,8vw,64px)',fontWeight:900,color:'var(--text)',lineHeight:1,margin:'0 0 12px'}}>{bmi}</p>
+                {/* Category badge */}
+                <span style={{display:'inline-block',background:catC+'22',border:`1.5px solid ${catC}55`,borderRadius:100,padding:'5px 18px',fontSize:13,fontWeight:800,color:catC}}>
+                  {bmiData.category}
+                </span>
+              </div>
             </div>
-          </div>
 
-          {/* 4-METRIC GRID */}
-          <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12}}>
-            {[
-              {icon:'🏷️',label:'Category',val:bmiData.category,valColor:catC},
-              {icon:'⚠️',label:'Health Risk',val:bmiData.risk,valColor:'var(--text)'},
-              {icon:'📏',label:'Ideal Weight',val:(bmiData.idealMin&&bmiData.idealMax)?(bmiData.idealMin+'–'+bmiData.idealMax+(unit==="metric"?' kg':' lbs')):'-',valColor:'var(--text)'},
-              {icon:'🔬',label:'Est. Body Fat',val:bmiData.bfPct?bmiData.bfPct+'%':'-',valColor:'var(--text)'},
-            ].map(m=>(
-              <div key={m.label} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'16px 14px',textAlign:'center'}}>
-                <div style={{fontSize:22,marginBottom:8}}>{m.icon}</div>
-                <div style={{fontSize:'clamp(13px,3vw,16px)',fontWeight:900,color:m.valColor||'var(--text)',lineHeight:1.3}}>{m.val}</div>
-                <div style={{fontSize:11,color:'var(--text3)',marginTop:6,fontWeight:600}}>{m.label}</div>
+            {/* 4-METRIC GRID */}
+            <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12}}>
+              {[
+                {icon:'🏷️',label:'Category',val:bmiData.category,valColor:catC},
+                {icon:'⚠️',label:'Health Risk',val:bmiData.risk,valColor:'var(--text)'},
+                {icon:'📏',label:'Ideal Weight',val:(bmiData.idealMin&&bmiData.idealMax)?(bmiData.idealMin+'–'+bmiData.idealMax+(unit==="metric"?' kg':' lbs')):'-',valColor:'var(--text)'},
+                {icon:'🔬',label:'Est. Body Fat',val:bmiData.bfPct?bmiData.bfPct+'%':'-',valColor:'var(--text)'},
+              ].map(m=>(
+                <div key={m.label} style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'16px 14px',textAlign:'center'}}>
+                  <div style={{fontSize:22,marginBottom:8}}>{m.icon}</div>
+                  <div style={{fontSize:'clamp(13px,3vw,16px)',fontWeight:900,color:m.valColor||'var(--text)',lineHeight:1.3}}>{m.val}</div>
+                  <div style={{fontSize:11,color:'var(--text3)',marginTop:6,fontWeight:600}}>{m.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* BMI SCALE BAR */}
+            <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'18px 22px'}}>
+              <p style={{fontSize:13,fontWeight:700,color:'var(--text2)',margin:'0 0 12px'}}>📊 BMI Scale</p>
+              {/* Zone bar */}
+              <div style={{position:'relative',height:14,borderRadius:100,overflow:'visible',display:'flex',marginBottom:8}}>
+                {scaleZones.map((z,i)=>(
+                  <div key={z.label} style={{width:z.width,background:z.color,opacity:.7,borderRadius:i===0?'100px 0 0 100px':i===scaleZones.length-1?'0 100px 100px 0':0}}/>
+                ))}
+                {/* Needle */}
+                {bmiPct!=null&&(
+                  <div style={{position:'absolute',top:-4,left:`${bmiPct}%`,transform:'translateX(-50%)',width:4,height:22,background:'var(--text)',borderRadius:4,boxShadow:'0 0 0 2px var(--surface)'}} />
+                )}
+              </div>
+              {/* Labels */}
+              <div style={{display:'flex',justifyContent:'space-between',marginTop:6}}>
+                {scaleZones.map(z=>(
+                  <span key={z.label} style={{fontSize:10,fontWeight:700,color:z.color,textAlign:'center'}}>{z.label}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* INSIGHTS */}
+            {res?.insights?.filter(Boolean).map((ins,i)=>(
+              <div key={i} style={{display:'flex',gap:12,padding:'12px 16px',borderRadius:12,
+                background:ins.type==='good'?'rgba(16,185,129,.08)':'rgba(219,39,119,.07)',
+                border:`1px solid ${ins.type==='good'?'rgba(16,185,129,.25)':'rgba(219,39,119,.2)'}`}}>
+                <span>{ins.type==='good'?'✅':'ℹ️'}</span>
+                <p style={{fontSize:13,color:'var(--text2)',margin:0,lineHeight:1.6}}>{ins.msg}</p>
               </div>
             ))}
+
+            {/* DISCLAIMER */}
+            <p style={{fontSize:11.5,color:'var(--text3)',lineHeight:1.7,padding:'12px 16px',background:'var(--surf2,var(--surface))',borderRadius:12,border:'1px solid var(--border)',margin:0}}>
+              ⚕️ <strong>Medical Disclaimer:</strong> BMI is a screening tool, not a diagnostic measure. It does not account for muscle mass, bone density, or fat distribution. "Est. Body Fat" uses the Deurenberg formula — an approximation only. Consult a healthcare provider for a complete health assessment.
+            </p>
           </div>
-
-          {/* BMI SCALE BAR */}
-          <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:14,padding:'18px 22px'}}>
-            <p style={{fontSize:13,fontWeight:700,color:'var(--text2)',margin:'0 0 12px'}}>📊 BMI Scale</p>
-            {/* Zone bar */}
-            <div style={{position:'relative',height:14,borderRadius:100,overflow:'visible',display:'flex',marginBottom:8}}>
-              {scaleZones.map((z,i)=>(
-                <div key={z.label} style={{width:z.width,background:z.color,opacity:.7,borderRadius:i===0?'100px 0 0 100px':i===scaleZones.length-1?'0 100px 100px 0':0}}/>
-              ))}
-              {/* Needle */}
-              {bmiPct!=null&&(
-                <div style={{position:'absolute',top:-4,left:`${bmiPct}%`,transform:'translateX(-50%)',width:4,height:22,background:'var(--text)',borderRadius:4,boxShadow:'0 0 0 2px var(--surface)'}} />
-              )}
-            </div>
-            {/* Labels */}
-            <div style={{display:'flex',justifyContent:'space-between',marginTop:6}}>
-              {scaleZones.map(z=>(
-                <span key={z.label} style={{fontSize:10,fontWeight:700,color:z.color,textAlign:'center'}}>{z.label}</span>
-              ))}
-            </div>
-          </div>
-
-          {/* INSIGHTS */}
-          {res?.insights?.filter(Boolean).map((ins,i)=>(
-            <div key={i} style={{display:'flex',gap:12,padding:'12px 16px',borderRadius:12,
-              background:ins.type==='good'?'rgba(16,185,129,.08)':'rgba(219,39,119,.07)',
-              border:`1px solid ${ins.type==='good'?'rgba(16,185,129,.25)':'rgba(219,39,119,.2)'}`}}>
-              <span>{ins.type==='good'?'✅':'ℹ️'}</span>
-              <p style={{fontSize:13,color:'var(--text2)',margin:0,lineHeight:1.6}}>{ins.msg}</p>
-            </div>
-          ))}
-
-          {/* DISCLAIMER */}
-          <p style={{fontSize:11.5,color:'var(--text3)',lineHeight:1.7,padding:'12px 16px',background:'var(--surf2,var(--surface))',borderRadius:12,border:'1px solid var(--border)',margin:0}}>
-            ⚕️ <strong>Medical Disclaimer:</strong> BMI is a screening tool, not a diagnostic measure. It does not account for muscle mass, bone density, or fat distribution. "Est. Body Fat" uses the Deurenberg formula — an approximation only. Consult a healthcare provider for a complete health assessment.
-          </p>
-        </div>
-      )}
-    </div>
+        )}
+      </>}
+    />
   );
 }
 
@@ -250,17 +249,11 @@ export function BMRForm(){
   },[sex,w,h,a]);
 
   return (
-    <div>
-      <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'24px 28px 20px',marginBottom:20}}>
-        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>🔥 Your Details</p>
-        <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
-        <Row2>
-          <Sl label="Weight (kg)" id="bmw" min={30} max={200} step={0.5} value={w} onChange={setW} fmt={v=>`${v}kg`}/>
-          <Sl label="Height (cm)" id="bmh" min={100} max={250} step={0.5} value={h} onChange={setH} fmt={v=>`${v}cm`}/>
-        </Row2>
-        <Sl label="Age" id="bma" min={10} max={100} value={a} onChange={setA} fmt={v=>`${v} years`}/>
-      </div>
-      {res&&<>
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      resultContent={<>
+        {res&&<>
         <ResultBox label={res.primary.label} value={res.primary.value}/>
         <StatsGrid items={res.stats}/>
         <InsightBox insights={res.insights}/>
@@ -274,7 +267,17 @@ export function BMRForm(){
           ))}
         </div>
       </>}
-    </div>
+      </>}
+      inputContent={<>
+        <p style={{fontSize:11,fontWeight:800,textTransform:'uppercase',letterSpacing:'.09em',color:'var(--text3)',margin:'0 0 18px'}}>🔥 Your Details</p>
+        <Tabs tabs={["Male","Female"]} active={sex==="male"?"Male":"Female"} onChange={v=>setSex(v==="Male"?"male":"female")}/>
+        <Row2>
+          <Sl label="Weight (kg)" id="bmw" min={30} max={200} step={0.5} value={w} onChange={setW} fmt={v=>`${v}kg`}/>
+          <Sl label="Height (cm)" id="bmh" min={100} max={250} step={0.5} value={h} onChange={setH} fmt={v=>`${v}cm`}/>
+        </Row2>
+        <Sl label="Age" id="bma" min={10} max={100} value={a} onChange={setA} fmt={v=>`${v} years`}/>
+      </>}
+    />
   );
 }
 
@@ -436,12 +439,11 @@ export function HeartRateForm(){
     return()=>clearTimeout(t);
   },[age,rhr]);
   return (
-    <div>
-      <Row2>
-        <Sl label="Age" id="hra" min={10} max={90} value={age} onChange={setAge} fmt={v=>`${v} years`}/>
-        <Sl label="Resting Heart Rate" id="hrr" min={40} max={100} value={rhr} onChange={setRhr} fmt={v=>`${v} bpm`}/>
-      </Row2>
-      {res&&(
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      resultContent={<>
+        {res&&(
         <>
           <div style={{background:"linear-gradient(135deg,var(--brand),var(--p800))",borderRadius:"var(--r-xl)",padding:"16px 20px",textAlign:"center",marginBottom:16}}>
             <p style={{fontSize:10,fontWeight:800,color:"rgba(255,255,255,.5)",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>Maximum Heart Rate</p>
@@ -459,7 +461,14 @@ export function HeartRateForm(){
           <InsightBox insights={res.insights}/>
         </>
       )}
-    </div>
+      </>}
+      inputContent={<>
+        <Row2>
+        <Sl label="Age" id="hra" min={10} max={90} value={age} onChange={setAge} fmt={v=>`${v} years`}/>
+        <Sl label="Resting Heart Rate" id="hrr" min={40} max={100} value={rhr} onChange={setRhr} fmt={v=>`${v} bpm`}/>
+      </Row2>
+      </>}
+    />
   );
 }
 
@@ -481,9 +490,11 @@ export function OneRMForm(){
     return()=>clearTimeout(t);
   },[w,r]);
   return (
-    <div>
-      <Row2><N label="Weight Lifted (kg)" id="ow" value={w} onChange={setW}/><N label="Reps Completed" id="or" value={r} onChange={setR}/></Row2>
-      {res&&(
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Lift"
+      resultContent={<>
+        {res&&(
         <>
           <ResultBox label={res.primary.label} value={res.primary.value}/>
           <StatsGrid items={res.stats}/>
@@ -499,7 +510,11 @@ export function OneRMForm(){
           </div>
         </>
       )}
-    </div>
+      </>}
+      inputContent={<>
+        <Row2><N label="Weight Lifted (kg)" id="ow" value={w} onChange={setW}/><N label="Reps Completed" id="or" value={r} onChange={setR}/></Row2>
+      </>}
+    />
   );
 }
 
@@ -631,10 +646,11 @@ export function PregnancyForm(){
               const done=res.weeksPregnant>=m.week;
               const active=done&&(i===milestones.length-1||res.weeksPregnant<milestones[i+1].week);
               return (
-                <div key={m.week} style={{display:'flex',alignItems:'center',gap:14,padding:'13px 20px',
-                  borderBottom:i<milestones.length-1?'1px solid var(--border)':'none',
-                  background:active?`${triColor}0a`:'transparent'}}>
-                  <div style={{width:32,height:32,borderRadius:'50%',flexShrink:0,display:'flex',
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Details"
+      inputContent={<>
+        <div style={{width:32,height:32,borderRadius:'50%',flexShrink:0,display:'flex',
                     alignItems:'center',justifyContent:'center',fontSize:14,color:'#fff',fontWeight:800,
                     background:done?triColor:'var(--surf2)',border:`2px solid ${done?triColor:'var(--border)'}`,
                     boxShadow:done?`0 2px 8px ${triColor}40`:'none'}}>
@@ -649,8 +665,9 @@ export function PregnancyForm(){
                     border:`1px solid ${done?triColor+'30':'var(--border)'}`}}>
                     Wk {m.week}
                   </span>
-                </div>
-              );
+      </>}
+    />
+  );
             })}
           </div>
 
@@ -737,35 +754,41 @@ export function SleepForm(){
   },[mode,time]);
   const CYCLE_COLORS=["#f87171","#34d399","#60a5fa"];
   return (
-    <div>
-      <Tabs tabs={["Bedtime to Wake","Wake to Bedtime"]} active={mode==="wakeup"?"Bedtime to Wake":"Wake to Bedtime"}
-        onChange={v=>setMode(v==="Bedtime to Wake"?"wakeup":"bedtime")}/>
-      <N label={mode==="wakeup"?"Bedtime":"Desired Wake-Up Time"} id="sleepTime" value={time} onChange={setTime} type="time"
-        hint={mode==="wakeup"?"When you plan to fall asleep":"When you need to wake up"}/>
-      {res&&(
-        <div style={{marginTop:16}}>
-          <L t={mode==="wakeup"?"Optimal Wake-Up Times":"Optimal Bedtimes"}/>
-          <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            {res.results.map((r,i)=>(
-              <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 18px",borderRadius:"var(--r-lg)",border:`2px solid ${r.cycles===5?"var(--brand)":"var(--border)"}`,background:r.cycles===5?"var(--p50)":"var(--surface2)"}}>
-                <div>
-                  <div style={{fontWeight:700,fontSize:14,color:r.cycles===5?"var(--brand)":"var(--text)"}}>
-                    {mode==="wakeup"?r.wakeup:r.bedtime}
-                    {r.cycles===5&&<span style={{marginLeft:8,fontSize:11,fontWeight:800,background:"var(--brand)",color:"#fff",padding:"2px 8px",borderRadius:100}}>Best</span>}
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Schedule"
+      inputContent={<>
+        <Tabs tabs={["Bedtime to Wake","Wake to Bedtime"]} active={mode==="wakeup"?"Bedtime to Wake":"Wake to Bedtime"}
+          onChange={v=>setMode(v==="Bedtime to Wake"?"wakeup":"bedtime")}/>
+        <N label={mode==="wakeup"?"Bedtime":"Desired Wake-Up Time"} id="sleepTime" value={time} onChange={setTime} type="time"
+          hint={mode==="wakeup"?"When you plan to fall asleep":"When you need to wake up"}/>
+      </>}
+      resultContent={<>
+        {res&&(
+          <div style={{marginTop:16}}>
+            <L t={mode==="wakeup"?"Optimal Wake-Up Times":"Optimal Bedtimes"}/>
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {res.results.map((r,i)=>(
+                <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 18px",borderRadius:"var(--r-lg)",border:`2px solid ${r.cycles===5?"var(--brand)":"var(--border)"}`,background:r.cycles===5?"var(--p50)":"var(--surface2)"}}>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:14,color:r.cycles===5?"var(--brand)":"var(--text)"}}>
+                      {mode==="wakeup"?r.wakeup:r.bedtime}
+                      {r.cycles===5&&<span style={{marginLeft:8,fontSize:11,fontWeight:800,background:"var(--brand)",color:"#fff",padding:"2px 8px",borderRadius:100}}>Best</span>}
+                    </div>
+                    <div style={{fontSize:12,color:"var(--text3)",marginTop:3}}>{r.cycles} cycles - {r.hours}h sleep</div>
                   </div>
-                  <div style={{fontSize:12,color:"var(--text3)",marginTop:3}}>{r.cycles} cycles - {r.hours}h sleep</div>
+                  <div style={{width:12,height:12,borderRadius:"50%",background:CYCLE_COLORS[i]}}/>
                 </div>
-                <div style={{width:12,height:12,borderRadius:"50%",background:CYCLE_COLORS[i]}}/>
-              </div>
-            ))}
+              ))}
+            </div>
+            <div style={{marginTop:14,padding:"12px 14px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
+              You fall asleep ~{res.onsetMins} min after lying down. Each sleep cycle is approx 90 min.
+            </div>
+            <InsightBox insights={res.insights}/>
           </div>
-          <div style={{marginTop:14,padding:"12px 14px",background:"var(--surface2)",borderRadius:"var(--r-lg)",border:"1px solid var(--border)",fontSize:12,color:"var(--text3)"}}>
-            You fall asleep ~{res.onsetMins} min after lying down. Each sleep cycle is approx 90 min.
-          </div>
-          <InsightBox insights={res.insights}/>
-        </div>
-      )}
-    </div>
+        )}
+      </>}
+    />
   );
 }
 
@@ -1755,7 +1778,16 @@ export function ConceptionForm() {
 }
 
 export function BodyTypeForm() {
-  return null;
+  return (
+    <FinanceLayout
+      accentClass="accent-health"
+      inputTitle="Your Measurements"
+      inputContent={<>
+        <p style={{fontSize:13,color:'var(--text3)',margin:0}}>Body type analysis coming soon.</p>
+      </>}
+      resultContent={<></>}
+    />
+  );
 }
 
 export function GFRForm() {

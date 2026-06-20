@@ -43,8 +43,11 @@ export function UnitForm({type="length"}){
   const baseVal = getBaseVal();
 
   return (
-    <div>
-      <div style={{ marginBottom: 16, padding: "12px 14px", background: "linear-gradient(to right, var(--brand-l), var(--surface))", borderLeft: "4px solid var(--brand)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--text2)", display: "flex", gap: 10, alignItems: "flex-start" }}>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Values"
+      inputContent={<>
+        <div style={{ marginBottom: 16, padding: "12px 14px", background: "linear-gradient(to right, var(--brand-l), var(--surface))", borderLeft: "4px solid var(--brand)", borderRadius: "var(--r-md)", fontSize: 13, color: "var(--text2)", display: "flex", gap: 10, alignItems: "flex-start" }}>
         <span aria-hidden="true" style={{ fontSize: 18, flexShrink: 0 }}>💡</span>
         <span><strong>Omni-Sync Active:</strong> Type a value in <em>any</em> box below, and all other units will instantly synchronize.</span>
       </div>
@@ -72,7 +75,8 @@ export function UnitForm({type="length"}){
           );
         })}
       </div>
-    </div>
+      </>}
+    />
   );
 }
 
@@ -83,14 +87,18 @@ export function TemperatureForm(){
   const fromF=v=>{const n=+v;if(!isNaN(n)){const cv=(n-32)*5/9;setC(cv.toFixed(2));setK((cv+273.15).toFixed(2));}};
   const fromK=v=>{const n=+v;if(!isNaN(n)){setC((n-273.15).toFixed(2));setF(((n-273.15)*9/5+32).toFixed(2));}};
   return (
-    <div>
-      <N label="Celsius (°C)" id="tc" value={c} onChange={v=>{setC(v);fromC(v);}}/>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Temperature"
+      inputContent={<>
+        <N label="Celsius (°C)" id="tc" value={c} onChange={v=>{setC(v);fromC(v);}}/>
       <N label="Fahrenheit (°F)" id="tf" value={f} onChange={setF} onChange={v=>{setF(v);fromF(v);}}/>
       <N label="Kelvin (K)" id="tk" value={k} onChange={v=>{setK(v);fromK(v);}}/>
       <div style={{padding:"10px 14px",background:"var(--p50)",border:"1px solid var(--p100)",borderRadius:"var(--r-md)",fontSize:13,color:"var(--brand)"}}>
         💡 Type in any field — all others update instantly
       </div>
-    </div>
+      </>}
+    />
   );
 }
 
@@ -192,13 +200,12 @@ export function AgeForm() {
   };
 
   return (
-    <div style={{ maxWidth: 680, margin: "0 auto", padding: "4px 0", fontFamily: "var(--font)" }}>
-
-      {/* ─── INPUT CARD ─── */}
-      <div style={{ background: "var(--surface)", border: "1.5px solid var(--border)", borderRadius: 16, overflow: "hidden", marginBottom: 20 }}>
-        <div style={{ padding: "12px 20px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 8, background: "var(--surf2, var(--surface2))" }}>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Details"
+      inputContent={<>
+        <div style={{ background: "var(--surf2, var(--surface2))", borderRadius: 12, padding: "12px 16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 16 }}>🎂</span>
-          <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".09em", color: "var(--text3)", margin: 0 }}>Your Birthday Details</p>
           {tob && !targetDate && (
             <span style={{ marginLeft: "auto", fontSize: 11, color: accent, fontWeight: 700, background: `${accent}15`, padding: "2px 8px", borderRadius: 100, border: `1px solid ${accent}40` }}>⏱ Live</span>
           )}
@@ -251,10 +258,9 @@ export function AgeForm() {
             />
           </div>
         </div>
-      </div>
-
-      {/* ─── RESULTS ─── */}
-      {res && (
+      </>}
+      resultContent={<>
+        {res && (
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
           {/* HERO */}
@@ -342,7 +348,8 @@ export function AgeForm() {
           )}
         </div>
       )}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -370,8 +377,14 @@ export function DateDiffForm(){
   },[d1,d2,excl, holidaysText]);
 
   return (
-    <div>
-      <Row2>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Dates"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/></>}
+      </>}
+      inputContent={<>
+        <Row2>
         <N label="Start Date" id="dd1" value={d1} onChange={setD1} type="date"/>
         <N label="End Date" id="dd2" value={d2} onChange={setD2} type="date"/>
       </Row2>
@@ -392,8 +405,8 @@ export function DateDiffForm(){
           />
         </div>
       )}
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -411,11 +424,17 @@ export function CountdownForm(){
       d.insights,null,d.breakdowns));
   },[targetDate,name,tick]);
   return (
-    <div>
-      <N label="Event Name (optional)" id="cn" value={name} onChange={setName} type="text" placeholder="e.g. My Birthday"/>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Event"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/></>}
+      </>}
+      inputContent={<>
+        <N label="Event Name (optional)" id="cn" value={name} onChange={setName} type="text" placeholder="e.g. My Birthday"/>
       <N label="Target Date" id="cd" value={targetDate} onChange={setTargetDate} type="date"/>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -435,8 +454,14 @@ export function WorkHoursForm(){
     return()=>clearTimeout(t);
   },[start,end,brk,days,rate]);
   return (
-    <div>
-      <Row2>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Hours"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/></>}
+      </>}
+      inputContent={<>
+        <Row2>
         <N label="Start Time" id="ws" value={start} onChange={setStart} type="time"/>
         <N label="End Time" id="we" value={end} onChange={setEnd} type="time"/>
       </Row2>
@@ -445,8 +470,8 @@ export function WorkHoursForm(){
         <Sl label="Days per Week" id="wd" min={1} max={7} value={days} onChange={setDays} fmt={v=>`${v} days`}/>
       </Row2>
       <N label="Hourly Rate (optional)" id="wr" value={rate} onChange={setRate} unit={sym} placeholder="0" hint="Add rate to calculate earnings"/>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -510,38 +535,42 @@ export function PasswordForm(){
   const pct = res ? Math.min((res.rawEntropy || res.stats[1]?.value.split(' ')[0]) / 100 * 100, 100) : 0;
 
   return (
-    <div>
-      <Sl label="Password Length" id="pl" min={6} max={64} value={len} onChange={setLen} fmt={v=>`${v} characters`}/>
-      <div style={{display:"flex",gap:20,marginBottom:18,flexWrap:"wrap"}}>
-        {[[upper,setUpper,"Uppercase A–Z"],[nums,setNums,"Numbers 0–9"],[syms,setSyms,"Symbols !@#$"]].map(([val,set,label])=>(
-          <label key={label} style={{display:"flex",alignItems:"center",gap:7,fontSize:13,fontWeight:600,color:"var(--text2)",cursor:"pointer"}}>
-            <input type="checkbox" checked={val} onChange={e=>set(e.target.checked)} style={{accentColor:"var(--brand)",width:15,height:15}}/>{label}
-          </label>
-        ))}
-      </div>
-      {res&&(
-        <>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,padding:"12px 16px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-xl)",marginBottom:12,flexWrap:"wrap"}}>
-            <code style={{fontFamily:"var(--font-mono)",fontSize:14,fontWeight:600,color:"var(--text)",wordBreak:"break-all",flex:1,minWidth:0}}>{res.primary.value}</code>
-            <button onClick={()=>navigator.clipboard.writeText(res.primary.value).catch(()=>{})} style={{flexShrink:0,padding:"8px 18px",borderRadius:"var(--r-md)",background:"var(--brand)",color:"#fff",fontSize:13,fontWeight:700,border:"none",cursor:"pointer",fontFamily:"var(--font)",minHeight:40}}>Copy</button>
-          </div>
-
-          <div style={{marginBottom: 16}}>
-             <div style={{display: "flex", justifyContent: "space-between", fontSize: 11, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 6}}>
-               <span>Strength: {res.stats[2]?.value}</span>
-               <span>Entropy: {res.stats[1]?.value}</span>
-             </div>
-             <div style={{width: "100%", height: 8, background: "var(--border)", borderRadius: 10, overflow: "hidden"}}>
-               <div style={{width: `${pct}%`, height: "100%", background: strengthColor, transition: "all 0.3s ease"}} />
-             </div>
-          </div>
-
-          <StatsGrid items={res.stats}/>
-          <InsightBox insights={res.insights}/>
-          <button onClick={gen} style={{width:"100%",padding:"11px",marginTop:12,background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-lg)",fontWeight:700,fontSize:14,cursor:"pointer",color:"var(--text2)",fontFamily:"var(--font)"}}>🔄 Generate New Password</button>
-        </>
-      )}
-    </div>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Password Options"
+      inputContent={<>
+        <Sl label="Password Length" id="pl" min={6} max={64} value={len} onChange={setLen} fmt={v=>`${v} characters`}/>
+        <div style={{display:"flex",gap:20,marginBottom:18,flexWrap:"wrap"}}>
+          {[[upper,setUpper,"Uppercase A–Z"],[nums,setNums,"Numbers 0–9"],[syms,setSyms,"Symbols !@#$"]].map(([val,set,label])=>(
+            <label key={label} style={{display:"flex",alignItems:"center",gap:7,fontSize:13,fontWeight:600,color:"var(--text2)",cursor:"pointer"}}>
+              <input type="checkbox" checked={val} onChange={e=>set(e.target.checked)} style={{accentColor:"var(--brand)",width:15,height:15}}/>{label}
+            </label>
+          ))}
+        </div>
+      </>}
+      resultContent={<>
+        {res&&(
+          <>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,padding:"12px 16px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-xl)",marginBottom:12,flexWrap:"wrap"}}>
+              <code style={{fontFamily:"var(--font-mono)",fontSize:14,fontWeight:600,color:"var(--text)",wordBreak:"break-all",flex:1,minWidth:0}}>{res.primary.value}</code>
+              <button onClick={()=>navigator.clipboard.writeText(res.primary.value).catch(()=>{})} style={{flexShrink:0,padding:"8px 18px",borderRadius:"var(--r-md)",background:"var(--brand)",color:"#fff",fontSize:13,fontWeight:700,border:"none",cursor:"pointer",fontFamily:"var(--font)",minHeight:40}}>Copy</button>
+            </div>
+            <div style={{marginBottom: 16}}>
+               <div style={{display: "flex", justifyContent: "space-between", fontSize: 11, fontWeight: 700, color: "var(--text3)", textTransform: "uppercase", letterSpacing: ".05em", marginBottom: 6}}>
+                 <span>Strength: {res.stats[2]?.value}</span>
+                 <span>Entropy: {res.stats[1]?.value}</span>
+               </div>
+               <div style={{width: "100%", height: 8, background: "var(--border)", borderRadius: 10, overflow: "hidden"}}>
+                 <div style={{width: `${pct}%`, height: "100%", background: strengthColor, transition: "all 0.3s ease"}} />
+               </div>
+            </div>
+            <StatsGrid items={res.stats}/>
+            <InsightBox insights={res.insights}/>
+            <button onClick={gen} style={{width:"100%",padding:"11px",marginTop:12,background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-lg)",fontWeight:700,fontSize:14,cursor:"pointer",color:"var(--text2)",fontFamily:"var(--font)"}}>🔄 Generate New Password</button>
+          </>
+        )}
+      </>}
+    />
   );
 }
 
@@ -551,14 +580,18 @@ export function RomanForm(){
   const result=mode==="toRoman"?toRoman(+n):fromRoman(n).toString();
   const valid=mode==="toRoman"?(+n>=1&&+n<=3999):!isNaN(fromRoman(n));
   return (
-    <div>
-      <Tabs tabs={["Number → Roman","Roman → Number"]} active={mode==="toRoman"?"Number → Roman":"Roman → Number"} onChange={v=>setMode(v.includes("→ R")?"toRoman":"fromRoman")}/>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Number"
+      inputContent={<>
+        <Tabs tabs={["Number → Roman","Roman → Number"]} active={mode==="toRoman"?"Number → Roman":"Roman → Number"} onChange={v=>setMode(v.includes("→ R")?"toRoman":"fromRoman")}/>
       <N label={mode==="toRoman"?"Number (1–3999)":"Roman Numeral"} id="rn" value={n} onChange={setN} type={mode==="toRoman"?"number":"text"} min={1} max={3999}/>
       {n&&(<div style={{background:"linear-gradient(135deg,var(--brand),var(--p800))",borderRadius:"var(--r-xl)",padding:"20px",textAlign:"center",marginTop:4}}>
         <p style={{fontSize:10,fontWeight:800,color:"rgba(255,255,255,.5)",textTransform:"uppercase",letterSpacing:".1em",marginBottom:4}}>{mode==="toRoman"?n+" =":"=  "}</p>
         <p style={{fontSize:28,fontWeight:800,color:valid?"#fff":"#fca5a5",fontFamily:"var(--font-mono)"}}>{valid?result:"Invalid input"}</p>
       </div>)}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -577,13 +610,19 @@ export function WordCountForm(){
     return()=>clearTimeout(t);
   },[text]);
   return (
-    <div>
-      <L t="Enter Text"/>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Text"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/></>}
+      </>}
+      inputContent={<>
+        <L t="Enter Text"/>
       <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Type or paste your text here…"
         style={{width:"100%",minHeight:150,padding:14,background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontSize:14,fontFamily:"var(--font)",color:"var(--text)",outline:"none",resize:"vertical",marginBottom:14}}
         onFocus={e=>e.target.style.borderColor="var(--brand)"} onBlur={e=>e.target.style.borderColor="var(--border)"}/>
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -593,10 +632,11 @@ export function Base64Form(){
   const [res,setRes]=useState(null);
   useEffect(()=>{const t=setTimeout(()=>setRes(calcBase64({text,mode})),60);return()=>clearTimeout(t);},[text,mode]);
   return (
-    <div>
-      <Tabs tabs={["Encode","Decode"]} active={mode==="encode"?"Encode":"Decode"} onChange={v=>setMode(v==="Encode"?"encode":"decode")}/>
-      <N label="Input" id="b64in" value={text} onChange={setText} type="text"/>
-      {res&&!res.error&&(<>
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Input"
+      resultContent={<>
+        {res&&!res.error&&(<>
         <L t="Output"/>
         <div style={{padding:"12px 16px",background:"var(--surface2)",border:"1.5px solid var(--border)",borderRadius:"var(--r-md)",fontFamily:"var(--font-mono)",fontSize:14,color:"var(--text)",wordBreak:"break-all",marginBottom:10}}>
           {res.result}
@@ -607,7 +647,12 @@ export function Base64Form(){
         </div>
       </>)}
       {res?.error&&<div style={{padding:"12px 14px",background:"#fef2f2",border:"1px solid #fecaca",borderRadius:"var(--r-md)",color:"#b91c1c",fontSize:13}}>⚠️ {res.error}</div>}
-    </div>
+      </>}
+      inputContent={<>
+        <Tabs tabs={["Encode","Decode"]} active={mode==="encode"?"Encode":"Decode"} onChange={v=>setMode(v==="Encode"?"encode":"decode")}/>
+      <N label="Input" id="b64in" value={text} onChange={setText} type="text"/>
+      </>}
+    />
   );
 }
 
@@ -636,8 +681,14 @@ export function AreaForm(){
   },[shape,a,b,r]);
 
   return (
-    <div>
-      <Sel label="Shape" id="ashape" value={shape} onChange={setShape} opts={[
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Shape"
+      resultContent={<>
+        {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><Breakdown rows={res.breakdowns}/></>}
+      </>}
+      inputContent={<>
+        <Sel label="Shape" id="ashape" value={shape} onChange={setShape} opts={[
         {v:"rectangle",l:"Rectangle"},{v:"square",l:"Square"},{v:"circle",l:"Circle"},
         {v:"triangle",l:"Right Triangle"},{v:"trapezoid",l:"Trapezoid"}
       ]}/>
@@ -645,8 +696,8 @@ export function AreaForm(){
       {shape==="square"&&<N label="Side Length" id="asq" value={a} onChange={setA} unit="units"/>}
       {shape==="circle"&&<N label="Radius" id="ar" value={r} onChange={setR} unit="units"/>}
       {shape==="trapezoid"&&<><Row2><N label="Parallel Side 1 (a)" id="ata" value={a} onChange={setA} unit="units"/><N label="Parallel Side 2 (b)" id="atb" value={b} onChange={setB} unit="units"/></Row2><N label="Height" id="ath" value={r} onChange={setR} unit="units"/></>}
-      {res&&<><ResultBox label={res.primary.label} value={res.primary.value}/><StatsGrid items={res.stats}/><InsightBox insights={res.insights}/><Breakdown rows={res.breakdowns}/></>}
-    </div>
+      </>}
+    />
   );
 }
 
@@ -659,16 +710,11 @@ export function RandomForm(){
     setRes(d);
   };
   return (
-    <div>
-      <Row2><N label="Min" id="rmin" value={min} onChange={setMin}/><N label="Max" id="rmax" value={max} onChange={setMax}/></Row2>
-      <Row2>
-        <Sl label="Count" id="rcount" min={1} max={50} value={count} onChange={setCount} fmt={v=>`${v} numbers`}/>
-        <Sel label="Type" id="rtype" value={type} onChange={setType} opts={[{v:"integer",l:"Integers"},{v:"decimal.js",l:"Decimals"}]}/>
-      </Row2>
-      <button onClick={gen} className="calculate-btn" style={{width:"100%",marginBottom:16}}>
-        🎲 Generate Random Numbers
-      </button>
-      {res&&(
+    <FinanceLayout
+      accentClass="accent-utility"
+      inputTitle="Your Options"
+      resultContent={<>
+        {res&&(
         <>
           <div style={{display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center"}}>
             {res.numbers.map((n,i)=>(
@@ -677,7 +723,18 @@ export function RandomForm(){
           </div>
         </>
       )}
-    </div>
+      </>}
+      inputContent={<>
+        <Row2><N label="Min" id="rmin" value={min} onChange={setMin}/><N label="Max" id="rmax" value={max} onChange={setMax}/></Row2>
+      <Row2>
+        <Sl label="Count" id="rcount" min={1} max={50} value={count} onChange={setCount} fmt={v=>`${v} numbers`}/>
+        <Sel label="Type" id="rtype" value={type} onChange={setType} opts={[{v:"integer",l:"Integers"},{v:"decimal.js",l:"Decimals"}]}/>
+      </Row2>
+      <button onClick={gen} className="calculate-btn" style={{width:"100%",marginBottom:16}}>
+        🎲 Generate Random Numbers
+      </button>
+      </>}
+    />
   );
 }
 
