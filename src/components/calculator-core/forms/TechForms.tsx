@@ -368,83 +368,79 @@ export function NumberBaseForm() {
     <FinanceLayout
       accentClass="accent-tech"
       inputTitle="Your Values"
-      result={res}
-      loading={null}
-      label="Decimal Value"
       inputContent={<>
-        <div>
-      <SectionTitle>Input Configuration</SectionTitle>
-      <Sel label="Input Number Base" id="nbbase" value={fromBase} onChange={setFromBase}
-        opts={[
-          { v: "2",  l: "Binary (Base 2)"        },
-          { v: "8",  l: "Octal (Base 8)"          },
-          { v: "10", l: "Decimal (Base 10)"       },
-          { v: "16", l: "Hexadecimal (Base 16)"   },
-          { v: "32", l: "Base-32"                 },
-          { v: "36", l: "Base-36"                 },
-        ]} />
-      <L t="Input Number" id="nbinput" />
-      <MonoInput id="nbinput" value={input}
-        onChange={function(e) { setInput(e.target.value); }}
-        placeholder="e.g. 255" />
-
-      {bases && (
-        <div>
-          <SectionTitle>All Base Representations</SectionTitle>
-          {BASE_ROWS.map(function(row) {
-            const isCopied = copied === row.key;
-            return (
-              <div key={row.key} style={{ display: "flex", alignItems: "center",
-                gap: 8, marginBottom: 8, padding: "10px 12px",
-                background: "var(--surface2)", border: "1.5px solid var(--border)",
-                borderRadius: "var(--r-md)" }}>
-                <div style={{ minWidth: 80 }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase",
-                    letterSpacing: ".05em", color: "var(--text3)" }}>{row.bit}</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)" }}>
-                    {row.label}
+        <SectionTitle>Input Configuration</SectionTitle>
+        <Sel label="Input Number Base" id="nbbase" value={fromBase} onChange={setFromBase}
+          opts={[
+            { v: "2",  l: "Binary (Base 2)"        },
+            { v: "8",  l: "Octal (Base 8)"          },
+            { v: "10", l: "Decimal (Base 10)"       },
+            { v: "16", l: "Hexadecimal (Base 16)"   },
+            { v: "32", l: "Base-32"                 },
+            { v: "36", l: "Base-36"                 },
+          ]} />
+        <L t="Input Number" id="nbinput" />
+        <MonoInput id="nbinput" value={input}
+          onChange={function(e) { setInput(e.target.value); }}
+          placeholder="e.g. 255" />
+      </>}
+      resultContent={<>
+        {bases && (
+          <div>
+            <SectionTitle>All Base Representations</SectionTitle>
+            {BASE_ROWS.map(function(row) {
+              const isCopied = copied === row.key;
+              return (
+                <div key={row.key} style={{ display: "flex", alignItems: "center",
+                  gap: 8, marginBottom: 8, padding: "10px 12px",
+                  background: "var(--surface2)", border: "1.5px solid var(--border)",
+                  borderRadius: "var(--r-md)" }}>
+                  <div style={{ minWidth: 80 }}>
+                    <div style={{ fontSize: 9, fontWeight: 800, textTransform: "uppercase",
+                      letterSpacing: ".05em", color: "var(--text3)" }}>{row.bit}</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text2)" }}>
+                      {row.label}
+                    </div>
                   </div>
+                  <code style={{ flex: 1, fontFamily: "var(--font-mono)", fontSize: 13,
+                    fontWeight: 700, color: "var(--text)", wordBreak: "break-all" }}>
+                    {row.value}
+                  </code>
+                  <button onClick={function() { copyVal(row.key, row.value); }}
+                    style={{ padding: "3px 10px", borderRadius: 100, fontSize: 10,
+                      fontWeight: 700, border: isCopied ? "1.5px solid var(--brand)" : "1px solid var(--border)",
+                      background: isCopied ? "var(--p50)" : "var(--surface)",
+                      color: isCopied ? "var(--brand)" : "var(--text3)",
+                      cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {isCopied ? "✅" : "📋"}
+                  </button>
                 </div>
-                <code style={{ flex: 1, fontFamily: "var(--font-mono)", fontSize: 13,
-                  fontWeight: 700, color: "var(--text)", wordBreak: "break-all" }}>
-                  {row.value}
-                </code>
-                <button onClick={function() { copyVal(row.key, row.value); }}
-                  style={{ padding: "3px 10px", borderRadius: 100, fontSize: 10,
-                    fontWeight: 700, border: isCopied ? "1.5px solid var(--brand)" : "1px solid var(--border)",
-                    background: isCopied ? "var(--p50)" : "var(--surface)",
-                    color: isCopied ? "var(--brand)" : "var(--text3)",
-                    cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
-                  {isCopied ? "✅" : "📋"}
-                </button>
-              </div>
-            );
-          })}
+              );
+            })}
 
-          {isColorHex && (
-            <div style={{ marginTop: 12, padding: "12px 16px",
-              background: "var(--surface2)", borderRadius: "var(--r-md)",
-              border: "1.5px solid var(--border)" }}>
-              <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase",
-                letterSpacing: ".06em", color: "var(--text3)", marginBottom: 8 }}>
-                🎨 Hex Color Preview
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 48, height: 48, borderRadius: "var(--r-md)",
-                  background: colorHex, border: "2px solid var(--border)",
-                  flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 16,
-                    fontWeight: 800, color: "var(--text)" }}>{colorHex}</div>
-                  <div style={{ fontSize: 11, color: "var(--text3)" }}>CSS color value</div>
+            {isColorHex && (
+              <div style={{ marginTop: 12, padding: "12px 16px",
+                background: "var(--surface2)", borderRadius: "var(--r-md)",
+                border: "1.5px solid var(--border)" }}>
+                <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase",
+                  letterSpacing: ".06em", color: "var(--text3)", marginBottom: 8 }}>
+                  🎨 Hex Color Preview
                 </div>
-                <CopyBtn text={colorHex} small />
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "var(--r-md)",
+                    background: colorHex, border: "2px solid var(--border)",
+                    flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 16,
+                      fontWeight: 800, color: "var(--text)" }}>{colorHex}</div>
+                    <div style={{ fontSize: 11, color: "var(--text3)" }}>CSS color value</div>
+                  </div>
+                  <CopyBtn text={colorHex} small />
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+            )}
+          </div>
+        )}
       </>}
     />
   );
@@ -1166,79 +1162,120 @@ export function RandomStringForm() {
   ];
 
   const pool = (includeLower ? 26 : 0) + (includeUpper ? 26 : 0) +
-             (includeDigits ? 10 : 0) + (includeSymbols ? 32 : 0);
+               (includeDigits ? 10 : 0) + (includeSymbols ? 32 : 0);
   const entropy = pool > 0 ? length * Math.log2(pool) : 0;
 
   return (
     <FinanceLayout
       accentClass="accent-tech"
-      inputTitle="Your Input"
-      result={res}
-      loading={null}
-      label="Calculator"
+      inputTitle="Configuration"
       inputContent={<>
-        <div>
-      <SectionTitle>Generator Presets</SectionTitle>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
-        {PRESETS.map(function(p) {
-          return (
-            <button key={p.label} onClick={function() { applyPreset(p); }}
-              style={{ padding: "6px 12px", borderRadius: 100, fontSize: 11,
-                fontWeight: 700, border: "1px solid var(--border)",
-                background: "var(--surface)", color: "var(--text2)", cursor: "pointer" }}>
-              {p.label}
-            </button>
-          );
-        })}
-      </div>
-
-      <SectionTitle>Configuration</SectionTitle>
-      <Sl label="String Length" id="rsl" min={4} max={128} value={length}
-        onChange={setLength} fmt={function(v) { return v + " chars"; }} />
-      <Sl label="Number of Strings" id="rsc" min={1} max={20} value={count}
-        onChange={setCount} fmt={function(v) { return v + " strings"; }} />
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-        {CHAR_TYPES.map(function(row) {
-          return (
-            <label key={row[0]} style={{ display: "flex", alignItems: "center",
-              gap: 6, fontSize: 13, fontWeight: 600, color: "var(--text2)", cursor: "pointer" }}>
-              <input type="checkbox" checked={row[1]}
-                onChange={function(e) { row[2](e.target.checked); }}
-                style={{ accentColor: "var(--brand)", width: 15, height: 15 }} />
-              {row[0]}
-            </label>
-          );
-        })}
-      </div>
-
-      <div style={{ padding: "10px 14px", background: "var(--surface2)",
-        border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", marginBottom: 14 }}>
-        <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase",
-          letterSpacing: ".05em", color: "var(--text3)", marginBottom: 4 }}>
-          Entropy Preview
+        <SectionTitle>Generator Presets</SectionTitle>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
+          {PRESETS.map(function(p) {
+            return (
+              <button key={p.label} onClick={function() { applyPreset(p); }}
+                style={{ padding: "6px 12px", borderRadius: 100, fontSize: 11,
+                  fontWeight: 700, border: "1px solid var(--border)",
+                  background: "var(--surface)", color: "var(--text2)", cursor: "pointer" }}>
+                {p.label}
+              </button>
+            );
+          })}
         </div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>
-          Pool: {pool} chars → {entropy.toFixed(1)} bits entropy
-        </div>
-        <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>
-          {entropy < 50 ? "⚠️ Low entropy — increase length or add character types" :
-           entropy < 80 ? "✅ Good entropy for most uses" :
-           "🚀 Excellent entropy — highly secure"}
-        </div>
-      </div>
 
-      <button onClick={generate}
-        style={{ width: "100%", padding: "13px", borderRadius: "var(--r-md)",
-          background: "var(--brand)", color: "#fff", fontWeight: 700,
-          fontSize: 14, border: "none", cursor: "pointer", marginBottom: 16 }}>
-        🎲 Generate {count} String{count > 1 ? "s" : ""}
-      </button>
-    </div>
+        <SectionTitle>Options</SectionTitle>
+        <Sl label="String Length" id="rsl" min={4} max={128} value={length}
+          onChange={setLength} fmt={function(v) { return v + " chars"; }} />
+        <Sl label="Number of Strings" id="rsc" min={1} max={20} value={count}
+          onChange={setCount} fmt={function(v) { return v + " strings"; }} />
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+          {CHAR_TYPES.map(function(row) {
+            return (
+              <label key={row[0]} style={{ display: "flex", alignItems: "center",
+                gap: 6, fontSize: 13, fontWeight: 600, color: "var(--text2)", cursor: "pointer" }}>
+                <input type="checkbox" checked={row[1]}
+                  onChange={function(e) { row[2](e.target.checked); }}
+                  style={{ accentColor: "var(--brand)", width: 15, height: 15 }} />
+                {row[0]}
+              </label>
+            );
+          })}
+        </div>
+
+        <div style={{ padding: "10px 14px", background: "var(--surface2)",
+          border: "1.5px solid var(--border)", borderRadius: "var(--r-md)", marginBottom: 14 }}>
+          <div style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase",
+            letterSpacing: ".05em", color: "var(--text3)", marginBottom: 4 }}>
+            Entropy Preview
+          </div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>
+            Pool: {pool} chars → {entropy.toFixed(1)} bits entropy
+          </div>
+          <div style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>
+            {entropy < 50 ? "⚠️ Low entropy — increase length or add character types" :
+             entropy < 80 ? "✅ Good entropy for most uses" :
+             "🚀 Excellent entropy — highly secure"}
+          </div>
+        </div>
+
+        <button onClick={generate}
+          style={{ width: "100%", padding: "13px", borderRadius: "var(--r-md)",
+            background: "var(--brand)", color: "#fff", fontWeight: 700,
+            fontSize: 14, border: "none", cursor: "pointer" }}>
+          🎲 Generate {count} String{count > 1 ? "s" : ""}
+        </button>
+      </>}
+      resultContent={<>
+        {results.length > 0 ? (
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between",
+              alignItems: "center", marginBottom: 10 }}>
+              <SectionTitle>Generated Strings</SectionTitle>
+              <button onClick={copyAll}
+                style={{ padding: "6px 14px", borderRadius: 100, fontSize: 11,
+                  fontWeight: 700, border: "1.5px solid var(--brand)",
+                  background: copiedAll ? "var(--brand)" : "var(--p50)",
+                  color: copiedAll ? "#fff" : "var(--brand)", cursor: "pointer" }}>
+                {copiedAll ? "✅ Copied All" : "📋 Copy All"}
+              </button>
+            </div>
+            {results.map(function(s, i) {
+              const isCopied = copiedIdx === i;
+              return (
+                <div key={i} style={{ display: "flex", alignItems: "center",
+                  gap: 8, marginBottom: 8, padding: "10px 12px",
+                  background: "var(--surface2)", border: "1.5px solid var(--border)",
+                  borderRadius: "var(--r-md)" }}>
+                  <code style={{ flex: 1, fontFamily: "var(--font-mono)", fontSize: 12,
+                    fontWeight: 600, color: "var(--text)", wordBreak: "break-all" }}>
+                    {s}
+                  </code>
+                  <button onClick={function() { copyOne(s, i); }}
+                    style={{ padding: "3px 10px", borderRadius: 100, fontSize: 10,
+                      fontWeight: 700,
+                      border: isCopied ? "1.5px solid var(--brand)" : "1px solid var(--border)",
+                      background: isCopied ? "var(--p50)" : "var(--surface)",
+                      color: isCopied ? "var(--brand)" : "var(--text3)",
+                      cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {isCopied ? "✅" : "📋"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", padding: "40px 20px",
+            color: "var(--text3)", fontSize: 13, fontWeight: 600 }}>
+            🎲 Click "Generate" to create random strings
+          </div>
+        )}
       </>}
     />
   );
 }
+
 
 /* ─────────────────────────────────────────────────────────────────────────
    8. BandwidthForm
