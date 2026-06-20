@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 type Verdict = {
   needed: number;
@@ -83,135 +84,137 @@ export function PassFailCalculator() {
   const meterColor = result?.color ?? '#15803d';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* Inputs grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        {/* Minimum Passing Score */}
-        <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
-            Minimum Passing Score
-          </label>
-          <input type="number" style={inp} value={passingScore} onChange={e => setPassingScore(e.target.value)} min={0} max={100} step={1} />
-          <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>Out of 100</div>
-        </div>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Scores"
+      inputContent={<>
+        {/* Inputs grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          {/* Minimum Passing Score */}
+          <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
+            <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
+              Minimum Passing Score
+            </label>
+            <input type="number" style={inp} value={passingScore} onChange={e => setPassingScore(e.target.value)} min={0} max={100} step={1} />
+            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>Out of 100</div>
+          </div>
 
-        {/* Current Average */}
-        <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
-            Current Average
-          </label>
-          <input type="number" style={inp} value={currentAvg} onChange={e => setCurrentAvg(e.target.value)} min={0} max={100} step={0.1} />
-          <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>Your score so far (0–100)</div>
-        </div>
+          {/* Current Average */}
+          <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
+            <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
+              Current Average
+            </label>
+            <input type="number" style={inp} value={currentAvg} onChange={e => setCurrentAvg(e.target.value)} min={0} max={100} step={0.1} />
+            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>Your score so far (0–100)</div>
+          </div>
 
-        {/* Remaining Assessments */}
-        <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
-            Remaining Assessments
-          </label>
-          <input type="number" style={inp} value={remainingCount} onChange={e => setRemainingCount(e.target.value)} min={0} max={50} step={1} />
-          <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>Number of tests / assignments left</div>
-        </div>
+          {/* Remaining Assessments */}
+          <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
+            <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
+              Remaining Assessments
+            </label>
+            <input type="number" style={inp} value={remainingCount} onChange={e => setRemainingCount(e.target.value)} min={0} max={50} step={1} />
+            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>Number of tests / assignments left</div>
+          </div>
 
-        {/* Weight of Remaining */}
-        <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
-            Weight of Remaining (%)
-          </label>
-          <input type="number" style={inp} value={remainingWeight} onChange={e => setRemainingWeight(e.target.value)} min={0} max={100} step={1} />
-          <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>% of final grade remaining</div>
+          {/* Weight of Remaining */}
+          <div style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
+            <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
+              Weight of Remaining (%)
+            </label>
+            <input type="number" style={inp} value={remainingWeight} onChange={e => setRemainingWeight(e.target.value)} min={0} max={100} step={1} />
+            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 5, textAlign: 'center' }}>% of final grade remaining</div>
+          </div>
         </div>
-      </div>
-
-      {/* Result Card */}
-      {result && (
-        <>
-          <div style={{ padding: '28px', background: `linear-gradient(135deg, ${result.color}22, ${result.color}0a)`, border: `2px solid ${result.color}55`, borderRadius: 18, textAlign: 'center' }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: result.color, textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 8 }}>
-              Required Score on Remaining
+      </>}
+      resultContent={<>
+        {/* Result Card */}
+        {result && (
+          <>
+            <div style={{ padding: '28px', background: `linear-gradient(135deg, ${result.color}22, ${result.color}0a)`, border: `2px solid ${result.color}55`, borderRadius: 18, textAlign: 'center' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: result.color, textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 8 }}>
+                Required Score on Remaining
+              </div>
+              <div style={{ fontSize: 72, fontWeight: 900, color: result.color, lineHeight: 1, fontFamily: 'var(--font-display)' }}>
+                {result.needed > 100
+                  ? '100+'
+                  : result.needed <= 0
+                  ? 'N/A'
+                  : `${result.needed.toFixed(1)}%`}
+              </div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: result.color, marginTop: 12 }}>
+                {result.emoji} {result.label}
+              </div>
+              {result.needed > 100 && (
+                <div style={{ fontSize: 13, color: '#dc2626', marginTop: 8, fontWeight: 700 }}>
+                  You need {result.needed.toFixed(1)}% — mathematically impossible even with a perfect score.
+                  <br />
+                  Deficit: {(result.needed - 100).toFixed(1)} points above maximum.
+                </div>
+              )}
             </div>
-            <div style={{ fontSize: 72, fontWeight: 900, color: result.color, lineHeight: 1, fontFamily: 'var(--font-display)' }}>
-              {result.needed > 100
-                ? '100+'
-                : result.needed <= 0
-                ? 'N/A'
-                : `${result.needed.toFixed(1)}%`}
+
+            {/* Visual Risk Meter */}
+            <div style={{ padding: '14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 10 }}>
+                📊 Risk Meter — Score Needed
+              </p>
+              <div style={{ position: 'relative', width: '100%', height: 22, background: 'var(--surface2)', borderRadius: 99, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                <div style={{ position: 'absolute', left: 0, top: 0, width: '70%', height: '100%', background: '#15803d18' }} />
+                <div style={{ position: 'absolute', left: '70%', top: 0, width: '15%', height: '100%', background: '#d9770618' }} />
+                <div style={{ position: 'absolute', left: '85%', top: 0, width: '15%', height: '100%', background: '#dc262618' }} />
+                <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${Math.min(100, meterFill)}%`, background: meterColor, borderRadius: 99, transition: 'width 0.4s' }} />
+                <div style={{ position: 'absolute', left: '35%', top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: '#15803d' }}>EASY</div>
+                <div style={{ position: 'absolute', left: '73%', top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: '#d97706' }}>HARD</div>
+                <div style={{ position: 'absolute', left: '87%', top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: '#dc2626' }}>RISKY</div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                <span style={{ fontSize: 10, color: 'var(--text3)' }}>0%</span>
+                <span style={{ fontSize: 10, color: 'var(--text3)' }}>70%</span>
+                <span style={{ fontSize: 10, color: 'var(--text3)' }}>85%</span>
+                <span style={{ fontSize: 10, color: 'var(--text3)' }}>100%</span>
+              </div>
             </div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: result.color, marginTop: 12 }}>
-              {result.emoji} {result.label}
+
+            {/* Best / Worst case */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div style={{ padding: '14px', background: 'linear-gradient(135deg, #15803d22, #15803d0a)', border: '2px solid #15803d55', borderRadius: 12, textAlign: 'center' }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: '#15803d', textTransform: 'uppercase', marginBottom: 6 }}>🏆 Best Case</div>
+                <div style={{ fontSize: 36, fontWeight: 900, color: '#15803d', fontFamily: 'var(--font-display)' }}>
+                  {result.bestCase.toFixed(1)}%
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>If you score 100% on all remaining</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: result.bestCase >= parseFloat(passingScore) ? '#15803d' : '#dc2626', marginTop: 6 }}>
+                  {result.bestCase >= parseFloat(passingScore) ? '✓ Would PASS' : '✗ Would FAIL'}
+                </div>
+              </div>
+              <div style={{ padding: '14px', background: 'linear-gradient(135deg, #dc262622, #dc26260a)', border: '2px solid #dc262655', borderRadius: 12, textAlign: 'center' }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: '#dc2626', textTransform: 'uppercase', marginBottom: 6 }}>💔 Worst Case</div>
+                <div style={{ fontSize: 36, fontWeight: 900, color: '#dc2626', fontFamily: 'var(--font-display)' }}>
+                  {result.worstCase.toFixed(1)}%
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>If you score 0% on all remaining</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: result.worstCase >= parseFloat(passingScore) ? '#15803d' : '#dc2626', marginTop: 6 }}>
+                  {result.worstCase >= parseFloat(passingScore) ? '✓ Would PASS' : '✗ Would FAIL'}
+                </div>
+              </div>
             </div>
-            {result.needed > 100 && (
-              <div style={{ fontSize: 13, color: '#dc2626', marginTop: 8, fontWeight: 700 }}>
-                You need {result.needed.toFixed(1)}% — mathematically impossible even with a perfect score.
+
+            {/* Formula explanation */}
+            <div style={{ padding: '12px 14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 6 }}>📐 Formula</p>
+              <p style={{ fontSize: 11, color: 'var(--text2)', margin: 0, lineHeight: 1.7 }}>
+                <span style={{ fontFamily: 'monospace', background: 'var(--surface2)', padding: '1px 5px', borderRadius: 4 }}>
+                  Required = (Target − Current × CompletedWeight) ÷ RemainingWeight
+                </span>
                 <br />
-                Deficit: {(result.needed - 100).toFixed(1)} points above maximum.
-              </div>
-            )}
-          </div>
-
-          {/* Visual Risk Meter */}
-          <div style={{ padding: '14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12 }}>
-            <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 10 }}>
-              📊 Risk Meter — Score Needed
-            </p>
-            <div style={{ position: 'relative', width: '100%', height: 22, background: 'var(--surface2)', borderRadius: 99, overflow: 'hidden', border: '1px solid var(--border)' }}>
-              {/* Zone bands */}
-              <div style={{ position: 'absolute', left: 0, top: 0, width: '70%', height: '100%', background: '#15803d18' }} />
-              <div style={{ position: 'absolute', left: '70%', top: 0, width: '15%', height: '100%', background: '#d9770618' }} />
-              <div style={{ position: 'absolute', left: '85%', top: 0, width: '15%', height: '100%', background: '#dc262618' }} />
-              {/* Fill */}
-              <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', width: `${Math.min(100, meterFill)}%`, background: meterColor, borderRadius: 99, transition: 'width 0.4s' }} />
-              {/* Labels */}
-              <div style={{ position: 'absolute', left: '35%', top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: '#15803d' }}>EASY</div>
-              <div style={{ position: 'absolute', left: '73%', top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: '#d97706' }}>HARD</div>
-              <div style={{ position: 'absolute', left: '87%', top: '50%', transform: 'translateY(-50%)', fontSize: 9, fontWeight: 700, color: '#dc2626' }}>RISKY</div>
+                Completed weight = {((1 - parseFloat(remainingWeight) / 100) * 100).toFixed(0)}% &nbsp;|&nbsp;
+                Remaining weight = {remainingWeight}%
+              </p>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-              <span style={{ fontSize: 10, color: 'var(--text3)' }}>0%</span>
-              <span style={{ fontSize: 10, color: 'var(--text3)' }}>70%</span>
-              <span style={{ fontSize: 10, color: 'var(--text3)' }}>85%</span>
-              <span style={{ fontSize: 10, color: 'var(--text3)' }}>100%</span>
-            </div>
-          </div>
-
-          {/* Best / Worst case */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <div style={{ padding: '14px', background: 'linear-gradient(135deg, #15803d22, #15803d0a)', border: '2px solid #15803d55', borderRadius: 12, textAlign: 'center' }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: '#15803d', textTransform: 'uppercase', marginBottom: 6 }}>🏆 Best Case</div>
-              <div style={{ fontSize: 36, fontWeight: 900, color: '#15803d', fontFamily: 'var(--font-display)' }}>
-                {result.bestCase.toFixed(1)}%
-              </div>
-              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>If you score 100% on all remaining</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: result.bestCase >= parseFloat(passingScore) ? '#15803d' : '#dc2626', marginTop: 6 }}>
-                {result.bestCase >= parseFloat(passingScore) ? '✓ Would PASS' : '✗ Would FAIL'}
-              </div>
-            </div>
-            <div style={{ padding: '14px', background: 'linear-gradient(135deg, #dc262622, #dc26260a)', border: '2px solid #dc262655', borderRadius: 12, textAlign: 'center' }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: '#dc2626', textTransform: 'uppercase', marginBottom: 6 }}>💔 Worst Case</div>
-              <div style={{ fontSize: 36, fontWeight: 900, color: '#dc2626', fontFamily: 'var(--font-display)' }}>
-                {result.worstCase.toFixed(1)}%
-              </div>
-              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 4 }}>If you score 0% on all remaining</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: result.worstCase >= parseFloat(passingScore) ? '#15803d' : '#dc2626', marginTop: 6 }}>
-                {result.worstCase >= parseFloat(passingScore) ? '✓ Would PASS' : '✗ Would FAIL'}
-              </div>
-            </div>
-          </div>
-
-          {/* Formula explanation */}
-          <div style={{ padding: '12px 14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
-            <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 6 }}>📐 Formula</p>
-            <p style={{ fontSize: 11, color: 'var(--text2)', margin: 0, lineHeight: 1.7 }}>
-              <span style={{ fontFamily: 'monospace', background: 'var(--surface2)', padding: '1px 5px', borderRadius: 4 }}>
-                Required = (Target − Current × CompletedWeight) ÷ RemainingWeight
-              </span>
-              <br />
-              Completed weight = {((1 - parseFloat(remainingWeight) / 100) * 100).toFixed(0)}% &nbsp;|&nbsp;
-              Remaining weight = {remainingWeight}%
-            </p>
-          </div>
-        </>
-      )}
-    </div>
+          </>
+        )}
+      </>}
+    />
   );
 }

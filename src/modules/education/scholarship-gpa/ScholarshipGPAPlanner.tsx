@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 const PRESETS = [
   { label: 'Merit', gpa: 3.0, color: '#3b82f6' },
@@ -146,7 +147,10 @@ export function ScholarshipGPAPlanner() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Profile"
+      inputContent={<>
 
       {/* Presets */}
       <div style={cardStyle}>
@@ -284,6 +288,9 @@ export function ScholarshipGPAPlanner() {
       </div>
 
       {/* Results */}
+      </>
+      }
+      resultContent={<>
       {results && (
         <>
           {/* Feasibility Banner */}
@@ -522,6 +529,8 @@ export function ScholarshipGPAPlanner() {
           </div>
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

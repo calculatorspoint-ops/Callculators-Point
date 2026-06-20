@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Priority = 'High' | 'Medium' | 'Low';
@@ -279,7 +280,10 @@ export function StudySchedulePlanner() {
   const overload = totalDailyUsed > hpdNum + 0.05;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Schedule"
+      inputContent={<>
 
       {/* ── Row 1: hours/day + study days ── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 12 }}>
@@ -438,6 +442,9 @@ export function StudySchedulePlanner() {
       </div>
 
       {/* ── Results ── */}
+      </>
+      }
+      resultContent={<>
       {results.length > 0 && (
         <>
           {/* Overload warning */}
@@ -721,6 +728,8 @@ export function StudySchedulePlanner() {
           </div>
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

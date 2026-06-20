@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // ── Grade scale ──────────────────────────────────────────────────────────────
 const GRADE_SCALE: { min: number; letter: string; gpa: number; color: string }[] = [
@@ -137,7 +138,10 @@ export function AssignmentGradeCalculator() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Assignments"
+      inputContent={<>
 
       {/* ── Controls bar ─────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
@@ -243,6 +247,9 @@ export function AssignmentGradeCalculator() {
         </button>
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* ── Result card ───────────────────────────────────────────────────── */}
       {result && (
         <>
@@ -388,6 +395,8 @@ export function AssignmentGradeCalculator() {
           </div>
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

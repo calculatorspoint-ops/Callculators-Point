@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 type DistributionPreset = 'competitive' | 'average' | 'lenient' | 'custom';
 
@@ -157,7 +158,10 @@ export function ClassRankCalculator() {
   const customTotal = customDist.above37 + customDist.range33 + customDist.range30 + customDist.range25 + customDist.below25;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Standing"
+      inputContent={<>
 
       {/* GPA + Class Size */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -275,6 +279,9 @@ export function ClassRankCalculator() {
       </div>
 
       {/* Results */}
+      </>
+      }
+      resultContent={<>
       {result && (
         <>
           {/* Main result card */}
@@ -382,6 +389,8 @@ export function ClassRankCalculator() {
           <strong>Disclaimer:</strong> This is an estimate based on typical GPA distributions. Actual class rank depends on your school's specific grading policies and student performance. Contact your school registrar for an official rank.
         </p>
       </div>
-    </div>
+      </>
+    }
+    />
   );
 }

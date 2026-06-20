@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 type ECStrength = 'none' | 'some' | 'strong' | 'exceptional';
 type EssayStrength = 'not_started' | 'average' | 'strong' | 'exceptional';
@@ -173,7 +174,10 @@ export function CollegeAdmissionEstimator() {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Profile"
+      inputContent={<>
       {/* DISCLAIMER */}
       <div style={{ padding: '12px 14px', background: '#fef3c722', border: '2px solid #d9770655', borderRadius: 12 }}>
         <p style={{ fontSize: 12, fontWeight: 700, color: '#d97706', margin: 0, lineHeight: 1.5 }}>
@@ -280,6 +284,9 @@ export function CollegeAdmissionEstimator() {
       </div>
 
       {/* Score breakdown */}
+      </>
+      }
+      resultContent={<>
       {result && (
         <>
           <div style={{ padding: '14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12 }}>
@@ -365,6 +372,8 @@ export function CollegeAdmissionEstimator() {
           </div>
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

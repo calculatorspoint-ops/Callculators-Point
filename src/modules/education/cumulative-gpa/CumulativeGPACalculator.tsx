@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Semester {
@@ -193,7 +194,10 @@ export function CumulativeGPACalculator() {
 
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Semesters"
+      inputContent={<>
 
       {/* ── Semester list ── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -330,6 +334,9 @@ export function CumulativeGPACalculator() {
       </div>
 
       {/* ── Results ── */}
+      </>
+      }
+      resultContent={<>
       {result && (
         <>
           {/* Big cumulative GPA display */}
@@ -548,6 +555,8 @@ export function CumulativeGPACalculator() {
           </li>
         </ul>
       </div>
-    </div>
+      </>
+    }
+    />
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 interface Assignment {
   id: number;
@@ -128,7 +129,10 @@ export function RequiredGradeCalculator() {
   const totalW = assignments.reduce((s, a) => s + (parseFloat(a.weight) || 0), 0);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Situation"
+      inputContent={<>
       {/* Settings */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         <div>
@@ -173,6 +177,9 @@ export function RequiredGradeCalculator() {
         </button>
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* Results */}
       {result && result.type === 'pending' && (
         <>
@@ -248,6 +255,8 @@ export function RequiredGradeCalculator() {
           <div style={{ fontSize: 16, fontWeight: 800, color: result.grade.color, marginTop: 8 }}>{result.grade.grade}</div>
         </div>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

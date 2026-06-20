@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // GMAT Focus Edition (2024): each section 60-90, total 205-805
 // Percentile data (approximate from GMAC)
@@ -129,7 +130,10 @@ export function GMATScoreCalculator() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Scores"
+      inputContent={<>
       {/* Header note */}
       <div style={{ padding: '10px 14px', background: 'linear-gradient(135deg, var(--brand-l), var(--surface))', border: '1px solid var(--border)', borderRadius: 10 }}>
         <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--brand)', margin: 0 }}>
@@ -163,6 +167,9 @@ export function GMATScoreCalculator() {
         ))}
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* Total Score Result */}
       {result && (
         <>
@@ -249,6 +256,8 @@ export function GMATScoreCalculator() {
           )}
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

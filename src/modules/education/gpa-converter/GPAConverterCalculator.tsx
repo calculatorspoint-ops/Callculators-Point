@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Scale = '4.0' | '5.0' | '7.0' | '10.0' | 'Percentage';
@@ -164,8 +165,10 @@ export function GPAConverterCalculator() {
     : [];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your GPA"
+      inputContent={<>
       {/* ── Country Presets ─────────────────────────────────────────────────── */}
       <div>
         <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 8 }}>
@@ -261,6 +264,9 @@ export function GPAConverterCalculator() {
         )}
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* ── Main Result Card ─────────────────────────────────────────────────── */}
       {result && (
         <>
@@ -449,6 +455,8 @@ export function GPAConverterCalculator() {
           </div>
         </>
       )}
-    </div>
+      </>
+      }
+    />
   );
 }

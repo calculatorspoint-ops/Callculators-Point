@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // Syllable counting: count vowel groups per word (approximation of Flesch method)
 function countSyllables(word: string): number {
@@ -125,7 +126,10 @@ export function ReadingLevelCalculator() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Text"
+      inputContent={<>
       {/* Textarea */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
@@ -168,6 +172,9 @@ export function ReadingLevelCalculator() {
       </div>
 
       {/* Results */}
+      </>
+      }
+      resultContent={<>
       {result && (
         <>
           {/* Main score cards */}
@@ -280,6 +287,8 @@ export function ReadingLevelCalculator() {
           </div>
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

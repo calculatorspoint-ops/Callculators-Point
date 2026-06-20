@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // SAT scoring scales (Digital SAT 2024 format)
 // Each section: 200–800, total: 400–1600
@@ -83,7 +84,10 @@ export function SATScoreCalculator() {
   const inp = { padding: '10px 14px', background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 10, fontSize: 15, color: 'var(--text)', outline: 'none', width: '100%', fontWeight: 700 } as React.CSSProperties;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Scores"
+      inputContent={<>
       {/* Digital SAT Notice */}
       <div style={{ padding: '10px 14px', background: '#eff6ff', border: '1.5px solid #bfdbfe', borderRadius: 10, fontSize: 12, color: '#1e40af', fontWeight: 600 }}>
         📱 <strong>Digital SAT Format (2024–onwards):</strong> This calculator uses the Digital SAT scoring model — two sections (Math + Reading &amp; Writing), each scored 200–800, total 400–1600. The paper SAT was discontinued in the US in 2023. Bluebook app score conversions are approximate.
@@ -135,6 +139,9 @@ export function SATScoreCalculator() {
         </div>
       )}
 
+      </>
+      }
+      resultContent={<>
       {/* Total Score Result */}
       {result && (
         <>
@@ -199,6 +206,8 @@ export function SATScoreCalculator() {
           )}
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

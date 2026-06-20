@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // ── Percentile lookup tables ──────────────────────────────────────────────────
 const VERBAL_PERCENTILES: Record<number, number> = {
@@ -218,7 +219,10 @@ export function GREScoreCalculator() {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Scores"
+      inputContent={<>
 
       {/* ── Input Mode Toggle ── */}
       <div style={cardStyle}>
@@ -322,6 +326,9 @@ export function GREScoreCalculator() {
         </div>
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* ── Total Score Banner ── */}
       <div
         style={{
@@ -465,6 +472,8 @@ export function GREScoreCalculator() {
         </div>
       </div>
 
-    </div>
+      </>
+    }
+    />
   );
 }

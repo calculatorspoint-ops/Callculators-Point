@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // ─── Grading Scale Definitions ───────────────────────────────────────────────
 
@@ -206,7 +207,10 @@ export function TestScoreCalculator() {
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Test"
+      inputContent={<>
 
       {/* ── Mode Toggle ── */}
       <div>
@@ -328,6 +332,9 @@ export function TestScoreCalculator() {
       )}
 
       {/* ── Results ── */}
+      </>
+      }
+      resultContent={<>
       {result && (
         <>
           {/* Main percentage card */}
@@ -503,6 +510,8 @@ export function TestScoreCalculator() {
           )}
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

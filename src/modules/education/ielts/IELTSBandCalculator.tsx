@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // Official IELTS band score rounding:
 // Average is calculated to the nearest 0.5 (rounds up from .25)
@@ -92,122 +93,127 @@ export function IELTSBandCalculator() {
   const inp = { padding: '10px 14px', background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 10, fontSize: 15, color: 'var(--text)', outline: 'none', width: '100%', fontWeight: 700 } as React.CSSProperties;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* IELTS Disclaimer */}
-      <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 10, fontSize: 12, color: '#15803d', fontWeight: 600 }}>
-        📋 <strong>Unofficial Estimate Only.</strong> Band scores are approximations based on published IELTS conversion tables. Official band scores are determined by certified IELTS examiners and can only be obtained through an authorised test centre (British Council, IDP, or Cambridge Assessment English). Raw score to band conversions may vary slightly by test sitting.
-      </div>
-      {/* Mode Toggles */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        <div>
-          <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 5 }}>Test Type</p>
-          <div style={{ display: 'flex', gap: 6, background: 'var(--surface2)', padding: 3, borderRadius: 9, border: '1px solid var(--border)' }}>
-            {(['academic', 'general'] as const).map(m => (
-              <button key={m} onClick={() => setMode(m)}
-                style={{ flex: 1, padding: '7px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer',
-                  background: mode === m ? 'var(--brand)' : 'transparent',
-                  color: mode === m ? '#fff' : 'var(--text3)', border: 'none', textTransform: 'capitalize' }}>
-                {m}
-              </button>
-            ))}
-          </div>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Scores"
+      inputContent={<>
+        {/* IELTS Disclaimer */}
+        <div style={{ padding: '10px 14px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: 10, fontSize: 12, color: '#15803d', fontWeight: 600 }}>
+          📋 <strong>Unofficial Estimate Only.</strong> Band scores are approximations based on published IELTS conversion tables. Official band scores are determined by certified IELTS examiners and can only be obtained through an authorised test centre (British Council, IDP, or Cambridge Assessment English). Raw score to band conversions may vary slightly by test sitting.
         </div>
-        <div>
-          <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 5 }}>L&R Input</p>
-          <div style={{ display: 'flex', gap: 6, background: 'var(--surface2)', padding: 3, borderRadius: 9, border: '1px solid var(--border)' }}>
-            {(['raw', 'band'] as const).map(m => (
-              <button key={m} onClick={() => setInputMode(m)}
-                style={{ flex: 1, padding: '7px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer',
-                  background: inputMode === m ? 'var(--brand)' : 'transparent',
-                  color: inputMode === m ? '#fff' : 'var(--text3)', border: 'none', textTransform: 'capitalize' }}>
-                {m === 'raw' ? 'Raw Score' : 'Band Score'}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Section Inputs */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-        {SECTIONS.map(s => {
-          const [val, setVal] = sectionBandMap[s.id];
-          const bandVal = resultBandMap[s.id];
-          const isRawSection = (s.id === 'listening' || s.id === 'reading') && inputMode === 'raw';
-          return (
-            <div key={s.id} style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
-              <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
-                {s.label}
-                <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)', display: 'block', marginTop: 2, textTransform: 'none' }}>{isRawSection ? s.hint : 'Band 0–9'}</span>
-              </label>
-              <input type="number" style={inp} value={val} onChange={e => setVal(e.target.value)} min={0} max={isRawSection ? 40 : 9} step={isRawSection ? 1 : 0.5} />
-              {result && bandVal !== undefined && (
-                <div style={{ marginTop: 8, textAlign: 'center', fontSize: 20, fontWeight: 900, color: getBandLabel(bandVal).color }}>
-                  Band {bandVal}
-                </div>
-              )}
+        {/* Mode Toggles */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          <div>
+            <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 5 }}>Test Type</p>
+            <div style={{ display: 'flex', gap: 6, background: 'var(--surface2)', padding: 3, borderRadius: 9, border: '1px solid var(--border)' }}>
+              {(['academic', 'general'] as const).map(m => (
+                <button key={m} onClick={() => setMode(m)}
+                  style={{ flex: 1, padding: '7px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                    background: mode === m ? 'var(--brand)' : 'transparent',
+                    color: mode === m ? '#fff' : 'var(--text3)', border: 'none', textTransform: 'capitalize' }}>
+                  {m}
+                </button>
+              ))}
             </div>
-          );
-        })}
-      </div>
-
-      {/* Overall Result */}
-      {result && (
-        <>
-          <div style={{ padding: '28px', background: `linear-gradient(135deg, ${result.color}22, ${result.color}0a)`, border: `2px solid ${result.color}55`, borderRadius: 18, textAlign: 'center' }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: result.color, textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 8 }}>IELTS Overall Band Score</div>
-            <div style={{ fontSize: 72, fontWeight: 900, color: result.color, lineHeight: 1, fontFamily: 'var(--font-display)' }}>{result.overall}</div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: result.color, marginTop: 10 }}>{result.label}</div>
-            <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 4 }}>{result.level}</div>
-            <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>Exact avg: {result.avg.toFixed(3)} → Rounded to {result.overall}</div>
           </div>
-
-          {/* Band breakdown */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
-            {[['L', result.lBand], ['R', result.rBand], ['W', result.wBand], ['S', result.sBand]].map(([k, b]) => {
-              const info = getBandLabel(b as number);
-              return (
-                <div key={k as string} style={{ padding: '10px', background: info.bg, border: `1px solid ${info.color}44`, borderRadius: 10, textAlign: 'center' }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: info.color, textTransform: 'uppercase' }}>{k}</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: info.color }}>{b}</div>
-                </div>
-              );
-            })}
+          <div>
+            <p style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 5 }}>L&R Input</p>
+            <div style={{ display: 'flex', gap: 6, background: 'var(--surface2)', padding: 3, borderRadius: 9, border: '1px solid var(--border)' }}>
+              {(['raw', 'band'] as const).map(m => (
+                <button key={m} onClick={() => setInputMode(m)}
+                  style={{ flex: 1, padding: '7px', borderRadius: 7, fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                    background: inputMode === m ? 'var(--brand)' : 'transparent',
+                    color: inputMode === m ? '#fff' : 'var(--text3)', border: 'none', textTransform: 'capitalize' }}>
+                  {m === 'raw' ? 'Raw Score' : 'Band Score'}
+                </button>
+              ))}
+            </div>
           </div>
+        </div>
 
-          {/* University requirements */}
-          <div style={{ padding: '14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12 }}>
-            <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 10 }}>University Admission Comparison</p>
-            {UNI_REQUIREMENTS.map((u, i) => {
-              const meets = result.overall >= u.min;
-              return (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < UNI_REQUIREMENTS.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{u.name}</div>
-                    <div style={{ fontSize: 10, color: 'var(--text3)' }}>Min: Band {u.min}</div>
+        {/* Section Inputs */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {SECTIONS.map(s => {
+            const [val, setVal] = sectionBandMap[s.id];
+            const bandVal = resultBandMap[s.id];
+            const isRawSection = (s.id === 'listening' || s.id === 'reading') && inputMode === 'raw';
+            return (
+              <div key={s.id} style={{ padding: '14px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 12 }}>
+                <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', display: 'block', marginBottom: 6, textTransform: 'uppercase' }}>
+                  {s.label}
+                  <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)', display: 'block', marginTop: 2, textTransform: 'none' }}>{isRawSection ? s.hint : 'Band 0–9'}</span>
+                </label>
+                <input type="number" style={inp} value={val} onChange={e => setVal(e.target.value)} min={0} max={isRawSection ? 40 : 9} step={isRawSection ? 1 : 0.5} />
+                {result && bandVal !== undefined && (
+                  <div style={{ marginTop: 8, textAlign: 'center', fontSize: 20, fontWeight: 900, color: getBandLabel(bandVal).color }}>
+                    Band {bandVal}
                   </div>
-                  <span style={{ fontSize: 11, fontWeight: 800, padding: '3px 10px', borderRadius: 99, background: meets ? '#dcfce7' : '#fef2f2', color: meets ? '#15803d' : '#dc2626' }}>
-                    {meets ? '✓ Eligible' : '✗ Below'}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Improvement tips */}
-          {result.overall < 8 && (
-            <div style={{ padding: '14px', background: 'linear-gradient(135deg, var(--brand-l), var(--surface))', border: '1px solid var(--border)', borderRadius: 12 }}>
-              <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 8 }}>💡 Score Improvement Tips</p>
-              <ul style={{ fontSize: 12, color: 'var(--text2)', paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 5 }}>
-                {result.lBand < 7 && <li>Listening: Practice with BBC podcasts, TED Talks, and official IELTS practice tests</li>}
-                {result.rBand < 7 && <li>Reading: Focus on skimming & scanning techniques, expand academic vocabulary</li>}
-                {result.wBand < 7 && <li>Writing: Practice Task 1 & 2, use cohesive devices, vary sentence structures</li>}
-                {result.sBand < 7 && <li>Speaking: Record yourself daily, focus on fluency over accuracy initially</li>}
-                <li>Aim for 0.5 band improvement per section with 4–6 weeks of dedicated practice</li>
-              </ul>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </>}
+      resultContent={<>
+        {/* Overall Result */}
+        {result && (
+          <>
+            <div style={{ padding: '28px', background: `linear-gradient(135deg, ${result.color}22, ${result.color}0a)`, border: `2px solid ${result.color}55`, borderRadius: 18, textAlign: 'center' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: result.color, textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 8 }}>IELTS Overall Band Score</div>
+              <div style={{ fontSize: 72, fontWeight: 900, color: result.color, lineHeight: 1, fontFamily: 'var(--font-display)' }}>{result.overall}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: result.color, marginTop: 10 }}>{result.label}</div>
+              <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 4 }}>{result.level}</div>
+              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>Exact avg: {result.avg.toFixed(3)} → Rounded to {result.overall}</div>
             </div>
-          )}
-        </>
-      )}
-    </div>
+
+            {/* Band breakdown */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
+              {[['L', result.lBand], ['R', result.rBand], ['W', result.wBand], ['S', result.sBand]].map(([k, b]) => {
+                const info = getBandLabel(b as number);
+                return (
+                  <div key={k as string} style={{ padding: '10px', background: info.bg, border: `1px solid ${info.color}44`, borderRadius: 10, textAlign: 'center' }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: info.color, textTransform: 'uppercase' }}>{k}</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: info.color }}>{b}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* University requirements */}
+            <div style={{ padding: '14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12 }}>
+              <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', marginBottom: 10 }}>University Admission Comparison</p>
+              {UNI_REQUIREMENTS.map((u, i) => {
+                const meets = result.overall >= u.min;
+                return (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: i < UNI_REQUIREMENTS.length - 1 ? '1px solid var(--border)' : 'none' }}>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{u.name}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text3)' }}>Min: Band {u.min}</div>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 800, padding: '3px 10px', borderRadius: 99, background: meets ? '#dcfce7' : '#fef2f2', color: meets ? '#15803d' : '#dc2626' }}>
+                      {meets ? '✓ Eligible' : '✗ Below'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Improvement tips */}
+            {result.overall < 8 && (
+              <div style={{ padding: '14px', background: 'linear-gradient(135deg, var(--brand-l), var(--surface))', border: '1px solid var(--border)', borderRadius: 12 }}>
+                <p style={{ fontSize: 11, fontWeight: 800, color: 'var(--brand)', textTransform: 'uppercase', marginBottom: 8 }}>💡 Score Improvement Tips</p>
+                <ul style={{ fontSize: 12, color: 'var(--text2)', paddingLeft: 16, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                  {result.lBand < 7 && <li>Listening: Practice with BBC podcasts, TED Talks, and official IELTS practice tests</li>}
+                  {result.rBand < 7 && <li>Reading: Focus on skimming & scanning techniques, expand academic vocabulary</li>}
+                  {result.wBand < 7 && <li>Writing: Practice Task 1 & 2, use cohesive devices, vary sentence structures</li>}
+                  {result.sBand < 7 && <li>Speaking: Record yourself daily, focus on fluency over accuracy initially</li>}
+                  <li>Aim for 0.5 band improvement per section with 4–6 weeks of dedicated practice</li>
+                </ul>
+              </div>
+            )}
+          </>
+        )}
+      </>}
+    />
   );
 }

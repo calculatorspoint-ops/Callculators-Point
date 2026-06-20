@@ -1,3 +1,4 @@
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 interface TimerMode {
@@ -148,7 +149,10 @@ export function StudyTimer() {
   const inp = { padding: '8px 10px', background: 'var(--surface2)', border: '1.5px solid var(--border)', borderRadius: 8, fontSize: 13, color: 'var(--text)', outline: 'none', width: '100%' } as React.CSSProperties;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Timer Settings"
+      inputContent={<>
       {/* Mode selector */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6 }}>
         {MODES.map((m, i) => (
@@ -186,6 +190,9 @@ export function StudyTimer() {
         ))}
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* Circle Timer */}
       <CircleTimer pct={pct} phase={phase} remaining={remaining} />
 
@@ -244,6 +251,8 @@ export function StudyTimer() {
           <li>Track distractions on paper to process them later</li>
         </ul>
       </div>
-    </div>
+      </>
+    }
+    />
   );
 }

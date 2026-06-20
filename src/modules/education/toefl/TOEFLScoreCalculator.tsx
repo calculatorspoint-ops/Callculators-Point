@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 // TOEFL iBT scoring: each section 0–30, total 0–120
 // University eligibility thresholds
@@ -98,7 +99,10 @@ export function TOEFLScoreCalculator() {
   const setCurrentScores = mode === 'ibt' ? setScores : setMyBest;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Scores"
+      inputContent={<>
 
       {/* Mode Toggle */}
       <div>
@@ -155,6 +159,9 @@ export function TOEFLScoreCalculator() {
         })}
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* Total Score Result */}
       {result && (
         <>
@@ -282,6 +289,8 @@ export function TOEFLScoreCalculator() {
           </div>
         </>
       )}
-    </div>
+      </>
+    }
+    />
   );
 }

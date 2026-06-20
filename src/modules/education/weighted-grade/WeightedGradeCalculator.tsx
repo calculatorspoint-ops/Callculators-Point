@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { FinanceLayout } from '../../../components/calculator-core/forms/SharedComponents';
 
 interface GradeComponent {
   id: number;
@@ -152,9 +153,10 @@ export function WeightedGradeCalculator() {
     : 'var(--border)';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-      {/* Header Controls */}
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Categories"
+      inputContent={<>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
         {/* What-If Toggle */}
         <div style={{
@@ -208,6 +210,9 @@ export function WeightedGradeCalculator() {
         )}
       </div>
 
+      </>
+      }
+      resultContent={<>
       {/* Grade Result Card */}
       <div style={{
         padding: '22px 24px',
@@ -599,6 +604,8 @@ export function WeightedGradeCalculator() {
         </div>
       </div>
 
-    </div>
+      </>
+    }
+    />
   );
 }
