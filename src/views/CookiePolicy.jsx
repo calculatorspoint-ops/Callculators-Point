@@ -11,8 +11,8 @@ const Section = ({ id, title, children }) => (
   </div>
 );
 
-const P = ({ children }) => <p style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 10 }}>{children}</p>;
-const Li = ({ children }) => <li style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 6 }}>{children}</li>;
+const P = ({ children }) => <p style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 10, overflowWrap: "break-word", wordBreak: "break-word" }}>{children}</p>;
+const Li = ({ children }) => <li style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 6, overflowWrap: "break-word", wordBreak: "break-word" }}>{children}</li>;
 const Ul = ({ children }) => <ul style={{ paddingLeft: 18, marginBottom: 12 }}>{children}</ul>;
 
 const TABLE_OF_CONTENTS = [
@@ -87,7 +87,7 @@ export default function CookiePolicy() {
         </div>
       </div>
 
-      <div className="page-wrap" style={{ maxWidth: 900 }}>
+      <div className="page-wrap" style={{ maxWidth: 900, overflowX: "hidden" }}>
 
         {/* Mobile TOC (visible ≤768px) */}
         <MobileTOC />
@@ -108,7 +108,7 @@ export default function CookiePolicy() {
           </div>
 
           {/* Main Content */}
-          <div>
+          <div style={{ minWidth: 0, overflowX: "hidden" }}>
             {/* Quick Summary */}
             <div style={{ padding: "16px 18px", background: "var(--green-l)", border: "1px solid var(--green-ll)", borderRadius: "var(--r-xl)", marginBottom: 32 }}>
               <p style={{ fontSize: 13, fontWeight: 700, color: "var(--green)", marginBottom: 8 }}>🎯 The Short Version</p>

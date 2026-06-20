@@ -186,6 +186,10 @@ html.mob-menu-open body { overflow: hidden; }
   textarea { width: 100% !important; }
   .ip-result-row { word-break: break-all !important; }
   table { display: block !important; overflow-x: auto !important; white-space: nowrap !important; width: 100% !important; }
+  /* Legal page tables: allow text to wrap — don't apply the nowrap forced override */
+  .legal-table-wrap table { white-space: normal !important; }
+  .legal-table-wrap td { white-space: normal !important; word-break: break-word !important; }
+  .legal-table-wrap th { white-space: nowrap !important; }
 
   /* stat-strip is styled via the Phase 2 rule below (overflow: hidden) */
   .stat-strip-item {
