@@ -1,32 +1,83 @@
+'use client';
+import { useState } from "react";
 import Link from "next/link";
 
 const LAST_UPDATED = "June 6, 2026";
 
 const Section = ({ id, title, children }) => (
-  <div id={id} style={{ marginBottom: 32 }}>
-    <h2 style={{ fontFamily: "var(--font-hd)", fontSize: "1.15rem", fontWeight: 800, color: "var(--text)", marginBottom: 12, letterSpacing: "-.02em", paddingTop: 8 }}>{title}</h2>
+  <div id={id} style={{ marginBottom: 32, scrollMarginTop: 80 }}>
+    <h2 style={{ fontFamily: "var(--font-hd)", fontSize: "clamp(1rem, 4vw, 1.15rem)", fontWeight: 800, color: "var(--text)", marginBottom: 12, letterSpacing: "-.02em", paddingTop: 8 }}>{title}</h2>
     {children}
   </div>
 );
 
-const P = ({ children }) => <p style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.8, marginBottom: 10 }}>{children}</p>;
-const Li = ({ children }) => <li style={{ fontSize: 14, color: "var(--text2)", lineHeight: 1.8, marginBottom: 4 }}>{children}</li>;
-const Ul = ({ children }) => <ul style={{ paddingLeft: 20, marginBottom: 12 }}>{children}</ul>;
+const P = ({ children }) => <p style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 10 }}>{children}</p>;
+const Li = ({ children }) => <li style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 6 }}>{children}</li>;
+const Ul = ({ children }) => <ul style={{ paddingLeft: 18, marginBottom: 12 }}>{children}</ul>;
 
 const TABLE_OF_CONTENTS = [
-  ["#what-are-cookies",   "What Are Cookies?"],
-  ["#cookies-we-use",     "Cookies We Use"],
-  ["#local-storage",      "Local Storage"],
-  ["#third-party",        "Third-Party Cookies"],
-  ["#manage-cookies",     "Managing Cookies"],
-  ["#do-not-track",       "Do Not Track"],
-  ["#updates",            "Updates to This Policy"],
-  ["#contact",            "Contact Us"],
+  ["#what-are-cookies",  "What Are Cookies?"],
+  ["#cookies-we-use",    "Cookies We Use"],
+  ["#local-storage",     "Local Storage"],
+  ["#third-party",       "Third-Party Cookies"],
+  ["#manage-cookies",    "Managing Cookies"],
+  ["#do-not-track",      "Do Not Track"],
+  ["#updates",           "Updates to This Policy"],
+  ["#contact",           "Contact Us"],
 ];
+
+function MobileTOC() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ display: "none" }} className="legal-mobile-toc">
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "12px 16px", background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: open ? "12px 12px 0 0" : 12, cursor: "pointer", fontSize: 13,
+          fontWeight: 700, color: "var(--text)", marginBottom: 0,
+        }}
+        aria-expanded={open}
+      >
+        <span>📋 Table of Contents</span>
+        <span style={{ fontSize: 18, lineHeight: 1, transition: "transform .2s", transform: open ? "rotate(180deg)" : "none" }}>⌄</span>
+      </button>
+      {open && (
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderTop: "none", borderRadius: "0 0 12px 12px", padding: "8px 0", marginBottom: 20 }}>
+          {TABLE_OF_CONTENTS.map(([href, label]) => (
+            <a
+              key={href} href={href}
+              onClick={() => setOpen(false)}
+              style={{ display: "block", fontSize: 13, color: "var(--text2)", padding: "9px 16px", textDecoration: "none", borderBottom: "1px solid var(--bord2)" }}
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const thStyle = { padding: "8px 10px", textAlign: "left", border: "1px solid var(--border)", fontWeight: 700, color: "var(--text)", background: "var(--surf2)", whiteSpace: "nowrap" };
+const tdStyle = { padding: "8px 10px", border: "1px solid var(--border)", color: "var(--text2)", wordBreak: "break-word", minWidth: 60 };
 
 export default function CookiePolicy() {
   return (
     <>
+      <style>{`
+        @media (max-width: 768px) {
+          #cp-grid { grid-template-columns: 1fr !important; }
+          .cp-toc  { display: none !important; }
+          .legal-mobile-toc { display: block !important; }
+        }
+        @media (max-width: 480px) {
+          .legal-table-wrap table { font-size: 12px !important; }
+          .legal-table-wrap td, .legal-table-wrap th { padding: 6px 8px !important; }
+        }
+      `}</style>
+
       <div className="page-hero">
         <div style={{ position: "relative", zIndex: 1 }}>
           <div style={{ fontSize: 44, marginBottom: 14 }}>🍪</div>
@@ -37,10 +88,13 @@ export default function CookiePolicy() {
       </div>
 
       <div className="page-wrap" style={{ maxWidth: 900 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 28, alignItems: "start" }} id="cp-grid">
-          <style>{`@media(max-width:768px){#cp-grid{grid-template-columns:1fr!important} .cp-toc{display:none!important}}`}</style>
 
-          {/* Table of Contents */}
+        {/* Mobile TOC (visible ≤768px) */}
+        <MobileTOC />
+
+        <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 28, alignItems: "start" }} id="cp-grid">
+
+          {/* Desktop TOC */}
           <div className="cp-toc" style={{ position: "sticky", top: "calc(var(--nav-h) + 20px)", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "18px 16px", boxShadow: "var(--sh1)" }}>
             <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".07em", color: "var(--text3)", marginBottom: 12 }}>Contents</p>
             {TABLE_OF_CONTENTS.map(([href, label]) => (
@@ -66,7 +120,7 @@ export default function CookiePolicy() {
                   "You can opt out of Google Analytics and personalized ads at any time",
                   "We do not use any marketing, profiling, or third-party advertising cookies beyond Google AdSense",
                 ].map(item => (
-                  <li key={item} style={{ fontSize: 13, color: "var(--green)", lineHeight: 1.7, marginBottom: 3 }}>{item}</li>
+                  <li key={item} style={{ fontSize: "clamp(12px, 3.5vw, 13px)", color: "var(--green)", lineHeight: 1.75, marginBottom: 4 }}>{item}</li>
                 ))}
               </ul>
             </div>
@@ -81,26 +135,24 @@ export default function CookiePolicy() {
 
               <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8, marginTop: 16 }}>2.1 Analytics Cookies (Google Analytics)</p>
               <P>We use Google Analytics to understand anonymous, aggregate traffic patterns — which calculators are most used, where visitors come from, and how the site performs. These cookies do not identify you personally.</P>
-              <div style={{ overflowX: "auto", marginBottom: 14 }}>
+              <div className="legal-table-wrap" style={{ overflowX: "auto", marginBottom: 14, WebkitOverflowScrolling: "touch" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ background: "var(--surf2)" }}>
-                      {["Cookie", "Purpose", "Duration", "Type"].map(h => (
-                        <th key={h} style={{ padding: "8px 12px", textAlign: "left", border: "1px solid var(--border)", fontWeight: 700, color: "var(--text)" }}>{h}</th>
-                      ))}
+                    <tr>
+                      {["Cookie", "Purpose", "Duration", "Type"].map(h => <th key={h} style={thStyle}>{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
                     {[
-                      ["_ga",  "Distinguishes unique visitors for Google Analytics", "2 years",   "Analytics"],
-                      ["_gid", "Distinguishes unique visitors for a single session",  "24 hours",  "Analytics"],
-                      ["_gat", "Throttles request rate to Google Analytics servers",  "1 minute",  "Analytics"],
+                      ["_ga",  "Distinguishes unique visitors for Google Analytics", "2 years",  "Analytics"],
+                      ["_gid", "Distinguishes unique visitors for a single session",  "24 hours", "Analytics"],
+                      ["_gat", "Throttles request rate to Google Analytics servers",  "1 minute", "Analytics"],
                     ].map(([name, purpose, duration, type]) => (
                       <tr key={name}>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}><code>{name}</code></td>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}>{purpose}</td>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}>{duration}</td>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}>{type}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}><code>{name}</code></td>
+                        <td style={tdStyle}>{purpose}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>{duration}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>{type}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -109,26 +161,24 @@ export default function CookiePolicy() {
 
               <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8, marginTop: 20 }}>2.2 Advertising Cookies (Google AdSense)</p>
               <P>Calculators Point may display advertising through Google AdSense or similar advertising partners after approval. If active, Google may use cookies to serve ads based on your visit to this site and other sites on the internet. These cookies are controlled entirely by Google.</P>
-              <div style={{ overflowX: "auto", marginBottom: 14 }}>
+              <div className="legal-table-wrap" style={{ overflowX: "auto", marginBottom: 14, WebkitOverflowScrolling: "touch" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ background: "var(--surf2)" }}>
-                      {["Cookie", "Purpose", "Duration", "Type"].map(h => (
-                        <th key={h} style={{ padding: "8px 12px", textAlign: "left", border: "1px solid var(--border)", fontWeight: 700, color: "var(--text)" }}>{h}</th>
-                      ))}
+                    <tr>
+                      {["Cookie", "Purpose", "Duration", "Type"].map(h => <th key={h} style={thStyle}>{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
                     {[
-                      ["IDE",        "Google DoubleClick — used to record user actions after viewing or clicking an ad", "1–2 years", "Advertising"],
-                      ["test_cookie","Google DoubleClick — checks if the browser supports cookies",                       "Session",   "Advertising"],
-                      ["DSID",       "Google — identifies a signed-in Google user for ad personalization",                "2 weeks",   "Advertising"],
+                      ["IDE",        "Google DoubleClick — records user actions after viewing or clicking an ad", "1–2 years", "Advertising"],
+                      ["test_cookie","Google DoubleClick — checks if the browser supports cookies",               "Session",   "Advertising"],
+                      ["DSID",       "Google — identifies a signed-in Google user for ad personalization",        "2 weeks",   "Advertising"],
                     ].map(([name, purpose, duration, type]) => (
                       <tr key={name}>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}><code>{name}</code></td>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}>{purpose}</td>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}>{duration}</td>
-                        <td style={{ padding: "8px 12px", border: "1px solid var(--border)", color: "var(--text2)" }}>{type}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}><code>{name}</code></td>
+                        <td style={tdStyle}>{purpose}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>{duration}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>{type}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -199,7 +249,7 @@ export default function CookiePolicy() {
             </Section>
 
             {/* Navigation */}
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 28, paddingTop: 24, borderTop: "1px solid var(--border)" }}>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 28, paddingTop: 24, borderTop: "1px solid var(--border)" }}>
               <Link href="/privacy-policy" className="btn-outline">Privacy Policy</Link>
               <Link href="/terms-of-service" className="btn-outline">Terms of Service</Link>
               <Link href="/disclaimer" className="btn-outline">Disclaimer</Link>

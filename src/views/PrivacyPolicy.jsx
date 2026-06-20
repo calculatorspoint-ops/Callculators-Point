@@ -1,72 +1,128 @@
-
+'use client';
+import { useState } from "react";
 import Link from "next/link";
 
 const LAST_UPDATED = "June 13, 2026";
 
 const Section = ({ id, title, children }) => (
-  <div id={id} style={{ marginBottom:32 }}>
-    <h2 style={{ fontFamily:"var(--font-hd)", fontSize:"1.15rem", fontWeight:800, color:"var(--text)", marginBottom:12, letterSpacing:"-.02em", paddingTop:8 }}>{title}</h2>
+  <div id={id} style={{ marginBottom: 32, scrollMarginTop: 80 }}>
+    <h2 style={{ fontFamily: "var(--font-hd)", fontSize: "clamp(1rem, 4vw, 1.15rem)", fontWeight: 800, color: "var(--text)", marginBottom: 12, letterSpacing: "-.02em", paddingTop: 8 }}>{title}</h2>
     {children}
   </div>
 );
 
-const P = ({ children }) => <p style={{ fontSize:14, color:"var(--text2)", lineHeight:1.8, marginBottom:10 }}>{children}</p>;
-const Li = ({ children }) => <li style={{ fontSize:14, color:"var(--text2)", lineHeight:1.8, marginBottom:4 }}>{children}</li>;
-const Ul = ({ children }) => <ul style={{ paddingLeft:20, marginBottom:12 }}>{children}</ul>;
+const P = ({ children }) => <p style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 10 }}>{children}</p>;
+const Li = ({ children }) => <li style={{ fontSize: "clamp(13px, 3.5vw, 14px)", color: "var(--text2)", lineHeight: 1.8, marginBottom: 6 }}>{children}</li>;
+const Ul = ({ children }) => <ul style={{ paddingLeft: 18, marginBottom: 12 }}>{children}</ul>;
 
 const TABLE_OF_CONTENTS = [
-  ["#overview",          "Overview"],
-  ["#data-collection",   "Information We Collect"],
-  ["#data-use",          "How We Use Information"],
-  ["#data-share",        "Information Sharing"],
-  ["#cookies",           "Cookies & Local Storage"],
-  ["#analytics",         "Analytics"],
-  ["#advertising",       "Advertising (Google AdSense)"],
-  ["#security",          "Data Security"],
-  ["#childrens",         "Children's Privacy"],
-  ["#rights",            "Your Rights"],
-  ["#do-not-sell",       "Do Not Sell (CCPA)"],
-  ["#changes",           "Changes to This Policy"],
-  ["#contact-pp",        "Contact Us"],
+  ["#overview",        "Overview"],
+  ["#data-collection", "Information We Collect"],
+  ["#data-use",        "How We Use Information"],
+  ["#data-share",      "Information Sharing"],
+  ["#cookies",         "Cookies & Local Storage"],
+  ["#analytics",       "Analytics"],
+  ["#advertising",     "Advertising (Google AdSense)"],
+  ["#security",        "Data Security"],
+  ["#childrens",       "Children's Privacy"],
+  ["#rights",          "Your Rights"],
+  ["#do-not-sell",     "Do Not Sell (CCPA)"],
+  ["#changes",         "Changes to This Policy"],
+  ["#contact-pp",      "Contact Us"],
 ];
+
+function MobileTOC() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ display: "none" }} className="legal-mobile-toc">
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "12px 16px", background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: open ? "12px 12px 0 0" : 12, cursor: "pointer", fontSize: 13,
+          fontWeight: 700, color: "var(--text)", marginBottom: 0,
+        }}
+        aria-expanded={open}
+      >
+        <span>📋 Table of Contents</span>
+        <span style={{ fontSize: 18, lineHeight: 1, transition: "transform .2s", transform: open ? "rotate(180deg)" : "none" }}>⌄</span>
+      </button>
+      {open && (
+        <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderTop: "none", borderRadius: "0 0 12px 12px", padding: "8px 0", marginBottom: 20 }}>
+          {TABLE_OF_CONTENTS.map(([href, label]) => (
+            <a
+              key={href} href={href}
+              onClick={() => setOpen(false)}
+              style={{ display: "block", fontSize: 13, color: "var(--text2)", padding: "9px 16px", textDecoration: "none", borderBottom: "1px solid var(--bord2)" }}
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const cookieTableStyle = {
+  width: "100%",
+  borderCollapse: "collapse",
+  fontSize: 13,
+};
+const thStyle = { padding: "8px 10px", textAlign: "left", border: "1px solid var(--border)", fontWeight: 700, color: "var(--text)", background: "var(--surf2)", whiteSpace: "nowrap" };
+const tdStyle = { padding: "8px 10px", border: "1px solid var(--border)", color: "var(--text2)", wordBreak: "break-word", minWidth: 60 };
 
 export default function PrivacyPolicy() {
   return (
     <>
-      
+      <style>{`
+        @media (max-width: 768px) {
+          #pp-grid { grid-template-columns: 1fr !important; }
+          .pp-toc  { display: none !important; }
+          .legal-mobile-toc { display: block !important; }
+        }
+        @media (max-width: 480px) {
+          .legal-table-wrap table { font-size: 12px !important; }
+          .legal-table-wrap td, .legal-table-wrap th { padding: 6px 8px !important; }
+        }
+      `}</style>
 
       <div className="page-hero">
-        <div style={{ position:"relative", zIndex:1 }}>
-          <div style={{ fontSize:44, marginBottom:14 }}>🔒</div>
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ fontSize: 44, marginBottom: 14 }}>🔒</div>
           <h1>Privacy Policy</h1>
           <p>Your privacy is our priority. Calculators Point is designed to collect as little data as possible.</p>
-          <p style={{ fontSize:12, color:"rgba(255,255,255,.4)", marginTop:12 }}>Last updated: {LAST_UPDATED}</p>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,.4)", marginTop: 12 }}>Last updated: {LAST_UPDATED}</p>
         </div>
       </div>
 
-      <div className="page-wrap" style={{ maxWidth:900 }}>
-        <div style={{ display:"grid", gridTemplateColumns:"220px 1fr", gap:28, alignItems:"start" }} id="pp-grid">
-          <style>{`@media(max-width:768px){#pp-grid{grid-template-columns:1fr!important} .pp-toc{display:none!important}}`}</style>
+      <div className="page-wrap" style={{ maxWidth: 900 }}>
 
-          {/* Table of contents */}
-          <div className="pp-toc" style={{ position:"sticky", top:"calc(var(--nav-h) + 20px)", background:"var(--surface)", border:"1px solid var(--border)", borderRadius:"var(--r-xl)", padding:"18px 16px", boxShadow:"var(--sh1)" }}>
-            <p style={{ fontSize:11, fontWeight:800, textTransform:"uppercase", letterSpacing:".07em", color:"var(--text3)", marginBottom:12 }}>Contents</p>
+        {/* Mobile TOC (visible ≤768px) */}
+        <MobileTOC />
+
+        <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 28, alignItems: "start" }} id="pp-grid">
+
+          {/* Desktop Table of Contents (hidden on mobile) */}
+          <div className="pp-toc" style={{ position: "sticky", top: "calc(var(--nav-h) + 20px)", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-xl)", padding: "18px 16px", boxShadow: "var(--sh1)" }}>
+            <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".07em", color: "var(--text3)", marginBottom: 12 }}>Contents</p>
             {TABLE_OF_CONTENTS.map(([href, label]) => (
               <a key={href} href={href}
-                style={{ display:"block", fontSize:12, color:"var(--text2)", padding:"5px 0", borderBottom:"1px solid var(--bord2)", textDecoration:"none", transition:"color .15s" }}
-                onMouseEnter={e=>e.currentTarget.style.color="var(--brand)"}
-                onMouseLeave={e=>e.currentTarget.style.color="var(--text2)"}>
+                style={{ display: "block", fontSize: 12, color: "var(--text2)", padding: "5px 0", borderBottom: "1px solid var(--bord2)", textDecoration: "none", transition: "color .15s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "var(--brand)"}
+                onMouseLeave={e => e.currentTarget.style.color = "var(--text2)"}>
                 {label}
               </a>
             ))}
           </div>
 
-          {/* Main content */}
+          {/* Main Content */}
           <div>
             {/* Quick summary */}
-            <div style={{ padding:"16px 18px", background:"var(--green-l)", border:"1px solid var(--green-ll)", borderRadius:"var(--r-xl)", marginBottom:32 }}>
-              <p style={{ fontSize:13, fontWeight:700, color:"var(--green)", marginBottom:8 }}>🎯 The Short Version</p>
-              <ul style={{ paddingLeft:18, margin:0 }}>
+            <div style={{ padding: "16px 18px", background: "var(--green-l)", border: "1px solid var(--green-ll)", borderRadius: "var(--r-xl)", marginBottom: 32 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "var(--green)", marginBottom: 8 }}>🎯 The Short Version</p>
+              <ul style={{ paddingLeft: 18, margin: 0 }}>
                 {[
                   "All calculations run entirely in your browser — we never see your inputs",
                   "We use Google Analytics for anonymous page view statistics only",
@@ -75,7 +131,7 @@ export default function PrivacyPolicy() {
                   "We do not sell, rent, or share your data with third parties",
                   "No account creation required — ever",
                 ].map(item => (
-                  <li key={item} style={{ fontSize:13, color:"var(--green)", lineHeight:1.7, marginBottom:3 }}>{item}</li>
+                  <li key={item} style={{ fontSize: "clamp(12px, 3.5vw, 13px)", color: "var(--green)", lineHeight: 1.75, marginBottom: 4 }}>{item}</li>
                 ))}
               </ul>
             </div>
@@ -86,12 +142,12 @@ export default function PrivacyPolicy() {
             </Section>
 
             <Section id="data-collection" title="2. Information We Collect">
-              <p style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:8 }}>2.1 Information You Do NOT Provide</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>2.1 Information You Do NOT Provide</p>
               <P>
                 <strong>Calculator inputs are never transmitted to our servers.</strong> When you enter values into any Calculators Point calculator — loan amounts, health metrics, dates, or any other data — those values are processed entirely within your web browser using JavaScript. They are never sent to Calculators Point or any third party.
               </P>
 
-              <p style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:8, marginTop:16 }}>2.2 Automatically Collected Information</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8, marginTop: 16 }}>2.2 Automatically Collected Information</p>
               <P>When you visit our website, we may automatically receive:</P>
               <Ul>
                 <Li><strong>IP address</strong> — used for country-level currency auto-detection via ipapi.co (see Section 5)</Li>
@@ -102,7 +158,7 @@ export default function PrivacyPolicy() {
                 <Li><strong>Device type</strong> (mobile/tablet/desktop) — for responsive design improvement</Li>
               </Ul>
 
-              <p style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:8, marginTop:16 }}>2.3 Information You Voluntarily Provide</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8, marginTop: 16 }}>2.3 Information You Voluntarily Provide</p>
               <P>If you submit our contact form, we collect:</P>
               <Ul>
                 <Li>Your name and email address</Li>
@@ -134,26 +190,33 @@ export default function PrivacyPolicy() {
             </Section>
 
             <Section id="cookies" title="5. Cookies & Local Storage">
-              <p style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:8 }}>5.1 Cookies</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>5.1 Cookies</p>
               <P>We use minimal cookies:</P>
-              <div style={{ overflowX:"auto", marginBottom:14 }}>
-                <table style={{ width:"100%", borderCollapse:"collapse", fontSize:13 }}>
-                  <thead><tr style={{ background:"var(--surf2)" }}>
-                    {["Cookie","Purpose","Duration","Type"].map(h=><th key={h} style={{ padding:"8px 12px", textAlign:"left", border:"1px solid var(--border)", fontWeight:700, color:"var(--text)" }}>{h}</th>)}
-                  </tr></thead>
+              <div className="legal-table-wrap" style={{ overflowX: "auto", marginBottom: 14, WebkitOverflowScrolling: "touch" }}>
+                <table style={cookieTableStyle}>
+                  <thead>
+                    <tr>
+                      {["Cookie", "Purpose", "Duration", "Type"].map(h => <th key={h} style={thStyle}>{h}</th>)}
+                    </tr>
+                  </thead>
                   <tbody>
                     {[
-                      ["_ga", "Google Analytics visitor tracking", "2 years", "Analytics"],
-                      ["_gid", "Google Analytics session tracking", "24 hours", "Analytics"],
-                      ["_gat", "Google Analytics request throttle", "1 minute", "Analytics"],
+                      ["_ga",  "Google Analytics visitor tracking", "2 years",   "Analytics"],
+                      ["_gid", "Google Analytics session tracking",  "24 hours",  "Analytics"],
+                      ["_gat", "Google Analytics request throttle",  "1 minute",  "Analytics"],
                     ].map(([name, purpose, duration, type]) => (
-                      <tr key={name}><td style={{ padding:"8px 12px", border:"1px solid var(--border)", color:"var(--text2)" }}><code>{name}</code></td><td style={{ padding:"8px 12px", border:"1px solid var(--border)", color:"var(--text2)" }}>{purpose}</td><td style={{ padding:"8px 12px", border:"1px solid var(--border)", color:"var(--text2)" }}>{duration}</td><td style={{ padding:"8px 12px", border:"1px solid var(--border)", color:"var(--text2)" }}>{type}</td></tr>
+                      <tr key={name}>
+                        <td style={tdStyle}><code>{name}</code></td>
+                        <td style={tdStyle}>{purpose}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>{duration}</td>
+                        <td style={{ ...tdStyle, whiteSpace: "nowrap" }}>{type}</td>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              <p style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:8 }}>5.2 Local Storage</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>5.2 Local Storage</p>
               <P>We use your browser's localStorage to save your preferences without cookies:</P>
               <Ul>
                 <Li><strong>Theme preference</strong> (light/dark mode)</Li>
@@ -172,12 +235,12 @@ export default function PrivacyPolicy() {
                 <Li>No demographic or interest reporting</Li>
                 <Li>No cross-site tracking</Li>
               </Ul>
-              <P>You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={{ color:"var(--brand)" }}>Google Analytics Opt-out Browser Add-on</a>.</P>
+              <P>You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style={{ color: "var(--brand)" }}>Google Analytics Opt-out Browser Add-on</a>.</P>
             </Section>
 
             <Section id="advertising" title="7. Advertising">
               <P>Calculators Point may display advertisements through Google AdSense or similar advertising partners. If and when ads are active, we serve non-personalized ads by default that do not use cookies for ad personalization.</P>
-              <P>If Google AdSense is active, Google may use cookies to serve ads based on your visit to our site and other sites on the internet. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color:"var(--brand)" }}>Google's Ad Settings</a>.</P>
+              <P>If Google AdSense is active, Google may use cookies to serve ads based on your visit to our site and other sites on the internet. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: "var(--brand)" }}>Google's Ad Settings</a>.</P>
               <P><strong>Advertising Disclosure:</strong> Any advertisements displayed will be clearly labeled and will never influence our calculator results, formulas, or editorial content.</P>
             </Section>
 
@@ -225,13 +288,21 @@ export default function PrivacyPolicy() {
               <P>Continued use of Calculators Point after changes are posted constitutes your acceptance of the revised policy.</P>
             </Section>
 
-            <Section id="contact-pp" title="12. Contact Us">
+            <Section id="contact-pp" title="13. Contact Us">
               <P>If you have questions, concerns, or requests regarding this Privacy Policy, please contact us:</P>
-              <P><strong>Email:</strong> <a href="mailto:contact@calculatorspoint.com" style={{ color:"var(--brand)" }}>contact@calculatorspoint.com</a></P>
-              <P><strong>Website:</strong> <Link href="/contact" style={{ color:"var(--brand)" }}>calculatorspoint.com/contact</Link></P>
+              <P><strong>Email:</strong> <a href="mailto:contact@calculatorspoint.com" style={{ color: "var(--brand)" }}>contact@calculatorspoint.com</a></P>
+              <P><strong>Website:</strong> <Link href="/contact" style={{ color: "var(--brand)" }}>calculatorspoint.com/contact</Link></P>
               <P><strong>Operator:</strong> Calculators Point, Pakistan</P>
               <P>For GDPR-related inquiries, please include "GDPR Request" in your subject line. We aim to respond within 48 business hours.</P>
             </Section>
+
+            {/* Related links */}
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 28, paddingTop: 20, borderTop: "1px solid var(--border)" }}>
+              <Link href="/cookie-policy" className="btn-outline">Cookie Policy</Link>
+              <Link href="/terms-of-service" className="btn-outline">Terms of Service</Link>
+              <Link href="/disclaimer" className="btn-outline">Disclaimer</Link>
+              <Link href="/contact" className="btn-primary" style={{ fontSize: 13 }}>Contact Us</Link>
+            </div>
           </div>
         </div>
       </div>
