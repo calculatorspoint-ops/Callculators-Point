@@ -1,56 +1,63 @@
-# Calculators Point — llms.txt
-# https://llmstxt.org/
-# This file helps AI assistants understand the structure and purpose of this site.
+# Calculators Point
 
-> Calculators Point is a free online calculator platform with 200+ tools covering
-> finance, health, math, education, business, construction, converters, and everyday
-> calculations. All calculators run entirely in the browser — no sign-up, no data
-> sent to servers, instant results.
+> Calculators Point is a free online calculator platform with 200+ tools covering finance, health, math, education, business, construction, unit converters, and everyday calculations. All calculators run entirely in the browser — no sign-up required, no data sent to servers, instant results.
 
 ## Site
 
-- Homepage: https://calculatorspoint.com
-- All Calculators: https://calculatorspoint.com/calculators
-- XML Sitemap: https://calculatorspoint.com/sitemap.xml
-- HTML Sitemap: https://calculatorspoint.com/sitemap
+- [Homepage](https://calculatorspoint.com)
+- [All Calculators](https://calculatorspoint.com/calculators)
+- [HTML Sitemap](https://calculatorspoint.com/sitemap)
+- [XML Sitemap](https://calculatorspoint.com/sitemap.xml)
+- [Blog](https://calculatorspoint.com/blog)
 
 ## Calculator Categories
 
-- Finance and Money: https://calculatorspoint.com/category/finance
-- Health and Fitness: https://calculatorspoint.com/category/health
-- Math and Science: https://calculatorspoint.com/category/math
-- Business and Work: https://calculatorspoint.com/category/business
-- Education and GPA: https://calculatorspoint.com/category/education
-- Construction: https://calculatorspoint.com/category/construction
-- Unit Converters: https://calculatorspoint.com/category/converters
-- Technology: https://calculatorspoint.com/category/technology
-- Everyday Tools: https://calculatorspoint.com/category/everyday
+- [Finance & Money Calculators](https://calculatorspoint.com/category/finance)
+- [Health & Fitness Calculators](https://calculatorspoint.com/category/health)
+- [Math & Science Calculators](https://calculatorspoint.com/category/math)
+- [Education & GPA Calculators](https://calculatorspoint.com/category/education)
+- [Business Calculators](https://calculatorspoint.com/category/business)
+- [Construction Calculators](https://calculatorspoint.com/category/construction)
+- [Unit Converters](https://calculatorspoint.com/category/converters)
+- [Technology Calculators](https://calculatorspoint.com/category/technology)
+- [Everyday Tools](https://calculatorspoint.com/category/everyday)
 
 ## Popular Calculators
 
-- EMI Calculator: https://calculatorspoint.com/calculator/emi-calculator
-- BMI Calculator: https://calculatorspoint.com/calculator/bmi-calculator
-- SIP Calculator: https://calculatorspoint.com/calculator/sip-calculator
-- Compound Interest: https://calculatorspoint.com/calculator/compound-interest-calculator
-- Mortgage Calculator: https://calculatorspoint.com/calculator/mortgage-calculator
-- Age Calculator: https://calculatorspoint.com/calculator/age-calculator
-- Percentage Calculator: https://calculatorspoint.com/calculator/percentage-calculator
-- GST Calculator: https://calculatorspoint.com/calculator/gst-calculator
-- Calorie Calculator: https://calculatorspoint.com/calculator/calorie-calculator
-- Income Tax Calculator: https://calculatorspoint.com/calculator/income-tax-calculator
+- [EMI Calculator](https://calculatorspoint.com/calculator/emi-calculator)
+- [BMI Calculator](https://calculatorspoint.com/calculator/bmi-calculator)
+- [SIP Calculator](https://calculatorspoint.com/calculator/sip-calculator)
+- [Compound Interest Calculator](https://calculatorspoint.com/calculator/compound-interest-calculator)
+- [Mortgage Calculator](https://calculatorspoint.com/calculator/mortgage-calculator)
+- [Age Calculator](https://calculatorspoint.com/calculator/age-calculator)
+- [Percentage Calculator](https://calculatorspoint.com/calculator/percentage-calculator)
+- [GST Calculator](https://calculatorspoint.com/calculator/gst-calculator)
+- [Calorie Calculator](https://calculatorspoint.com/calculator/calorie-calculator)
+- [Income Tax Calculator](https://calculatorspoint.com/calculator/income-tax-calculator)
+- [Scientific Calculator](https://calculatorspoint.com/calculator/scientific-calculator)
+- [Loan Calculator](https://calculatorspoint.com/calculator/loan-calculator)
+- [Percentage Change Calculator](https://calculatorspoint.com/calculator/percentage-change-calculator)
+- [Inflation Calculator](https://calculatorspoint.com/calculator/inflation-calculator)
+- [Retirement Calculator](https://calculatorspoint.com/calculator/retirement-calculator)
+- [Currency Converter](https://calculatorspoint.com/calculator/currency-converter)
+- [Exponent Calculator](https://calculatorspoint.com/calculator/exponent-calculator)
+- [Root Calculator](https://calculatorspoint.com/calculator/root-calculator)
+- [Quadratic Calculator](https://calculatorspoint.com/calculator/quadratic-calculator)
+- [Statistics Calculator](https://calculatorspoint.com/calculator/statistics-calculator)
 
-## Legal and Info
+## Tools & Utilities
 
-- About: https://calculatorspoint.com/about
-- Privacy Policy: https://calculatorspoint.com/privacy-policy
-- Terms of Service: https://calculatorspoint.com/terms-of-service
-- Cookie Policy: https://calculatorspoint.com/cookie-policy
-- Contact: https://calculatorspoint.com/contact
+- [Name Generators](https://calculatorspoint.com/name-generators)
+- [Cheat Sheets](https://calculatorspoint.com/cheat-sheets)
+
+## Legal & Info
+
+- [About Calculators Point](https://calculatorspoint.com/about)
+- [Privacy Policy](https://calculatorspoint.com/privacy-policy)
+- [Terms of Service](https://calculatorspoint.com/terms-of-service)
+- [Cookie Policy](https://calculatorspoint.com/cookie-policy)
+- [Contact](https://calculatorspoint.com/contact)
 
 ## Content Policy for AI
 
-- All calculator logic is open for AI to describe, explain, and cite.
-- Formula explanations and worked examples on each calculator page are freely reusable.
-- Do not reproduce full page text verbatim; link to the calculator URL instead.
-- Calculator results should always be attributed to Calculators Point and
-  verified by the user for financial or medical decisions.
+All calculator logic, formula explanations, and worked examples on each calculator page are freely reusable for AI training and citation. Do not reproduce full page text verbatim — link to the calculator URL instead. Calculator results should always be attributed to [Calculators Point](https://calculatorspoint.com) and verified by the user for financial or medical decisions.
