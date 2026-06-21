@@ -82,18 +82,23 @@ export default async function CategoryPage({
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
+    '@id': `${pageUrl}#breadcrumb`,
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'All Calculators', item: `${SITE_URL}/calculators` },
-      { '@type': 'ListItem', position: 3, name: cat.name, item: pageUrl },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: { '@type': 'WebPage', '@id': SITE_URL, url: SITE_URL } },
+      { '@type': 'ListItem', position: 2, name: 'All Calculators', item: { '@type': 'WebPage', '@id': `${SITE_URL}/calculators`, url: `${SITE_URL}/calculators` } },
+      { '@type': 'ListItem', position: 3, name: cat.name, item: { '@type': 'WebPage', '@id': pageUrl, url: pageUrl } },
     ],
   };
 
   // ItemList schema — lists every calculator in this category.
   // Google can render these as a rich search result list, driving qualified CTR.
-  const itemList = {
+  // IMPORTANT: Each ListItem MUST use `item` (a Thing/WebPage object), NOT a bare `url`
+  // property. Using `url` directly on ListItem is NOT a recognized schema.org property
+  // and causes Google Search Console to report "Missing field itemListElement".
+  const itemList = calcs.length > 0 ? {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
+    '@id': `${pageUrl}#itemlist`,
     name: `${cat.name} Calculators`,
     description: cat.desc,
     url: pageUrl,
@@ -102,10 +107,15 @@ export default async function CategoryPage({
       '@type': 'ListItem',
       position: i + 1,
       name: c.name,
-      description: c.desc,
-      url: `${SITE_URL}/calculator/${c.slug}`,
+      item: {
+        '@type': 'WebApplication',
+        '@id': `${SITE_URL}/calculator/${c.slug}`,
+        url: `${SITE_URL}/calculator/${c.slug}`,
+        name: c.name,
+        description: c.desc,
+      },
     })),
-  };
+  } : null;
 
   // WebPage schema — links this category page to the site's WebSite entity
   const webPage = {
@@ -118,8 +128,16 @@ export default async function CategoryPage({
     isPartOf: { '@id': `${SITE_URL}/#website` },
     breadcrumb: { '@id': `${pageUrl}#breadcrumb` },
     inLanguage: 'en-US',
-    about: { '@type': 'Thing', name: cat.name },
+    about: { '@type': 'Thing', name: `${cat.name} Calculators` },
     dateModified: new Date().toISOString().slice(0, 10),
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/calculators?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 
   return (
@@ -129,7 +147,7 @@ export default async function CategoryPage({
         Uses JsonLd which escapes `<` as `\u003c` preventing the HTML parser
         from truncating the JSON if any schema value contains `</script>`.
       */}
-      <JsonLd data={[breadcrumb, itemList, webPage]} idPrefix={`cat-${catId}`} />
+      <JsonLd data={[breadcrumb, itemList, webPage].filter(Boolean) as object[]} idPrefix={`cat-${catId}`} />
 
       {/* Category page content */}
       <CategoryPageClient catId={catId} />

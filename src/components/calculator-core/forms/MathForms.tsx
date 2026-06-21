@@ -1241,5 +1241,204 @@ export function DistanceForm() {
   );
 }
 
+// ── Exponent Calculator ───────────────────────────────────────────────
+export function ExponentForm() {
+  const [base, setBase] = useState("2");
+  const [exp, setExp] = useState("10");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const b = parseFloat(base);
+      const e = parseFloat(exp);
+      if (!isFinite(b) || !isFinite(e)) { setRes(null); return; }
+
+      // Handle special cases
+      if (b === 0 && e < 0) { setRes(null); return; } // 0^negative is undefined
+      if (b < 0 && e !== Math.floor(e)) { setRes(null); return; } // negative base with fractional exp
+
+      const result = Math.pow(b, e);
+      if (!isFinite(result)) { setRes(null); return; }
+
+      // Scientific notation
+      const sci = result !== 0
+        ? result.toExponential(6).replace(/\.?0+e/, 'e')
+        : "0";
+
+      // Step-by-step breakdown
+      const breakdowns = [];
+      if (e === 0) {
+        breakdowns.push({ label: "Rule: Any number^0 = 1", value: `${b}⁰ = 1` });
+      } else if (e < 0) {
+        breakdowns.push({ label: "Negative Exponent Rule", value: `${b}^${e} = 1 / ${b}^${Math.abs(e)}` });
+        breakdowns.push({ label: `${b}^${Math.abs(e)}`, value: Math.pow(b, Math.abs(e)).toFixed(6) });
+        breakdowns.push({ label: "Final Result", value: result.toFixed(10) });
+      } else if (e === Math.floor(e) && Math.abs(e) <= 10) {
+        // Show step-by-step multiplication for small integer exponents
+        let running = 1;
+        for (let i = 1; i <= Math.abs(e); i++) {
+          running *= b;
+          breakdowns.push({ label: `${b}^${i}`, value: running.toLocaleString() });
+        }
+      } else {
+        breakdowns.push({ label: "Calculation", value: `${b}^${e} = e^(${e} × ln(${b}))` });
+        if (b > 0) {
+          breakdowns.push({ label: `ln(${b})`, value: Math.log(b).toFixed(8) });
+          breakdowns.push({ label: `${e} × ln(${b})`, value: (e * Math.log(b)).toFixed(8) });
+        }
+        breakdowns.push({ label: "Result", value: result.toFixed(10) });
+      }
+
+      const insights = [];
+      if (Math.abs(result) >= 1e6 || (Math.abs(result) < 0.001 && result !== 0)) {
+        insights.push({ type: "tip", msg: `Result is very ${Math.abs(result) >= 1e6 ? "large" : "small"} — scientific notation: ${sci}` });
+      }
+      if (b === 2 && e > 0 && e === Math.floor(e)) {
+        insights.push({ type: "info", msg: `2^${e} = ${result.toLocaleString()} — this is a common binary power in computing.` });
+      }
+
+      setRes(buildResult(
+        "Result",
+        Math.abs(result) >= 1e9 || (Math.abs(result) < 1e-4 && result !== 0)
+          ? sci
+          : result.toLocaleString(undefined, { maximumFractionDigits: 10 }),
+        [
+          { label: "Base", value: b.toString() },
+          { label: "Exponent", value: e.toString() },
+          { label: "Result", value: result.toLocaleString(undefined, { maximumFractionDigits: 10 }), highlight: true },
+          { label: "Scientific Notation", value: sci },
+          { label: "Reciprocal (1/result)", value: result !== 0 ? (1 / result).toExponential(6) : "undefined" },
+        ],
+        insights,
+        null,
+        breakdowns
+      ));
+    }, 80);
+    return () => clearTimeout(t);
+  }, [base, exp]);
+
+  return (
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Exponent Result"
+      inputContent={<>
+        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+          <Row2>
+            <N label="Base (b)" id="exp-base" value={base} onChange={setBase} hint="Any real number" placeholder="e.g. 2" />
+            <N label="Exponent (n)" id="exp-exp" value={exp} onChange={setExp} hint="Positive, negative, or decimal" placeholder="e.g. 10" />
+          </Row2>
+          <div style={{ marginTop: 8, padding: "10px 14px", background: "var(--surface2)", borderRadius: "var(--r-md)", border: "1px solid var(--border)", fontSize: 13, color: "var(--text)", textAlign: "center", fontWeight: 600 }}>
+            {base || 'b'} <sup style={{ fontSize: 11 }}>{exp || 'n'}</sup> = <span style={{ color: "var(--brand)" }}>
+              {res ? (res.primary?.value || '—') : '—'}
+            </span>
+          </div>
+          <div style={{ marginTop: 16, padding: "14px 16px", background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
+            <div style={{ fontSize: 13, color: "var(--text3)", marginBottom: 8, fontWeight: 600 }}>Quick Reference</div>
+            {[
+              { label: "2¹⁰ = 1,024", desc: "1 kilobyte in binary" },
+              { label: "10³ = 1,000", desc: "Power of 10" },
+              { label: "2⁻¹ = 0.5", desc: "Negative exponent" },
+              { label: "9^0.5 = 3", desc: "Square root via exponent" },
+            ].map((q, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: i < 3 ? "1px solid var(--border2)" : "none", fontSize: 12 }}>
+                <span style={{ color: "var(--brand)", fontWeight: 700 }}>{q.label}</span>
+                <span style={{ color: "var(--text3)" }}>{q.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>}
+    />
+  );
+}
+
+// ── Root Calculator ───────────────────────────────────────────────────
+export function RootForm() {
+  const [num, setNum] = useState("216");
+  const [degree, setDegree] = useState("3");
+  const [res, setRes] = useState(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const x = parseFloat(num);
+      const n = parseFloat(degree);
+      if (!isFinite(x) || !isFinite(n) || n === 0) { setRes(null); return; }
+      if (x < 0 && n % 2 === 0) { setRes(null); return; } // even root of negative is complex
+
+      const result = x < 0 ? -Math.pow(-x, 1 / n) : Math.pow(x, 1 / n);
+      if (!isFinite(result)) { setRes(null); return; }
+
+      // Newton's method steps for display
+      const breakdowns = [];
+      let guess = result > 0 ? Math.max(1, result) : 1;
+      for (let i = 0; i < 5; i++) {
+        const prevGuess = guess;
+        guess = ((n - 1) * guess + x / Math.pow(guess, n - 1)) / n;
+        breakdowns.push({ label: `Iteration ${i + 1}`, value: `${prevGuess.toFixed(6)} → ${guess.toFixed(6)}` });
+        if (Math.abs(guess - prevGuess) < 1e-10) break;
+      }
+      breakdowns.push({ label: "Verification", value: `${result.toFixed(6)}^${n} ≈ ${Math.pow(result, n).toFixed(4)}` });
+
+      const nthLabel = n === 2 ? "Square" : n === 3 ? "Cube" : `${n}th`;
+
+      setRes(buildResult(
+        `${nthLabel} Root`,
+        result.toFixed(8),
+        [
+          { label: `${nthLabel} Root of ${x}`, value: result.toFixed(8), highlight: true },
+          { label: "As Exponent", value: `${x}^(1/${n})` },
+          { label: "Verification", value: `${result.toFixed(4)}^${n} = ${Math.pow(result, n).toFixed(4)}` },
+          { label: "Decimal", value: result.toFixed(12) },
+        ],
+        [{ type: "tip", msg: `The ${nthLabel.toLowerCase()} root of ${x} is the number that, when raised to the power ${n}, equals ${x}.` }],
+        null,
+        breakdowns
+      ));
+    }, 80);
+    return () => clearTimeout(t);
+  }, [num, degree]);
+
+  return (
+    <FinanceLayout
+      accentClass="accent-math"
+      inputTitle="Your Values"
+      result={res}
+      loading={null}
+      label="Root Result"
+      inputContent={<>
+        <div style={{background:'var(--surface)',border:'1.5px solid var(--border)',borderRadius:16,padding:'22px 24px 20px'}}>
+          <Tabs
+            tabs={["Square Root", "Cube Root", "Custom"]}
+            active={degree === "2" ? "Square Root" : degree === "3" ? "Cube Root" : "Custom"}
+            onChange={v => setDegree(v === "Square Root" ? "2" : v === "Cube Root" ? "3" : degree)}
+          />
+          <N label="Number (x)" id="root-num" value={num} onChange={setNum} hint="Enter any number" placeholder="e.g. 216" />
+          {!["2", "3"].includes(degree) && (
+            <N label="Root Degree (n)" id="root-deg" value={degree} onChange={setDegree} hint="Enter the root degree" placeholder="e.g. 4" />
+          )}
+          <div style={{ marginTop: 16, padding: "14px 16px", background: "var(--surface2)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)" }}>
+            <div style={{ fontSize: 13, color: "var(--text3)", marginBottom: 8, fontWeight: 600 }}>Common Roots</div>
+            {[
+              { label: "√4 = 2", desc: "Square root of 4" },
+              { label: "∛27 = 3", desc: "Cube root of 27" },
+              { label: "√2 ≈ 1.4142", desc: "Square root of 2" },
+              { label: "∜16 = 2", desc: "4th root of 16" },
+            ].map((q, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: i < 3 ? "1px solid var(--border2)" : "none", fontSize: 12 }}>
+                <span style={{ color: "var(--brand)", fontWeight: 700 }}>{q.label}</span>
+                <span style={{ color: "var(--text3)" }}>{q.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </>}
+    />
+  );
+}
+
 // Default export
+
 
