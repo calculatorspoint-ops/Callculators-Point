@@ -51,17 +51,17 @@ body {
 
 /* ── Critical: Navbar placeholder so page doesn't jump on load ── */
 /* Must match --nav-h CSS variable (68px desktop / 56px mobile) defined in index.css */
-.navbar {
+.navbar, .nb {
   min-height: 68px;
   height: 68px;
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 200;
   /* Background and other decorative styles are in index.css */
   background: var(--surface, #ffffff);
-  border-bottom: 1px solid var(--border, #e2e8f0);
+  border-bottom: 1px solid transparent;
 }
 
 /* ── Critical: Stat-strip dimensions reserved above-fold ── */
