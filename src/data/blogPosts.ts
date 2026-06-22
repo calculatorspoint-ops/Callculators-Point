@@ -308,40 +308,354 @@ EMI = 50,00,000 × 0.007083 × (1.007083)^²⁴⁰ ÷ [(1.007083)^²⁴⁰ − 1
     `,
   },
 
-  // ── Draft 5 ──────────────────────────────────────────────────────────────
+  // ── Article 5: Celsius to Fahrenheit Conversion Guide ───────────────────────
   {
     slug: 'celsius-to-fahrenheit-conversion-guide',
     title: 'Celsius to Fahrenheit Conversion: Formula, Chart & Calculator',
     description: 'Convert Celsius to Fahrenheit instantly. Learn the exact formula, see a quick reference chart for common temperatures, and use our free temperature converter.',
     excerpt: 'The exact formula to convert Celsius to Fahrenheit, a printable reference chart, and common conversions you\'ll actually use every day.',
-    draft: true,
+    draft: false,
     author: 'Calculators Point',
     publishedAt: '2026-06-05',
-    updatedAt: '2026-06-05',
+    updatedAt: '2026-06-22',
     category: 'unit-conversion-guides',
     tags: ['Celsius', 'Fahrenheit', 'temperature', 'unit conversion', 'formula'],
-    readingTime: 4,
+    readingTime: 5,
     relatedCalculators: [
       'temperature-converter',
       'length-converter',
       'weight-converter',
     ],
-    // ⚠️ PLACEHOLDER CONTENT — Replace with original, well-researched article before publishing.
     content: `
-      <p><strong>[DRAFT — PLACEHOLDER CONTENT. DO NOT PUBLISH AS-IS.]</strong></p>
-      <h2>The Celsius to Fahrenheit Formula</h2>
-      <p>Placeholder formula °F = (°C × 9/5) + 32...</p>
-      <h2>Step-by-Step Conversion Example</h2>
-      <p>Placeholder worked example...</p>
-      <h2>Common Temperature Conversions Chart</h2>
-      <p>Placeholder table (0°C, 20°C, 37°C, 100°C, etc.)...</p>
-      <h2>Fahrenheit to Celsius Formula</h2>
-      <p>Placeholder reverse formula...</p>
-      <h2>Use Our Free Temperature Converter</h2>
-      <p>Placeholder CTA...</p>
+<p>Whether you are checking the weather for a trip abroad, following a recipe from an American cookbook, or taking someone's temperature, knowing how to convert Celsius to Fahrenheit is an essential everyday skill. This guide explains the exact formula, gives you worked examples, and provides a handy reference chart.</p>
+<h2>The Celsius to Fahrenheit Formula</h2>
+<pre><code>°F = (°C × 9/5) + 32</code></pre>
+<p>This formula does two things: multiplying by 9/5 (= 1.8) accounts for the difference in scale between degrees, then adding 32 shifts the baseline — because Celsius sets 0° at water's freezing point while Fahrenheit sets it at 32°.</p>
+<h2>Step-by-Step Worked Examples</h2>
+<h3>Example 1: Convert 25°C (warm summer day)</h3>
+<pre><code>°F = (25 × 9/5) + 32 = (25 × 1.8) + 32 = 45 + 32 = 77°F</code></pre>
+<h3>Example 2: Convert 100°C (boiling point of water)</h3>
+<pre><code>°F = (100 × 1.8) + 32 = 180 + 32 = 212°F</code></pre>
+<h3>Example 3: Convert 37°C (normal body temperature)</h3>
+<pre><code>°F = (37 × 1.8) + 32 = 66.6 + 32 = 98.6°F</code></pre>
+<h2>The Reverse Formula: Fahrenheit to Celsius</h2>
+<pre><code>°C = (°F − 32) × 5/9</code></pre>
+<p>Example: 68°F → (68 − 32) × 5/9 = 36 × 0.5556 = <strong>20°C</strong></p>
+<h2>Quick Mental Math Shortcut</h2>
+<p>For rough estimates: <strong>Double the Celsius value and add 30.</strong> At 22°C: (22 × 2) + 30 = 74°F (actual: 71.6°F). The error is typically within 2–3°F for normal weather temperatures.</p>
+<h2>Common Temperature Conversions Chart</h2>
+<table><thead><tr><th>°C</th><th>°F</th><th>Context</th></tr></thead><tbody>
+<tr><td>−40°C</td><td>−40°F</td><td>The only point where both scales are equal</td></tr>
+<tr><td>0°C</td><td>32°F</td><td>Water freezing point</td></tr>
+<tr><td>10°C</td><td>50°F</td><td>Cool autumn day</td></tr>
+<tr><td>20°C</td><td>68°F</td><td>Comfortable room temperature</td></tr>
+<tr><td>25°C</td><td>77°F</td><td>Warm summer day</td></tr>
+<tr><td>37°C</td><td>98.6°F</td><td>Normal body temperature</td></tr>
+<tr><td>38°C</td><td>100.4°F</td><td>Fever threshold</td></tr>
+<tr><td>40°C</td><td>104°F</td><td>Very hot / high fever</td></tr>
+<tr><td>100°C</td><td>212°F</td><td>Water boiling point</td></tr>
+<tr><td>180°C</td><td>356°F</td><td>Typical baking temperature</td></tr>
+</tbody></table>
+<h2>Cooking Temperature Conversions</h2>
+<table><thead><tr><th>°F</th><th>°C</th><th>Description</th></tr></thead><tbody>
+<tr><td>325°F</td><td>165°C</td><td>Slow oven</td></tr>
+<tr><td>350°F</td><td>175°C</td><td>Moderate oven (most common)</td></tr>
+<tr><td>400°F</td><td>200°C</td><td>Hot oven</td></tr>
+<tr><td>450°F</td><td>230°C</td><td>Very hot oven</td></tr>
+</tbody></table>
+<h2>Frequently Asked Questions</h2>
+<h3>What is 30°C in Fahrenheit?</h3>
+<p>(30 × 1.8) + 32 = 54 + 32 = <strong>86°F</strong>.</p>
+<h3>What temperature is the same in Celsius and Fahrenheit?</h3>
+<p><strong>−40°</strong> is the only point where both scales read the same number.</p>
+<h3>Is 37°C a fever?</h3>
+<p>37°C (98.6°F) is normal body temperature. A fever in adults is typically 38°C (100.4°F) or higher.</p>
+<p>Use our free <a href="/calculator/temperature-converter">Temperature Converter</a> to convert any temperature instantly.</p>
+    `,
+  },
+
+  // ── Article 6 — How to Calculate Percentage ────────────────────────────
+  {
+    slug: 'how-to-calculate-percentage',
+    title: 'How to Calculate Percentage: 6 Types With Formulas & Examples',
+    description: 'Master every type of percentage calculation — increase, decrease, of a number, difference, and more. Step-by-step formulas with worked examples and a free calculator.',
+    excerpt: 'Six percentage formulas every student and professional needs: find percentage of a number, calculate increase/decrease, find what percent one number is of another, and more.',
+    draft: false,
+    author: 'Calculators Point',
+    publishedAt: '2026-06-10',
+    updatedAt: '2026-06-22',
+    category: 'math-tutorials',
+    tags: ['percentage', 'percentage formula', 'math', 'percentage calculator', 'percent'],
+    readingTime: 9,
+    relatedCalculators: [
+      'percentage-calculator',
+      'percentage-increase-decrease-calculator',
+      'discount-calculator',
+      'profit-loss-calculator',
+    ],
+    content: `
+<p>Percentage is one of the most frequently used calculations in everyday life — from shopping discounts to exam scores, salary hikes to GST, investment returns to nutritional labels. Yet many people struggle when the question changes from "what is 20% of 500?" to "500 is what percentage of 2,000?" This guide covers all six core percentage calculation types with clear formulas and worked examples.</p>
+
+<h2>What is a Percentage?</h2>
+<p>A percentage is a ratio expressed as a fraction of 100. The word comes from Latin <em>per centum</em> — "by the hundred." When you say 45%, you mean 45 out of every 100, or 45/100 = 0.45 as a decimal. Percentages allow comparison between quantities with different bases — which is why they appear everywhere from statistics to science to everyday shopping.</p>
+
+<h2>Type 1: Finding the Percentage of a Number</h2>
+<p><strong>Question:</strong> What is X% of Y?</p>
+<pre><code>Result = (X ÷ 100) × Y</code></pre>
+<p><strong>Example:</strong> What is 35% of 8,400?<br/>= (35 ÷ 100) × 8,400 = 0.35 × 8,400 = <strong>2,940</strong></p>
+<p><strong>Real-world uses:</strong> GST calculation (18% of bill amount), discount amount, commission earned, tip at a restaurant.</p>
+
+<h2>Type 2: Finding What Percentage One Number Is of Another</h2>
+<p><strong>Question:</strong> X is what percentage of Y?</p>
+<pre><code>Percentage = (X ÷ Y) × 100</code></pre>
+<p><strong>Example:</strong> You scored 68 out of 80 in an exam.<br/>= (68 ÷ 80) × 100 = <strong>85%</strong></p>
+<p><strong>Real-world uses:</strong> Exam score percentage, market share, completion percentage, attendance rate.</p>
+
+<h2>Type 3: Percentage Increase</h2>
+<p><strong>Question:</strong> What is the percentage increase from Old to New?</p>
+<pre><code>% Increase = [(New − Old) ÷ Old] × 100</code></pre>
+<p><strong>Example:</strong> Salary increased from ₹45,000 to ₹52,200.<br/>= [(52,200 − 45,000) ÷ 45,000] × 100 = [7,200 ÷ 45,000] × 100 = <strong>16%</strong></p>
+
+<h2>Type 4: Percentage Decrease</h2>
+<p><strong>Question:</strong> What is the percentage decrease from Old to New?</p>
+<pre><code>% Decrease = [(Old − New) ÷ Old] × 100</code></pre>
+<p><strong>Example:</strong> Product was ₹1,200, now on sale for ₹900.<br/>= [(1,200 − 900) ÷ 1,200] × 100 = [300 ÷ 1,200] × 100 = <strong>25%</strong></p>
+
+<h2>Type 5: Finding the Original Number from a Percentage</h2>
+<p><strong>Question:</strong> X% of what number equals Y?</p>
+<pre><code>Original = Y ÷ (X ÷ 100) = (Y × 100) ÷ X</code></pre>
+<p><strong>Example:</strong> After a 20% discount, a shirt costs ₹640. What was the original price?<br/>Sale price = 80% of original → Original = 640 ÷ 0.80 = <strong>₹800</strong></p>
+<p><strong>Common mistake:</strong> Adding 20% back to ₹640 = ₹768 — wrong! The percentage was taken off the <em>original</em> price, not the sale price.</p>
+
+<h2>Type 6: Percentage Difference Between Two Numbers</h2>
+<p><strong>Question:</strong> What is the percentage difference between A and B?</p>
+<pre><code>% Difference = [|A − B| ÷ ((A + B) ÷ 2)] × 100</code></pre>
+<p><strong>Example:</strong> City A has 3,200 students; City B has 4,000.<br/>= [800 ÷ 3,600] × 100 ≈ <strong>22.2%</strong></p>
+
+<h2>Quick Reference: All 6 Formulas</h2>
+<table>
+<thead><tr><th>Calculation Type</th><th>Formula</th></tr></thead>
+<tbody>
+<tr><td>X% of Y</td><td>(X ÷ 100) × Y</td></tr>
+<tr><td>X is what % of Y</td><td>(X ÷ Y) × 100</td></tr>
+<tr><td>% increase from A to B</td><td>[(B − A) ÷ A] × 100</td></tr>
+<tr><td>% decrease from A to B</td><td>[(A − B) ÷ A] × 100</td></tr>
+<tr><td>Original from % and result</td><td>Result ÷ (% ÷ 100)</td></tr>
+<tr><td>% difference between A and B</td><td>[|A−B| ÷ avg(A,B)] × 100</td></tr>
+</tbody>
+</table>
+
+<h2>Common Mistakes to Avoid</h2>
+<ul>
+<li><strong>Adding percentages directly:</strong> +50% then −50% on ₹100 gives ₹75, NOT ₹100.</li>
+<li><strong>Confusing percentage points with % change:</strong> Interest rising from 4% to 6% is 2 percentage points but a 50% increase in the rate.</li>
+<li><strong>Wrong base for reverse calculations:</strong> Always divide by the percentage decimal, don't add back to the discounted value.</li>
+</ul>
+
+<p>Use our free <a href="/calculator/percentage-calculator">Percentage Calculator</a> to solve all six types instantly, or the <a href="/calculator/percentage-increase-decrease-calculator">Percentage Increase &amp; Decrease Calculator</a> to compute change between two values.</p>
+    `,
+  },
+
+  // ── Article 7 — CGPA to Percentage Conversion ──────────────────────────
+  {
+    slug: 'cgpa-to-percentage-conversion-complete-guide',
+    title: 'CGPA to Percentage: Conversion Formula for All Universities',
+    description: 'Convert CGPA to percentage for CBSE, Anna University, VTU, Mumbai University, SPPU, and more. Official formulas, conversion tables, and a free online calculator.',
+    excerpt: 'Different universities use different CGPA to percentage formulas. This guide covers CBSE, Anna University, VTU, Mumbai University, SPPU — with examples and comparison tables.',
+    draft: false,
+    author: 'Calculators Point',
+    publishedAt: '2026-06-12',
+    updatedAt: '2026-06-22',
+    category: 'education-tools',
+    tags: ['CGPA', 'percentage', 'GPA conversion', 'CBSE', 'university grades'],
+    readingTime: 8,
+    relatedCalculators: [
+      'cgpa-to-percentage-calculator',
+      'gpa-calculator',
+      'percentage-calculator',
+    ],
+    content: `
+<p>Whether you are applying to a job, a university abroad, or a postgraduate program, you will almost certainly be asked to convert your CGPA to a percentage. The problem: there is no single universal formula. Each university, board, or institution uses a different multiplier. This guide covers every major system used in India and internationally.</p>
+
+<h2>What is CGPA?</h2>
+<p>CGPA (Cumulative Grade Point Average) is a standardized measure of academic performance. Instead of raw marks, each subject earns a grade point (typically 0–10 in India, 0–4 in the USA), and the CGPA is the weighted average across all subjects or semesters. It provides a consistent measure of overall academic achievement regardless of semester-to-semester variation.</p>
+
+<h2>Why Is There No Single Formula?</h2>
+<p>Different institutions define their grade scales differently. A 9.0 on a 10-point scale at one university may represent 85–89%, while the same 9.0 at another university may represent 90–94%. Always verify the official conversion formula from your institution's examination department.</p>
+
+<h2>CBSE (Class 10 and 12) — Official Formula</h2>
+<pre><code>Percentage = CGPA × 9.5</code></pre>
+<p><strong>Example:</strong> CGPA of 9.2 → 9.2 × 9.5 = <strong>87.4%</strong></p>
+<table>
+<thead><tr><th>CGPA</th><th>Percentage (×9.5)</th><th>Grade</th></tr></thead>
+<tbody>
+<tr><td>10.0</td><td>95%</td><td>A1</td></tr>
+<tr><td>9.0</td><td>85.5%</td><td>A2</td></tr>
+<tr><td>8.0</td><td>76%</td><td>B1</td></tr>
+<tr><td>7.0</td><td>66.5%</td><td>B2</td></tr>
+<tr><td>6.0</td><td>57%</td><td>C1</td></tr>
+</tbody>
+</table>
+
+<h2>Anna University (Tamil Nadu)</h2>
+<pre><code>Percentage = (CGPA − 0.5) × 10</code></pre>
+<p><strong>Example:</strong> CGPA 8.2 → (8.2 − 0.5) × 10 = <strong>77%</strong></p>
+
+<h2>Mumbai University</h2>
+<pre><code>Percentage = (CGPA × 7.1) + 11</code></pre>
+<p><strong>Example:</strong> CGPA 7.5 → (7.5 × 7.1) + 11 = <strong>64.25%</strong></p>
+
+<h2>VTU (Visvesvaraya Technological University)</h2>
+<pre><code>Percentage = (CGPA − 0.75) × 10</code></pre>
+<p><strong>Example:</strong> CGPA 8.5 → (8.5 − 0.75) × 10 = <strong>77.5%</strong></p>
+
+<h2>SPPU (Savitribai Phule Pune University)</h2>
+<pre><code>Percentage = (CGPA × 10) − 7.5</code></pre>
+<p><strong>Example:</strong> CGPA 8.0 → (8.0 × 10) − 7.5 = <strong>72.5%</strong></p>
+
+<h2>Quick Comparison: Same CGPA, Different Results</h2>
+<table>
+<thead><tr><th>CGPA</th><th>CBSE (×9.5)</th><th>Anna (−0.5)×10</th><th>VTU (−0.75)×10</th><th>Mumbai (×7.1+11)</th></tr></thead>
+<tbody>
+<tr><td>8.0</td><td>76%</td><td>75%</td><td>72.5%</td><td>67.8%</td></tr>
+<tr><td>8.5</td><td>80.75%</td><td>80%</td><td>77.5%</td><td>71.35%</td></tr>
+<tr><td>9.0</td><td>85.5%</td><td>85%</td><td>82.5%</td><td>74.9%</td></tr>
+</tbody>
+</table>
+<p>The same 9.0 CGPA gives anything from 74.9% to 85.5% depending on the university. Always specify your university when submitting CGPA to an employer or institution.</p>
+
+<h2>US GPA (4.0 Scale) to Percentage Reference</h2>
+<table>
+<thead><tr><th>US GPA</th><th>Approximate Percentage</th><th>Grade</th></tr></thead>
+<tbody>
+<tr><td>4.0</td><td>90–100%</td><td>A / A+</td></tr>
+<tr><td>3.7</td><td>87–89%</td><td>A−</td></tr>
+<tr><td>3.3</td><td>83–86%</td><td>B+</td></tr>
+<tr><td>3.0</td><td>80–82%</td><td>B</td></tr>
+<tr><td>2.7</td><td>77–79%</td><td>B−</td></tr>
+<tr><td>2.0</td><td>70–72%</td><td>C</td></tr>
+</tbody>
+</table>
+
+<h2>Which to Report: CGPA or Percentage?</h2>
+<ul>
+<li><strong>Government / PSU jobs:</strong> Report percentage — cutoffs are stated in percentage terms</li>
+<li><strong>Private sector:</strong> Either is accepted — always specify the scale (e.g., "8.5/10")</li>
+<li><strong>Foreign universities:</strong> Convert to 4.0 GPA scale — WES/ICAS services handle Indian transcripts</li>
+<li><strong>Indian postgraduate entrance:</strong> Use your university's official formula and attach a conversion certificate</li>
+</ul>
+
+<p>Calculate your CGPA to percentage instantly with our free <a href="/calculator/cgpa-to-percentage-calculator">CGPA to Percentage Calculator</a> — supports CBSE, Anna University, Mumbai University, VTU, SPPU, and custom multipliers.</p>
+    `,
+  },
+
+  // ── Article 8 — Age Calculator Guide ──────────────────────────────────
+  {
+    slug: 'how-to-calculate-age-from-date-of-birth',
+    title: 'How to Calculate Your Exact Age from Date of Birth',
+    description: 'Calculate your exact age in years, months, and days from your date of birth. Learn the step-by-step method, leap year edge cases, and use a free online age calculator.',
+    excerpt: 'Your exact age in years, months, and days — how to calculate it manually, how leap years affect the count, and the real-world situations where exact age matters.',
+    draft: false,
+    author: 'Calculators Point',
+    publishedAt: '2026-06-15',
+    updatedAt: '2026-06-22',
+    category: 'everyday-calculation-tips',
+    tags: ['age calculator', 'date of birth', 'age calculation', 'leap year', 'birthday'],
+    readingTime: 7,
+    relatedCalculators: [
+      'age-calculator',
+      'date-difference-calculator',
+      'birthday-calculator',
+    ],
+    content: `
+<p>Calculating your exact age sounds trivial — subtract your birth year from the current year. But if you need the precise number of years, months, and days for a visa application, retirement calculation, medical record, insurance form, or school admission, the simple subtraction is almost never enough. This guide explains how exact age calculation works, including leap years and real-world applications.</p>
+
+<h2>The Simple Method — Age in Years Only</h2>
+<pre><code>Age = Current Year − Birth Year
+(Subtract 1 if birthday has not occurred yet this year)</code></pre>
+<p><strong>Example:</strong> Born 15 August 1995. Today is 22 June 2026.</p>
+<ul>
+<li>2026 − 1995 = 31</li>
+<li>Birthday (15 Aug) has not occurred yet in 2026 (we are in June)</li>
+<li>Age = 31 − 1 = <strong>30 years</strong></li>
+</ul>
+
+<h2>The Precise Method — Years, Months, and Days</h2>
+<p>Calculate in three stages: Years → Months → Days.</p>
+<h3>Step-by-Step Example</h3>
+<p>Birth date: <strong>10 September 1998</strong> | Today: <strong>22 June 2026</strong></p>
+<pre><code>Step 1 — Years:
+  2026 − 1998 = 28
+  Birthday (10 Sep) has not occurred in 2026 yet
+  → Completed years = 27
+
+Step 2 — Months (from 10 Sep 2025 to 22 Jun 2026):
+  Sep 10 → Oct 10 → Nov 10 → Dec 10 → Jan 10 → Feb 10
+  → Mar 10 → Apr 10 → May 10 → Jun 10 = 9 complete months
+
+Step 3 — Days (from Jun 10 to Jun 22):
+  22 − 10 = 12 days
+
+Result: 27 years, 9 months, 12 days</code></pre>
+
+<h2>How Leap Years Affect Age Calculation</h2>
+<p>People born on February 29 face a special case in non-leap years:</p>
+<table>
+<thead><tr><th>Country / Context</th><th>Feb 29 Birthday in Non-Leap Year</th></tr></thead>
+<tbody>
+<tr><td>UK, India (legal)</td><td>March 1</td></tr>
+<tr><td>China, Hong Kong</td><td>February 28</td></tr>
+<tr><td>US (most states)</td><td>March 1</td></tr>
+<tr><td>New Zealand</td><td>February 28</td></tr>
+</tbody>
+</table>
+<p>This distinction matters for driving licenses, voter registration, and pension eligibility when a birthday falls at a legal age cutoff.</p>
+
+<h2>Leap Year Rule</h2>
+<pre><code>A year is a leap year if:
+  Divisible by 4 AND (NOT divisible by 100 OR divisible by 400)
+
+2024 → divisible by 4 → Leap year ✅
+1900 → divisible by 100, not 400 → NOT a leap year ❌
+2000 → divisible by 400 → Leap year ✅
+2100 → divisible by 100, not 400 → NOT a leap year ❌</code></pre>
+
+<h2>Real-World Uses for Exact Age</h2>
+<table>
+<thead><tr><th>Use Case</th><th>Precision Needed</th><th>Why It Matters</th></tr></thead>
+<tbody>
+<tr><td>School admission</td><td>Years and months</td><td>Age cutoffs are as of a specific date (e.g., 31 March)</td></tr>
+<tr><td>Visa applications</td><td>Years and days</td><td>Some visa categories require age under a threshold on the application date</td></tr>
+<tr><td>Pension eligibility</td><td>Exact date</td><td>Benefits start on the exact day you reach retirement age</td></tr>
+<tr><td>Insurance premiums</td><td>Years</td><td>Premium bands change on your birthday</td></tr>
+<tr><td>Pediatric medical dosing</td><td>Years and months</td><td>Doses depend on age in months for children under 12</td></tr>
+<tr><td>Legal drinking age</td><td>Exact date</td><td>Must be of legal age on the purchase date, not just the same year</td></tr>
+</tbody>
+</table>
+
+<h2>Age in Different Units</h2>
+<ul>
+<li><strong>Age in months:</strong> (Years × 12) + Remaining months</li>
+<li><strong>Age in weeks:</strong> Total days ÷ 7</li>
+<li><strong>Age in days:</strong> Every day from birth to today (accounting for all leap years)</li>
+</ul>
+<p><strong>Fun fact:</strong> At exactly age 30, you have lived approximately <strong>10,957 days</strong>, <strong>262,980 hours</strong>, or <strong>946,728,000 seconds</strong>.</p>
+
+<h2>Days in Each Month (Quick Reference)</h2>
+<table>
+<thead><tr><th>Month</th><th>Regular Year</th><th>Leap Year</th></tr></thead>
+<tbody>
+<tr><td>January / March / May / July / August / October / December</td><td>31 days</td><td>31 days</td></tr>
+<tr><td>April / June / September / November</td><td>30 days</td><td>30 days</td></tr>
+<tr><td>February</td><td>28 days</td><td>29 days</td></tr>
+</tbody>
+</table>
+
+<p>Calculate your exact age instantly — in years, months, days, hours, and minutes — with our free <a href="/calculator/age-calculator">Age Calculator</a>. Find the exact number of days between any two dates with the <a href="/calculator/date-difference-calculator">Date Difference Calculator</a>.</p>
     `,
   },
 ];
+
 
 // ── Utility functions ─────────────────────────────────────────────────────────
 

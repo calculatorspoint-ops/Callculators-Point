@@ -61,7 +61,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
         <ScrollToTop />
       </Suspense>
       <Navbar />
-      <main style={{ minHeight: '100vh' }}>
+      <main id="main-content" style={{ minHeight: '100vh' }}>
         <ErrorBoundary>
           <Suspense>
             {children}

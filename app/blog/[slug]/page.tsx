@@ -64,11 +64,18 @@ export async function generateMetadata({
       authors: [post.author],
       tags: post.tags,
       section: catMeta?.name,
+      images: [{
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: post.title,
+      }],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
+      images: [`${SITE_URL}/og-image.png`],
     },
     // Extra metadata for article structured data consumers
     other: {
@@ -139,6 +146,39 @@ export default async function BlogPostPage({
     ],
   };
 
+  // Extract FAQ pairs from article content (h3 + following p inside an h2 FAQ section)
+  // This powers the FAQPage schema that Google displays as rich results in SERPs.
+  function extractFaqs(html: string): Array<{ q: string; a: string }> {
+    const faqStart = html.indexOf('<h2>Frequently Asked Questions</h2>');
+    if (faqStart === -1) return [];
+    const faqSection = html.slice(faqStart);
+    const pairs: Array<{ q: string; a: string }> = [];
+    const h3Regex = /<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>/gs;
+    let m;
+    while ((m = h3Regex.exec(faqSection)) !== null) {
+      pairs.push({
+        q: m[1].replace(/<[^>]+>/g, '').trim(),
+        a: m[2].replace(/<[^>]+>/g, '').trim(),
+      });
+    }
+    return pairs;
+  }
+
+  const faqs = extractFaqs(post.content);
+  const faqSchema = faqs.length > 0 && !post.draft ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${SITE_URL}/blog/${post.slug}#faq`,
+    mainEntity: faqs.map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: a,
+      },
+    })),
+  } : null;
+
   return (
     <>
       {/*
@@ -146,7 +186,7 @@ export default async function BlogPostPage({
         JsonLd escapes `<` as `\u003c` preventing HTML-parser from
         prematurely closing the <script> block.
       */}
-      <JsonLd data={[breadcrumbSchema, articleSchema].filter(Boolean) as object[]} idPrefix={`blog-${post.slug}`} />
+      <JsonLd data={[breadcrumbSchema, articleSchema, faqSchema].filter(Boolean) as object[]} idPrefix={`blog-${post.slug}`} />
 
       <div style={{ maxWidth: 760, margin: '0 auto', padding: 'clamp(24px, 5vw, 60px) clamp(16px, 4vw, 32px)' }}>
 

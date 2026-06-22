@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Calculators Point',
     images: [{
-      url: `${SITE_URL}/api/og?title=${encodeURIComponent('Calculators Point')}&icon=${encodeURIComponent('🧮')}&cat=${encodeURIComponent(`${CALC_COUNT_LABEL} Free Calculators`)}`,
+      url: `${SITE_URL}/og-image.png`,
       width: 1200,
       height: 630,
       alt: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     description: `Free EMI, BMI, SIP, mortgage, tax, and ${CALC_COUNT_LABEL} more calculators.`,
-    images: [`${SITE_URL}/api/og?title=${encodeURIComponent('Calculators Point')}&icon=${encodeURIComponent('🧮')}&cat=${encodeURIComponent(`${CALC_COUNT_LABEL} Free Calculators`)}`],
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 

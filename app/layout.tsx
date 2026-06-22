@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, and everyday life.`,
     images: [{
-      url: `https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=${encodeURIComponent(`${CALC_COUNT_LABEL} Free Calculators`)}`,
+      url: 'https://calculatorspoint.com/og-image.png',
       width: 1200,
       height: 630,
       alt: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
     description: `${CALC_COUNT_LABEL} free online calculators for finance, health, math, and everyday life.`,
-    images: [`https://calculatorspoint.com/api/og?title=Calculators+Point&icon=🧮&cat=${encodeURIComponent(`${CALC_COUNT_LABEL} Free Calculators`)}`],
+    images: ['https://calculatorspoint.com/og-image.png'],
   },
   robots: {
     index: true,
@@ -163,6 +163,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       </head>
       <body className={`${inter.variable} ${jakarta.variable} ${mono.variable}`} suppressHydrationWarning>
+        {/* ── Skip to content — WCAG 2.1 AA accessibility requirement ─────────────
+            First interactive element in the body so keyboard/screen-reader users
+            can skip the navigation and jump directly to main content.
+            visually-hidden until focused (avoids layout impact).
+        ──────────────────────────────────────────────────────────────── */}
+        <a
+          href="#main-content"
+          style={{
+            position: 'absolute',
+            top: '-9999px',
+            left: '-9999px',
+            zIndex: 10000,
+            background: '#6366f1',
+            color: '#fff',
+            padding: '12px 20px',
+            borderRadius: '0 0 8px 8px',
+            fontWeight: 700,
+            fontSize: 14,
+            textDecoration: 'none',
+            transition: 'top 0.1s',
+          }}
+          onFocus={e => { e.currentTarget.style.top = '0'; e.currentTarget.style.left = '16px'; }}
+          onBlur={e => { e.currentTarget.style.top = '-9999px'; e.currentTarget.style.left = '-9999px'; }}
+        >
+          Skip to main content
+        </a>
         <ClientProviders>
           {children}
         </ClientProviders>
