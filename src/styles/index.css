@@ -1235,10 +1235,9 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 .navbar-inner{
   max-width:var(--calc-max);margin:0 auto;
   padding:0 clamp(16px,2.5vw,28px);height:100%;
-  display:flex;align-items:center;gap:10px;
-  /* Logo | Nav | Controls — three independent flex regions */
+  display:flex;align-items:center;gap:12px;
   justify-content:space-between;
-  min-width:0;overflow:visible;
+  min-width:0;
 }
 /* Logo — fixed left region, never shrinks */
 .navbar-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0;min-width:0;}
@@ -1248,13 +1247,14 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 2px 10px rgba(37,99,235,.35);
 }
-.navbar-logo-text{font-weight:800;font-size:19px;letter-spacing:-.04em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.navbar-logo-text{font-weight:800;font-size:18px;letter-spacing:-.04em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
 
 /* Desktop category nav — centred, grows to fill space between logo and controls */
-.navbar-nav{display:flex;gap:4px;align-items:center;flex:1;justify-content:center;min-width:0;}
+.navbar-nav{display:flex;gap:3px;align-items:center;flex:1;justify-content:center;min-width:0;overflow:hidden;}
 .navbar-nav .nav-link{
-  padding:6px 11px;border-radius:8px;font-size:13px;font-weight:600;
+  padding:6px 10px;border-radius:8px;font-size:13px;font-weight:600;
   color:var(--text2);text-decoration:none;transition:all .15s;white-space:nowrap;
+  flex-shrink:0;
 }
 .navbar-nav .nav-link:hover{background:var(--surf2);color:var(--text);}
 .navbar-nav .nav-link-all{
@@ -1273,14 +1273,14 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   background:var(--surface2);border:1.5px solid var(--border);
   border-radius:10px;
   /* clamp keeps it from being too wide on mid-range screens */
-  width:clamp(160px,18vw,240px);
+  width:clamp(140px,16vw,220px);
   min-width:0;
   transition:border-color .2s,box-shadow .2s,width .25s cubic-bezier(.4,0,.2,1),background .2s;
 }
 .navbar-search-box:focus-within{
   border-color:var(--brand);box-shadow:var(--sh-glow);
   background:var(--surface);
-  width:clamp(220px,24vw,320px);
+  width:clamp(190px,22vw,300px);
 }
 .navbar-search-icon{color:var(--text3);flex-shrink:0;transition:color .15s;}
 .navbar-search-box:focus-within .navbar-search-icon{color:var(--brand);}
@@ -1328,8 +1328,10 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   border:1px solid var(--border);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   color:var(--text2);transition:all .15s;flex-shrink:0;
+  min-width:36px;min-height:36px;
 }
 .navbar-icon-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l);}
+.navbar-icon-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-color:var(--brand);}
 
 /* Mobile search btn — hidden on desktop */
 .mobile-search-btn{display:none;}
@@ -1341,9 +1343,9 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   padding:10px 16px 12px;position:relative;
 }
 .navbar-mobile-search-inner{
-  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
   background:var(--surface2);border:1.5px solid var(--border);
-  border-radius:10px;
+  border-radius:12px;
 }
 .navbar-mobile-search-inner:focus-within{border-color:var(--brand);box-shadow:var(--sh-glow);}
 .navbar-mobile-search-inner .navbar-search-input{font-size:16px;}
@@ -1356,14 +1358,14 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .mob-menu-panel{
-  position:fixed;top:0;right:0;bottom:0;width:min(85vw,320px);
+  position:fixed;top:0;right:0;bottom:0;width:min(88vw,320px);
   background:var(--surface);z-index:300;
-  display:flex;flex-direction:column;overflow-y:auto;
-  box-shadow:-8px 0 32px rgba(0,0,0,.16);
+  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;
+  box-shadow:-8px 0 40px rgba(0,0,0,.2);
   transform:translateX(100%);
   visibility:hidden;
   transition:transform .28s cubic-bezier(.4,0,.2,1), visibility 0s linear .28s;
-  padding-top:calc(var(--nav-h));
+  padding-top:var(--nav-h);
 }
 .mob-menu-panel--open{
   transform:translateX(0);
@@ -1377,9 +1379,9 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 }
 .mob-menu-link{
   display:flex;align-items:center;gap:10px;
-  padding:11px 12px;border-radius:10px;font-size:14px;font-weight:600;
+  padding:12px 14px;border-radius:10px;font-size:14px;font-weight:600;
   color:var(--text2);text-decoration:none;transition:all .15s;
-  min-height:46px;
+  min-height:48px;
 }
 .mob-menu-link:hover,.mob-menu-link:active{background:var(--surface2);color:var(--text);}
 .mob-menu-link--featured{color:var(--brand);font-weight:700;}
@@ -1460,6 +1462,12 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   .desktop-only{display:none!important;}
   .hero-inner{padding:40px 20px 36px;}
   .sticky-res{position:static!important;}
+  /* Tablet-specific navbar adjustments */
+  .navbar-inner{gap:8px;padding:0 clamp(14px,2vw,20px);}
+  .navbar-logo-text{font-size:16px;}
+  .navbar-logo-icon{width:32px;height:32px;border-radius:9px;}
+  .navbar-controls{gap:5px;}
+  .navbar-icon-btn{min-width:34px;min-height:34px;padding:7px;}
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1467,33 +1475,30 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
    Full desktop nav stays visible but items are tightened so
    nothing overflows or squeezes on 1280–1366px laptop screens.
 ══════════════════════════════════════════════════════════════ */
-@media(min-width:1025px) and (max-width:1380px){
-  .navbar-inner{
-    gap:6px;
-    padding:0 clamp(12px,1.5vw,20px);
-  }
-  /* Tighter nav link padding so all 6 links fit comfortably */
-  .navbar-nav{gap:2px;}
-  .navbar-nav .nav-link{
-    padding:5px 8px;
-    font-size:12.5px;
-  }
-  .navbar-nav .nav-link-all{
-    padding:4px 10px;
-    font-size:12.5px;
-  }
-  /* Shrink search box — it's the widest item in the controls row */
-  .navbar-search-box{
-    width:clamp(130px,12vw,170px);
-  }
-  .navbar-search-box:focus-within{
-    width:clamp(170px,16vw,210px);
-  }
-  /* Reduce icon button padding */
-  .navbar-icon-btn{padding:6px;}
-  /* Hide currency selector at laptop range — space is too tight */
+@media(min-width:1025px) and (max-width:1200px){
+  /* Narrow laptop — all nav links visible but very compact */
+  .navbar-inner{gap:5px;padding:0 clamp(10px,1.2vw,16px);}
+  .navbar-nav{gap:1px;}
+  .navbar-nav .nav-link{padding:5px 7px;font-size:12px;}
+  .navbar-nav .nav-link-all{padding:4px 9px;font-size:12px;}
+  .navbar-search-box{width:clamp(110px,10vw,140px);}
+  .navbar-search-box:focus-within{width:clamp(140px,14vw,190px);}
+  .navbar-icon-btn{padding:6px;min-width:30px;min-height:30px;}
   .desktop-only{display:none!important;}
-  /* Tighten controls gap */
+  .navbar-controls{gap:3px;}
+  .navbar-logo-text{font-size:15px;max-width:140px;}
+  .navbar-logo-icon{width:30px;height:30px;border-radius:8px;}
+}
+@media(min-width:1201px) and (max-width:1380px){
+  /* Wide laptop — comfortable but still tighter than full desktop */
+  .navbar-inner{gap:8px;padding:0 clamp(14px,1.8vw,22px);}
+  .navbar-nav{gap:2px;}
+  .navbar-nav .nav-link{padding:5px 9px;font-size:12.5px;}
+  .navbar-nav .nav-link-all{padding:4px 10px;font-size:12.5px;}
+  .navbar-search-box{width:clamp(130px,12vw,170px);}
+  .navbar-search-box:focus-within{width:clamp(170px,16vw,210px);}
+  .navbar-icon-btn{padding:7px;}
+  .desktop-only{display:none!important;}
   .navbar-controls{gap:4px;}
 }
 
@@ -1504,8 +1509,10 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 @media(max-width:767px){
   :root{--nav-h:56px;}
   .navbar-inner{padding:0 12px;gap:6px;}
-  .navbar-logo-text{font-size:15px;}
-  .navbar-logo-icon{width:30px;height:30px;}
+  .navbar-logo-text{font-size:15px;max-width:150px;}
+  .navbar-logo-icon{width:30px;height:30px;border-radius:8px;}
+  .navbar-controls{gap:5px;}
+  .navbar-icon-btn{min-width:36px;min-height:36px;padding:8px;}
   .hero-inner{padding:24px 14px 28px!important;}
   .hero-title{font-size:clamp(1.5rem,7.5vw,2rem)!important;line-height:1.15;}
   .hero-sub{font-size:14px!important;margin-bottom:20px!important;max-width:100%!important;}
@@ -1573,15 +1580,21 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   .badge{font-size:9px;padding:1px 5px;}
   .cph-title{font-size:0.95rem!important;}
   .navbar-inner{padding:0 10px;gap:5px;}
+  .navbar-logo-text{font-size:14px;max-width:120px;}
+  .navbar-icon-btn{padding:7px;min-width:34px;min-height:34px;}
   .hero-title{font-size:1.4rem!important;}
 }
 @media(max-width:375px){
-  .navbar-logo-text{font-size:14px;}
+  .navbar-logo-text{font-size:13px;max-width:110px;}
+  .navbar-inner{padding:0 8px;gap:4px;}
   .result-val{font-size:18px!important;}
 }
 @media(max-width:340px){
+  /* Icon-only logo on very small screens — text would overflow */
   .navbar-logo-text{display:none;}
-  .navbar-logo-icon{width:28px;height:28px;}
+  .navbar-logo-icon{width:30px;height:30px;}
+  /* Reduce button size to give room for icon buttons */
+  .navbar-icon-btn{padding:6px;min-width:32px;min-height:32px;}
 }
 
 /* ══════════════════════════════════════════════════════════════
