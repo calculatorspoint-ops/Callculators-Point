@@ -16,6 +16,31 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 img, video { max-width: 100%; height: auto; display: block; }
+
+/* ── Skip-to-content link (WCAG 2.1 AA) ── */
+/* Pure CSS — no JS event handlers, safe in Server Components.
+   Hidden off-screen until Tab key brings it into focus. */
+.skip-link {
+  position: fixed;
+  top: -9999px;
+  left: 16px;
+  z-index: 10000;
+  background: #2563eb;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 0 0 10px 10px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: top 0.15s ease;
+  white-space: nowrap;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
 body {
   margin: 0;
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
