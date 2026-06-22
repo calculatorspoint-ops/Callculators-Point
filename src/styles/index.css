@@ -1249,8 +1249,10 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 }
 .navbar-logo-text{font-weight:800;font-size:18px;letter-spacing:-.04em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
 
-/* Desktop category nav — centred, grows to fill space between logo and controls */
-.navbar-nav{display:flex;gap:3px;align-items:center;flex:1;justify-content:center;min-width:0;overflow:hidden;}
+/* Desktop category nav — centred, grows to fill space between logo and controls.
+   overflow:clip stops clipping from leaking into layout; the fade mask in ::after
+   hints to the user if any link is cut off (shouldn't happen after breakpoint tuning). */
+.navbar-nav{display:flex;gap:3px;align-items:center;flex:1;justify-content:center;min-width:0;overflow:hidden;position:relative;}
 .navbar-nav .nav-link{
   padding:6px 10px;border-radius:8px;font-size:13px;font-weight:600;
   color:var(--text2);text-decoration:none;transition:all .15s;white-space:nowrap;
@@ -1476,30 +1478,35 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
    nothing overflows or squeezes on 1280–1366px laptop screens.
 ══════════════════════════════════════════════════════════════ */
 @media(min-width:1025px) and (max-width:1200px){
-  /* Narrow laptop — all nav links visible but very compact */
-  .navbar-inner{gap:5px;padding:0 clamp(10px,1.2vw,16px);}
-  .navbar-nav{gap:1px;}
-  .navbar-nav .nav-link{padding:5px 7px;font-size:12px;}
-  .navbar-nav .nav-link-all{padding:4px 9px;font-size:12px;}
-  .navbar-search-box{width:clamp(110px,10vw,140px);}
-  .navbar-search-box:focus-within{width:clamp(140px,14vw,190px);}
-  .navbar-icon-btn{padding:6px;min-width:30px;min-height:30px;}
+  /* Narrow laptop — tight layout, hide icon emojis to reclaim space */
+  .navbar-inner{gap:4px;padding:0 clamp(8px,1vw,14px);}
+  .navbar-nav{gap:0px;margin:0 2px;}
+  .navbar-nav .nav-link{padding:5px 6px;font-size:11.5px;}
+  /* Hide emoji icons in nav links on very narrow screens */
+  .navbar-nav .nav-link span[aria-hidden]{display:none;}
+  .navbar-nav .nav-link-all{padding:4px 8px;font-size:11.5px;}
+  /* Narrow the search bar significantly */
+  .navbar-search-box{width:clamp(90px,8vw,120px);}
+  .navbar-search-box:focus-within{width:clamp(120px,12vw,170px);}
+  .navbar-icon-btn{padding:5px;min-width:28px;min-height:28px;}
   .desktop-only{display:none!important;}
-  .navbar-controls{gap:3px;}
-  .navbar-logo-text{font-size:15px;max-width:140px;}
-  .navbar-logo-icon{width:30px;height:30px;border-radius:8px;}
+  .navbar-controls{gap:2px;}
+  .navbar-logo-text{font-size:14px;max-width:130px;}
+  .navbar-logo-icon{width:28px;height:28px;border-radius:8px;}
 }
 @media(min-width:1201px) and (max-width:1380px){
   /* Wide laptop — comfortable but still tighter than full desktop */
-  .navbar-inner{gap:8px;padding:0 clamp(14px,1.8vw,22px);}
-  .navbar-nav{gap:2px;}
-  .navbar-nav .nav-link{padding:5px 9px;font-size:12.5px;}
+  .navbar-inner{gap:6px;padding:0 clamp(12px,1.5vw,20px);}
+  .navbar-nav{gap:1px;margin:0 4px;}
+  .navbar-nav .nav-link{padding:5px 8px;font-size:12.5px;}
   .navbar-nav .nav-link-all{padding:4px 10px;font-size:12.5px;}
-  .navbar-search-box{width:clamp(130px,12vw,170px);}
-  .navbar-search-box:focus-within{width:clamp(170px,16vw,210px);}
-  .navbar-icon-btn{padding:7px;}
+  .navbar-search-box{width:clamp(120px,10vw,160px);}
+  .navbar-search-box:focus-within{width:clamp(160px,14vw,200px);}
+  .navbar-icon-btn{padding:6px;}
   .desktop-only{display:none!important;}
-  .navbar-controls{gap:4px;}
+  .navbar-controls{gap:3px;}
+  .navbar-logo-text{font-size:15px;max-width:150px;}
+  .navbar-logo-icon{width:30px;height:30px;border-radius:8px;}
 }
 
 
