@@ -135,6 +135,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ─────────────────────────────────────────────────────────────────── */}
         <meta name="google-adsense-account" content="ca-pub-5164672592255197" />
 
+        {/* ── Bing Webmaster Tools site ownership verification ─────────────────────
+            Option 2 (meta tag) verification — complements the txt file at
+            /b21dafd8307e48edbbeea8902e9e6a6d.txt (Option 1).
+            See: https://www.bing.com/webmasters
+        ─────────────────────────────────────────────────────────────────── */}
+        <meta name="msvalidate.01" content="b21dafd8307e48edbbeea8902e9e6a6d" />
+
         {/* ── Resource hints ────────────────────────────────────────────────────
             REMOVED: self-preconnect to calculatorspoint.com was a no-op that
             Lighthouse flagged as an unnecessary resource hint error.
