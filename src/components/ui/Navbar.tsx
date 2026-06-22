@@ -3,16 +3,29 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings, Sparkles } from "lucide-react";
+import {
+  Search, Moon, Sun, X, Calculator,
+  ChevronRight, Settings, Sparkles, TrendingUp,
+  Heart, FlaskConical, GraduationCap, LayoutGrid
+} from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
+import {
+  ALL_CALCULATORS, CATEGORIES, POPULAR,
+  CalculatorConfig, CALC_COUNT_LABEL
+} from "@/data/calculatorConfigs";
 import { CurrencySelector } from './CurrencySelector';
 import { SettingsModal } from './SettingsModal';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 
-/* ─────────────────────────────────────────────────────────────────
-   Fuzzy search helper
-───────────────────────────────────────────────────────────────── */
+/* ── Category icon map ───────────────────────────────────────── */
+const CAT_ICONS: Record<string, React.ReactNode> = {
+  finance:     <TrendingUp  size={13} strokeWidth={2.2} />,
+  health:      <Heart       size={13} strokeWidth={2.2} />,
+  math:        <FlaskConical size={13} strokeWidth={2.2} />,
+  education:   <GraduationCap size={13} strokeWidth={2.2} />,
+};
+
+/* ── Fuzzy search ────────────────────────────────────────────── */
 function searchCalculators(query: string): CalculatorConfig[] {
   if (!query?.trim()) return [];
   const lq = query.toLowerCase().trim();
@@ -21,12 +34,14 @@ function searchCalculators(query: string): CalculatorConfig[] {
       const nameL = c.name.toLowerCase();
       const descL = (c.desc || "").toLowerCase();
       let score = 0;
-      if (nameL === lq)               score += 100;
-      else if (nameL.startsWith(lq))  score += 60;
-      else if (nameL.includes(lq))    score += 40;
-      if (descL.includes(lq))         score += 15;
-      if (c.keywords?.some(kw => lq.includes(kw.toLowerCase()) || kw.toLowerCase().includes(lq))) score += 50;
-      if (c.popular)                  score += 5;
+      if (nameL === lq)              score += 100;
+      else if (nameL.startsWith(lq)) score += 60;
+      else if (nameL.includes(lq))   score += 40;
+      if (descL.includes(lq))        score += 15;
+      if (c.keywords?.some(kw =>
+        lq.includes(kw.toLowerCase()) || kw.toLowerCase().includes(lq)
+      )) score += 50;
+      if (c.popular) score += 5;
       return { calc: c, score };
     })
     .filter(s => s.score > 0)
@@ -35,49 +50,60 @@ function searchCalculators(query: string): CalculatorConfig[] {
     .slice(0, 8);
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   Search Dropdown
-───────────────────────────────────────────────────────────────── */
+/* ── Search Dropdown ─────────────────────────────────────────── */
 function SearchDropdown({
-  results, query, activeIdx, listboxId = "search-dropdown-list",
+  results, query, activeIdx,
+  listboxId = "search-dropdown-list",
+  dark,
 }: {
   results: CalculatorConfig[];
   query: string;
   activeIdx: number;
   listboxId?: string;
+  dark?: boolean;
 }) {
   const noResults = query.trim().length > 1 && results.length === 0;
   const suggestions = noResults ? POPULAR.slice(0, 4) : null;
 
   return (
-    <div className="nb-drop" role="listbox" aria-label="Search results" id={listboxId}>
+    <div
+      className={`xnb-drop${dark ? " xnb-drop--dark" : ""}`}
+      role="listbox"
+      aria-label="Search results"
+      id={listboxId}
+    >
+      {results.length > 0 && (
+        <div className="xnb-drop-header">
+          <span>Results for "<strong>{query}</strong>"</span>
+          <span className="xnb-drop-count">{results.length} found</span>
+        </div>
+      )}
       {results.map((r, i) => (
         <Link
           key={r.id}
           id={`${listboxId}-option-${i}`}
           href={`/calculator/${r.slug}`}
-          className={`nb-drop-item${i === activeIdx ? " nb-drop-item--active" : ""}`}
+          className={`xnb-drop-item${i === activeIdx ? " xnb-drop-item--active" : ""}`}
           role="option"
           aria-selected={i === activeIdx}
         >
-          <span className="nb-drop-icon">{r.icon}</span>
-          <div className="nb-drop-text">
-            <div className="nb-drop-name">{r.name}</div>
-            <div className="nb-drop-desc">{r.desc?.slice(0, 55)}</div>
+          <span className="xnb-drop-icon">{r.icon}</span>
+          <div className="xnb-drop-text">
+            <div className="xnb-drop-name">{r.name}</div>
+            <div className="xnb-drop-desc">{r.desc?.slice(0, 60)}</div>
           </div>
-          {r.popular && <span className="nb-drop-hot">HOT</span>}
+          {r.popular && <span className="xnb-drop-hot">🔥 HOT</span>}
         </Link>
       ))}
-
       {noResults && (
         <>
-          <div className="nb-drop-hint">No results — try these</div>
+          <div className="xnb-drop-empty">No results — try these popular tools</div>
           {suggestions?.map(r => (
-            <Link key={r.id} href={`/calculator/${r.slug}`} className="nb-drop-item" role="option">
-              <span className="nb-drop-icon">{r.icon}</span>
-              <div className="nb-drop-text">
-                <div className="nb-drop-name">{r.name}</div>
-                <div className="nb-drop-desc">{r.desc?.slice(0, 50)}</div>
+            <Link key={r.id} href={`/calculator/${r.slug}`} className="xnb-drop-item" role="option">
+              <span className="xnb-drop-icon">{r.icon}</span>
+              <div className="xnb-drop-text">
+                <div className="xnb-drop-name">{r.name}</div>
+                <div className="xnb-drop-desc">{r.desc?.slice(0, 55)}</div>
               </div>
             </Link>
           ))}
@@ -87,21 +113,20 @@ function SearchDropdown({
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   Search Box (desktop + mobile)
-───────────────────────────────────────────────────────────────── */
+/* ── Search Box ──────────────────────────────────────────────── */
 function SearchBox({
-  isMobile, isOpen, onClose,
+  isMobile, isOpen, onClose, dark,
 }: {
   isMobile: boolean;
   isOpen?: boolean;
   onClose?: () => void;
+  dark?: boolean;
 }) {
   const router = useRouter();
   const { addSearchHistory } = useAppStore();
-  const [q, setQ] = useState("");
+  const [q, setQ]           = useState("");
   const [results, setResults] = useState<CalculatorConfig[]>([]);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen]     = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef  = useRef<HTMLDivElement>(null);
@@ -123,14 +148,14 @@ function SearchBox({
   }, [q]);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const h = (e: MouseEvent) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
         setOpen(false); setActiveIdx(-1);
         if (isMobile && onClose) onClose();
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
   }, [isMobile, onClose]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -161,16 +186,16 @@ function SearchBox({
 
   if (isMobile) {
     return (
-      <div className="nb-mob-search" ref={wrapRef}>
-        <div className="nb-mob-search-inner">
-          <Search size={16} className="nb-search-icon-svg" aria-hidden="true" />
+      <div className="xnb-mob-search" ref={wrapRef}>
+        <div className="xnb-mob-search-inner">
+          <Search size={16} className="xnb-search-svg" aria-hidden="true" />
           <input
             ref={inputRef}
             value={q}
             onChange={e => setQ(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Search ${CALC_COUNT_LABEL} calculators…`}
-            className="nb-search-input"
+            className="xnb-search-input"
             aria-label="Search calculators"
             aria-expanded={open}
             aria-haspopup="listbox"
@@ -181,20 +206,22 @@ function SearchBox({
             spellCheck={false}
           />
           {q && (
-            <button onClick={() => { setQ(""); setOpen(false); }} className="nb-search-clear" aria-label="Clear search">
+            <button onClick={() => { setQ(""); setOpen(false); }} className="xnb-clear" aria-label="Clear search">
               <X size={14} />
             </button>
           )}
         </div>
-        {open && <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId={listboxId} />}
+        {open && (
+          <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId={listboxId} />
+        )}
       </div>
     );
   }
 
   return (
-    <div ref={wrapRef} className="nb-search-wrap">
-      <div className={`nb-search-box${open ? " nb-search-box--open" : ""}`}>
-        <Search size={14} className="nb-search-icon-svg" aria-hidden="true" />
+    <div ref={wrapRef} className="xnb-search-wrap">
+      <div className={`xnb-search-box${open ? " xnb-search-box--active" : ""}${dark ? " xnb-search-box--dark" : ""}`}>
+        <Search size={14} className="xnb-search-svg" aria-hidden="true" />
         <input
           ref={inputRef}
           value={q}
@@ -202,7 +229,7 @@ function SearchBox({
           onKeyDown={handleKeyDown}
           onFocus={() => q.trim() && setOpen(true)}
           placeholder="Search calculators…"
-          className="nb-search-input"
+          className="xnb-search-input"
           aria-label="Search calculators"
           aria-expanded={open}
           aria-haspopup="listbox"
@@ -213,27 +240,37 @@ function SearchBox({
           spellCheck={false}
         />
         {q ? (
-          <button onClick={() => { setQ(""); setOpen(false); inputRef.current?.focus(); }} className="nb-search-clear" aria-label="Clear search">
+          <button
+            onClick={() => { setQ(""); setOpen(false); inputRef.current?.focus(); }}
+            className="xnb-clear"
+            aria-label="Clear search"
+          >
             <X size={14} />
           </button>
         ) : (
-          <kbd className="nb-search-kbd">⌘K</kbd>
+          <kbd className="xnb-kbd">⌘K</kbd>
         )}
       </div>
-      {open && <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId={listboxId} />}
+      {open && (
+        <SearchDropdown
+          results={results}
+          query={q}
+          activeIdx={activeIdx}
+          listboxId={listboxId}
+          dark={dark}
+        />
+      )}
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   Main Navbar
-───────────────────────────────────────────────────────────────── */
+/* ── Main Navbar ─────────────────────────────────────────────── */
 export function Navbar() {
   const { theme, toggleTheme } = useAppStore();
-  const [mob, setMob] = useState(false);
+  const [mob, setMob]           = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted]   = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
@@ -250,98 +287,116 @@ export function Navbar() {
     document.documentElement.classList.toggle("mob-menu-open", mob);
     return () => document.documentElement.classList.remove("mob-menu-open");
   }, [mob]);
-
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setScrolled(window.scrollY > 6);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
   }, []);
-
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && mob) setMob(false); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const fn = (e: KeyboardEvent) => { if (e.key === "Escape" && mob) setMob(false); };
+    document.addEventListener("keydown", fn);
+    return () => document.removeEventListener("keydown", fn);
   }, [mob]);
 
+  const isDark   = mounted && theme === "dark";
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <>
-      {/* ── HEADER ────────────────────────────────────────────── */}
-      <header className={`nb${scrolled ? " nb--scrolled" : ""}`} role="banner">
-        <div className="nb-inner">
+      {/* ══════════════════════════════════════════════════════
+          HEADER
+      ══════════════════════════════════════════════════════ */}
+      <header
+        className={`xnb${scrolled ? " xnb--scrolled" : ""}`}
+        role="banner"
+      >
+        {/* Subtle top shimmer line */}
+        <div className="xnb-topline" aria-hidden="true" />
 
-          {/* Logo */}
-          <Link href="/" className="nb-logo" aria-label="Calculators Point — home">
-            <div className="nb-logo-mark" aria-hidden="true">
-              <Calculator size={19} color="#fff" strokeWidth={2.5} />
+        <div className="xnb-inner">
+
+          {/* ── Logo ── */}
+          <Link href="/" className="xnb-logo" aria-label="Calculators Point home">
+            <div className="xnb-logo-mark" aria-hidden="true">
+              <Calculator size={18} strokeWidth={2.5} />
             </div>
-            <span className="nb-logo-text">
-              Calculators<span className="nb-logo-accent">Point</span>
+            <span className="xnb-logo-text">
+              Calculators<span className="xnb-logo-hi">Point</span>
             </span>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="nb-nav" aria-label="Main navigation">
+          {/* ── Desktop nav ── */}
+          <nav className="xnb-nav" aria-label="Main navigation">
             {CATEGORIES.slice(0, 4).map(c => (
               <Link
                 key={c.id}
                 href={`/category/${c.id}`}
-                className={`nb-link${isActive(`/category/${c.id}`) ? " nb-link--active" : ""}`}
+                className={`xnb-link${isActive(`/category/${c.id}`) ? " xnb-link--on" : ""}`}
               >
-                <span className="nb-link-icon" aria-hidden="true">{c.icon}</span>
-                <span className="nb-link-label">{c.name}</span>
+                <span className="xnb-link-dot" aria-hidden="true" />
+                <span className="xnb-link-ico" aria-hidden="true">
+                  {CAT_ICONS[c.id] ?? c.icon}
+                </span>
+                <span>{c.name}</span>
               </Link>
             ))}
             <Link
               href="/name-generators"
-              className={`nb-link${isActive("/name-generators") ? " nb-link--active" : ""}`}
+              className={`xnb-link${isActive("/name-generators") ? " xnb-link--on" : ""}`}
             >
-              <Sparkles size={13} strokeWidth={2.5} className="nb-link-icon" aria-hidden="true" />
-              <span className="nb-link-label">Generators</span>
+              <span className="xnb-link-dot" aria-hidden="true" />
+              <Sparkles size={12} strokeWidth={2.5} className="xnb-link-ico" aria-hidden="true" />
+              <span>Generators</span>
             </Link>
           </nav>
 
-          {/* Right controls */}
-          <div className="nb-controls">
+          {/* ── Right controls ── */}
+          <div className="xnb-controls">
             {/* Desktop search */}
-            <SearchBox isMobile={false} />
+            <SearchBox isMobile={false} dark={isDark} />
 
-            {/* Currency — desktop only */}
-            <div className="nb-desktop-only">
+            {/* Currency */}
+            <div className="xnb-donly">
               <CurrencySelector />
             </div>
 
-            {/* Theme toggle */}
+            {/* Theme */}
             <button
               onClick={toggleTheme}
-              className="nb-icon-btn"
-              aria-label={mounted && theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              title={mounted && theme === "dark" ? "Light mode" : "Dark mode"}
+              className="xnb-icon"
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              title={isDark ? "Light mode" : "Dark mode"}
             >
-              {mounted ? (theme === "dark" ? <Sun size={16} /> : <Moon size={16} />) : <Moon size={16} />}
+              {mounted
+                ? (isDark ? <Sun size={15} /> : <Moon size={15} />)
+                : <Moon size={15} />}
             </button>
 
-            {/* Settings — desktop only */}
+            {/* Settings */}
             <button
               ref={settingsBtnRef}
               onClick={() => setSettingsOpen(true)}
-              className="nb-icon-btn nb-desktop-only"
+              className="xnb-icon xnb-donly"
               aria-label="Open settings"
               title="Settings"
             >
-              <Settings size={16} />
+              <Settings size={15} />
             </button>
 
-            {/* All Tools CTA — desktop */}
-            <Link href="/calculators" className="nb-cta nb-desktop-only" aria-label={`Browse all ${CALC_COUNT_LABEL} calculators`}>
+            {/* All Tools CTA */}
+            <Link
+              href="/calculators"
+              className="xnb-cta xnb-donly"
+              aria-label={`Browse all ${CALC_COUNT_LABEL} calculators`}
+            >
+              <LayoutGrid size={13} aria-hidden="true" />
               All Tools
             </Link>
 
-            {/* Mobile search toggle */}
+            {/* Mobile: search toggle */}
             <button
-              className="nb-icon-btn nb-mob-only"
+              className="xnb-icon xnb-monly"
               onClick={() => setSearchOpen(s => !s)}
               aria-label={searchOpen ? "Close search" : "Search calculators"}
               aria-expanded={searchOpen}
@@ -352,21 +407,25 @@ export function Navbar() {
             {/* Hamburger */}
             <button
               ref={hamburgerBtnRef}
-              className={`nb-hamburger${mob ? " nb-hamburger--open" : ""}`}
+              className={`xnb-burger${mob ? " xnb-burger--x" : ""}`}
               onClick={() => setMob(!mob)}
-              aria-label={mob ? "Close navigation menu" : "Open navigation menu"}
+              aria-label={mob ? "Close menu" : "Open navigation menu"}
               aria-expanded={mob}
-              aria-controls="nb-mob-panel"
+              aria-controls="xnb-panel"
             >
-              <span className="nb-bar" aria-hidden="true" />
-              <span className="nb-bar" aria-hidden="true" />
-              <span className="nb-bar" aria-hidden="true" />
+              <span className="xnb-bar" aria-hidden="true" />
+              <span className="xnb-bar" aria-hidden="true" />
+              <span className="xnb-bar" aria-hidden="true" />
             </button>
           </div>
         </div>
 
-        {/* Mobile search (expands below header bar) */}
-        <SearchBox isMobile={true} isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+        {/* Mobile search */}
+        <SearchBox
+          isMobile={true}
+          isOpen={searchOpen}
+          onClose={() => setSearchOpen(false)}
+        />
       </header>
 
       {/* Settings modal */}
@@ -376,67 +435,69 @@ export function Navbar() {
 
       {/* Overlay */}
       <div
-        className={`nb-overlay${mob ? " nb-overlay--on" : ""}`}
+        className={`xnb-overlay${mob ? " xnb-overlay--on" : ""}`}
         onClick={() => setMob(false)}
         aria-hidden="true"
       />
 
-      {/* ── MOBILE PANEL ──────────────────────────────────────── */}
+      {/* ══════════════════════════════════════════════════════
+          MOBILE SLIDE PANEL
+      ══════════════════════════════════════════════════════ */}
       <div
-        id="nb-mob-panel"
+        id="xnb-panel"
         ref={mobMenuRef}
-        className={`nb-mob-panel${mob ? " nb-mob-panel--open" : ""}`}
+        className={`xnb-panel${mob ? " xnb-panel--open" : ""}`}
         aria-hidden={!mob}
       >
         {/* Panel header */}
-        <div className="nb-mob-hd">
-          <Link href="/" className="nb-logo" onClick={() => setMob(false)} aria-label="Home">
-            <div className="nb-logo-mark nb-logo-mark--sm" aria-hidden="true">
-              <Calculator size={16} color="#fff" strokeWidth={2.5} />
+        <div className="xnb-panel-hd">
+          <Link href="/" className="xnb-logo" onClick={() => setMob(false)} aria-label="Home">
+            <div className="xnb-logo-mark xnb-logo-mark--sm" aria-hidden="true">
+              <Calculator size={15} strokeWidth={2.5} />
             </div>
-            <span className="nb-logo-text" style={{ fontSize: 15 }}>
-              Calculators<span className="nb-logo-accent">Point</span>
+            <span className="xnb-logo-text" style={{ fontSize: 15 }}>
+              Calculators<span className="xnb-logo-hi">Point</span>
             </span>
           </Link>
-          <button className="nb-mob-close" onClick={() => setMob(false)} aria-label="Close menu">
-            <X size={18} />
+          <button className="xnb-panel-close" onClick={() => setMob(false)} aria-label="Close menu">
+            <X size={17} />
           </button>
         </div>
 
-        {/* Quick action buttons */}
-        <div className="nb-mob-actions">
-          <Link href="/calculators" className="nb-mob-cta" onClick={() => setMob(false)}>
-            📊 All {CALC_COUNT_LABEL} Tools
+        {/* Quick CTAs */}
+        <div className="xnb-panel-ctas">
+          <Link href="/calculators" className="xnb-panel-cta" onClick={() => setMob(false)}>
+            <LayoutGrid size={14} /> All {CALC_COUNT_LABEL} Tools
           </Link>
-          <Link href="/name-generators" className="nb-mob-cta nb-mob-cta--ghost" onClick={() => setMob(false)}>
-            ✨ Generators
+          <Link href="/name-generators" className="xnb-panel-cta xnb-panel-cta--ghost" onClick={() => setMob(false)}>
+            <Sparkles size={14} /> Generators
           </Link>
         </div>
 
         {/* Categories */}
-        <div className="nb-mob-section">
-          <p className="nb-mob-label">Categories</p>
+        <div className="xnb-panel-section">
+          <p className="xnb-panel-label">Categories</p>
           <nav aria-label="Calculator categories">
             {CATEGORIES.map(c => (
               <Link
                 key={c.id}
                 href={`/category/${c.id}`}
-                className={`nb-mob-link${isActive(`/category/${c.id}`) ? " nb-mob-link--active" : ""}`}
+                className={`xnb-panel-link${isActive(`/category/${c.id}`) ? " xnb-panel-link--on" : ""}`}
                 onClick={() => setMob(false)}
               >
-                <span className="nb-mob-ico" aria-hidden="true">{c.icon}</span>
+                <span className="xnb-panel-ico" aria-hidden="true">{c.icon}</span>
                 <span>{c.name}</span>
-                <ChevronRight size={14} className="nb-mob-arrow" aria-hidden="true" />
+                <ChevronRight size={14} className="xnb-panel-arrow" aria-hidden="true" />
               </Link>
             ))}
           </nav>
         </div>
 
-        <hr className="nb-mob-sep" />
+        <div className="xnb-panel-sep" />
 
         {/* Pages */}
-        <div className="nb-mob-section">
-          <p className="nb-mob-label">Pages</p>
+        <div className="xnb-panel-section">
+          <p className="xnb-panel-label">Pages</p>
           <nav aria-label="Site pages">
             {[
               { href: "/about",   icon: "ℹ️",  label: "About"   },
@@ -446,42 +507,46 @@ export function Navbar() {
               <Link
                 key={href}
                 href={href}
-                className={`nb-mob-link${isActive(href) ? " nb-mob-link--active" : ""}`}
+                className={`xnb-panel-link${isActive(href) ? " xnb-panel-link--on" : ""}`}
                 onClick={() => setMob(false)}
               >
-                <span className="nb-mob-ico" aria-hidden="true">{icon}</span>
+                <span className="xnb-panel-ico" aria-hidden="true">{icon}</span>
                 <span>{label}</span>
-                <ChevronRight size={14} className="nb-mob-arrow" aria-hidden="true" />
+                <ChevronRight size={14} className="xnb-panel-arrow" aria-hidden="true" />
               </Link>
             ))}
             <button
-              className="nb-mob-link"
+              className="xnb-panel-link"
               onClick={() => { setSettingsOpen(true); setMob(false); }}
               style={{ background: "none", border: "none", width: "100%", textAlign: "left", cursor: "pointer", font: "inherit" }}
             >
-              <span className="nb-mob-ico" aria-hidden="true">⚙️</span>
+              <span className="xnb-panel-ico" aria-hidden="true">⚙️</span>
               <span>Settings</span>
-              <ChevronRight size={14} className="nb-mob-arrow" aria-hidden="true" />
+              <ChevronRight size={14} className="xnb-panel-arrow" aria-hidden="true" />
             </button>
           </nav>
         </div>
 
-        <hr className="nb-mob-sep" />
+        <div className="xnb-panel-sep" />
 
-        {/* Preferences */}
-        <div className="nb-mob-section">
-          <p className="nb-mob-label">Preferences</p>
-          <div className="nb-mob-prefs">
-            <div className="nb-mob-pref">
-              <span className="nb-mob-pref-lbl">Currency</span>
+        {/* Prefs */}
+        <div className="xnb-panel-section">
+          <p className="xnb-panel-label">Preferences</p>
+          <div className="xnb-panel-prefs">
+            <div className="xnb-panel-pref">
+              <span className="xnb-panel-pref-lbl">Currency</span>
               <CurrencySelector />
             </div>
-            <div className="nb-mob-pref">
-              <span className="nb-mob-pref-lbl">Theme</span>
-              <button onClick={toggleTheme} className="nb-mob-theme-btn" aria-label="Toggle theme">
+            <div className="xnb-panel-pref">
+              <span className="xnb-panel-pref-lbl">Theme</span>
+              <button
+                onClick={toggleTheme}
+                className="xnb-panel-theme"
+                aria-label="Toggle theme"
+              >
                 {mounted
-                  ? (theme === "dark" ? <><Sun size={14} /> Light</> : <><Moon size={14} /> Dark</>)
-                  : <><Moon size={14} /> Dark</>}
+                  ? (isDark ? <><Sun size={13} /> Light</> : <><Moon size={13} /> Dark</>)
+                  : <><Moon size={13} /> Dark</>}
               </button>
             </div>
           </div>
