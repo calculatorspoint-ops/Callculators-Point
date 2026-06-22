@@ -16,7 +16,7 @@ import { NextResponse } from 'next/server';
 import { ALL_CALCULATORS, INDEXABLE_CALCULATORS, CATEGORIES } from '@/data/calculatorConfigs';
 import { SEO_LANDING_PAGES } from '@/data/seoLandingData';
 
-const INDEXNOW_KEY = 'b2492a52c6214fc6b0a4bdd5a01e63f6';
+const INDEXNOW_KEY = 'b21dafd8307e48edbbeea8902e9e6a6d';
 const BASE_URL     = 'https://www.calculatorspoint.com';
 const INDEXNOW_API = 'https://api.indexnow.org/indexnow';
 
