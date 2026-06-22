@@ -319,6 +319,7 @@ export function Navbar() {
           {/* ── Logo ── */}
           <Link href="/" className="xnb-logo" aria-label="Calculators Point home">
             <div className="xnb-logo-mark" aria-hidden="true">
+              <div className="xnb-glow" />
               <Calculator size={18} strokeWidth={2.5} />
             </div>
             <span className="xnb-logo-text">
@@ -451,14 +452,18 @@ export function Navbar() {
       >
         {/* Panel header */}
         <div className="xnb-panel-hd">
-          <Link href="/" className="xnb-logo" onClick={() => setMob(false)} aria-label="Home">
-            <div className="xnb-logo-mark xnb-logo-mark--sm" aria-hidden="true">
-              <Calculator size={15} strokeWidth={2.5} />
-            </div>
-            <span className="xnb-logo-text" style={{ fontSize: 15 }}>
-              Calculators<span className="xnb-logo-hi">Point</span>
-            </span>
-          </Link>
+          <div>
+            <Link href="/" className="xnb-logo" onClick={() => setMob(false)} aria-label="Home">
+              <div className="xnb-logo-mark xnb-logo-mark--sm" aria-hidden="true">
+                <div className="xnb-glow" />
+                <Calculator size={15} strokeWidth={2.5} />
+              </div>
+              <span className="xnb-logo-text" style={{ fontSize: 15 }}>
+                Calculators<span className="xnb-logo-hi">Point</span>
+              </span>
+            </Link>
+            <p className="xnb-panel-tagline">Your go-to calculator suite</p>
+          </div>
           <button className="xnb-panel-close" onClick={() => setMob(false)} aria-label="Close menu">
             <X size={17} />
           </button>
@@ -466,10 +471,10 @@ export function Navbar() {
 
         {/* Quick CTAs */}
         <div className="xnb-panel-ctas">
-          <Link href="/calculators" className="xnb-panel-cta" onClick={() => setMob(false)}>
+          <Link href="/calculators" className="xnb-panel-cta" onClick={() => setMob(false)} style={{ '--i': 0 } as React.CSSProperties}>
             <LayoutGrid size={14} /> All {CALC_COUNT_LABEL} Tools
           </Link>
-          <Link href="/name-generators" className="xnb-panel-cta xnb-panel-cta--ghost" onClick={() => setMob(false)}>
+          <Link href="/name-generators" className="xnb-panel-cta xnb-panel-cta--ghost" onClick={() => setMob(false)} style={{ '--i': 1 } as React.CSSProperties}>
             <Sparkles size={14} /> Generators
           </Link>
         </div>
@@ -478,12 +483,13 @@ export function Navbar() {
         <div className="xnb-panel-section">
           <p className="xnb-panel-label">Categories</p>
           <nav aria-label="Calculator categories">
-            {CATEGORIES.map(c => (
+            {CATEGORIES.map((c, i) => (
               <Link
                 key={c.id}
                 href={`/category/${c.id}`}
                 className={`xnb-panel-link${isActive(`/category/${c.id}`) ? " xnb-panel-link--on" : ""}`}
                 onClick={() => setMob(false)}
+                style={{ '--i': i + 2 } as React.CSSProperties}
               >
                 <span className="xnb-panel-ico" aria-hidden="true">{c.icon}</span>
                 <span>{c.name}</span>
@@ -503,12 +509,13 @@ export function Navbar() {
               { href: "/about",   icon: "ℹ️",  label: "About"   },
               { href: "/contact", icon: "✉️",  label: "Contact" },
               { href: "/blog",    icon: "📝",  label: "Blog"    },
-            ].map(({ href, icon, label }) => (
+            ].map(({ href, icon, label }, i) => (
               <Link
                 key={href}
                 href={href}
                 className={`xnb-panel-link${isActive(href) ? " xnb-panel-link--on" : ""}`}
                 onClick={() => setMob(false)}
+                style={{ '--i': i + CATEGORIES.length + 2 } as React.CSSProperties}
               >
                 <span className="xnb-panel-ico" aria-hidden="true">{icon}</span>
                 <span>{label}</span>
