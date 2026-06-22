@@ -3,225 +3,223 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Search, Moon, Sun, X, Calculator,
-  ChevronRight, Settings, Sparkles, TrendingUp,
-  Heart, FlaskConical, GraduationCap, LayoutGrid
-} from "lucide-react";
+import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
-import {
-  ALL_CALCULATORS, CATEGORIES, POPULAR,
-  CalculatorConfig, CALC_COUNT_LABEL
-} from "@/data/calculatorConfigs";
+import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { CurrencySelector } from './CurrencySelector';
 import { SettingsModal } from './SettingsModal';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 
-/* ── Category icon map ───────────────────────────────────────── */
-const CAT_ICONS: Record<string, React.ReactNode> = {
-  finance:     <TrendingUp  size={13} strokeWidth={2.2} />,
-  health:      <Heart       size={13} strokeWidth={2.2} />,
-  math:        <FlaskConical size={13} strokeWidth={2.2} />,
-  education:   <GraduationCap size={13} strokeWidth={2.2} />,
-};
-
-/* ── Fuzzy search ────────────────────────────────────────────── */
+/* ── Fuzzy-ish search: name + desc + keywords ──────────── */
 function searchCalculators(query: string): CalculatorConfig[] {
   if (!query?.trim()) return [];
   const lq = query.toLowerCase().trim();
-  return ALL_CALCULATORS
-    .map(c => {
-      const nameL = c.name.toLowerCase();
-      const descL = (c.desc || "").toLowerCase();
-      let score = 0;
-      if (nameL === lq)              score += 100;
-      else if (nameL.startsWith(lq)) score += 60;
-      else if (nameL.includes(lq))   score += 40;
-      if (descL.includes(lq))        score += 15;
-      if (c.keywords?.some(kw =>
-        lq.includes(kw.toLowerCase()) || kw.toLowerCase().includes(lq)
-      )) score += 50;
-      if (c.popular) score += 5;
-      return { calc: c, score };
-    })
+
+  const scored = ALL_CALCULATORS.map(c => {
+    const nameL = c.name.toLowerCase();
+    const descL = (c.desc || "").toLowerCase();
+    let score = 0;
+
+    if (nameL === lq)                         score += 100;
+    else if (nameL.startsWith(lq))            score += 60;
+    else if (nameL.includes(lq))             score += 40;
+    
+    if (descL.includes(lq))                  score += 15;
+    
+    if (c.keywords?.some(kw => lq.includes(kw.toLowerCase()) || kw.toLowerCase().includes(lq))) {
+      score += 50;
+    }
+    
+    if (c.popular)                           score += 5;
+
+    return { calc: c, score };
+  });
+
+  return scored
     .filter(s => s.score > 0)
     .sort((a, b) => b.score - a.score)
     .map(s => s.calc)
     .slice(0, 8);
 }
 
-/* ── Search Dropdown ─────────────────────────────────────────── */
-function SearchDropdown({
-  results, query, activeIdx,
-  listboxId = "search-dropdown-list",
-  dark,
-}: {
-  results: CalculatorConfig[];
-  query: string;
-  activeIdx: number;
-  listboxId?: string;
-  dark?: boolean;
-}) {
+/* ── Search Dropdown ──────────────────────────────────────────── */
+function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdown-list" }: { results: CalculatorConfig[]; query: string; activeIdx: number; listboxId?: string }) {
   const noResults = query.trim().length > 1 && results.length === 0;
-  const suggestions = noResults ? POPULAR.slice(0, 4) : null;
+  const suggestions = noResults
+    ? POPULAR.slice(0, 4)
+    : null;
 
   return (
-    <div
-      className={`xnb-drop${dark ? " xnb-drop--dark" : ""}`}
-      role="listbox"
-      aria-label="Search results"
-      id={listboxId}
-    >
-      {results.length > 0 && (
-        <div className="xnb-drop-header">
-          <span>Results for "<strong>{query}</strong>"</span>
-          <span className="xnb-drop-count">{results.length} found</span>
-        </div>
-      )}
-      {results.map((r, i) => (
-        <Link
-          key={r.id}
-          id={`${listboxId}-option-${i}`}
-          href={`/calculator/${r.slug}`}
-          className={`xnb-drop-item${i === activeIdx ? " xnb-drop-item--active" : ""}`}
-          role="option"
-          aria-selected={i === activeIdx}
-        >
-          <span className="xnb-drop-icon">{r.icon}</span>
-          <div className="xnb-drop-text">
-            <div className="xnb-drop-name">{r.name}</div>
-            <div className="xnb-drop-desc">{r.desc?.slice(0, 60)}</div>
-          </div>
-          {r.popular && <span className="xnb-drop-hot">🔥 HOT</span>}
-        </Link>
-      ))}
+    <div className="navbar-search-drop" role="listbox" aria-label="Search results" id={listboxId}>
+      {results.map((r, i) => {
+        return (
+          <Link
+            key={r.id}
+            id={`${listboxId}-option-${i}`}
+            href={`/calculator/${r.slug}`}
+            className={`navbar-search-item${i === activeIdx ? " navbar-search-item--active" : ""}`}
+            role="option"
+            aria-selected={i === activeIdx}
+          >
+            <span className="navbar-search-item-icon">{r.icon}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="navbar-search-item-name">{r.name}</div>
+              <div className="navbar-search-item-desc">{r.desc?.slice(0, 55)}</div>
+            </div>
+            {r.popular && (
+              <span style={{ fontSize: 9, fontWeight: 800, color: "#f59e0b", background: "#fef3c7", padding: "2px 6px", borderRadius: 100, flexShrink: 0 }}>
+                HOT
+              </span>
+            )}
+          </Link>
+        );
+      })}
+
       {noResults && (
-        <>
-          <div className="xnb-drop-empty">No results — try these popular tools</div>
-          {suggestions?.map(r => (
-            <Link key={r.id} href={`/calculator/${r.slug}`} className="xnb-drop-item" role="option">
-              <span className="xnb-drop-icon">{r.icon}</span>
-              <div className="xnb-drop-text">
-                <div className="xnb-drop-name">{r.name}</div>
-                <div className="xnb-drop-desc">{r.desc?.slice(0, 55)}</div>
+        <div>
+          <div style={{ padding: "10px 16px 6px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: ".06em", color: "var(--text3)" }}>
+            No results — try these popular tools
+          </div>
+          {suggestions?.map((r) => (
+            <Link key={r.id} href={`/calculator/${r.slug}`} className="navbar-search-item" role="option">
+              <span className="navbar-search-item-icon">{r.icon}</span>
+              <div>
+                <div className="navbar-search-item-name">{r.name}</div>
+                <div className="navbar-search-item-desc">{r.desc?.slice(0, 50)}</div>
               </div>
             </Link>
           ))}
-        </>
+        </div>
       )}
     </div>
   );
 }
 
-/* ── Search Box ──────────────────────────────────────────────── */
-function SearchBox({
-  isMobile, isOpen, onClose, dark,
-}: {
-  isMobile: boolean;
-  isOpen?: boolean;
-  onClose?: () => void;
-  dark?: boolean;
-}) {
+function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: boolean; onClose?: () => void }) {
   const router = useRouter();
   const { addSearchHistory } = useAppStore();
-  const [q, setQ]           = useState("");
+  const [q, setQ] = useState("");
   const [results, setResults] = useState<CalculatorConfig[]>([]);
-  const [open, setOpen]     = useState(false);
+  const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const wrapRef  = useRef<HTMLDivElement>(null);
-  const debRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
 
   useEffect(() => { setOpen(false); setQ(""); setActiveIdx(-1); }, [pathname]);
-  useEffect(() => { if (isMobile && isOpen) inputRef.current?.focus(); }, [isMobile, isOpen]);
-
+  
   useEffect(() => {
-    if (debRef.current) clearTimeout(debRef.current);
-    debRef.current = setTimeout(() => {
-      if (!q.trim()) { setResults([]); setOpen(false); setActiveIdx(-1); return; }
-      setResults(searchCalculators(q));
+    if (isMobile && isOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isMobile, isOpen]);
+
+  // Debounced search
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (!q.trim()) {
+        setResults([]);
+        setOpen(false);
+        setActiveIdx(-1);
+        return;
+      }
+      const r = searchCalculators(q);
+      setResults(r);
       setOpen(true);
       setActiveIdx(-1);
     }, 120);
-    return () => { if (debRef.current) clearTimeout(debRef.current); };
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [q]);
 
+  // Click outside to close
   useEffect(() => {
     const h = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
-        setOpen(false); setActiveIdx(-1);
-        if (isMobile && onClose) onClose();
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        setActiveIdx(-1);
+        if (isMobile && onClose) {
+           onClose();
+        }
       }
     };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, [isMobile, onClose]);
 
+  // Keyboard navigation
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!open && !isMobile) return;
     if (e.key === "ArrowDown") {
-      e.preventDefault(); setActiveIdx(i => Math.min(i + 1, results.length - 1));
+      e.preventDefault();
+      setActiveIdx(i => Math.min(i + 1, results.length - 1));
     } else if (e.key === "ArrowUp") {
-      e.preventDefault(); setActiveIdx(i => Math.max(i - 1, -1));
+      e.preventDefault();
+      setActiveIdx(i => Math.max(i - 1, -1));
     } else if (e.key === "Escape") {
-      setOpen(false); setQ(""); setActiveIdx(-1);
+      setOpen(false);
+      setQ("");
+      setActiveIdx(-1);
       if (isMobile && onClose) onClose();
     } else if (e.key === "Enter" && activeIdx >= 0 && results[activeIdx]) {
       e.preventDefault();
       addSearchHistory(q);
       router.push(`/calculator/${results[activeIdx].slug}`);
-      setOpen(false); if (isMobile && onClose) onClose();
+      setOpen(false);
+      if (isMobile && onClose) onClose();
     } else if (e.key === "Enter" && q.trim() && results.length > 0 && activeIdx === -1) {
       e.preventDefault();
       addSearchHistory(q);
       router.push(`/calculator/${results[0].slug}`);
-      setOpen(false); if (isMobile && onClose) onClose();
+      setOpen(false);
+      if (isMobile && onClose) onClose();
     }
   }, [open, activeIdx, results, q, addSearchHistory, isMobile, router, onClose]);
-
-  const listboxId = isMobile ? "mob-search-list" : "desk-search-list";
 
   if (isMobile && !isOpen) return null;
 
   if (isMobile) {
     return (
-      <div className="xnb-mob-search" ref={wrapRef}>
-        <div className="xnb-mob-search-inner">
-          <Search size={16} className="xnb-search-svg" aria-hidden="true" />
+      <div className="navbar-mobile-search" ref={searchRef}>
+        <div className="navbar-mobile-search-inner">
+          <Search size={15} style={{ color: "var(--text3)", flexShrink: 0 }} />
           <input
             ref={inputRef}
             value={q}
             onChange={e => setQ(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Search ${CALC_COUNT_LABEL} calculators…`}
-            className="xnb-search-input"
+            className="navbar-search-input"
             aria-label="Search calculators"
             aria-expanded={open}
             aria-haspopup="listbox"
             role="combobox"
-            aria-controls={listboxId}
-            aria-activedescendant={open && activeIdx >= 0 ? `${listboxId}-option-${activeIdx}` : undefined}
+            aria-controls="mobile-search-dropdown-list"
+            aria-activedescendant={open && activeIdx >= 0 ? `mobile-search-dropdown-list-option-${activeIdx}` : undefined}
             autoComplete="off"
-            spellCheck={false}
           />
           {q && (
-            <button onClick={() => { setQ(""); setOpen(false); }} className="xnb-clear" aria-label="Clear search">
-              <X size={14} />
+            <button
+              onClick={() => { setQ(""); setOpen(false); }}
+              className="navbar-search-clear"
+              aria-label="Clear search"
+            >
+              ×
             </button>
           )}
         </div>
         {open && (
-          <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId={listboxId} />
+          <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId="mobile-search-dropdown-list" />
         )}
       </div>
     );
   }
 
   return (
-    <div ref={wrapRef} className="xnb-search-wrap">
-      <div className={`xnb-search-box${open ? " xnb-search-box--active" : ""}${dark ? " xnb-search-box--dark" : ""}`}>
-        <Search size={14} className="xnb-search-svg" aria-hidden="true" />
+    <div ref={searchRef} className="navbar-search-desktop">
+      <div className="navbar-search-box">
+        <Search size={14} className="navbar-search-icon" />
         <input
           ref={inputRef}
           value={q}
@@ -229,333 +227,219 @@ function SearchBox({
           onKeyDown={handleKeyDown}
           onFocus={() => q.trim() && setOpen(true)}
           placeholder="Search calculators…"
-          className="xnb-search-input"
+          className="navbar-search-input"
           aria-label="Search calculators"
           aria-expanded={open}
           aria-haspopup="listbox"
           role="combobox"
-          aria-controls={listboxId}
-          aria-activedescendant={open && activeIdx >= 0 ? `${listboxId}-option-${activeIdx}` : undefined}
+          aria-controls="desktop-search-dropdown-list"
+          aria-activedescendant={open && activeIdx >= 0 ? `desktop-search-dropdown-list-option-${activeIdx}` : undefined}
           autoComplete="off"
-          spellCheck={false}
         />
-        {q ? (
+        {q && (
           <button
             onClick={() => { setQ(""); setOpen(false); inputRef.current?.focus(); }}
-            className="xnb-clear"
+            className="navbar-search-clear"
             aria-label="Clear search"
           >
-            <X size={14} />
+            ×
           </button>
-        ) : (
-          <kbd className="xnb-kbd">⌘K</kbd>
         )}
       </div>
       {open && (
-        <SearchDropdown
-          results={results}
-          query={q}
-          activeIdx={activeIdx}
-          listboxId={listboxId}
-          dark={dark}
-        />
+        <SearchDropdown results={results} query={q} activeIdx={activeIdx} listboxId="desktop-search-dropdown-list" />
       )}
     </div>
   );
 }
 
-/* ── Main Navbar ─────────────────────────────────────────────── */
 export function Navbar() {
   const { theme, toggleTheme } = useAppStore();
-  const [mob, setMob]           = useState(false);
+  const [mob, setMob]         = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [mounted, setMounted]   = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
+  // Refs for focus management
   const settingsBtnRef  = useRef<HTMLButtonElement>(null);
   const hamburgerBtnRef = useRef<HTMLButtonElement>(null);
-  const mobMenuRef      = useRef<HTMLDivElement>(null);
+  const mobMenuPanelRef = useRef<HTMLDivElement>(null);
 
-  useFocusTrap(mobMenuRef, mob, hamburgerBtnRef);
+  // Focus trap for mobile menu
+  useFocusTrap(mobMenuPanelRef, mob, hamburgerBtnRef);
 
   useEffect(() => { setMounted(true); }, []);
-  useEffect(() => { document.documentElement.classList.toggle("dark", theme === "dark"); }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
   useEffect(() => { setMob(false); setSearchOpen(false); }, [pathname]);
+
   useEffect(() => {
     document.documentElement.classList.toggle("mob-menu-open", mob);
-    return () => document.documentElement.classList.remove("mob-menu-open");
+    return () => { document.documentElement.classList.remove("mob-menu-open"); };
   }, [mob]);
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 6);
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-  useEffect(() => {
-    const fn = (e: KeyboardEvent) => { if (e.key === "Escape" && mob) setMob(false); };
-    document.addEventListener("keydown", fn);
-    return () => document.removeEventListener("keydown", fn);
-  }, [mob]);
-
-  const isDark   = mounted && theme === "dark";
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <>
-      {/* ══════════════════════════════════════════════════════
-          HEADER
-      ══════════════════════════════════════════════════════ */}
-      <header
-        className={`xnb${scrolled ? " xnb--scrolled" : ""}`}
-        role="banner"
-      >
-        {/* Subtle top shimmer line */}
-        <div className="xnb-topline" aria-hidden="true" />
-
-        <div className="xnb-inner">
+      <header className="navbar">
+        <div className="navbar-inner">
 
           {/* ── Logo ── */}
-          <Link href="/" className="xnb-logo" aria-label="Calculators Point home">
-            <div className="xnb-logo-mark" aria-hidden="true">
-              <div className="xnb-glow" />
-              <Calculator size={18} strokeWidth={2.5} />
+          <Link href="/" className="navbar-logo" aria-label="Calculators Point home">
+            <div className="navbar-logo-icon">
+              <Calculator size={21} color="#fff" strokeWidth={2.5} />
             </div>
-            <span className="xnb-logo-text">
-              Calculators<span className="xnb-logo-hi">Point</span>
+            <span className="navbar-logo-text">
+              Calculators<span style={{ color: "#2563EB" }}>Point</span>
             </span>
           </Link>
 
-          {/* ── Desktop nav ── */}
-          <nav className="xnb-nav" aria-label="Main navigation">
+          {/* ── Desktop Nav ── */}
+          <nav className="navbar-nav" aria-label="Main navigation">
             {CATEGORIES.slice(0, 4).map(c => (
-              <Link
-                key={c.id}
-                href={`/category/${c.id}`}
-                className={`xnb-link${isActive(`/category/${c.id}`) ? " xnb-link--on" : ""}`}
-              >
-                <span className="xnb-link-dot" aria-hidden="true" />
-                <span className="xnb-link-ico" aria-hidden="true">
-                  {CAT_ICONS[c.id] ?? c.icon}
-                </span>
-                <span>{c.name}</span>
+              <Link key={c.id} href={`/category/${c.id}`} className="nav-link">
+                <span aria-hidden="true">{c.icon}</span>{' '}{c.name}
               </Link>
             ))}
-            <Link
-              href="/name-generators"
-              className={`xnb-link${isActive("/name-generators") ? " xnb-link--on" : ""}`}
-            >
-              <span className="xnb-link-dot" aria-hidden="true" />
-              <Sparkles size={12} strokeWidth={2.5} className="xnb-link-ico" aria-hidden="true" />
-              <span>Generators</span>
+            {/* W6 fix: Name Generators in primary nav for crawl depth + PageRank */}
+            <Link href="/name-generators" className="nav-link">
+              <span aria-hidden="true">✨</span>{' '}Name Generators
+            </Link>
+            <Link href="/calculators" className="nav-link nav-link-all">
+              All Tools
             </Link>
           </nav>
 
           {/* ── Right controls ── */}
-          <div className="xnb-controls">
-            {/* Desktop search */}
-            <SearchBox isMobile={false} dark={isDark} />
+          <div className="navbar-controls">
 
-            {/* Currency */}
-            <div className="xnb-donly">
+            {/* Desktop search */}
+            <SearchBox isMobile={false} />
+
+            {/* Mobile search icon */}
+            <button
+              className="navbar-icon-btn mobile-search-btn"
+              onClick={() => setSearchOpen(s => !s)}
+              aria-label="Search"
+            >
+              <Search size={17} />
+            </button>
+
+            {/* Currency — desktop only */}
+            <div className="desktop-only">
               <CurrencySelector />
             </div>
 
-            {/* Theme */}
+
+            {/* Theme toggle — render placeholder until mounted to avoid hydration mismatch */}
             <button
               onClick={toggleTheme}
-              className="xnb-icon"
-              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              title={isDark ? "Light mode" : "Dark mode"}
+              className="navbar-icon-btn"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {mounted
-                ? (isDark ? <Sun size={15} /> : <Moon size={15} />)
-                : <Moon size={15} />}
+              {/* Render nothing until mounted so SSR and client initial render match */}
+              {mounted ? (theme === "dark" ? <Sun size={16} /> : <Moon size={16} />) : <Moon size={16} />}
             </button>
 
-            {/* Settings */}
+            {/* Settings toggle */}
             <button
               ref={settingsBtnRef}
               onClick={() => setSettingsOpen(true)}
-              className="xnb-icon xnb-donly"
-              aria-label="Open settings"
-              title="Settings"
+              className="navbar-icon-btn desktop-only"
+              aria-label="Settings"
             >
-              <Settings size={15} />
+              <Settings size={16} />
             </button>
 
-            {/* All Tools CTA */}
-            <Link
-              href="/calculators"
-              className="xnb-cta xnb-donly"
-              aria-label={`Browse all ${CALC_COUNT_LABEL} calculators`}
-            >
-              <LayoutGrid size={13} aria-hidden="true" />
-              All Tools
-            </Link>
-
-            {/* Mobile: search toggle */}
-            <button
-              className="xnb-icon xnb-monly"
-              onClick={() => setSearchOpen(s => !s)}
-              aria-label={searchOpen ? "Close search" : "Search calculators"}
-              aria-expanded={searchOpen}
-            >
-              {searchOpen ? <X size={17} /> : <Search size={17} />}
-            </button>
-
-            {/* Hamburger */}
+            {/* Mobile hamburger */}
             <button
               ref={hamburgerBtnRef}
-              className={`xnb-burger${mob ? " xnb-burger--x" : ""}`}
+              className="navbar-icon-btn navbar-hamburger"
               onClick={() => setMob(!mob)}
-              aria-label={mob ? "Close menu" : "Open navigation menu"}
+              aria-label={mob ? "Close menu" : "Open menu"}
               aria-expanded={mob}
-              aria-controls="xnb-panel"
+              aria-controls="mob-menu-panel"
             >
-              <span className="xnb-bar" aria-hidden="true" />
-              <span className="xnb-bar" aria-hidden="true" />
-              <span className="xnb-bar" aria-hidden="true" />
+              {mob ? <X size={18} /> : <Menu size={18} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile search */}
-        <SearchBox
-          isMobile={true}
-          isOpen={searchOpen}
-          onClose={() => setSearchOpen(false)}
-        />
+        {/* ── Mobile search bar (expands below header) ── */}
+        <SearchBox isMobile={true} isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       </header>
 
-      {/* Settings modal */}
       {settingsOpen && (
-        <SettingsModal onClose={() => setSettingsOpen(false)} triggerRef={settingsBtnRef} />
+        <SettingsModal
+          onClose={() => setSettingsOpen(false)}
+          triggerRef={settingsBtnRef}
+        />
       )}
 
-      {/* Overlay */}
+      {/* ── Mobile full-screen menu overlay ── */}
+      {mob && (
+        <div className="mob-overlay" onClick={() => setMob(false)} />
+      )}
       <div
-        className={`xnb-overlay${mob ? " xnb-overlay--on" : ""}`}
-        onClick={() => setMob(false)}
-        aria-hidden="true"
-      />
-
-      {/* ══════════════════════════════════════════════════════
-          MOBILE SLIDE PANEL
-      ══════════════════════════════════════════════════════ */}
-      <div
-        id="xnb-panel"
-        ref={mobMenuRef}
-        className={`xnb-panel${mob ? " xnb-panel--open" : ""}`}
+        id="mob-menu-panel"
+        ref={mobMenuPanelRef}
+        className={`mob-menu-panel${mob ? " mob-menu-panel--open" : ""}`}
         aria-hidden={!mob}
       >
-        {/* Panel header */}
-        <div className="xnb-panel-hd">
-          <div>
-            <Link href="/" className="xnb-logo" onClick={() => setMob(false)} aria-label="Home">
-              <div className="xnb-logo-mark xnb-logo-mark--sm" aria-hidden="true">
-                <div className="xnb-glow" />
-                <Calculator size={15} strokeWidth={2.5} />
-              </div>
-              <span className="xnb-logo-text" style={{ fontSize: 15 }}>
-                Calculators<span className="xnb-logo-hi">Point</span>
-              </span>
+        {/* Category links */}
+        <div className="mob-menu-section">
+          <p className="mob-menu-section-title">Categories</p>
+          {CATEGORIES.map(c => (
+            <Link key={c.id} href={`/category/${c.id}`} className="mob-menu-link">
+              <span className="mob-menu-link-icon" aria-hidden="true">{c.icon}</span>
+              <span>{c.name}</span>
+              <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
             </Link>
-            <p className="xnb-panel-tagline">Your go-to calculator suite</p>
-          </div>
-          <button className="xnb-panel-close" onClick={() => setMob(false)} aria-label="Close menu">
-            <X size={17} />
+          ))}
+        </div>
+
+        <div className="mob-menu-divider" />
+
+        {/* Quick links */}
+        <div className="mob-menu-section">
+          <p className="mob-menu-section-title">Quick Links</p>
+          <Link href="/calculators" className="mob-menu-link mob-menu-link--featured">
+            <span aria-hidden="true">📊</span>
+            <span>All {CALC_COUNT_LABEL} Tools</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto" }} />
+          </Link>
+          <Link href="/name-generators" className="mob-menu-link mob-menu-link--featured">
+            <span aria-hidden="true">✨</span>
+            <span>Name Generators</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto" }} />
+          </Link>
+          <Link href="/about" className="mob-menu-link">
+            <span aria-hidden="true">ℹ️</span>
+            <span>About</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
+          </Link>
+          <Link href="/contact" className="mob-menu-link">
+            <span aria-hidden="true">✉️</span>
+            <span>Contact</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
+          </Link>
+          <button onClick={() => { setSettingsOpen(true); setMob(false); }} className="mob-menu-link" style={{ background: "none", border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}>
+            <span aria-hidden="true">⚙️</span>
+            <span>Settings</span>
+            <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </button>
         </div>
 
-        {/* Quick CTAs */}
-        <div className="xnb-panel-ctas">
-          <Link href="/calculators" className="xnb-panel-cta" onClick={() => setMob(false)} style={{ '--i': 0 } as React.CSSProperties}>
-            <LayoutGrid size={14} /> All {CALC_COUNT_LABEL} Tools
-          </Link>
-          <Link href="/name-generators" className="xnb-panel-cta xnb-panel-cta--ghost" onClick={() => setMob(false)} style={{ '--i': 1 } as React.CSSProperties}>
-            <Sparkles size={14} /> Generators
-          </Link>
-        </div>
+        <div className="mob-menu-divider" />
 
-        {/* Categories */}
-        <div className="xnb-panel-section">
-          <p className="xnb-panel-label">Categories</p>
-          <nav aria-label="Calculator categories">
-            {CATEGORIES.map((c, i) => (
-              <Link
-                key={c.id}
-                href={`/category/${c.id}`}
-                className={`xnb-panel-link${isActive(`/category/${c.id}`) ? " xnb-panel-link--on" : ""}`}
-                onClick={() => setMob(false)}
-                style={{ '--i': i + 2 } as React.CSSProperties}
-              >
-                <span className="xnb-panel-ico" aria-hidden="true">{c.icon}</span>
-                <span>{c.name}</span>
-                <ChevronRight size={14} className="xnb-panel-arrow" aria-hidden="true" />
-              </Link>
-            ))}
-          </nav>
-        </div>
-
-        <div className="xnb-panel-sep" />
-
-        {/* Pages */}
-        <div className="xnb-panel-section">
-          <p className="xnb-panel-label">Pages</p>
-          <nav aria-label="Site pages">
-            {[
-              { href: "/about",   icon: "ℹ️",  label: "About"   },
-              { href: "/contact", icon: "✉️",  label: "Contact" },
-              { href: "/blog",    icon: "📝",  label: "Blog"    },
-            ].map(({ href, icon, label }, i) => (
-              <Link
-                key={href}
-                href={href}
-                className={`xnb-panel-link${isActive(href) ? " xnb-panel-link--on" : ""}`}
-                onClick={() => setMob(false)}
-                style={{ '--i': i + CATEGORIES.length + 2 } as React.CSSProperties}
-              >
-                <span className="xnb-panel-ico" aria-hidden="true">{icon}</span>
-                <span>{label}</span>
-                <ChevronRight size={14} className="xnb-panel-arrow" aria-hidden="true" />
-              </Link>
-            ))}
-            <button
-              className="xnb-panel-link"
-              onClick={() => { setSettingsOpen(true); setMob(false); }}
-              style={{ background: "none", border: "none", width: "100%", textAlign: "left", cursor: "pointer", font: "inherit" }}
-            >
-              <span className="xnb-panel-ico" aria-hidden="true">⚙️</span>
-              <span>Settings</span>
-              <ChevronRight size={14} className="xnb-panel-arrow" aria-hidden="true" />
-            </button>
-          </nav>
-        </div>
-
-        <div className="xnb-panel-sep" />
-
-        {/* Prefs */}
-        <div className="xnb-panel-section">
-          <p className="xnb-panel-label">Preferences</p>
-          <div className="xnb-panel-prefs">
-            <div className="xnb-panel-pref">
-              <span className="xnb-panel-pref-lbl">Currency</span>
-              <CurrencySelector />
-            </div>
-            <div className="xnb-panel-pref">
-              <span className="xnb-panel-pref-lbl">Theme</span>
-              <button
-                onClick={toggleTheme}
-                className="xnb-panel-theme"
-                aria-label="Toggle theme"
-              >
-                {mounted
-                  ? (isDark ? <><Sun size={13} /> Light</> : <><Moon size={13} /> Dark</>)
-                  : <><Moon size={13} /> Dark</>}
-              </button>
-            </div>
+        {/* Currency in mobile menu */}
+        <div className="mob-menu-section">
+          <p className="mob-menu-section-title">Currency</p>
+          <div style={{ padding: "0 4px" }}>
+            <CurrencySelector />
           </div>
         </div>
       </div>
