@@ -1235,10 +1235,13 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 .navbar-inner{
   max-width:var(--calc-max);margin:0 auto;
   padding:0 clamp(16px,2.5vw,28px);height:100%;
-  display:flex;align-items:center;gap:10px;justify-content:space-between;
+  display:flex;align-items:center;gap:10px;
+  /* Logo | Nav | Controls — three independent flex regions */
+  justify-content:space-between;
   min-width:0;overflow:visible;
 }
-.navbar-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0;}
+/* Logo — fixed left region, never shrinks */
+.navbar-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0;min-width:0;}
 .navbar-logo-icon{
   width:38px;height:38px;border-radius:11px;flex-shrink:0;
   background:linear-gradient(135deg,#2563EB,#1D4ED8);
@@ -1247,8 +1250,8 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 }
 .navbar-logo-text{font-weight:800;font-size:19px;letter-spacing:-.04em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-/* Desktop category nav */
-.navbar-nav{display:flex;gap:4px;align-items:center;}
+/* Desktop category nav — centred, grows to fill space between logo and controls */
+.navbar-nav{display:flex;gap:4px;align-items:center;flex:1;justify-content:center;min-width:0;}
 .navbar-nav .nav-link{
   padding:6px 11px;border-radius:8px;font-size:13px;font-weight:600;
   color:var(--text2);text-decoration:none;transition:all .15s;white-space:nowrap;
@@ -1260,8 +1263,8 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
 }
 .navbar-nav .nav-link-all:hover{background:var(--brand-l);}
 
-/* Right control group */
-.navbar-controls{display:flex;align-items:center;gap:6px;}
+/* Right control group — fixed right region, never shrinks */
+.navbar-controls{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 
 /* Desktop search */
 .navbar-search-desktop{position:relative;display:flex;flex-shrink:0;}
@@ -1269,7 +1272,9 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   display:flex;align-items:center;gap:7px;padding:7px 13px;
   background:var(--surface2);border:1.5px solid var(--border);
   border-radius:10px;
-  width:clamp(180px,20vw,240px);
+  /* clamp keeps it from being too wide on mid-range screens */
+  width:clamp(160px,18vw,240px);
+  min-width:0;
   transition:border-color .2s,box-shadow .2s,width .25s cubic-bezier(.4,0,.2,1),background .2s;
 }
 .navbar-search-box:focus-within{
@@ -1456,6 +1461,42 @@ details .faq-body{padding:14px 18px;font-size:14px;line-height:1.75;color:var(--
   .hero-inner{padding:40px 20px 36px;}
   .sticky-res{position:static!important;}
 }
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE — LAPTOP (1025px–1380px)
+   Full desktop nav stays visible but items are tightened so
+   nothing overflows or squeezes on 1280–1366px laptop screens.
+══════════════════════════════════════════════════════════════ */
+@media(min-width:1025px) and (max-width:1380px){
+  .navbar-inner{
+    gap:6px;
+    padding:0 clamp(12px,1.5vw,20px);
+  }
+  /* Tighter nav link padding so all 6 links fit comfortably */
+  .navbar-nav{gap:2px;}
+  .navbar-nav .nav-link{
+    padding:5px 8px;
+    font-size:12.5px;
+  }
+  .navbar-nav .nav-link-all{
+    padding:4px 10px;
+    font-size:12.5px;
+  }
+  /* Shrink search box — it's the widest item in the controls row */
+  .navbar-search-box{
+    width:clamp(130px,12vw,170px);
+  }
+  .navbar-search-box:focus-within{
+    width:clamp(170px,16vw,210px);
+  }
+  /* Reduce icon button padding */
+  .navbar-icon-btn{padding:6px;}
+  /* Hide currency selector at laptop range — space is too tight */
+  .desktop-only{display:none!important;}
+  /* Tighten controls gap */
+  .navbar-controls{gap:4px;}
+}
+
 
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE (<768px)
