@@ -1,8 +1,13 @@
 /**
  * app/about/page.tsx — About page (SSG)
+ *
+ * The About view is imported directly (server-rendered) so that the founder bio,
+ * mission statement, and E-E-A-T signals are present in the initial HTML response.
+ * This is critical for AdSense review — Google needs to see trust content in raw HTML,
+ * not an empty shell waiting for client-side JavaScript to hydrate.
  */
 import type { Metadata } from 'next';
-import AboutClient from './about-client';
+import About from '@/views/About';
 
 export const metadata: Metadata = {
   title: 'About Us — Calculators Point',
@@ -66,7 +71,9 @@ export default function AboutPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
-      <AboutClient />
+      {/* About view is imported directly (server-rendered) — NOT via dynamic() */}
+      {/* This ensures Googlebot sees the full founder bio and E-E-A-T content in raw HTML */}
+      <About />
     </>
   );
 }

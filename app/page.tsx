@@ -74,11 +74,16 @@ const siteSchema = {
         width: 512,
         height: 512,
       },
-      sameAs: [
-        'https://twitter.com/CalculatorsPt',
-        'https://www.facebook.com/calculatorspoint',
-        'https://www.linkedin.com/company/calculatorspoint'
-      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        email: 'contact@calculatorspoint.com',
+        contactType: 'customer support',
+        availableLanguage: 'English',
+      },
+      // sameAs: Only add verified, active social profiles.
+      // Removed placeholder Twitter/Facebook/LinkedIn links — unverified sameAs
+      // entries cause Google's Knowledge Graph to distrust the Organization entity.
+      // Add real profile URLs here once accounts are established.
     },
     {
       '@type': 'WebSite',
@@ -101,6 +106,9 @@ const siteSchema = {
     },
     {
       // WebPage for homepage itself — signals freshness and links to WebSite entity
+      // dateModified is STATIC — do not use new Date() here. Dynamic dates that change
+      // on every build mislead Googlebot into treating unchanged pages as freshly updated,
+      // which erodes crawl trust over time. Update this date manually after real content changes.
       '@type': 'WebPage',
       '@id': `${SITE_URL}/#webpage`,
       url: SITE_URL,
@@ -109,7 +117,8 @@ const siteSchema = {
       isPartOf: { '@id': `${SITE_URL}/#website` },
       about: { '@type': 'Thing', name: 'Online Calculators' },
       inLanguage: 'en-US',
-      dateModified: new Date().toISOString().slice(0, 10),
+      dateModified: '2026-06-22',
+      datePublished: '2025-01-01',
     },
   ],
 };

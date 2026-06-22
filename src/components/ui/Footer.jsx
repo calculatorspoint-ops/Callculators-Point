@@ -88,11 +88,12 @@ export function Footer() {
           </nav>
         </div>
 
-        {/* Ad disclosure — must be accurate and present-tense; FTC / Google policy require this */}
+        {/* Ad disclosure — FTC / Google AdSense policy require this on every page */}
         <div className="footer-disc">
           <strong style={{ color:"#94a3b8" }}>Advertising Disclosure:</strong>{" "}
-          Calculators Point is free to use and supported by advertising via Google AdSense.
-          Ads never influence our results — all outputs are calculated independently of any advertiser.
+          Calculators Point is a free educational platform. We may display advertisements to support the cost of
+          running this service. Advertisers have no influence over our calculator formulas,
+          results, or editorial content — all outputs are calculated independently.
           See our{" "}
           <Link href="/privacy-policy" style={{ color:"var(--footer-link-hover)" }}>Privacy Policy</Link> and{" "}
           <Link href="/disclaimer" style={{ color:"var(--footer-link-hover)" }}>Disclaimer</Link> for details.

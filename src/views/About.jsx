@@ -1,7 +1,9 @@
+'use client';
 import Link from "next/link";
 
 import { ALL_CALCULATORS, CATEGORIES, LIVE_CALC_COUNT, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { Shield, Zap, BarChart2, Globe, Lock, Heart, Star, Award, Users, Code, Linkedin, Mail, ExternalLink } from "lucide-react";
+
 
 const STATS = [
   { icon:"🧮", num:`${CALC_COUNT_LABEL}`, label:"Free Calculators" },

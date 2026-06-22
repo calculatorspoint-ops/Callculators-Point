@@ -153,33 +153,65 @@ export default function BlogPage() {
             })}
           </div>
         ) : (
-          /* ── Coming Soon State (shown while all posts are drafts) ── */
-          <div style={{ textAlign: 'center', padding: '64px 24px', borderRadius: 20, border: '2px dashed var(--border)', background: 'var(--surface)' }}>
-            <div style={{ fontSize: 64, marginBottom: 16 }}>📝</div>
-            <h2 style={{ fontFamily: 'var(--font-hd)', fontSize: 24, fontWeight: 800, color: 'var(--text)', marginBottom: 12, letterSpacing: '-.02em' }}>
-              Guides Coming Soon
+          /* ── Enriched content state — substantive, not a thin placeholder ── */
+          <div>
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: '28px 32px', marginBottom: 32 }}>
+              <p style={{ fontSize: 15, color: 'var(--text2)', lineHeight: 1.8, marginBottom: 16 }}>
+                Our team is currently writing in-depth, research-backed guides on how to use our calculators effectively — covering topics like loan planning, investment strategy, health tracking, GPA optimization, and more. Each guide will include worked examples, formulas explained in plain English, and step-by-step walkthroughs.
+              </p>
+              <p style={{ fontSize: 15, color: 'var(--text2)', lineHeight: 1.8, marginBottom: 20 }}>
+                In the meantime, every calculator on Calculators Point already includes a built-in <strong>About</strong> section, <strong>step-by-step formula</strong> display, and <strong>FAQ section</strong> — giving you the context you need to understand your results right on the calculator page.
+              </p>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <Link href="/calculators" style={{ padding: '11px 22px', background: 'var(--brand)', color: '#fff', borderRadius: 'var(--r-lg)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
+                  Browse {CALC_COUNT_LABEL} Free Calculators →
+                </Link>
+                <Link href="/contact" style={{ padding: '11px 22px', background: 'var(--surf2)', color: 'var(--text)', border: '1.5px solid var(--border)', borderRadius: 'var(--r-lg)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
+                  Suggest a Topic
+                </Link>
+              </div>
+            </div>
+
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 8, letterSpacing: '-.02em' }}>
+              Start With These Popular Calculators
             </h2>
-            <p style={{ fontSize: 15, color: 'var(--text2)', maxWidth: 420, margin: '0 auto 28px', lineHeight: 1.7 }}>
-              We&apos;re writing in-depth calculator guides covering finance, health, math, and more. Check back soon.
+            <p style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 20, lineHeight: 1.7 }}>
+              Each calculator below includes a full About section explaining the formula, worked examples, and frequently asked questions.
             </p>
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/calculators" style={{ padding: '11px 22px', background: 'var(--brand)', color: '#fff', borderRadius: 'var(--r-lg)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
-                Browse {CALC_COUNT_LABEL} Calculators →
-              </Link>
-              <Link href="/" style={{ padding: '11px 22px', background: 'var(--surf2)', color: 'var(--text)', border: '1.5px solid var(--border)', borderRadius: 'var(--r-lg)', fontWeight: 700, fontSize: 14, textDecoration: 'none' }}>
-                Go Home
-              </Link>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14, marginBottom: 48 }}>
+              {[
+                { href: '/calculator/loan-emi-calculator',          icon: '🏦', name: 'EMI Calculator',        cat: 'Finance',   desc: 'Understand your monthly loan repayment with full amortization schedule and total interest calculation.' },
+                { href: '/calculator/bmi-calculator',               icon: '⚖️', name: 'BMI Calculator',         cat: 'Health',    desc: 'Body Mass Index using the WHO standard formula, with health risk interpretation and category explanation.' },
+                { href: '/calculator/sip-calculator',               icon: '📈', name: 'SIP Calculator',         cat: 'Finance',   desc: 'Plan your mutual fund investments with realistic projections and step-up SIP contribution options.' },
+                { href: '/calculator/compound-interest-calculator', icon: '💰', name: 'Compound Interest',      cat: 'Finance',   desc: 'See how your savings grow over time with annual, monthly, and daily compounding comparisons.' },
+                { href: '/calculator/bmr-calculator',               icon: '🔥', name: 'BMR Calculator',         cat: 'Health',    desc: 'Calculate your Basal Metabolic Rate using the Mifflin-St Jeor equation — the gold standard formula.' },
+                { href: '/calculator/gpa-calculator',               icon: '📚', name: 'GPA Calculator',         cat: 'Education', desc: 'Calculate your semester or cumulative GPA with course weight support and grade simulation.' },
+              ].map(c => (
+                <Link key={c.href} href={c.href} style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '18px 20px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, textDecoration: 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontSize: 22 }} aria-hidden="true">{c.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--brand)', fontWeight: 600 }}>{c.cat}</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 12, color: 'var(--text2)', lineHeight: 1.6, margin: 0 }}>{c.desc}</p>
+                </Link>
+              ))}
             </div>
           </div>
         )}
 
-        {/* ── Topics Grid ── */}
+        {/* ── Upcoming Topics (shown only when no published posts) ── */}
         {!hasPublishedPosts && (
-          <div style={{ marginTop: 60 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 20, letterSpacing: '-.02em' }}>
-              Upcoming Topics
+          <div style={{ marginTop: 32 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', marginBottom: 8, letterSpacing: '-.02em' }}>
+              Guide Topics We Are Writing
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+            <p style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 20, lineHeight: 1.7 }}>
+              Our upcoming guides will cover these topics with in-depth, practical examples:
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
               {BLOG_CATEGORIES.map((cat) => (
                 <div key={cat.id} style={{ padding: '16px 18px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontSize: 24 }}>{cat.icon}</span>
