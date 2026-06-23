@@ -13,6 +13,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CATEGORIES, CALC_COUNT_LABEL, POPULAR } from '@/data/calculatorConfigs';
 import HomePageClient from './home-client';
+import HeroCalcWidget from './hero-calc-widget';
 import { SITE_URL } from '@/config/site';
 import { JsonLd } from '@/components/JsonLd';
 
@@ -192,32 +193,11 @@ function HeroSection() {
             </div>
           </div>
 
-          {/* Right column — static placeholder replaces interactive QuickCalc in hero.
-              Keeps the visual footprint (prevents CLS) with ZERO JS cost.
-              The interactive QuickCalc loads below the fold via HomePageClient. */}
-          <div className="hero-widget-col" aria-hidden="true">
+          {/* Right column — interactive QuickCalc widget */}
+          <div className="hero-widget-col">
             <div className="hero-widget-label">⚡ Quick Calculator</div>
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              {/* Static skeleton that matches QuickCalc dimensions exactly */}
-              <div
-                className="hero-calc-placeholder"
-                role="img"
-                aria-label="Interactive calculator widget — loads after page"
-              >
-                <div className="hero-calc-display">
-                  <span className="hero-calc-display-hint">0</span>
-                </div>
-                <div className="hero-calc-btns">
-                  {['C', '±', '%', '÷', '7', '8', '9', '×', '4', '5', '6', '−', '1', '2', '3', '+', '0', '.', '='].map((btn) => (
-                    <div
-                      key={btn}
-                      className={`hero-calc-btn${btn === '=' ? ' hero-calc-btn--eq' : btn === '0' ? ' hero-calc-btn--zero' : ['C', '±', '%', '÷', '×', '−', '+'].includes(btn) ? ' hero-calc-btn--op' : ''}`}
-                    >
-                      {btn}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <HeroCalcWidget />
             </div>
           </div>
         </div>
