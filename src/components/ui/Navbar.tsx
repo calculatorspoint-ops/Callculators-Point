@@ -50,28 +50,33 @@ function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdow
     : null;
 
   return (
-    <div className="navbar-search-drop" role="listbox" aria-label="Search results" id={listboxId}>
+    <div className="navbar-search-drop" role="list" aria-label="Search results" id={listboxId}>
       {results.map((r, i) => {
         return (
-          <Link
+          <div
             key={r.id}
             id={`${listboxId}-option-${i}`}
-            href={`/calculator/${r.slug}`}
-            className={`navbar-search-item${i === activeIdx ? " navbar-search-item--active" : ""}`}
-            role="option"
+            role="listitem"
             aria-selected={i === activeIdx}
+            className={`navbar-search-item-wrap${i === activeIdx ? " navbar-search-item-wrap--active" : ""}`}
           >
-            <span className="navbar-search-item-icon">{r.icon}</span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="navbar-search-item-name">{r.name}</div>
-              <div className="navbar-search-item-desc">{r.desc?.slice(0, 55)}</div>
-            </div>
-            {r.popular && (
-              <span style={{ fontSize: 9, fontWeight: 800, color: "#f59e0b", background: "#fef3c7", padding: "2px 6px", borderRadius: 100, flexShrink: 0 }}>
-                HOT
-              </span>
-            )}
-          </Link>
+            <Link
+              href={`/calculator/${r.slug}`}
+              className={`navbar-search-item${i === activeIdx ? " navbar-search-item--active" : ""}`}
+              tabIndex={i === activeIdx ? 0 : -1}
+            >
+              <span className="navbar-search-item-icon">{r.icon}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="navbar-search-item-name">{r.name}</div>
+                <div className="navbar-search-item-desc">{r.desc?.slice(0, 55)}</div>
+              </div>
+              {r.popular && (
+                <span style={{ fontSize: 9, fontWeight: 800, color: "#f59e0b", background: "#fef3c7", padding: "2px 6px", borderRadius: 100, flexShrink: 0 }}>
+                  HOT
+                </span>
+              )}
+            </Link>
+          </div>
         );
       })}
 
@@ -81,13 +86,15 @@ function SearchDropdown({ results, query, activeIdx, listboxId = "search-dropdow
             No results — try these popular tools
           </div>
           {suggestions?.map((r) => (
-            <Link key={r.id} href={`/calculator/${r.slug}`} className="navbar-search-item" role="option">
-              <span className="navbar-search-item-icon">{r.icon}</span>
-              <div>
-                <div className="navbar-search-item-name">{r.name}</div>
-                <div className="navbar-search-item-desc">{r.desc?.slice(0, 50)}</div>
-              </div>
-            </Link>
+            <div key={r.id} role="listitem" className="navbar-search-item-wrap">
+              <Link href={`/calculator/${r.slug}`} className="navbar-search-item">
+                <span className="navbar-search-item-icon">{r.icon}</span>
+                <div>
+                  <div className="navbar-search-item-name">{r.name}</div>
+                  <div className="navbar-search-item-desc">{r.desc?.slice(0, 50)}</div>
+                </div>
+              </Link>
+            </div>
           ))}
         </div>
       )}
@@ -206,9 +213,10 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
           />
           {q && (
             <button
+              type="button"
               onClick={() => { setQ(""); setOpen(false); }}
               className="navbar-search-clear"
-              aria-label="Clear search"
+              aria-label="Clear search query"
             >
               ×
             </button>

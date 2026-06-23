@@ -18,7 +18,8 @@ import type { Viewport, Metadata } from 'next';
 import Script from 'next/script';
 import './globals.css';
 import '../src/styles/index.css';
-import '../src/styles/calculator-layout-fix.css';
+// calculator-layout-fix.css is now imported in app/(calc-routes)/layout.tsx
+// so it only loads on /calculator, /calculators, and /category pages.
 import '../src/styles/mobile.css';
 import '../src/styles/mobile-overflow-killer.css';
 // NOTE: all-calculators.css is imported inside AllCalculators.jsx (page-scoped)

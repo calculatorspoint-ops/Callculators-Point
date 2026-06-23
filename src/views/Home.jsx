@@ -109,6 +109,11 @@ export default function Home({ skipHero } = {}) {
 
   useEffect(() => {
     setMounted(true);
+    // Hide the server-rendered popular strip once client JS has hydrated.
+    // The strip stays in HTML (Googlebot crawls it) but users only see the
+    // client version that loads via belowFoldReady below.
+    const serverStrip = document.getElementById('server-popular-strip');
+    if (serverStrip) serverStrip.style.display = 'none';
     // Use requestIdleCallback if available, otherwise setTimeout
     const schedule = typeof window !== 'undefined' && 'requestIdleCallback' in window
       ? (cb) => requestIdleCallback(cb, { timeout: 300 })

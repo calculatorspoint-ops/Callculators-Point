@@ -230,6 +230,7 @@ function PopularSection() {
   const popular = POPULAR.slice(0, 10);
   return (
     <div
+      id="server-popular-strip"
       style={{
         background: 'var(--surface)',
         borderBottom: '1px solid var(--border)',

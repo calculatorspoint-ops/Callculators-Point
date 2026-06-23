@@ -127,8 +127,8 @@ export function QuickCalc() {
     // ── Memory ops ─────────────────────────────────────────────
     if (label === "MC") { setMemory(0); setHasMemory(false); return; }
     if (label === "MR") { setDisplay(String(memory)); setFresh(true); return; }
-    if (label === "M+") { const v = parseFloat(display); if (!isNaN(v)) { setMemory(m => { setHasMemory(true); return m + v; }); } return; }
-    if (label === "M−") { const v = parseFloat(display); if (!isNaN(v)) { setMemory(m => { setHasMemory(true); return m - v; }); } return; }
+    if (label === "M+") { const v = parseFloat(display); if (!isNaN(v)) { setMemory(m => m + v); setHasMemory(true); } return; }
+    if (label === "M−") { const v = parseFloat(display); if (!isNaN(v)) { setMemory(m => m - v); setHasMemory(true); } return; }
     // ── Equals ────────────────────────────────────────────────
     if (label === "=") {
       const full = expr + display;
