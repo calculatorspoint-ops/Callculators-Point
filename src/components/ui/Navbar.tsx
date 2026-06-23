@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, Settings } from "lucide-react";
+import { Search, Moon, Sun, Menu, X, Calculator, ChevronRight, ChevronDown, Settings } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { ALL_CALCULATORS, CATEGORIES, POPULAR, CalculatorConfig, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { CurrencySelector } from './CurrencySelector';
@@ -253,6 +253,89 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
   );
 }
 
+/* ── Categories Dropdown ─────────────────────────────────────── */
+function CategoriesDropdown() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  // Close on route change
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  // Close on outside click
+  useEffect(() => {
+    const h = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', h);
+    return () => document.removeEventListener('mousedown', h);
+  }, []);
+
+  // Close on Escape
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', h);
+    return () => document.removeEventListener('keydown', h);
+  }, []);
+
+  return (
+    <div className="cat-dropdown-wrap" ref={ref}>
+      <button
+        className={`nav-link cat-dropdown-trigger${open ? ' cat-dropdown-trigger--open' : ''}`}
+        onClick={() => setOpen(s => !s)}
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-label="Browse categories"
+      >
+        <span aria-hidden="true">🗂️</span>{' '}Categories
+        <ChevronDown size={13} className="cat-chevron" />
+      </button>
+
+      {open && (
+        <div className="cat-dropdown" role="menu" aria-label="Categories menu">
+          {/* Header */}
+          <div className="cat-dropdown-header">
+            <span className="cat-dropdown-title">Browse Categories</span>
+            <Link href="/calculators" className="cat-dropdown-all-link" onClick={() => setOpen(false)}>
+              All Tools →
+            </Link>
+          </div>
+
+          {/* Category grid */}
+          <div className="cat-dropdown-grid">
+            {CATEGORIES.map(c => (
+              <Link
+                key={c.id}
+                href={`/category/${c.id}`}
+                className="cat-dropdown-item"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                style={{ '--cat-color': c.color, '--cat-bg': c.bg } as React.CSSProperties}
+              >
+                <span className="cat-dropdown-icon">{c.icon}</span>
+                <div className="cat-dropdown-info">
+                  <span className="cat-dropdown-name">{c.name}</span>
+                  <span className="cat-dropdown-desc">{c.desc}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Footer quick links */}
+          <div className="cat-dropdown-footer">
+            <Link href="/name-generators" className="cat-dropdown-footer-link" onClick={() => setOpen(false)}>
+              <span>✨</span> Name Generators
+            </Link>
+            <Link href="/calculators" className="cat-dropdown-footer-link cat-dropdown-footer-link--primary" onClick={() => setOpen(false)}>
+              <span>📊</span> View All Tools
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Navbar() {
   const { theme, toggleTheme } = useAppStore();
   const [mob, setMob]         = useState(false);
@@ -299,11 +382,8 @@ export function Navbar() {
 
           {/* ── Desktop Nav ── */}
           <nav className="navbar-nav" aria-label="Main navigation">
-            {CATEGORIES.slice(0, 4).map(c => (
-              <Link key={c.id} href={`/category/${c.id}`} className="nav-link">
-                <span aria-hidden="true">{c.icon}</span>{' '}{c.name}
-              </Link>
-            ))}
+            {/* Categories dropdown tab */}
+            <CategoriesDropdown />
             {/* W6 fix: Name Generators in primary nav for crawl depth + PageRank */}
             <Link href="/name-generators" className="nav-link">
               <span aria-hidden="true">✨</span>{' '}Name Generators
