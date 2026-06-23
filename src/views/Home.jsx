@@ -1,16 +1,10 @@
 'use client';
-import { useState, useEffect, Suspense, lazy } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, Star, ChevronRight, Calculator, Sparkles, BookOpen } from "lucide-react";
+import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, ChevronRight, Sparkles } from "lucide-react";
 
-import { CATEGORIES, BY_CATEGORY, POPULAR, NEW_CALCS, ALL_CALCULATORS, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
+import { CATEGORIES, BY_CATEGORY, ALL_CALCULATORS, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
 import { useAppStore } from "@/store/useAppStore";
-
-// Lazy-load the heavy QuickCalc widget — it's below the fold on mobile
-// and has no SSR content anyway (it's all interactive state)
-const QuickCalc = lazy(() =>
-  import('@/components/ui/QuickCalc').then(m => ({ default: m.QuickCalc }))
-);
 
 /* ── Calculator row item ─────────────────────────────────────────────── */
 function CalcRow({ calc }) {
@@ -179,27 +173,18 @@ export default function Home({ skipHero } = {}) {
               </div>
             </div>
 
-            {/* Right column — Quick calc widget (lazy-loaded, no SSR needed) */}
-            <div className="hero-widget-col">
-              <div className="hero-widget-label">⚡ Quick Calculator</div>
-              <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                <Suspense fallback={
-                  <div style={{ width: 300, height: 400, borderRadius: 20, background: "rgba(15,23,42,.92)", border: "1.5px solid rgba(255,255,255,.1)" }} />
-                }>
-                  <QuickCalc />
-                </Suspense>
-              </div>
-            </div>
+            {/* Right column — Quick calc widget now lives in page.tsx HeroSection */}
+            <div className="hero-widget-col" />
           </div>
 
           {/* Category pills */}
-          <div className="hero-pills" role="navigation" aria-label="Calculator categories">
+          <nav className="hero-pills" aria-label="Calculator categories">
             {CATEGORIES.map(cat => (
               <Link key={cat.id} href={`/category/${cat.id}`} className="hero-pill">
-                <span>{cat.icon}</span> {cat.name}
+                <span aria-hidden="true">{cat.icon}</span> {cat.name}
               </Link>
             ))}
-          </div>
+          </nav>
         </div>
       </section>
       )}

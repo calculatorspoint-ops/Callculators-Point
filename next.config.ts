@@ -13,7 +13,7 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  eslint: { ignoreDuringBuilds: true },
+  eslint: { ignoreDuringBuilds: false },
 
   // ── Compression ───────────────────────────────────────────────────────────
   // Explicitly enable gzip/Brotli compression for HTML, CSS, JS, and text

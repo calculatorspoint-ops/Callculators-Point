@@ -132,7 +132,7 @@ const popularItemListSchema = {
   name: `Popular Free Online Calculators`,
   description: `Top-rated free calculators on Calculators Point for finance, health, and math.`,
   url: SITE_URL,
-  numberOfItems: POPULAR.length,
+  numberOfItems: Math.min(POPULAR.length, 10),
   itemListElement: POPULAR.slice(0, 10).map((c, i) => ({
     '@type': 'ListItem',
     position: i + 1,

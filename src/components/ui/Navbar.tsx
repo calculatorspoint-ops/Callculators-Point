@@ -171,7 +171,12 @@ function SearchBox({ isMobile, isOpen, onClose }: { isMobile: boolean; isOpen?: 
     } else if (e.key === "Enter" && q.trim() && results.length > 0 && activeIdx === -1) {
       e.preventDefault();
       addSearchHistory(q);
-      router.push(`/calculator/${results[0].slug}`);
+      router.push(`/search?q=${encodeURIComponent(q.trim())}`);
+      setOpen(false);
+      if (isMobile && onClose) onClose();
+    } else if (e.key === "Enter" && q.trim() && results.length === 0) {
+      e.preventDefault();
+      router.push(`/search?q=${encodeURIComponent(q.trim())}`);
       setOpen(false);
       if (isMobile && onClose) onClose();
     }
@@ -283,7 +288,7 @@ function CategoriesDropdown() {
       <button
         className={`nav-link cat-dropdown-trigger${open ? ' cat-dropdown-trigger--open' : ''}`}
         onClick={() => setOpen(s => !s)}
-        aria-haspopup="true"
+        aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Browse categories"
       >

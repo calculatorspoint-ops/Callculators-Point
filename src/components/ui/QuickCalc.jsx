@@ -312,7 +312,10 @@ export function QuickCalc() {
                 No history yet
               </div>
             ) : hist.map((h, i) => (
-              <div key={i} onClick={() => { setDisplay(h.result); setFresh(true); setShowHist(false); }}
+              <button
+                key={i}
+                type="button"
+                onClick={() => { setDisplay(h.result); setFresh(true); setShowHist(false); }}
                 style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center",
                   padding: "4px 6px", cursor: "pointer", borderRadius: 6,
@@ -380,12 +383,21 @@ export function QuickCalc() {
         {rows.flat().map((btn, i) => (
           <button
             key={i}
+            type="button"
             onClick={() => press(btn.l)}
             style={{ ...getBtnStyle(btn.s || "num"), gridColumn: btn.w ? `span ${btn.w}` : undefined }}
             onPointerDown={e => { e.currentTarget.style.transform = "scale(.92)"; e.currentTarget.style.opacity = ".8"; }}
             onPointerUp={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.opacity = "1"; }}
             onPointerLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.opacity = "1"; }}
-            aria-label={btn.l}
+            aria-label={{
+              '÷':'Divide','×':'Multiply','−':'Subtract','+':'Add',
+              '=':'Equals','C':'Clear','±':'Toggle sign','%':'Percent',
+              '⌫':'Backspace','√':'Square root','∛':'Cube root','π':'Pi',
+              'e':'Euler number','x²':'Square','x³':'Cube','xʸ':'Power',
+              '1/x':'Reciprocal','asin':'Arc sine','acos':'Arc cosine',
+              'atan':'Arc tangent','log':'Logarithm','ln':'Natural log',
+              '(':'Open parenthesis',')':'Close parenthesis','^':'Power',
+            }[btn.l] ?? btn.l}
           >
             {btn.l}
           </button>

@@ -141,12 +141,24 @@ function CalcPageHeader({ calc, cat }: {
   return (
     <div className="calc-page-head">
       <div className="cph-inner">
-        <nav className="cph-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/">Home</Link>
-          <span className="cph-breadcrumb-sep">›</span>
-          {cat && <Link href={`/category/${cat.id}`}>{cat.icon} {cat.name}</Link>}
-          <span className="cph-breadcrumb-sep">›</span>
-          <span style={{ color: 'rgba(255,255,255,.72)' }}>{calc.name}</span>
+        <nav className="cph-breadcrumb" aria-label="Breadcrumb"
+          itemScope itemType="https://schema.org/BreadcrumbList">
+          <span itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <Link href="/" itemProp="item"><span itemProp="name">Home</span></Link>
+            <meta itemProp="position" content="1" />
+          </span>
+          <span className="cph-breadcrumb-sep" aria-hidden="true">›</span>
+          {cat && (
+            <span itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+              <Link href={`/category/${cat.id}`} itemProp="item"><span itemProp="name">{cat.icon} {cat.name}</span></Link>
+              <meta itemProp="position" content="2" />
+            </span>
+          )}
+          <span className="cph-breadcrumb-sep" aria-hidden="true">›</span>
+          <span itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+            <span itemProp="name" style={{ color: 'rgba(255,255,255,.72)' }} aria-current="page">{calc.name}</span>
+            <meta itemProp="position" content={cat ? '3' : '2'} />
+          </span>
         </nav>
 
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>

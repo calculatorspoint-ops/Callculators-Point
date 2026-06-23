@@ -63,6 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: DATES.homepage,
     changeFrequency: 'daily',
     priority: 1.0,
+    images: [`${BASE_URL}/og-image.png`],
   }];
 
   // ── 2. Calculator directory index (/calculators) ─────────────────────────

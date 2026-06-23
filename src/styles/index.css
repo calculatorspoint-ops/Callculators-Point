@@ -216,7 +216,9 @@
    BASE RESET
 ══════════════════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;text-rendering:optimizeLegibility;max-width:100%;overflow-x:hidden;}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;text-rendering:optimizeLegibility;max-width:100%;overflow-x:hidden;}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth;}}
+
 body{
   font-family:var(--font);background:var(--bg);color:var(--text);
   line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:15px;
@@ -3605,4 +3607,108 @@ details[open] .seo-faq-question::after { transform: rotate(180deg); }
 .radio-label-focused {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SOCIAL SHARE BUTTONS
+══════════════════════════════════════════════════════════════ */
+.share-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;
+  border:1.5px solid var(--border);background:var(--surface);
+  color:var(--text2);cursor:pointer;transition:all .15s;
+  font-family:var(--font);white-space:nowrap;gap:5px;
+}
+.share-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l);}
+.share-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px;}
+
+/* ══════════════════════════════════════════════════════════════
+   SKELETON LOADING ANIMATION
+══════════════════════════════════════════════════════════════ */
+.skeleton{
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface) 50%,var(--surface2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.6s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* ══════════════════════════════════════════════════════════════
+   PREFERS-REDUCED-MOTION — WCAG 2.1 Level AA (SC 2.3.3)
+   Disable all decorative animations for users who prefer
+   reduced motion (vestibular sensitivity, epilepsy, etc.)
+══════════════════════════════════════════════════════════════ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .skeleton{animation:none;background:var(--surface2);}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRINT STYLES — clean output for calculator results
+══════════════════════════════════════════════════════════════ */
+@media print{
+  /* Hide non-essential UI */
+  .navbar,.footer,.mob-menu-panel,.mob-overlay,
+  .navbar-controls,.hero,.stat-strip,
+  .home-why,.home-cat-block button,
+  .qcalc,[class*="AdUnit"],
+  .cookie-consent,.skip-link,
+  .btn-primary,.btn-ghost,
+  .share-section,.cat-dropdown{display:none!important;}
+
+  /* Reset backgrounds and shadows */
+  body{background:#fff!important;color:#000!important;font-size:12pt;}
+  *{box-shadow:none!important;text-shadow:none!important;background-image:none!important;}
+
+  /* Show full URLs after links */
+  a[href]::after{content:" (" attr(href) ")";font-size:9pt;color:#555;}
+  a[href^="#"]::after,a[href^="/"]::after{content:"";}
+
+  /* Calculator result areas */
+  .calc-layout{display:block!important;}
+  .result-box,.breakdown-section{
+    border:1px solid #ccc!important;
+    page-break-inside:avoid;
+    margin-bottom:16pt;
+  }
+  .page-hero{background:none!important;color:#000!important;padding:12pt 0!important;}
+  .cph-title,.cph-desc{color:#000!important;}
+
+  /* Page setup */
+  @page{margin:1.5cm;size:A4;}
+  h1,h2,h3{page-break-after:avoid;color:#000!important;}
+  table{border-collapse:collapse;width:100%;}
+  th,td{border:1px solid #ddd;padding:5pt;text-align:left;font-size:10pt;}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE OVERFLOW SAFEGUARD (consolidated from mobile-overflow-killer.css)
+   Prevents layout blowouts on devices < 768px
+══════════════════════════════════════════════════════════════ */
+@media(max-width:767px){
+  html,body,#root{width:100%;max-width:100vw;overflow-x:hidden!important;}
+  .page-wrap,.home-wrap,.calc-layout,.calc-card,.calc-card-body,
+  .calc-form-stack,.hero,.hero-inner,.navbar,.footer{
+    width:100%!important;max-width:100vw!important;
+    box-sizing:border-box!important;min-width:0!important;
+  }
+  .calc-form-stack>*,.sc-row2>*,.sc-row3>*,.stats-grid>*,.sc-stats-grid>*{
+    min-width:0!important;
+  }
+  input,select,textarea,button{max-width:100%!important;}
+  .matrix-wrap,.result-table-wrap,.amort-schedule-wrap,
+  .comparison-table-wrap,.table-responsive,.breakdown-wrap{
+    display:block!important;width:100%!important;
+    max-width:100%!important;overflow-x:auto!important;
+  }
+  table{min-width:max-content!important;}
+  .result-val,td,th,p,h1,h2,h3,h4,span,div,.ip-result-row{
+    overflow-wrap:break-word!important;word-wrap:break-word!important;
+    word-break:break-word;
+  }
 }

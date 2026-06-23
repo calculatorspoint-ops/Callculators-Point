@@ -28,6 +28,9 @@ const CookieConsent = lazy(() =>
 const ScrollToTop = lazy(() =>
   import('@/components/ui/ScrollToTop').then(m => ({ default: m.ScrollToTop }))
 );
+const BackToTop = lazy(() =>
+  import('@/components/ui/BackToTop').then(m => ({ default: m.BackToTop }))
+);
 
 // Defer Analytics — loads after page is interactive, doesn't affect LCP/FCP
 const Analytics = lazy(() =>
@@ -60,10 +63,13 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
       <Suspense fallback={null}>
         <ScrollToTop />
       </Suspense>
+      <Suspense fallback={null}>
+        <BackToTop />
+      </Suspense>
       <Navbar />
       <main id="main-content" style={{ minHeight: '100vh' }}>
         <ErrorBoundary>
-          <Suspense>
+          <Suspense fallback={null}>
             {children}
           </Suspense>
         </ErrorBoundary>
