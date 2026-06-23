@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Parser } from 'expr-eval';
 
 /* ══════════════════════════════════════════════════════════════
    QUICK CALCULATOR — Professional Basic + Scientific modes
@@ -32,32 +33,73 @@ const SCI_ROWS = [
   [{ l:"=",s:"eq",w:4}],
 ];
 
-// ── Expression evaluator ──────────────────────────────────────
+// ── Expression evaluator — uses expr-eval (safe sandboxed parser) ────
+// SECURITY: The old Function()() approach was eval by another name — a
+// carefully crafted expression could escape the regex sanitisation and
+// execute arbitrary JS. expr-eval runs in a completely isolated scope
+// with no access to window, document, or any JS globals.
+
+const _parser = new Parser({
+  operators: {
+    logical: false,      // disable &&, ||
+    comparison: false,   // disable ==, !=, <, >
+    'in': false,         // disable `in` operator
+    assignment: false,   // disable = assignment
+  },
+});
+
+// Register all math functions expr-eval doesn't expose by default
+_parser.functions.log10 = Math.log10;
+_parser.functions.ln    = Math.log;
+_parser.functions.cbrt  = Math.cbrt;
+
 function evalExpr(expr, isDeg) {
   try {
-    const toRad = isDeg ? (x) => x * Math.PI / 180 : (x) => x;
-    const safe = expr
-      .replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-")
-      .replace(/\^/g, "**")
+    // Normalise display symbols → expr-eval tokens
+    const normalised = expr
+      .replace(/×/g, '*')
+      .replace(/÷/g, '/')
+      .replace(/−/g, '-')
       .replace(/π/g, String(Math.PI))
-      .replace(/\be\b/g, String(Math.E))
-      .replace(/sin\(/g,  isDeg ? `(x=>Math.sin(x*${Math.PI}/180))(` : "Math.sin(")
-      .replace(/cos\(/g,  isDeg ? `(x=>Math.cos(x*${Math.PI}/180))(` : "Math.cos(")
-      .replace(/tan\(/g,  isDeg ? `(x=>Math.tan(x*${Math.PI}/180))(` : "Math.tan(")
-      .replace(/asin\(/g, isDeg ? `(x=>Math.asin(x)*180/${Math.PI})(` : "Math.asin(")
-      .replace(/acos\(/g, isDeg ? `(x=>Math.acos(x)*180/${Math.PI})(` : "Math.acos(")
-      .replace(/atan\(/g, isDeg ? `(x=>Math.atan(x)*180/${Math.PI})(` : "Math.atan(")
-      .replace(/log\(/g, "Math.log10(")
-      .replace(/ln\(/g,  "Math.log(")
-      .replace(/√\(/g,   "Math.sqrt(")
-      .replace(/∛\(/g,   "(x=>Math.cbrt(x))(");
-    const result = Function('"use strict";return(' + safe + ')')();
-    if (!isFinite(result)) return "Error";
-    // Clean up floating point noise
+      // Euler's number: only standalone 'e' (not 1e10 scientific notation)
+      // expr-eval handles numeric literals including 1e10 natively, so we
+      // only replace the bare constant 'e' used as a function button.
+      .replace(/(?<![0-9])e(?![0-9+-])/g, String(Math.E))
+      // Special function spellings → expr-eval built-ins
+      .replace(/√\(/g,  'sqrt(')
+      .replace(/∛\(/g,  'cbrt(')
+      .replace(/log\(/g, 'log10(')
+      .replace(/ln\(/g,  'ln(')
+      // x², x³, xʸ — convert postfix power notation to ^ operator
+      .replace(/x²/g, '^2')
+      .replace(/x³/g, '^3')
+      .replace(/xʸ/g, '^')
+      // 1/x — wrap existing display value in reciprocal
+      .replace(/1\/x/g, '1/')
+      // Trig — wrap in degree→radian conversion when isDeg mode is on
+      .replace(/sin\(/g,  isDeg ? `sin(pi/180*` : 'sin(')
+      .replace(/cos\(/g,  isDeg ? `cos(pi/180*` : 'cos(')
+      .replace(/tan\(/g,  isDeg ? `tan(pi/180*` : 'tan(')
+      // Inverse trig — result is in radians; convert back to degrees
+      .replace(/asin\(/g, isDeg ? `(180/pi)*asin(` : 'asin(')
+      .replace(/acos\(/g, isDeg ? `(180/pi)*acos(` : 'acos(')
+      .replace(/atan\(/g, isDeg ? `(180/pi)*atan(` : 'atan(');
+
+    // expr-eval uses ^ for power; also accepts ** so normalise
+    const withPow = normalised.replace(/\*\*/g, '^');
+
+    // Inject pi constant (expr-eval doesn't predefine it)
+    const result = _parser.evaluate(withPow, { pi: Math.PI, e: Math.E });
+
+    if (typeof result !== 'number' || !isFinite(result)) return 'Error';
+    // Remove floating-point noise (e.g. 0.1+0.2 = 0.30000000000000004)
     const rounded = parseFloat(result.toPrecision(12));
     return rounded.toString();
-  } catch { return "Error"; }
+  } catch {
+    return 'Error';
+  }
 }
+
 
 export function QuickCalc() {
   const [mode,      setMode]      = useState("basic");
