@@ -474,12 +474,22 @@ export function Navbar() {
 
       {/* ── Mobile full-screen menu overlay ── */}
       {mob && (
-        <div className="mob-overlay" onClick={() => setMob(false)} />
+        <div
+          className="mob-overlay"
+          onClick={() => setMob(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setMob(false)}
+          role="button"
+          tabIndex={-1}
+          aria-label="Close menu"
+        />
       )}
       <div
         id="mob-menu-panel"
         ref={mobMenuPanelRef}
         className={`mob-menu-panel${mob ? " mob-menu-panel--open" : ""}`}
+        role="dialog"
+        aria-modal={mob}
+        aria-label="Site navigation menu"
         aria-hidden={!mob}
       >
         {/* Category links */}
@@ -519,7 +529,12 @@ export function Navbar() {
             <span>Contact</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />
           </Link>
-          <button onClick={() => { setSettingsOpen(true); setMob(false); }} className="mob-menu-link" style={{ background: "none", border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}>
+          <button
+            type="button"
+            onClick={() => { setSettingsOpen(true); setMob(false); }}
+            className="mob-menu-link"
+            style={{ background: "none", border: "none", width: "100%", textAlign: "left", cursor: "pointer" }}
+          >
             <span aria-hidden="true">⚙️</span>
             <span>Settings</span>
             <ChevronRight size={14} style={{ marginLeft: "auto", color: "var(--text3)" }} />

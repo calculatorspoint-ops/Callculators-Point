@@ -114,6 +114,22 @@ export function QuickCalc() {
   const [justCalc,  setJustCalc]  = useState(false);
   const containerRef = useRef(null);
 
+  // F6 fix: Load persisted history from localStorage after mount (avoids SSR mismatch)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('qcalc_hist');
+      if (saved) setHist(JSON.parse(saved));
+    } catch { /* ignore parse errors */ }
+  }, []);
+
+  // F6 fix: Persist history to localStorage whenever it changes
+  useEffect(() => {
+    if (hist.length === 0) return;
+    try {
+      localStorage.setItem('qcalc_hist', JSON.stringify(hist.slice(0, 20)));
+    } catch { /* ignore quota errors */ }
+  }, [hist]);
+
   const press = useCallback((label) => {
     // ── Clear ──────────────────────────────────────────────────
     if (label === "C") {
@@ -300,7 +316,17 @@ export function QuickCalc() {
           {["basic","scientific"].map(m => (
             <button
               key={m}
-              onClick={() => setMode(m)}
+              onClick={() => {
+                if (m !== mode) {
+                  // B6 fix: reset calc state when switching modes to avoid
+                  // stale justCalc/expr carry-over on the first press in new mode
+                  setMode(m);
+                  setDisplay('0');
+                  setExpr('');
+                  setFresh(true);
+                  setJustCalc(false);
+                }
+              }}
               aria-pressed={mode === m}
               aria-label={`${m === "basic" ? "Basic" : "Scientific"} mode${mode === m ? " (active)" : ""}`}
               style={{

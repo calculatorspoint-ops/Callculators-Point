@@ -12,8 +12,17 @@ export class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Automatically recover from Vite's stale dynamic import chunks by hard reloading (once per session)
-    if (error?.message && error.message.includes('Failed to fetch dynamically imported module')) {
+    // Auto-recover from stale dynamic import chunks by hard reloading (once per session).
+    // Covers both Vite and Next.js chunk-load failure messages.
+    const msg = error?.message || '';
+    const isChunkError =
+      msg.includes('Failed to fetch dynamically imported module') ||  // Vite
+      msg.includes('ChunkLoadError') ||                               // webpack (Next.js <14)
+      msg.includes('Loading chunk') ||                                // webpack (Next.js)
+      msg.includes('Loading CSS chunk') ||                            // webpack CSS chunks
+      /failed to load.*chunk/i.test(msg);                             // generic fallback
+
+    if (isChunkError) {
       const reloadKey = 'calcpoint_dynamic_import_reload';
       if (!sessionStorage.getItem(reloadKey)) {
         sessionStorage.setItem(reloadKey, 'true');

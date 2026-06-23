@@ -73,10 +73,24 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
   const toolGuides = getLandingsByCalc(calc.slug);
 
   const share = () => {
+    // F2 fix: Share the full URL — calculator forms push their field values as
+    // search params via useShareableUrl, so this URL is pre-filled for the recipient.
+    const shareTarget = typeof window !== 'undefined' ? window.location.href : `/calculator/${slug}`;
     if (navigator.share) {
-      navigator.share({ title: calc.name, text: `Free ${calc.name} — ${calc.desc}`, url: window.location.href }).catch(() => {});
+      navigator.share({ title: calc.name, text: `Free ${calc.name} — ${calc.desc}`, url: shareTarget }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(window.location.href).catch(() => {});
+      navigator.clipboard.writeText(shareTarget)
+        .then(() => {
+          // Brief toast — no state needed, just a quick DOM manipulation
+          const btn = document.querySelector('[aria-label="Share calculator"]') as HTMLButtonElement | null;
+          if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '✓ Copied!';
+            btn.style.background = 'rgba(16,185,129,.8)';
+            setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
+          }
+        })
+        .catch(() => {});
     }
   };
 

@@ -118,7 +118,7 @@ const siteSchema = {
       isPartOf: { '@id': `${SITE_URL}/#website` },
       about: { '@type': 'Thing', name: 'Online Calculators' },
       inLanguage: 'en-US',
-      dateModified: '2026-06-22',
+      dateModified: '2026-06-23',
       datePublished: '2025-01-01',
     },
   ],
