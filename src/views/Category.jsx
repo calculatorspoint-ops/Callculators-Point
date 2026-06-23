@@ -1,5 +1,6 @@
 'use client';
 import { useParams } from "next/navigation";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight, BarChart2, Zap, BookOpen, TrendingUp, Star } from "lucide-react";
@@ -211,9 +212,25 @@ export default function Category() {
 
   if (!cat) { redirect('/calculators'); return null; }
 
-  const popular = calcs.filter(c => c.popular);
-  const newCalcs = calcs.filter(c => c.isNew);
-  const rest = calcs.filter(c => !c.popular && !c.isNew);
+  const [sortMode, setSortMode] = useState('default'); // 'default' | 'az' | 'new'
+  const [filterQ,  setFilterQ]  = useState('');
+
+  // Filter + sort the full calc list
+  const sortedCalcs = useMemo(() => {
+    let list = filterQ.trim()
+      ? calcs.filter(c =>
+          c.name.toLowerCase().includes(filterQ.toLowerCase()) ||
+          (c.desc || '').toLowerCase().includes(filterQ.toLowerCase())
+        )
+      : [...calcs];
+    if (sortMode === 'az')  list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
+    if (sortMode === 'new') list = list.slice().sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+    return list;
+  }, [calcs, sortMode, filterQ]);
+
+  const popular  = sortMode === 'default' && !filterQ ? calcs.filter(c => c.popular) : [];
+  const newCalcs = sortMode === 'default' && !filterQ ? calcs.filter(c => c.isNew && !c.popular) : [];
+  const rest     = sortMode === 'default' && !filterQ ? calcs.filter(c => !c.popular && !c.isNew) : sortedCalcs;
 
   const CalcCard = ({ c, badge }) => (
     <Link
@@ -386,9 +403,61 @@ export default function Category() {
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "28px 20px 64px" }}>
         <div className="category-page-layout">
-
           {/* Main content */}
           <div>
+            {/* Filter + Sort bar — #23 fix */}
+            <div style={{
+              display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap',
+              marginBottom: 20, padding: '12px 14px',
+              background: 'var(--surface)', border: '1.5px solid var(--border)',
+              borderRadius: 14,
+            }}>
+              {/* Search within category */}
+              <div style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                <span style={{ fontSize: 14, opacity: 0.5 }}>🔍</span>
+                <input
+                  value={filterQ}
+                  onChange={e => setFilterQ(e.target.value)}
+                  placeholder={`Search ${cat.name.toLowerCase()} tools…`}
+                  style={{
+                    flex: 1, border: 'none', outline: 'none', background: 'transparent',
+                    fontSize: 14, color: 'var(--text)', fontFamily: 'var(--font)',
+                  }}
+                  aria-label={`Filter ${cat.name} calculators`}
+                />
+                {filterQ && (
+                  <button type="button" onClick={() => setFilterQ('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text3)', fontSize: 16, lineHeight: 1 }} aria-label="Clear filter">×</button>
+                )}
+              </div>
+              {/* Sort buttons */}
+              <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                {[['default','⭐ Popular'],['az','A → Z'],['new','🆕 Newest']].map(([mode, label]) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setSortMode(mode)}
+                    aria-pressed={sortMode === mode}
+                    style={{
+                      padding: '6px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+                      border: '1.5px solid',
+                      borderColor: sortMode === mode ? 'var(--brand)' : 'var(--border)',
+                      background: sortMode === mode ? 'var(--brand-l)' : 'transparent',
+                      color: sortMode === mode ? 'var(--brand)' : 'var(--text2)',
+                      cursor: 'pointer', transition: 'all .15s', fontFamily: 'var(--font)',
+                    }}
+                  >{label}</button>
+                ))}
+              </div>
+            </div>
+
+            {/* No results message */}
+            {filterQ && sortedCalcs.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text3)', fontSize: 14 }}>
+                No {cat.name.toLowerCase()} tools match "{filterQ}".
+                <button type="button" onClick={() => setFilterQ('')} style={{ marginLeft: 8, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>Clear</button>
+              </div>
+            )}
+
             {/* Popular */}
             {popular.length > 0 && (
               <div style={{ marginBottom: 28 }}>

@@ -35,6 +35,7 @@ import Link from 'next/link';
 import { FAQSection } from '@/components/calculator-core/FAQSection';
 import { FeedbackWidget } from '@/components/calculator-core/FeedbackWidget';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { SocialShare } from '@/components/ui/SocialShare';
 // STATIC import — fixes the double-lazy DOM order bug (see file comment above).
 // CalculatorWidget is only 92 lines; its per-form children remain lazy via registry files.
 import { CalculatorWidget } from '@/components/calculator-core/CalculatorWidget';
@@ -228,6 +229,14 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
 
           {/* Feedback */}
           <FeedbackWidget calcName={calc.name} calcSlug={calc.slug} />
+
+          {/* Social share — #28 fix: share results to WhatsApp, Twitter/X, or copy URL */}
+          <div style={{ marginTop: 16, padding: '14px 18px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: 14 }}>
+            <SocialShare
+              title={`${calc.name} Result`}
+              text={`I used the free ${calc.name} on Calculators Point — check it out!`}
+            />
+          </div>
 
           {/* FAQ */}
           {faqs.length > 0 && <FAQSection faqs={faqs} />}

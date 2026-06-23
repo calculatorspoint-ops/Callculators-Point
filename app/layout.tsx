@@ -61,6 +61,12 @@ export const metadata: Metadata = {
       width: 1200,
       height: 630,
       alt: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators`,
+    }, {
+      // #21 fix: dark-mode OG image for premium social shares
+      url: 'https://calculatorspoint.com/og-image-dark.png',
+      width: 1200,
+      height: 630,
+      alt: `Calculators Point — ${CALC_COUNT_LABEL} Free Online Calculators (dark)`,
     }],
   },
   twitter: {

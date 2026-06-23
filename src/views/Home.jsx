@@ -328,41 +328,48 @@ export default function Home({ skipHero } = {}) {
         <div className="home-grid">
           {/* ── Left: Calculator lists ── */}
           <main role="main">
-            {/* Recently Used */}
-            {recentCalcs.length > 0 && (
-              <div className="home-cat-block" style={{ marginBottom: 16 }}>
-                <div className="home-cat-head" style={{ borderLeft: "4px solid #16a34a" }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--green-l)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-                    🕐
+            {/* Recently Used + Favorites — gated behind mount to avoid SSR mismatch.
+               suppressHydrationWarning + min-height prevents CLS when they appear. */}
+            <div
+              suppressHydrationWarning
+              style={{ minHeight: mounted && (recentCalcs.length > 0 || favoriteCalcs.length > 0) ? 'auto' : 0 }}
+            >
+              {/* Recently Used */}
+              {recentCalcs.length > 0 && (
+                <div className="home-cat-block" style={{ marginBottom: 16 }}>
+                  <div className="home-cat-head" style={{ borderLeft: "4px solid #16a34a" }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--green-l)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
+                      🕐
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>Recently Used</div>
+                      <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Jump back in where you left off</p>
+                    </div>
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>Recently Used</div>
-                    <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Jump back in where you left off</p>
+                  <div className="home-cat-grid">
+                    {recentCalcs.slice(0, 5).map(c => <CalcRow key={c.id} calc={c} />)}
                   </div>
                 </div>
-                <div className="home-cat-grid">
-                  {recentCalcs.slice(0, 5).map(c => <CalcRow key={c.id} calc={c} />)}
-                </div>
-              </div>
-            )}
+              )}
 
-            {/* Favorites */}
-            {favoriteCalcs.length > 0 && (
-              <div className="home-cat-block" style={{ marginBottom: 16 }}>
-                <div className="home-cat-head" style={{ borderLeft: "4px solid #f59e0b" }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-                    ⭐
+              {/* Favorites */}
+              {favoriteCalcs.length > 0 && (
+                <div className="home-cat-block" style={{ marginBottom: 16 }}>
+                  <div className="home-cat-head" style={{ borderLeft: "4px solid #f59e0b" }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
+                      ⭐
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>Your Favorites</div>
+                      <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Saved tools — accessible in one click</p>
+                    </div>
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>Your Favorites</div>
-                    <p style={{ fontSize: 11, color: "var(--text3)", marginTop: 2 }}>Saved tools — accessible in one click</p>
+                  <div className="home-cat-grid">
+                    {favoriteCalcs.slice(0, 6).map(c => <CalcRow key={c.id} calc={c} />)}
                   </div>
                 </div>
-                <div className="home-cat-grid">
-                  {favoriteCalcs.slice(0, 6).map(c => <CalcRow key={c.id} calc={c} />)}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Category blocks */}
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

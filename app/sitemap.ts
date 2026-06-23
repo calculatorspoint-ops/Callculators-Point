@@ -48,9 +48,9 @@ const BASE_URL = 'https://calculatorspoint.com';
  *    content actually changes. Fake "freshness" can hurt crawl trust.
  */
 const DATES = {
-  homepage:    new Date('2026-06-13'),  // Updated: Firebase fix, H2 content sections, FAQ schema, E-E-A-T, security headers
-  content:     new Date('2026-06-13'),  // Updated: EMI validation, SEO text fix, accessibility improvements
-  popular:     new Date('2026-06-13'),  // Updated: UI/UX audit fixes, sitemap freshness aligned
+  homepage:    new Date('2026-06-23'),  // Updated: medium + low priority audit fixes
+  content:     new Date('2026-06-23'),  // Updated: category filter/sort, social share, manifest
+  popular:     new Date('2026-06-23'),  // Updated: loading skeletons, error boundaries, B6 fix
   static:      new Date('2026-06-13'),  // Updated: legal pages, consent compliance, HSTS header
 };
 
@@ -82,6 +82,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: DATES.content,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
+    // #19 fix: image sitemap — category OG image surfaces in Google Image Search
+    images: [`${BASE_URL}/api/og?title=${encodeURIComponent(`${cat.name} Calculators`)}&icon=${encodeURIComponent(cat.icon)}&cat=Category`],
   }));
 
   // ── 4. Calculator pages — auto-generated from INDEXABLE_CALCULATORS ─────
@@ -93,6 +95,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: (calc.popular || calc.isNew) ? DATES.popular : DATES.content,
       changeFrequency: (calc.popular ? 'weekly' : 'monthly') as 'weekly' | 'monthly',
       priority: calc.popular ? 0.9 : calc.isNew ? 0.85 : 0.75,
+      // #19 fix: image sitemap — dynamic OG image per calculator surfaces in Google Image Search
+      images: [`${BASE_URL}/api/og?title=${encodeURIComponent(`Free ${calc.name} Online`)}&icon=${encodeURIComponent(calc.icon || '🧮')}&cat=${encodeURIComponent(calc.cat || '')}`],
     }));
 
   // ── 5. SEO long-tail landing pages — auto-generated from SEO_LANDING_PAGES ─
