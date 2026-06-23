@@ -395,7 +395,7 @@ export function QuickCalc() {
               >
                 <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "55%" }}>{h.expr}</span>
                 <span style={{ color: "#60a5fa", fontWeight: 700, flexShrink: 0 }}>= {h.result}</span>
-              </div>
+              </button>
             ))}
           </div>
         )}
