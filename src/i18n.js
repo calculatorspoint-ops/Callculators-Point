@@ -44,6 +44,27 @@ const resources = {
         "business": "Negocios",
       }
     }
+  },
+  'pt-BR': {
+    translation: {
+      "nav": {
+        "home": "Início",
+        "calculators": "Calculadoras",
+        "about": "Sobre",
+        "contact": "Contato",
+      },
+      "categories": {
+        "finance": "Finanças e Dinheiro",
+        "health": "Saúde e Bem-estar",
+        "math": "Matemática e Ciência",
+        "education": "Educação e Notas",
+        "converters": "Conversores de Unidades",
+        "everyday": "Ferramentas do Dia a Dia",
+        "construction": "Construção",
+        "technology": "Tecnologia",
+        "business": "Negócios",
+      }
+    }
   }
 };
 

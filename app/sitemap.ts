@@ -169,10 +169,49 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.65,
   }));
 
+  // ── pt-BR locale pages ────────────────────────────────────────────────────
+  const PT_BR_BASE = `${BASE_URL}/pt-br`;
+
+  const ptBrHomepage: MetadataRoute.Sitemap = [{
+    url: PT_BR_BASE,
+    lastModified: DATES.homepage,
+    changeFrequency: 'daily',
+    priority: 0.9,
+  }];
+
+  const ptBrIndexPage: MetadataRoute.Sitemap = [{
+    url: `${PT_BR_BASE}/calculators`,
+    lastModified: DATES.content,
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }];
+
+  const ptBrCategoryPages: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
+    url: `${PT_BR_BASE}/category/${cat.id}`,
+    lastModified: DATES.content,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  const ptBrCalculatorPages: MetadataRoute.Sitemap = INDEXABLE_CALCULATORS.map((calc) => ({
+    url: `${PT_BR_BASE}/calculator/${calc.slug}`,
+    lastModified: (calc.popular || calc.isNew) ? DATES.popular : DATES.content,
+    changeFrequency: (calc.popular ? 'weekly' : 'monthly') as 'weekly' | 'monthly',
+    priority: calc.popular ? 0.8 : 0.65,
+  }));
+
+  const ptBrStaticPages: MetadataRoute.Sitemap = [
+    { url: `${PT_BR_BASE}/about`,            lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.4 },
+    { url: `${PT_BR_BASE}/contact`,          lastModified: DATES.static, changeFrequency: 'monthly' as const, priority: 0.3 },
+    { url: `${PT_BR_BASE}/privacy-policy`,   lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.2 },
+    { url: `${PT_BR_BASE}/terms-of-service`, lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.2 },
+    { url: `${PT_BR_BASE}/disclaimer`,       lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.2 },
+    { url: `${PT_BR_BASE}/cookie-policy`,    lastModified: DATES.static, changeFrequency: 'yearly'  as const, priority: 0.2 },
+  ];
+
   // ── Final output ──────────────────────────────────────────────────────────
-  //    Order matters: higher-priority groups first so crawlers process
-  //    the most important pages before hitting any crawl budget limit.
   return [
+    // ── English pages (UNCHANGED) ─────────────────────────────────────────
     ...homepage,           // 1    URL
     ...indexPage,          // 1    URL
     ...categoryPages,      // 9    URLs
@@ -180,9 +219,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...toolPages,          // 12   URLs (auto from data)
     ...nameGeneratorPages, // 9    URLs
     ...ecosystemPages,     // 3    URLs
-    ...cheatSheetPages,    // 1    URL  (real formula content now published)
-    ...blogIndexPage,      // 0-1  URL (only when published posts exist)
-    ...blogPostPages,      // 0-N  URLs (only published posts, drafts excluded)
+    ...cheatSheetPages,    // 1    URL
+    ...blogIndexPage,      // 0-1  URL
+    ...blogPostPages,      // 0-N  URLs
     ...staticPages,        // 6    URLs
+
+    // ── pt-BR pages ───────────────────────────────────────────────────────
+    ...ptBrHomepage,           // 1    URL
+    ...ptBrIndexPage,          // 1    URL
+    ...ptBrCategoryPages,      // 9    URLs
+    ...ptBrCalculatorPages,    // 180+ URLs
+    ...ptBrStaticPages,        // 6    URLs
   ];
 }

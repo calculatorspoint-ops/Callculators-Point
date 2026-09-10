@@ -85,6 +85,11 @@ export async function generateMetadata(
 
     alternates: {
       canonical: `${SITE_URL}/calculator/${slug}`,
+      languages: {
+        'en': `${SITE_URL}/calculator/${slug}`,
+        'pt-BR': `${SITE_URL}/pt-br/calculator/${slug}`,
+        'x-default': `${SITE_URL}/calculator/${slug}`,
+      },
     },
     openGraph: {
       title: fullTitle,
