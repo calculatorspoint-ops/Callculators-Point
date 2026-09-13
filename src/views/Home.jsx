@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowRight, Zap, BarChart2, Shield, TrendingUp, ChevronRight, Sparkles, Calculator } from "lucide-react";
 
-import { CATEGORIES, BY_CATEGORY, ALL_CALCULATORS, CALC_COUNT_LABEL } from "@/data/calculatorConfigs";
+import { CATEGORIES, BY_CATEGORY, ALL_CALCULATORS, CALC_COUNT_LABEL, POPULAR, NEW_CALCS } from "@/data/calculatorConfigs";
 import { useAppStore } from "@/store/useAppStore";
 
 /* ── Calculator row item ─────────────────────────────────────────────── */

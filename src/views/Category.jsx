@@ -210,8 +210,6 @@ export default function Category() {
   const calcs = BY_CATEGORY[catId] || [];
   const content = CAT_CONTENT[catId] || {};
 
-  if (!cat) { redirect('/calculators'); return null; }
-
   const [sortMode, setSortMode] = useState('default'); // 'default' | 'az' | 'new'
   const [filterQ,  setFilterQ]  = useState('');
 
@@ -227,6 +225,8 @@ export default function Category() {
     if (sortMode === 'new') list = list.slice().sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
     return list;
   }, [calcs, sortMode, filterQ]);
+
+  if (!cat) { redirect('/calculators'); return null; }
 
   const popular  = sortMode === 'default' && !filterQ ? calcs.filter(c => c.popular) : [];
   const newCalcs = sortMode === 'default' && !filterQ ? calcs.filter(c => c.isNew && !c.popular) : [];

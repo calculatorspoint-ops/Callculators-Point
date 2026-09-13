@@ -48,6 +48,10 @@ const ExportToolbar = lazy(() =>
 
 export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { slug: string; headerAlreadyRendered?: boolean }) {
   const calc = getCalcBySlug(slug);
+
+  // ⚠️ Rules of Hooks: ALL hooks must be called unconditionally before any early return.
+  // The useEffect bodies use calc?.id / calc?.slug (optional chaining) so they are
+  // safe to run even when calc is undefined — they simply no-op.
   const { toggleFavorite, favorites, addRecent } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
@@ -64,6 +68,7 @@ export function CalculatorPageClient({ slug, headerAlreadyRendered = false }: { 
     }
   }, [calc?.id, calc?.slug, addRecent]);
 
+  // Early return AFTER all hooks — never before.
   if (!calc) return null;
 
   // Use false on server/pre-mount so SSR and client initial render match
